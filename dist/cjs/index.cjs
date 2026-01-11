@@ -95,7 +95,7 @@ module.exports = __toCommonJS(index_exports);
 // src/bootstrap.ts
 var fs = __toESM(require("fs"));
 var path = __toESM(require("path"));
-var events = __toESM(require("events"));
+var events2 = __toESM(require("events"));
 var xmpp = __toESM(require("@xmpp/client"));
 var shapefile = __toESM(require("shapefile"));
 var xml2js = __toESM(require("xml2js"));
@@ -108,8 +108,8 @@ var import_os = __toESM(require("os"));
 var import_say = __toESM(require("say"));
 var import_child_process = __toESM(require("child_process"));
 
-// src/dictionaries/events.ts
-var EVENTS = {
+// src/@dictionaries/events.ts
+var events = {
   "AF": "Ashfall",
   "AS": "Air Stagnation",
   "BH": "Beach Hazard",
@@ -172,7 +172,7 @@ var EVENTS = {
   "ZR": "Freezing Rain",
   "ZY": "Freezing Spray"
 };
-var ACTIONS = {
+var actions = {
   "W": "Warning",
   "F": "Forecast",
   "A": "Watch",
@@ -181,7 +181,7 @@ var ACTIONS = {
   "N": "Synopsis",
   "S": "Statement"
 };
-var STATUS = {
+var status = {
   "NEW": "Issued",
   "CON": "Updated",
   "EXT": "Extended",
@@ -193,13 +193,13 @@ var STATUS = {
   "CAN": "Cancelled",
   "EXP": "Expired"
 };
-var TYPES = {
+var types = {
   "O": "Operational Product",
   "T": "Test Product",
   "E": "Experimental Product",
   "X": "Experimental Product (Non-Operational)"
 };
-var STATUS_CORRELATIONS = [
+var status_correlations = [
   { type: "Update", forward: "Updated", cancel: false, update: true, new: false },
   { type: "Cancel", forward: "Cancelled", cancel: true, update: false, new: false },
   { type: "Alert", forward: "Issued", cancel: false, update: false, new: true },
@@ -212,7 +212,7 @@ var STATUS_CORRELATIONS = [
   { type: "Cancelled", forward: "Cancelled", cancel: true, update: false, new: false },
   { type: "Routine", forward: "Routine", cancel: false, update: true, new: false }
 ];
-var CAUSES = {
+var causes = {
   "SM": "Snow Melt",
   "RS": "Rain/Snow Melt",
   "ER": "Excessive Rain",
@@ -229,13 +229,13 @@ var CAUSES = {
   "UU": "Unknown",
   "OT": "Other Effects"
 };
-var RECORDS = {
+var records = {
   "NO": "No Record Expected",
   "NR": "Near Record or possible record",
   "UU": "Unknown history of records",
   "OO": "Other"
 };
-var SEVERITY = {
+var severity = {
   N: "Not Expected",
   0: "Areal Flood or FF Product",
   1: "Minor",
@@ -244,8 +244,8 @@ var SEVERITY = {
   U: "Unknown"
 };
 
-// src/dictionaries/offshore.ts
-var OFFSHORE = {
+// src/@dictionaries/offshore.ts
+var offshore = {
   "Special Weather Statement": "Special Weather Statement",
   "Hurricane Warning": "Hurricane Warning",
   "Hurricane Force Wind Warning": "Hurricane Force Wind Warning",
@@ -258,8 +258,8 @@ var OFFSHORE = {
   "Small Craft Warning": "Small Craft Warning"
 };
 
-// src/dictionaries/awips.ts
-var AWIPS = {
+// src/@dictionaries/awips.ts
+var awips = {
   ABV: `rawinsonde-data-above-100-millibars`,
   ADA: `alarm-alert-administrative-message`,
   ADM: `alert-administrative-message`,
@@ -602,8 +602,8 @@ var AWIPS = {
   ZFP: `zone-forecast-product`
 };
 
-// src/dictionaries/signatures.ts
-var TAGS = {
+// src/@dictionaries/signatures.ts
+var tags = {
   "FROSTBITE AND HYPOTHERMIA ARE LIKELY": "Frostbite and Hypothermia Likely",
   "LICKELY BECOME SLICK AND HAZARDOUS": "Slick and Hazardous Roads",
   "SLIPPERY ROAD CONDITIONS": "Slippery Roads",
@@ -649,7 +649,7 @@ var TAGS = {
   "FLASH FLOODING CAUSED BY HEAVY RAIN.": "Caused by heavy rain",
   "SOURCE...LAW ENFORCEMENT REPORTED.": "Confirmed by Law Enforcement"
 };
-var CANCEL_SIGNATURES = [
+var cancel_signatures = [
   "THIS_MESSAGE_IS_FOR_TEST_PURPOSES_ONLY",
   "this is a test",
   "subsided sufficiently for the advisory to be cancelled",
@@ -661,7 +661,7 @@ var CANCEL_SIGNATURES = [
   "The threat has ended",
   "has weakened below severe"
 ];
-var MESSAGE_SIGNATURES = [
+var message_signatures = [
   { regex: /\*/g, replacement: "." },
   { regex: /\bUTC\b/g, replacement: "Coordinated Universal Time" },
   { regex: /\bGMT\b/g, replacement: "Greenwich Mean Time" },
@@ -709,8 +709,8 @@ var MESSAGE_SIGNATURES = [
   { regex: /\bF\b(?!\w)/g, replacement: "degrees Fahrenheit" }
 ];
 
-// src/dictionaries/icao.ts
-var ICAOs = {
+// src/@dictionaries/icao.ts
+var icaos = {
   "KLCH": "Lake Charles, LA",
   "TSTL": "St. Louis, MO",
   "PABC": "Bethel, AK",
@@ -952,7 +952,7 @@ var ICAOs = {
 var packages = {
   fs,
   path,
-  events,
+  events: events2,
   xmpp,
   shapefile,
   xml2js,
@@ -977,7 +977,7 @@ var cache = {
   db: null,
   lastWarn: null,
   totalLocationWarns: 0,
-  events: new events.EventEmitter(),
+  events: new events2.EventEmitter(),
   isProcessingAudioQueue: false,
   audioQueue: []
 };
@@ -997,9 +997,11 @@ var settings = {
     },
     cache: {
       enabled: false,
-      max_file_size: 5,
+      max_file_size_mb: 5,
+      directory: null,
       max_db_history: 5e3,
-      directory: null
+      max_db_cache_size: 1e3,
+      use_db_for_cache: true
     },
     preferences: {
       disable_ugc: false,
@@ -1021,7 +1023,7 @@ var settings = {
     filtering: {
       events: [],
       filtered_icao: [],
-      ignored_icao: [`KWNS`],
+      ignored_icao: [],
       ignored_events: [`Xx`, `Test Message`],
       ugc_filter: [],
       state_filter: [],
@@ -1035,20 +1037,20 @@ var settings = {
   }
 };
 var definitions = {
-  events: EVENTS,
-  actions: ACTIONS,
-  status: STATUS,
-  productTypes: TYPES,
-  correlations: STATUS_CORRELATIONS,
-  offshore: OFFSHORE,
-  awips: AWIPS,
-  causes: CAUSES,
-  records: RECORDS,
-  severity: SEVERITY,
-  cancelSignatures: CANCEL_SIGNATURES,
-  messageSignatures: MESSAGE_SIGNATURES,
-  tags: TAGS,
-  ICAO: ICAOs,
+  events,
+  actions,
+  status,
+  productTypes: types,
+  correlations: status_correlations,
+  offshore,
+  awips,
+  causes,
+  records,
+  severity,
+  cancelSignatures: cancel_signatures,
+  messageSignatures: message_signatures,
+  tags,
+  ICAO: icaos,
   enhancedEvents: [
     { "Tornado Warning": {
       "Tornado Emergency": { description: "tornado emergency", condition: (tornadoThreatTag) => tornadoThreatTag === "OBSERVED" },
@@ -1100,7 +1102,7 @@ var definitions = {
   }
 };
 
-// src/parsers/stanza.ts
+// src/@parsers/stanza.ts
 var StanzaParser = class {
   /**
    * @function validate
@@ -1218,7 +1220,7 @@ ${message}`;
 };
 var stanza_default = StanzaParser;
 
-// src/parsers/text.ts
+// src/@parsers/text.ts
 var TextParser = class {
   /**
    * @function textProductToString
@@ -1371,7 +1373,7 @@ var TextParser = class {
 };
 var text_default = TextParser;
 
-// src/parsers/ugc.ts
+// src/@parsers/ugc.ts
 var UGCParser = class {
   /**
    * @function ugcExtractor
@@ -1552,7 +1554,7 @@ var UGCParser = class {
 };
 var ugc_default = UGCParser;
 
-// src/parsers/pvtec.ts
+// src/@parsers/pvtec.ts
 var PVtecParser = class {
   /**
    * @function pVtecExtractor
@@ -1581,7 +1583,8 @@ var PVtecParser = class {
           event: `${definitions.events[parts[3]]} ${definitions.actions[parts[4]]}`,
           status: definitions.status[parts[1]],
           wmo: ((_b = message.match(definitions.regular_expressions.wmo)) == null ? void 0 : _b[0]) || `N/A`,
-          expires: this.parseExpiryDate(dates)
+          expires: this.parseExpiryDate(dates),
+          isKWNS: (parts[4] == `A` || parts[4] == `Y`) && (parts[3] == `TO` || parts[3] == `SV`) ? true : false
         });
       }
       return pVtecs.length > 0 ? pVtecs : null;
@@ -1609,7 +1612,7 @@ var PVtecParser = class {
 };
 var pvtec_default = PVtecParser;
 
-// src/parsers/hvtec.ts
+// src/@parsers/hvtec.ts
 var HVtecParser = class {
   /**
    * @function HVtecExtractor
@@ -1641,7 +1644,7 @@ var HVtecParser = class {
 };
 var hvtec_default = HVtecParser;
 
-// src/parsers/events/vtec.ts
+// src/@parsers/@events/vtec.ts
 var VTECAlerts = class {
   /**
    * @function event
@@ -1677,6 +1680,9 @@ var VTECAlerts = class {
               const pVtec = getPVTEC[j];
               const baseProperties = yield events_default.getBaseProperties(message, attributes, getUGC, pVtec, getHVTEC);
               const getHeader = events_default.getHeader(__spreadValues(__spreadValues({}, validated.attributes), baseProperties.raw), baseProperties, pVtec);
+              if (pVtec.isKWNS && (baseProperties == null ? void 0 : baseProperties.sender_icao) != `KWNS`) {
+                continue;
+              }
               processed.push({
                 type: "Feature",
                 properties: __spreadProps(__spreadValues({
@@ -1705,7 +1711,7 @@ var VTECAlerts = class {
 };
 var vtec_default = VTECAlerts;
 
-// src/parsers/events/ugc.ts
+// src/@parsers/@events/ugc.ts
 var UGCAlerts = class {
   /**
    * @function getTracking
@@ -1799,7 +1805,7 @@ var UGCAlerts = class {
 };
 var ugc_default2 = UGCAlerts;
 
-// src/parsers/events/text.ts
+// src/@parsers/@events/text.ts
 var TextAlerts = class {
   /**
    * @function getTracking
@@ -1813,7 +1819,8 @@ var TextAlerts = class {
    * @returns {string} 
    */
   static getTracking(properties) {
-    return `${properties.sender_icao}-${properties.raw.attributes.ttaaii}-${properties.raw.attributes.id.slice(-4)}`;
+    var _a, _b, _c;
+    return `${properties.sender_icao}-${properties.raw.attributes.ttaaii}-${(_c = (_b = (_a = properties == null ? void 0 : properties.raw) == null ? void 0 : _a.attributes) == null ? void 0 : _b.id.slice(-4)) != null ? _c : "N/A"}`;
   }
   /**
    * @function getEvent
@@ -1891,7 +1898,7 @@ var TextAlerts = class {
 };
 var text_default2 = TextAlerts;
 
-// src/parsers/events/cap.ts
+// src/@parsers/@events/cap.ts
 var CapAlerts = class {
   /**
    * @function getTracking
@@ -2012,7 +2019,7 @@ var CapAlerts = class {
 };
 var cap_default = CapAlerts;
 
-// src/parsers/events/api.ts
+// src/@parsers/@events/api.ts
 var APIAlerts = class {
   /**
    * @function getTracking
@@ -2134,7 +2141,7 @@ var APIAlerts = class {
 };
 var api_default = APIAlerts;
 
-// src/parsers/events.ts
+// src/@parsers/events.ts
 var EventParser = class {
   /**
    * @function getBaseProperties
@@ -2275,10 +2282,10 @@ var EventParser = class {
    * @param {unknown[]} events
    * @returns {void}
    */
-  static validateEvents(events2) {
+  static validateEvents(events3) {
     return __async(this, null, function* () {
       var _a, _b, _c, _d, _e;
-      if (events2.length == 0) return;
+      if (events3.length == 0) return;
       const filteringSettings = (_b = (_a = settings) == null ? void 0 : _a.global_settings) == null ? void 0 : _b.filtering;
       const easSettings = (_d = (_c = settings) == null ? void 0 : _c.global_settings) == null ? void 0 : _d.eas_settings;
       const globalSettings = (_e = settings) == null ? void 0 : _e.global_settings;
@@ -2294,7 +2301,7 @@ var EventParser = class {
           bools[key] = setting;
         }
       }
-      const filtered = events2.filter((event) => {
+      const filtered = events3.filter((event) => {
         var _a2, _b2;
         const originalEvent = this.buildDefaultSignature(event);
         const props = originalEvent == null ? void 0 : originalEvent.properties;
@@ -2346,10 +2353,10 @@ var EventParser = class {
     const parent = `ATSX`;
     const alertType = (_d = (_c = (_a = attributes == null ? void 0 : attributes.awipsType) == null ? void 0 : _a.type) != null ? _c : (_b = attributes == null ? void 0 : attributes.getAwip) == null ? void 0 : _b.prefix) != null ? _d : `XX`;
     const ugc = ((_e = properties == null ? void 0 : properties.geocode) == null ? void 0 : _e.UGC) != null ? (_f = properties == null ? void 0 : properties.geocode) == null ? void 0 : _f.UGC.join(`-`) : `000000`;
-    const status = (_g = pVtec == null ? void 0 : pVtec.status) != null ? _g : "Issued";
+    const status2 = (_g = pVtec == null ? void 0 : pVtec.status) != null ? _g : "Issued";
     const issued = (properties == null ? void 0 : properties.issued) != null ? (_h = new Date(properties == null ? void 0 : properties.issued)) == null ? void 0 : _h.toISOString().replace(/[-:]/g, "").split(".")[0] : (/* @__PURE__ */ new Date()).toISOString().replace(/[-:]/g, "").split(".")[0];
     const sender = (_i = properties == null ? void 0 : properties.sender_icao) != null ? _i : `XXXX`;
-    const header = `ZCZC-${parent}-${alertType}-${ugc}-${status}-${issued}-${sender}-`;
+    const header = `ZCZC-${parent}-${alertType}-${ugc}-${status2}-${issued}-${sender}-`;
     return header;
   }
   /**
@@ -2443,8 +2450,8 @@ var EventParser = class {
     const props = (_a = event.properties) != null ? _a : {};
     const statusCorrelation = definitions.correlations.find((c) => c.type === props.action_type);
     const defEventTags = definitions.tags;
-    const tags = Object.entries(defEventTags).filter(([key]) => props == null ? void 0 : props.description.toLowerCase().includes(key.toLowerCase())).map(([, value]) => value);
-    props.tags = tags.length > 0 ? tags : [`N/A`];
+    const tags2 = Object.entries(defEventTags).filter(([key]) => props == null ? void 0 : props.description.toLowerCase().includes(key.toLowerCase())).map(([, value]) => value);
+    props.tags = tags2.length > 0 ? tags2 : [`N/A`];
     const setAction = (type) => {
       props.is_cancelled = type === `C`;
       props.is_updated = type === `U`;
@@ -2481,7 +2488,7 @@ var EventParser = class {
 };
 var events_default = EventParser;
 
-// src/database.ts
+// src/@submodules/database.ts
 var Database = class {
   /**
    * @function stanzaCacheImport
@@ -2613,7 +2620,7 @@ var Database = class {
 };
 var database_default = Database;
 
-// src/xmpp.ts
+// src/@submodules/xmpp.ts
 var Xmpp = class {
   /** 
    * @function isSessionReconnectionEligible
@@ -2748,7 +2755,7 @@ var Xmpp = class {
 };
 var xmpp_default = Xmpp;
 
-// src/utils.ts
+// src/@submodules/utils.ts
 var Utils = class _Utils {
   /**
    * @function sleep
@@ -2794,8 +2801,21 @@ var Utils = class _Utils {
    */
   static loadCollectionCache() {
     return __async(this, null, function* () {
+      var _a;
       try {
         const settings2 = settings;
+        if (settings2.noaa_weather_wire_service_settings.cache.use_db_for_cache) {
+          const rows = yield cache.db.prepare(`SELECT * FROM stanzas ORDER BY rowid DESC LIMIT ${(_a = settings2.noaa_weather_wire_service_settings.cache.max_db_cache_size) != null ? _a : 5e3}`).all();
+          this.warn(definitions.messages.dump_cache.replace(`{count}`, rows.length.toString()), true);
+          for (const row of rows) {
+            const validate = JSON.parse(row.stanza);
+            const skipMessage = validate.ignore || validate.isCap && !settings2.noaa_weather_wire_service_settings.preferences.cap_only || !validate.isCap && settings2.noaa_weather_wire_service_settings.preferences.cap_only || validate.isCap && !validate.isCapDescription;
+            if (skipMessage) return;
+            yield events_default.eventHandler(validate);
+          }
+          this.warn(definitions.messages.dump_cache_complete, true);
+          return;
+        }
         if (settings2.noaa_weather_wire_service_settings.cache.enabled && settings2.noaa_weather_wire_service_settings.cache.directory) {
           if (!packages.fs.existsSync(settings2.noaa_weather_wire_service_settings.cache.directory)) return;
           const cacheDir = settings2.noaa_weather_wire_service_settings.cache.directory;
@@ -2886,7 +2906,7 @@ var Utils = class _Utils {
           headers: requestOptions.headers,
           timeout: requestOptions.timeout,
           maxRedirects: 0,
-          validateStatus: (status) => status === 200 || status === 500
+          validateStatus: (status2) => status2 === 200 || status2 === 500
         });
         return { error: false, message: resp.data };
       } catch (err) {
@@ -2948,7 +2968,7 @@ var Utils = class _Utils {
       const reconnections = settings2.noaa_weather_wire_service_settings.reconnection_settings;
       if (isWire) {
         if (cache2.enabled) {
-          void this.garbageCollectionCache(cache2.max_file_size);
+          void this.garbageCollectionCache(cache2.max_file_size_mb);
         }
         if (reconnections.enabled) {
           void xmpp_default.isSessionReconnectionEligible(reconnections.interval);
@@ -2990,7 +3010,7 @@ var Utils = class _Utils {
 };
 var utils_default = Utils;
 
-// src/eas.ts
+// src/@submodules/eas.ts
 var EAS = class {
   /**
    * @function generateEASAudio
@@ -3538,10 +3558,10 @@ var AlertManager = class {
    * @returns {string[]}
    */
   getAllAlertTypes() {
-    const events2 = new Set(Object.values(definitions.events));
-    const actions = new Set(Object.values(definitions.actions));
-    return Array.from(events2).flatMap(
-      (event) => Array.from(actions).map((action) => `${event} ${action}`)
+    const events3 = new Set(Object.values(definitions.events));
+    const actions2 = new Set(Object.values(definitions.actions));
+    return Array.from(events3).flatMap(
+      (event) => Array.from(actions2).map((action) => `${event} ${action}`)
     );
   }
   /**

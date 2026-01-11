@@ -1,4 +1,4 @@
-export const EVENTS: Record<string, string> = {
+export const events: Record<string, string> = {
     "AF": "Ashfall",
     "AS": "Air Stagnation",
     "BH": "Beach Hazard",
@@ -62,7 +62,7 @@ export const EVENTS: Record<string, string> = {
     "ZY": "Freezing Spray"
 };
 
-export const ACTIONS: Record<string, string> = {
+export const actions: Record<string, string> = {
     "W": "Warning", 
     "F": "Forecast", 
     "A": "Watch", 
@@ -73,7 +73,7 @@ export const ACTIONS: Record<string, string> = {
 }
 
 
-export const STATUS: Record<string, string> = {
+export const status: Record<string, string> = {
     "NEW": "Issued", 
     "CON": "Updated", 
     "EXT": "Extended", 
@@ -86,14 +86,14 @@ export const STATUS: Record<string, string> = {
     "EXP": "Expired" 
 }
 
-export const TYPES: Record<string, string> = {
+export const types: Record<string, string> = {
     "O": "Operational Product",
     "T": "Test Product",
     "E": "Experimental Product",
     "X": "Experimental Product (Non-Operational)",
 }
 
-export const STATUS_CORRELATIONS: {type: string, forward: string, cancel: boolean, update: boolean, new: boolean}[] = [
+export const status_correlations: {type: string, forward: string, cancel: boolean, update: boolean, new: boolean}[] = [
     {type: "Update", forward: "Updated", cancel: false, update: true, new: false},
     {type: "Cancel", forward: "Cancelled", cancel: true, update: false, new: false},
     {type: "Alert", forward: "Issued", cancel: false, update: false, new: true},
@@ -107,7 +107,7 @@ export const STATUS_CORRELATIONS: {type: string, forward: string, cancel: boolea
     {type: "Routine", forward: "Routine", cancel: false, update: true, new: false},
 ]
 
-export const CAUSES : Record<string, string> = {
+export const causes : Record<string, string> = {
     "SM": "Snow Melt",
     "RS": "Rain/Snow Melt",
     "ER": "Excessive Rain",
@@ -125,14 +125,14 @@ export const CAUSES : Record<string, string> = {
     "OT": "Other Effects"
 }
 
-export const RECORDS: Record<string, string> = {
+export const records: Record<string, string> = {
     "NO": "No Record Expected",
     "NR": "Near Record or possible record",
     "UU": "Unknown history of records",
     "OO": "Other",
 }
 
-export const SEVERITY: Record<string, string> = {
+export const severity: Record<string, string> = {
     N: "Not Expected",
     0: "Areal Flood or FF Product",
     1: "Minor",

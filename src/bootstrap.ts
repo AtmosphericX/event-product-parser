@@ -28,28 +28,17 @@ import say from 'say';
 import child from 'child_process';
 
 
-import * as dictEvents from './dictionaries/events';
-import * as dictOffshore from './dictionaries/offshore';
-import * as dictAwips from './dictionaries/awips';
-import * as dictSignatures from './dictionaries/signatures';
-import * as dictICAOs from './dictionaries/icao';
+import * as dictEvents from './@dictionaries/events';
+import * as dictOffshore from './@dictionaries/offshore';
+import * as dictAwips from './@dictionaries/awips';
+import * as dictSignatures from './@dictionaries/signatures';
+import * as dictICAOs from './@dictionaries/icao';
 
 
 export const packages = {
-    fs, 
-    path, 
-    events, 
-    xmpp, 
-    shapefile, 
-    xml2js, 
-    sqlite3, 
-    jobs, 
-    axios, 
-    crypto, 
-    os, 
-    say,
-    child,
-    turf,
+    fs, path, events, xmpp, 
+    shapefile, xml2js, sqlite3, jobs, axios, 
+    crypto, os, say,child,turf,
 };
 
 export const cache = {
@@ -85,9 +74,11 @@ export const settings = {
         },   
         cache: {
             enabled: false,
-            max_file_size: 5,
-            max_db_history: 5000,
+            max_file_size_mb: 5,
             directory: null,
+            max_db_history: 5000,
+            max_db_cache_size: 1000,
+            use_db_for_cache: true,
         },
         preferences: {
             disable_ugc: false,
@@ -109,7 +100,7 @@ export const settings = {
         filtering: {
             events: [],
             filtered_icao: [],
-            ignored_icao: [`KWNS`],
+            ignored_icao: [],
             ignored_events: [`Xx`, `Test Message`],
             ugc_filter: [],
             state_filter: [],
@@ -125,20 +116,20 @@ export const settings = {
 
 
 export const definitions = {
-    events: dictEvents.EVENTS,
-    actions: dictEvents.ACTIONS,
-    status: dictEvents.STATUS,
-    productTypes: dictEvents.TYPES,
-    correlations: dictEvents.STATUS_CORRELATIONS,
-    offshore: dictOffshore.OFFSHORE,
-    awips: dictAwips.AWIPS,
-    causes: dictEvents.CAUSES,
-    records: dictEvents.RECORDS,
-    severity: dictEvents.SEVERITY,
-    cancelSignatures: dictSignatures.CANCEL_SIGNATURES,
-    messageSignatures: dictSignatures.MESSAGE_SIGNATURES,
-    tags: dictSignatures.TAGS,
-    ICAO: dictICAOs.ICAOs,
+    events: dictEvents.events,
+    actions: dictEvents.actions,
+    status: dictEvents.status,
+    productTypes: dictEvents.types,
+    correlations: dictEvents.status_correlations,
+    offshore: dictOffshore.offshore,
+    awips: dictAwips.awips,
+    causes: dictEvents.causes,
+    records: dictEvents.records,
+    severity: dictEvents.severity,
+    cancelSignatures: dictSignatures.cancel_signatures,
+    messageSignatures: dictSignatures.message_signatures,
+    tags: dictSignatures.tags,
+    ICAO: dictICAOs.icaos,
     enhancedEvents: [
         {"Tornado Warning": {
             "Tornado Emergency": { description: "tornado emergency", condition: (tornadoThreatTag: string) => tornadoThreatTag === 'OBSERVED'},

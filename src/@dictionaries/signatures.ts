@@ -1,4 +1,4 @@
-export const TAGS: Record<string, string> = {
+export const tags: Record<string, string> = {
     "FROSTBITE AND HYPOTHERMIA ARE LIKELY": "Frostbite and Hypothermia Likely",
     "LICKELY BECOME SLICK AND HAZARDOUS": "Slick and Hazardous Roads",
     "SLIPPERY ROAD CONDITIONS": "Slippery Roads",
@@ -45,7 +45,7 @@ export const TAGS: Record<string, string> = {
     "SOURCE...LAW ENFORCEMENT REPORTED.": "Confirmed by Law Enforcement"
 }
 
-export const CANCEL_SIGNATURES: string[] = [
+export const cancel_signatures: string[] = [
     "THIS_MESSAGE_IS_FOR_TEST_PURPOSES_ONLY", 
     "this is a test", 
     "subsided sufficiently for the advisory to be cancelled", 
@@ -58,7 +58,7 @@ export const CANCEL_SIGNATURES: string[] = [
     "has weakened below severe"
 ]
 
-export const MESSAGE_SIGNATURES: { regex: RegExp, replacement: string }[] = [
+export const message_signatures: { regex: RegExp, replacement: string }[] = [
     { regex: /\*/g, replacement: '.' }, 
     { regex: /\bUTC\b/g, replacement: 'Coordinated Universal Time' },
     { regex: /\bGMT\b/g, replacement: 'Greenwich Mean Time' },

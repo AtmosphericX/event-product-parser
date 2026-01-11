@@ -12,10 +12,10 @@
 */
 
 
-import * as loader from './bootstrap';
-import * as types from './types';
-import StanzaParser from './parsers/stanza';
-import EventParser from './parsers/events';
+import * as loader from '../bootstrap';
+import * as types from '../types';
+import StanzaParser from '../@parsers/stanza';
+import EventParser from '../@parsers/events';
 import Xmpp from './xmpp';
 
 export class Utils { 
@@ -65,6 +65,23 @@ export class Utils {
     public static async loadCollectionCache() {
         try {
             const settings = loader.settings as types.ClientSettingsTypes;
+            if (settings.noaa_weather_wire_service_settings.cache.use_db_for_cache) {
+                const rows = await loader.cache.db
+                .prepare(`SELECT * FROM stanzas ORDER BY rowid DESC LIMIT ${settings.noaa_weather_wire_service_settings.cache.max_db_cache_size ?? 5000}`)
+                .all() as { rowid: number; stanza: string }[];
+                this.warn(loader.definitions.messages.dump_cache.replace(`{count}`, rows.length.toString()), true);
+                for (const row of rows) {
+                    const validate = JSON.parse(row.stanza);
+                    const skipMessage = validate.ignore ||
+                            (validate.isCap && !settings.noaa_weather_wire_service_settings.preferences.cap_only) ||
+                            (!validate.isCap && settings.noaa_weather_wire_service_settings.preferences.cap_only) ||
+                            (validate.isCap && !validate.isCapDescription);
+                    if (skipMessage) return;
+                    await EventParser.eventHandler(validate);
+                }
+                this.warn(loader.definitions.messages.dump_cache_complete, true);
+                return;
+            }
             if (settings.noaa_weather_wire_service_settings.cache.enabled && settings.noaa_weather_wire_service_settings.cache.directory) {
                 if (!loader.packages.fs.existsSync(settings.noaa_weather_wire_service_settings.cache.directory)) return;
                 const cacheDir = settings.noaa_weather_wire_service_settings.cache.directory;
@@ -215,7 +232,7 @@ export class Utils {
             const reconnections = settings.noaa_weather_wire_service_settings.reconnection_settings;
             if (isWire) {
                 if (cache.enabled) {
-                    void this.garbageCollectionCache(cache.max_file_size);
+                    void this.garbageCollectionCache(cache.max_file_size_mb);
                 }
                 if (reconnections.enabled) {
                     void Xmpp.isSessionReconnectionEligible(reconnections.interval);

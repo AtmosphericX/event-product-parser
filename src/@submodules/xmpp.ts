@@ -12,12 +12,12 @@
 */
 
 
-import * as loader from './bootstrap';
-import * as types from './types';
+import * as loader from '../bootstrap';
+import * as types from '../types';
 import Utils from './utils';
-import StanzaParser from './parsers/stanza';
-import Database from './database';
-import EventParser from './parsers/events';
+import StanzaParser from '../@parsers/stanza';
+import Database from '../@submodules/database';
+import EventParser from '../@parsers/events';
 
 
 export class Xmpp { 

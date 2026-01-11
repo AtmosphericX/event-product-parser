@@ -4,11 +4,11 @@ import * as loader from '../bootstrap';
 import * as types from '../types';
 import TextParser from './text';
 import UGCParser from './ugc';
-import VTECAlerts from './events/vtec';
-import UGCAlerts from './events/ugc';
-import TextAlerts from './events/text';
-import CAPAlerts from './events/cap';
-import APIAlerts from './events/api';
+import VTECAlerts from './@events/vtec';
+import UGCAlerts from './@events/ugc';
+import TextAlerts from './@events/text';
+import CAPAlerts from './@events/cap';
+import APIAlerts from './@events/api';
 
 
 export class EventParser {

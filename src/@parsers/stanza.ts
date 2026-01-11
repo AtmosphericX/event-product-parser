@@ -86,7 +86,7 @@ export class StanzaParser {
     private static getType(attributes: unknown): Record<string, string> {
         const attrs = attributes as types.StanzaAttributesType | undefined;
         if (!attrs?.awipsid) return { type: 'XX', prefix: 'XX' };
-        const awipsDefs = loader.definitions.awips;
+        const awipsDefs = loader.definitions.awips as Record<string, string>;
         for (const [prefix, type] of Object.entries(awipsDefs)) {
             if (attrs.awipsid.startsWith(prefix)) {
                 return { type, prefix };

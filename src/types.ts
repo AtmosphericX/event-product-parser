@@ -17,8 +17,6 @@ interface LocalEasSettings {
     intro_wav?: string;
 }
 
-
-
 interface LocalAlertFilteringSettings { 
     events?: string[]; 
     filtered_icao?: string[]; 
@@ -51,9 +49,11 @@ interface LocalClientCredentialSettings {
 
 interface LocalCacheSettings { 
     enabled?: boolean;
-    max_file_size?: number;
-    max_db_history?: number;
+    max_file_size_mb?: number;
     directory?: string;
+    max_db_history?: number;
+    use_db_for_cache?: boolean;
+    max_db_cache_size?: number;
 }
 
 interface LocalAlertPreferenceSettings {
@@ -184,6 +184,7 @@ export interface PVtecEntry {
     status?: string;
     wmo?: string;
     expires?: Date | string;
+    isKWNS?: boolean;
 }
 
 export interface UGCEntry { 

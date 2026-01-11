@@ -1,4 +1,4 @@
-export const ICAOs: Record<string, string> = {
+export const icaos: Record<string, string> = {
     "KLCH": "Lake Charles, LA",
     "TSTL": "St. Louis, MO", 
     "PABC": "Bethel, AK", 

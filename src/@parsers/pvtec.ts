@@ -42,6 +42,7 @@ export class PVtecParser {
                 status: loader.definitions.status[parts[1]],
                 wmo: message.match(loader.definitions.regular_expressions.wmo)?.[0] || `N/A`,
                 expires: this.parseExpiryDate(dates),
+                isKWNS: (parts[4] == `A` || parts[4] == `Y`) && (parts[3] == `TO` || parts[3] == `SV`) ? true : false,
             });
         }
         return pVtecs.length > 0 ? pVtecs : null;

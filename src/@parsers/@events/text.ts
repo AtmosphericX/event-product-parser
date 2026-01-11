@@ -30,7 +30,7 @@ export class TextAlerts {
      * @returns {string} 
      */
     private static getTracking(properties: types.EventProperties) {
-        return `${properties.sender_icao}-${properties.raw.attributes.ttaaii}-${properties.raw.attributes.id.slice(-4)}`
+        return `${properties.sender_icao}-${properties.raw.attributes.ttaaii}-${properties?.raw?.attributes?.id.slice(-4) ?? 'N/A'}`;
     }
 
     /**

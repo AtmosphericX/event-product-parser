@@ -52,6 +52,9 @@ export class VTECAlerts {
                         const pVtec = getPVTEC[j];
                         const baseProperties = await EventParser.getBaseProperties(message, attributes, getUGC, pVtec, getHVTEC) as types.EventProperties;
                         const getHeader = EventParser.getHeader({ ...validated.attributes, ...baseProperties.raw } as types.StanzaAttributes, baseProperties, pVtec);
+                        if (pVtec.isKWNS && baseProperties?.sender_icao != `KWNS`) {
+                            continue;
+                        }
                         processed.push({
                             type: "Feature",
                             properties: { 

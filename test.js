@@ -16,10 +16,12 @@ const parser = new AlertManager({
             nickname: "AtmosphericX Standalone Parser",
         },   
         cache: {
-            enabled: true,
-            max_file_size: 5,
+            enabled: false,
+            max_file_size_mb: 5,
+            directory: null,
             max_db_history: 5000,
-            directory: `cache`,
+            max_db_cache_size: 1000,
+            use_db_for_cache: true,
         },
         preferences: {
             disable_ugc: false,
@@ -40,7 +42,7 @@ const parser = new AlertManager({
         filtering: {
             events: [`Severe Thunderstorm Warning`],
             filtered_icao: ["PAFC"],
-            ignored_icao: [`KWNS`],
+            ignored_icao: [],
             ignored_events: [`Xx`, `Test Message`],
             ugc_filter: [],
             state_filter: [],

@@ -1,4 +1,4 @@
-export const OFFSHORE: Record<string, string> = {
+export const offshore: Record<string, string> = {
     "Special Weather Statement": "Special Weather Statement",
     "Hurricane Warning": "Hurricane Warning",
     "Hurricane Force Wind Warning": "Hurricane Force Wind Warning",

@@ -1,4 +1,4 @@
-export const AWIPS: Record<string, string> = {
+export const awips: Record<string, string> = {
     ABV: `rawinsonde-data-above-100-millibars`,
     ADA: `alarm-alert-administrative-message`,
     ADM: `alert-administrative-message`,

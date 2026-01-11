@@ -12,8 +12,8 @@
 */
 
 
-import * as loader from './bootstrap';
-import * as types from './types';
+import * as loader from '../bootstrap';
+import * as types from '../types';
 import Utils from './utils';
 
 

@@ -35,10 +35,12 @@ const parser = new AlertManager({
             nickname: "AtmosphericX Parser",
         },   
         cache: {
-            enabled: true,
-            max_file_size: 5,
+            enabled: false,
+            max_file_size_mb: 5,
+            directory: `./nwws_cache`,
             max_db_history: 5000,
-            directory: `meow`,
+            max_db_cache_size: 1000,
+            use_db_for_cache: true,
         },
         preferences: {
             disable_ugc: false,
@@ -58,8 +60,8 @@ const parser = new AlertManager({
         shapefile_skip: 10,
         filtering: {
             events: [`Severe Thunderstorm Warning`],
-            filtered_icao: [],
-            ignored_icao: [`KWNS`],
+            filtered_icao: [`KLOT`],
+            ignored_icao: [],
             ignored_events: [`Xx`, `Test Message`],
             ugc_filter: [],
             state_filter: [],

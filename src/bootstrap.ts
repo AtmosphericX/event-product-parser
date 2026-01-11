@@ -174,7 +174,7 @@ export const definitions = {
         invalid_nickname: `The nickname you provided is invalid, please provide a valid nickname to continue.`,
         eas_no_directory: `You have not set a directory for EAS audio files to be saved to, please set the 'directory' setting in the global settings to enable EAS audio generation.`,
         reconnect_too_fast: `The client is attempting to reconnect too fast. This may be due to network instability. Reconnection attempt has been halted for safety.`,
-        dump_cache: `Found {count} cached alert files and will begin dumping them shortly...`,
+        dump_cache: `Found {count} cached alert files and will begin dumping them shortly.`,
         dump_cache_complete: `Completed dumping all cached alert files.`,
     }
 };

@@ -107,6 +107,7 @@ var import_crypto = __toESM(require("crypto"));
 var import_os = __toESM(require("os"));
 var import_say = __toESM(require("say"));
 var import_child_process = __toESM(require("child_process"));
+var import_jszip = __toESM(require("jszip"));
 
 // src/@dictionaries/events.ts
 var events = {
@@ -963,7 +964,8 @@ var packages = {
   os: import_os.default,
   say: import_say.default,
   child: import_child_process.default,
-  turf
+  turf,
+  jszip: import_jszip.default
 };
 var cache = {
   isReady: true,
@@ -1071,6 +1073,17 @@ var definitions = {
       "Considerable Severe Thunderstorm Warning": { condition: (damageThreatTag) => damageThreatTag === "CONSIDERABLE" }
     } }
   ],
+  shapefiles_directory: [
+    { name: "us_counties", id: "C", link: "https://www.weather.gov/source/gis/Shapefiles/County/cs03mr26.zip" },
+    { name: "us_states_territories", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/County/s_03mr26.zip" },
+    { name: "fire_weather_zones", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/fz03mr26.zip" },
+    { name: "costal_marine_zones", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/mz03mr26.zip" },
+    { name: "offshore_marine_zones", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/oz03mr26.zip" },
+    { name: "public_forecast_zones", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/z_03mr26.zip" },
+    { name: "county_warning_areas", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/w_03mr26.zip" },
+    { name: "river_forecast_boundaries", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/Misc/rf05mr24.zip" },
+    { name: "partial_counties", id: "C", link: "https://www.weather.gov/source/gis/Shapefiles/County/cs03mr26.zip" }
+  ],
   regular_expressions: {
     pvtec: new RegExp(`[OTEX].(NEW|CON|EXT|EXA|EXB|UPG|CAN|EXP|COR|ROU).[A-Z]{4}.[A-Z]{2}.[WAYSFON].[0-9]{4}.[0-9]{6}T[0-9]{4}Z-[0-9]{6}T[0-9]{4}Z`, "g"),
     hvtec: new RegExp(`[a-zA-Z0-9]{4}.[A-Z0-9].[A-Z]{2}.[0-9]{6}T[0-9]{4}Z.[0-9]{6}T[0-9]{4}Z.[0-9]{6}T[0-9]{4}Z.[A-Z]{2}`, "imu"),
@@ -1080,24 +1093,14 @@ var definitions = {
     ugc3: new RegExp(`(\\d{6})(?=-|$)`, "imu"),
     dateline: new RegExp(`\\d{3,4}\\s*(AM|PM)?\\s*[A-Z]{2,4}\\s+[A-Z]{3,}\\s+[A-Z]{3,}\\s+\\d{1,2}\\s+\\d{4}`, "gim")
   },
-  shapefiles: [
-    { id: `C`, file: `USCounties` },
-    { id: `Z`, file: `ForecastZones` },
-    { id: `Z`, file: `FireZones` },
-    { id: `Z`, file: `OffShoreZones` },
-    { id: `Z`, file: `FireCounties` },
-    { id: `Z`, file: `Marine` }
-  ],
   messages: {
-    shapefile_creation: `DO NOT CLOSE THIS PROJECT UNTIL THE SHAPEFILES ARE DONE COMPLETING!
-	 THIS COULD TAKE A WHILE DEPENDING ON THE SPEED OF YOUR STORAGE!!
-	 IF YOU CLOSE YOUR PROJECT, THE SHAPEFILES WILL NOT BE CREATED AND YOU WILL NEED TO DELETE ${settings.database} AND RESTART TO CREATE THEM AGAIN!`,
+    shapefile_creation: `DO NOT CLOSE THIS PROJECT UNTIL THE SHAPEFILES ARE DONE COMPLETING! THIS COULD TAKE A WHILE!! IF YOU CLOSE YOUR PROJECT, THE SHAPEFILES WILL NOT BE CREATED AND YOU WILL NEED TO DELETE ${settings.database} AND RESTART TO CREATE THEM AGAIN!`,
     shapefile_creation_finished: `SHAPEFILES HAVE BEEN SUCCESSFULLY CREATED AND THE DATABASE IS READY FOR USE!`,
     not_ready: `You can NOT create another instance without shutting down the current one first, please make sure to call the stop() method first!`,
     invalid_nickname: `The nickname you provided is invalid, please provide a valid nickname to continue.`,
     eas_no_directory: `You have not set a directory for EAS audio files to be saved to, please set the 'directory' setting in the global settings to enable EAS audio generation.`,
     reconnect_too_fast: `The client is attempting to reconnect too fast. This may be due to network instability. Reconnection attempt has been halted for safety.`,
-    dump_cache: `Found {count} cached alert files and will begin dumping them shortly...`,
+    dump_cache: `Found {count} cached alert files and will begin dumping them shortly.`,
     dump_cache_complete: `Completed dumping all cached alert files.`
   }
 };
@@ -2577,13 +2580,33 @@ var Database = class {
                 )
             `).run();
         const shapefileCount = cache.db.prepare(`SELECT COUNT(*) AS count FROM shapefiles`).get().count;
+        const shapefileDownloads = definitions.shapefiles_directory;
         if (shapefileCount === 0) {
           yield utils_default.sleep(1e3);
           utils_default.warn(definitions.messages.shapefile_creation);
-          for (const shape of definitions.shapefiles) {
-            const filepath = path2.resolve(__dirname, "../../shapefiles", shape.file);
-            const { features } = yield shapefile2.read(filepath, filepath);
-            utils_default.warn(`Importing ${features.length} entries from ${shape.file}...`);
+          for (const shape of definitions.shapefiles_directory) {
+            const name = shape.name;
+            const type = shape.id;
+            const link = shape.link;
+            const response = yield packages.axios.get(link, { responseType: "arraybuffer" });
+            const zip = new packages.jszip();
+            const content = yield zip.loadAsync(response.data);
+            const dirPath = path2.resolve(__dirname, "../../shapefiles");
+            if (!fs2.existsSync(dirPath)) fs2.mkdirSync(dirPath);
+            for (const fileName of Object.keys(content.files)) {
+              if (fileName.endsWith(".shp") || fileName.endsWith(".dbf")) {
+                const fileData = yield content.files[fileName].async("nodebuffer");
+                const outputPath = path2.resolve(dirPath, `${name}_${type}${path2.extname(fileName)}`);
+                fs2.writeFileSync(outputPath, fileData);
+                utils_default.warn(`Successfully downloaded and extracted ${fileName}`);
+              }
+            }
+            const filepath = path2.resolve(__dirname, "../../shapefiles", shape.name + "_" + shape.id);
+            const { features } = yield shapefile2.read(
+              filepath,
+              filepath
+            );
+            utils_default.warn(`Importing ${features.length} entries from ${shape.name}_${shape.id}...`);
             const insertStmt = cache.db.prepare(`
                         INSERT OR REPLACE INTO shapefiles (id, location, geometry) VALUES (?, ?, ?)
                     `);
@@ -2607,9 +2630,14 @@ var Database = class {
                 insertStmt.run(final, location, JSON.stringify(geometry));
               }
             });
+            fs2.unlinkSync(filepath + ".shp");
+            fs2.unlinkSync(filepath + ".dbf");
+            utils_default.warn(`Cleaned up temporary files for ${shape.name}_${shape.id}`);
             insertTransaction(features);
           }
           utils_default.warn(definitions.messages.shapefile_creation_finished);
+          fs2.rm(path2.resolve(__dirname, "../../shapefiles"), { recursive: true, force: true }, () => {
+          });
         }
       } catch (error) {
         const msg = error instanceof Error ? error.message : String(error);

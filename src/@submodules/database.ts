@@ -107,10 +107,29 @@ export class Database {
             if (shapefileCount === 0) {
                 await Utils.sleep(1000);
                 Utils.warn(loader.definitions.messages.shapefile_creation);
-                for (const shape of loader.definitions.shapefiles) {
-                    const filepath = path.resolve(__dirname, '../../shapefiles', shape.file);
-                    const { features } = await shapefile.read(filepath, filepath);
-                    Utils.warn(`Importing ${features.length} entries from ${shape.file}...`);
+                for (const shape of loader.definitions.shapefiles_directory) {
+                    const name = shape.name;
+                    const type = shape.id;
+                    const link = shape.link;
+                    const response = await loader.packages.axios.get(link, { responseType: 'arraybuffer' });
+                    const zip = new loader.packages.jszip();
+                    const content = await zip.loadAsync(response.data);
+                    const dirPath = path.resolve(__dirname, '../../shapefiles');
+                    if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath);
+                    for (const fileName of Object.keys(content.files)) {
+                        if (fileName.endsWith('.shp') || fileName.endsWith('.dbf')) {
+                            const fileData = await content.files[fileName].async('nodebuffer');
+                            const outputPath = path.resolve(dirPath, `${name}_${type}${path.extname(fileName)}`);
+                            fs.writeFileSync(outputPath, fileData);
+                            Utils.warn(`Successfully downloaded and extracted ${fileName}`);
+                        }
+                    }
+                    const filepath = path.resolve(__dirname, '../../shapefiles', shape.name + '_' + shape.id);
+                    const { features } = await shapefile.read(
+                        filepath,
+                        filepath,
+                    );
+                    Utils.warn(`Importing ${features.length} entries from ${shape.name}_${shape.id}...`);
                     const insertStmt = loader.cache.db.prepare(`
                         INSERT OR REPLACE INTO shapefiles (id, location, geometry) VALUES (?, ?, ?)
                     `);
@@ -121,22 +140,29 @@ export class Database {
                             if (properties.FIPS) {
                                 final = `${properties.STATE}${shape.id}${properties.FIPS.substring(2)}`;
                                 location = `${properties.COUNTYNAME}, ${properties.STATE}`;
-                            } else if (properties.FULLSTAID) {
+                            }
+                            else if (properties.FULLSTAID) {
                                 final = `${properties.ST}${shape.id}${properties.WFO}`;
                                 location = `${properties.CITY}, ${properties.STATE}`;
-                            } else if (properties.STATE) {
+                            }
+                            else if (properties.STATE) {
                                 final = `${properties.STATE}${shape.id}${properties.ZONE}`;
                                 location = `${properties.NAME}, ${properties.STATE}`;
-                            } else {
+                            }
+                            else {
                                 final = properties.ID;
                                 location = properties.NAME;
                             }
                             insertStmt.run(final, location, JSON.stringify(geometry));
                         }
                     });
+                    fs.unlinkSync(filepath + '.shp');
+                    fs.unlinkSync(filepath + '.dbf');
+                    Utils.warn(`Cleaned up temporary files for ${shape.name}_${shape.id}`);
                     insertTransaction(features);
                 }
                 Utils.warn(loader.definitions.messages.shapefile_creation_finished);
+                fs.rm(path.resolve(__dirname, '../../shapefiles'), { recursive: true, force: true }, () => {});
             }
         } catch (error: unknown) {
             const msg = error instanceof Error ? error.message : String(error);

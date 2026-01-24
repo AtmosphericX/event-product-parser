@@ -2580,7 +2580,6 @@ var Database = class {
                 )
             `).run();
         const shapefileCount = cache.db.prepare(`SELECT COUNT(*) AS count FROM shapefiles`).get().count;
-        const shapefileDownloads = definitions.shapefiles_directory;
         if (shapefileCount === 0) {
           yield utils_default.sleep(1e3);
           utils_default.warn(definitions.messages.shapefile_creation);

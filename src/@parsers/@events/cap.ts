@@ -89,8 +89,11 @@ export class CapAlerts {
                         sender_icao: extracted.wmoidentifier ? extracted.wmoidentifier.substring(extracted.wmoidentifier.length - 4) : `N/A`,
                         attributes: attributes,
                         geocode: {
-                            UGC: [extracted.ugc],
-                            GENERATED: null,
+                            UGC: extracted.ugc ? (Array.isArray(extracted.ugc) ? extracted.ugc : [extracted.ugc]) : [`XX000`],
+                            GENERATED: extracted?.polygon?.length > 0 ? Buffer.from(JSON.stringify([extracted.polygon.split(' ').map((coord: string) => {
+                                const [lat, lon] = coord.split(',').map(Number);
+                                return [lon, lat];
+                            })])).toString('base64') : null,
                         },
                         raw: {attributes},
                         parameters: {

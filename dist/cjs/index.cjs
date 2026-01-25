@@ -1081,8 +1081,7 @@ var definitions = {
     { name: "offshore_marine_zones", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/oz03mr26.zip" },
     { name: "public_forecast_zones", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/z_03mr26.zip" },
     { name: "county_warning_areas", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/w_03mr26.zip" },
-    { name: "river_forecast_boundaries", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/Misc/rf05mr24.zip" },
-    { name: "partial_counties", id: "C", link: "https://www.weather.gov/source/gis/Shapefiles/County/cs03mr26.zip" }
+    { name: "river_forecast_boundaries", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/Misc/rf05mr24.zip" }
   ],
   regular_expressions: {
     pvtec: new RegExp(`[OTEX].(NEW|CON|EXT|EXA|EXB|UPG|CAN|EXP|COR|ROU).[A-Z]{4}.[A-Z]{2}.[WAYSFON].[0-9]{4}.[0-9]{6}T[0-9]{4}Z-[0-9]{6}T[0-9]{4}Z`, "g"),
@@ -1479,7 +1478,8 @@ var UGCParser = class {
    * @description
    *     Retrieves geographic coordinates for an array of zone identifiers
    *     from the shapefiles database. Returns the coordinates of the first
-   *     polygon found for any matching zone.
+   *     polygon found for any matching zone. If no polygons are found,
+   *     returns `null`.
    *
    * @static
    * @param {string[]} zones
@@ -1961,7 +1961,7 @@ var CapAlerts = class {
    */
   static event(validated) {
     return __async(this, null, function* () {
-      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s;
+      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t;
       let processed = [];
       const tick = performance.now();
       const settings2 = settings;
@@ -2013,18 +2013,21 @@ var CapAlerts = class {
               sender_icao: extracted.wmoidentifier ? extracted.wmoidentifier.substring(extracted.wmoidentifier.length - 4) : `N/A`,
               attributes,
               geocode: {
-                UGC: [extracted.ugc],
-                GENERATED: null
+                UGC: extracted.ugc ? Array.isArray(extracted.ugc) ? extracted.ugc : [extracted.ugc] : [`XX000`],
+                GENERATED: ((_j = extracted == null ? void 0 : extracted.polygon) == null ? void 0 : _j.length) > 0 ? Buffer.from(JSON.stringify([extracted.polygon.split(" ").map((coord) => {
+                  const [lat, lon] = coord.split(",").map(Number);
+                  return [lon, lat];
+                })])).toString("base64") : null
               },
               raw: { attributes },
               parameters: {
-                wmo: (_j = extracted.wmoidentifier) != null ? _j : `N/A`,
+                wmo: (_k = extracted.wmoidentifier) != null ? _k : `N/A`,
                 source: getSource,
-                max_hail_size: (_k = extracted.maxHailSize) != null ? _k : `N/A`,
-                max_wind_gust: (_l = extracted.maxWindGust) != null ? _l : `N/A`,
-                damage_threat: (_m = extracted.thunderstormdamagethreat) != null ? _m : `N/A`,
-                tornado_detection: (_o = (_n = extracted.tornadodetection) != null ? _n : extracted.waterspoutdetection) != null ? _o : `N/A`,
-                flood_detection: (_p = extracted.flooddetection) != null ? _p : `N/A`,
+                max_hail_size: (_l = extracted.maxHailSize) != null ? _l : `N/A`,
+                max_wind_gust: (_m = extracted.maxWindGust) != null ? _m : `N/A`,
+                damage_threat: (_n = extracted.thunderstormdamagethreat) != null ? _n : `N/A`,
+                tornado_detection: (_p = (_o = extracted.tornadodetection) != null ? _o : extracted.waterspoutdetection) != null ? _p : `N/A`,
+                flood_detection: (_q = extracted.flooddetection) != null ? _q : `N/A`,
                 discussion_tornado_intensity: `N/A`,
                 discussion_wind_intensity: `N/A`,
                 discussion_hail_intensity: `N/A`
@@ -2034,9 +2037,9 @@ var CapAlerts = class {
                 source: `cap-parser`,
                 tracking: this.getTracking(extracted, attributes),
                 header: getHeader,
-                pvtec: (_q = extracted.vtec) != null ? _q : `N/A`,
+                pvtec: (_r = extracted.vtec) != null ? _r : `N/A`,
                 hvtec: `N/A`,
-                history: [{ description: (_r = extracted.description) != null ? _r : `N/A`, issued: extracted.sent ? new Date(extracted.sent).toLocaleString() : `N/A`, type: (_s = extracted.msgtype) != null ? _s : `N/A` }]
+                history: [{ description: (_s = extracted.description) != null ? _s : `N/A`, issued: extracted.sent ? new Date(extracted.sent).toLocaleString() : `N/A`, type: (_t = extracted.msgtype) != null ? _t : `N/A` }]
               }
             }
           });
@@ -2104,7 +2107,7 @@ var APIAlerts = class {
    */
   static event(validated) {
     return __async(this, null, function* () {
-      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa;
+      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra;
       let processed = [];
       const settings2 = settings;
       const messages = Object.values(JSON.parse(validated.message).features);
@@ -2134,17 +2137,17 @@ var APIAlerts = class {
             attributes: validated.attributes,
             geocode: {
               UGC: (_O = (_N = (_M = feature == null ? void 0 : feature.properties) == null ? void 0 : _M.geocode) == null ? void 0 : _N.UGC) != null ? _O : [`XX000`],
-              GENERATED: null
+              GENERATED: ((_P = feature == null ? void 0 : feature.geometry) == null ? void 0 : _P.coordinates.length) > 0 ? Buffer.from(JSON.stringify((_Q = feature == null ? void 0 : feature.geometry) == null ? void 0 : _Q.coordinates)).toString("base64") : null
             },
             raw: {},
             parameters: {
-              wmo: (_T = (_S = (_R = (_Q = (_P = feature == null ? void 0 : feature.properties) == null ? void 0 : _P.parameters) == null ? void 0 : _Q.WMOidentifier) == null ? void 0 : _R[0]) != null ? _S : getWmo) != null ? _T : `N/A`,
+              wmo: (_V = (_U = (_T = (_S = (_R = feature == null ? void 0 : feature.properties) == null ? void 0 : _R.parameters) == null ? void 0 : _S.WMOidentifier) == null ? void 0 : _T[0]) != null ? _U : getWmo) != null ? _V : `N/A`,
               source: getSource,
-              max_hail_size: (_W = (_V = (_U = feature == null ? void 0 : feature.properties) == null ? void 0 : _U.parameters) == null ? void 0 : _V.maxHailSize) != null ? _W : `N/A`,
-              max_wind_gust: (_Z = (_Y = (_X = feature == null ? void 0 : feature.properties) == null ? void 0 : _X.parameters) == null ? void 0 : _Y.maxWindGust) != null ? _Z : `N/A`,
-              damage_threat: (_ba = (_aa = (_$ = (__ = feature == null ? void 0 : feature.properties) == null ? void 0 : __.parameters) == null ? void 0 : _$.thunderstormDamageThreat) == null ? void 0 : _aa[0]) != null ? _ba : `N/A`,
-              tornado_detection: (_fa = (_ea = (_da = (_ca = feature == null ? void 0 : feature.properties) == null ? void 0 : _ca.parameters) == null ? void 0 : _da.tornadoDetection) == null ? void 0 : _ea[0]) != null ? _fa : `N/A`,
-              flood_detection: (_ja = (_ia = (_ha = (_ga = feature == null ? void 0 : feature.properties) == null ? void 0 : _ga.parameters) == null ? void 0 : _ha.floodDetection) == null ? void 0 : _ia[0]) != null ? _ja : `N/A`,
+              max_hail_size: (_Y = (_X = (_W = feature == null ? void 0 : feature.properties) == null ? void 0 : _W.parameters) == null ? void 0 : _X.maxHailSize) != null ? _Y : `N/A`,
+              max_wind_gust: (_$ = (__ = (_Z = feature == null ? void 0 : feature.properties) == null ? void 0 : _Z.parameters) == null ? void 0 : __.maxWindGust) != null ? _$ : `N/A`,
+              damage_threat: (_da = (_ca = (_ba = (_aa = feature == null ? void 0 : feature.properties) == null ? void 0 : _aa.parameters) == null ? void 0 : _ba.thunderstormDamageThreat) == null ? void 0 : _ca[0]) != null ? _da : `N/A`,
+              tornado_detection: (_ha = (_ga = (_fa = (_ea = feature == null ? void 0 : feature.properties) == null ? void 0 : _ea.parameters) == null ? void 0 : _fa.tornadoDetection) == null ? void 0 : _ga[0]) != null ? _ha : `N/A`,
+              flood_detection: (_la = (_ka = (_ja = (_ia = feature == null ? void 0 : feature.properties) == null ? void 0 : _ia.parameters) == null ? void 0 : _ja.floodDetection) == null ? void 0 : _ka[0]) != null ? _la : `N/A`,
               discussion_tornado_intensity: "N/A",
               discussion_wind_intensity: `N/A`,
               discussion_hail_intensity: `N/A`
@@ -2156,9 +2159,9 @@ var APIAlerts = class {
               header: getHeader,
               pvtec: getPVTEC != null ? getPVTEC : `N/A`,
               history: [{
-                description: (_la = (_ka = feature == null ? void 0 : feature.properties) == null ? void 0 : _ka.description) != null ? _la : `N/A`,
-                action: (_na = (_ma = feature == null ? void 0 : feature.properties) == null ? void 0 : _ma.messageType) != null ? _na : `N/A`,
-                time: ((_oa = feature == null ? void 0 : feature.properties) == null ? void 0 : _oa.sent) ? new Date((_pa = feature == null ? void 0 : feature.properties) == null ? void 0 : _pa.sent).toLocaleString() : `N/A`
+                description: (_na = (_ma = feature == null ? void 0 : feature.properties) == null ? void 0 : _ma.description) != null ? _na : `N/A`,
+                action: (_pa = (_oa = feature == null ? void 0 : feature.properties) == null ? void 0 : _oa.messageType) != null ? _pa : `N/A`,
+                time: ((_qa = feature == null ? void 0 : feature.properties) == null ? void 0 : _qa.sent) ? new Date((_ra = feature == null ? void 0 : feature.properties) == null ? void 0 : _ra.sent).toLocaleString() : `N/A`
               }]
             }
           }
@@ -2250,7 +2253,7 @@ var EventParser = class {
   static getEventGeometry(generated, ugc = null) {
     return __async(this, null, function* () {
       const settings2 = settings;
-      let geometry = { type: "Polygon", coordinates: generated != null ? [JSON.parse(Buffer.from(generated, "base64").toString("utf-8"))] : null };
+      let geometry = { type: "Polygon", coordinates: generated != null ? JSON.parse(Buffer.from(generated, "base64").toString("utf-8")) : null };
       if (settings2.global_settings.shapefile_coordinates && generated == null && ugc != null) {
         const coordinates = yield ugc_default.getCoordinates(ugc.zones);
         geometry = { type: "Polygon", coordinates: coordinates != null ? [coordinates] : null };

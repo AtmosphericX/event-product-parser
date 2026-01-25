@@ -88,7 +88,7 @@ export class EventParser {
      */
     public static async getEventGeometry(generated: string, ugc: types.UGCEntry = null) : Promise<types.geometry> {
         const settings = loader.settings as types.ClientSettingsTypes;
-        let geometry = { type: "Polygon", coordinates: generated != null ? [JSON.parse(Buffer.from(generated, 'base64').toString('utf-8'))] : null };
+        let geometry = { type: "Polygon", coordinates: generated != null ? JSON.parse(Buffer.from(generated, 'base64').toString('utf-8')) : null };
         if (settings.global_settings.shapefile_coordinates && generated == null && ugc != null) {
             const coordinates = await UGCParser.getCoordinates(ugc.zones) as any;
             geometry = { type: "Polygon", coordinates: (coordinates != null) ? [coordinates] : null };

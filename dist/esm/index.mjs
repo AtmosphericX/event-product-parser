@@ -2095,7 +2095,7 @@ var APIAlerts = class {
             attributes: validated.attributes,
             geocode: {
               UGC: (_O = (_N = (_M = feature == null ? void 0 : feature.properties) == null ? void 0 : _M.geocode) == null ? void 0 : _N.UGC) != null ? _O : [`XX000`],
-              GENERATED: ((_P = feature == null ? void 0 : feature.geometry) == null ? void 0 : _P.coordinates.length) > 0 ? Buffer.from(JSON.stringify((_Q = feature == null ? void 0 : feature.geometry) == null ? void 0 : _Q.coordinates)).toString("base64") : null
+              GENERATED: ((_P = feature == null ? void 0 : feature.geometry) == null ? void 0 : _P.coordinates.length) > 0 ? Buffer.from(JSON.stringify([(_Q = feature == null ? void 0 : feature.geometry) == null ? void 0 : _Q.coordinates[0]])).toString("base64") : null
             },
             raw: {},
             parameters: {
@@ -2175,7 +2175,7 @@ var EventParser = class {
         locations: (_p = ugc == null ? void 0 : ugc.locations.join(`; `)) != null ? _p : `No Location Specified (UGC Missing)`,
         issued: getCorrectIssued,
         expires: getCorrectExpiry,
-        geocode: { UGC: (_q = ugc == null ? void 0 : ugc.zones) != null ? _q : [`XX000`], GENERATED: definitions2.polygon.length > 0 ? Buffer.from(JSON.stringify(definitions2.polygon)).toString("base64") : null },
+        geocode: { UGC: (_q = ugc == null ? void 0 : ugc.zones) != null ? _q : [`XX000`], GENERATED: definitions2.polygon.length > 0 ? Buffer.from(JSON.stringify([definitions2.polygon])).toString("base64") : null },
         description: definitions2.description,
         sender_name: getOffice.name,
         sender_icao: getOffice.icao,

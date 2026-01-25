@@ -53,7 +53,7 @@ export class EventParser {
             locations: ugc?.locations.join(`; `) ?? `No Location Specified (UGC Missing)`,
             issued: getCorrectIssued,
             expires: getCorrectExpiry,
-            geocode: { UGC: ugc?.zones ?? [`XX000`], GENERATED: definitions.polygon.length > 0 ? Buffer.from(JSON.stringify(definitions.polygon)).toString('base64')  : null},
+            geocode: { UGC: ugc?.zones ?? [`XX000`], GENERATED: definitions.polygon.length > 0 ? Buffer.from(JSON.stringify([definitions.polygon])).toString('base64')  : null},
             description: definitions.description,
             sender_name: getOffice.name,
             sender_icao: getOffice.icao,

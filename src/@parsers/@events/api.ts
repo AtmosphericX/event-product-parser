@@ -101,7 +101,7 @@ export class APIAlerts {
                     attributes: validated.attributes,
                     geocode: {
                         UGC: feature?.properties?.geocode?.UGC ?? [`XX000`], 
-                        GENERATED: feature?.geometry?.coordinates.length > 0 ? Buffer.from(JSON.stringify(feature?.geometry?.coordinates)).toString('base64') : null,
+                        GENERATED: feature?.geometry?.coordinates.length > 0 ? Buffer.from(JSON.stringify([feature?.geometry?.coordinates[0]])).toString('base64') : null,
                     },
                     raw: {},
                     parameters: {

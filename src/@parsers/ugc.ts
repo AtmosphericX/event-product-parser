@@ -113,7 +113,8 @@ export class UGCParser {
      * @description
      *     Retrieves geographic coordinates for an array of zone identifiers
      *     from the shapefiles database. Returns the coordinates of the first
-     *     polygon found for any matching zone.
+     *     polygon found for any matching zone. If no polygons are found,
+     *     returns `null`.
      *
      * @static
      * @param {string[]} zones
@@ -139,10 +140,35 @@ export class UGCParser {
             if (u && u.geometry) merged = u;
         }
         if (!merged?.geometry) return null;
-        const outerRing = merged.geometry.type === "Polygon" ? merged.geometry.coordinates[0]
-            : merged.geometry.coordinates[0][0];
-        const skip = loader.settings.global_settings.shapefile_skip;
-        const skipped = outerRing.filter((_: any, idx: number) => idx % skip === 0);
+        let outerRing: any[] = [];
+        if (merged.geometry.type === "Polygon") {
+            outerRing = merged.geometry.coordinates[0];
+        } else if (merged.geometry.type === "MultiPolygon") {
+            const polys = merged.geometry.coordinates;
+            let maxArea = -1;
+            let maxPoly = polys[0];
+            for (const poly of polys) {
+                const feat = { type: "Feature", geometry: { type: "Polygon", coordinates: poly }, properties: {} };
+                const area = loader.packages.turf.area(feat as any);
+                if (area > maxArea) {
+                    maxArea = area;
+                    maxPoly = poly;
+                }
+            }
+            outerRing = maxPoly[0];
+        } else {
+            return null;
+        }
+        const skip = Math.max(1, parseInt(String(loader.settings.global_settings.shapefile_skip), 10) || 1);
+        let skipped = outerRing.filter((_: any, idx: number) => idx % skip === 0);
+        if (skipped.length < 4) {
+            skipped = outerRing.slice();
+        }
+        const first = skipped[0];
+        const last = skipped[skipped.length - 1];
+        if (!first || !last || first[0] !== last[0] || first[1] !== last[1]) {
+            skipped.push([first[0], first[1]]);
+        }
         return skipped.length ? skipped : null;
     }
 

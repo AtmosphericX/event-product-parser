@@ -1505,9 +1505,35 @@ var UGCParser = class {
       if (u && u.geometry) merged = u;
     }
     if (!(merged == null ? void 0 : merged.geometry)) return null;
-    const outerRing = merged.geometry.type === "Polygon" ? merged.geometry.coordinates[0] : merged.geometry.coordinates[0][0];
-    const skip = settings.global_settings.shapefile_skip;
-    const skipped = outerRing.filter((_, idx) => idx % skip === 0);
+    let outerRing = [];
+    if (merged.geometry.type === "Polygon") {
+      outerRing = merged.geometry.coordinates[0];
+    } else if (merged.geometry.type === "MultiPolygon") {
+      const polys = merged.geometry.coordinates;
+      let maxArea = -1;
+      let maxPoly = polys[0];
+      for (const poly of polys) {
+        const feat = { type: "Feature", geometry: { type: "Polygon", coordinates: poly }, properties: {} };
+        const area = packages.turf.area(feat);
+        if (area > maxArea) {
+          maxArea = area;
+          maxPoly = poly;
+        }
+      }
+      outerRing = maxPoly[0];
+    } else {
+      return null;
+    }
+    const skip = Math.max(1, parseInt(String(settings.global_settings.shapefile_skip), 10) || 1);
+    let skipped = outerRing.filter((_, idx) => idx % skip === 0);
+    if (skipped.length < 4) {
+      skipped = outerRing.slice();
+    }
+    const first = skipped[0];
+    const last = skipped[skipped.length - 1];
+    if (!first || !last || first[0] !== last[0] || first[1] !== last[1]) {
+      skipped.push([first[0], first[1]]);
+    }
     return skipped.length ? skipped : null;
   }
   /**

@@ -127,7 +127,7 @@ export class UGCParser {
         const rows = loader.cache.db
             .prepare(`SELECT geometry FROM shapefiles WHERE id IN (${placeholders})`)
             .all(...list);
-        const polygons = [];
+        const polygons: any[] = [];
         for (const row of rows) {
             if (!row?.geometry) continue;
             const geom = JSON.parse(row.geometry);
@@ -140,25 +140,31 @@ export class UGCParser {
         const mergedCoords = unionFn(...polygons);
         if (!mergedCoords || mergedCoords.length === 0) return null;
         let maxArea = -1;
-        let outerRing: any[] = [];
+        let bestPoly: any[] = [];
         for (const poly of mergedCoords) {
-            const ring = poly[0];
+            const outerRing = poly[0];
             let area = 0;
-            for (let i = 0; i < ring.length - 1; i++) {
-                const [x1, y1] = ring[i];
-                const [x2, y2] = ring[i + 1];
+            for (let i = 0; i < outerRing.length - 1; i++) {
+                const [x1, y1] = outerRing[i];
+                const [x2, y2] = outerRing[i + 1];
                 area += x1 * y2 - x2 * y1;
             }
             area = Math.abs(area / 2);
             if (area > maxArea) {
                 maxArea = area;
-                outerRing = ring;
+                bestPoly = poly;
             }
         }
-        if (!outerRing || outerRing.length === 0) return null;
-        const skip = Math.max(1, loader.settings.global_settings.shapefile_skip, 100);
+        if (!bestPoly || bestPoly.length === 0) return null;
+        const outerRing = bestPoly[0];
+        const skip = Math.max(
+            1,
+            parseInt(String(loader.settings.global_settings.shapefile_skip), 10) || 1
+        );
         let skipped = outerRing.filter((_: any, idx: number) => idx % skip === 0);
-        if (skipped.length < 4) { skipped = outerRing.slice(); }
+        if (skipped.length < 4) {
+            skipped = outerRing.slice();
+        }
         const first = skipped[0];
         const last = skipped[skipped.length - 1];
         if (!first || !last || first[0] !== last[0] || first[1] !== last[1]) {

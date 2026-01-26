@@ -19,7 +19,7 @@ import * as xmpp from '@xmpp/client';
 import * as shapefile from 'shapefile';
 import * as xml2js from 'xml2js';
 import * as jobs from 'croner';
-import * as turf from "turf";
+import * as polygonClipping from 'polygon-clipping';
 import sqlite3 from 'better-sqlite3';
 import axios from 'axios';
 import crypto from 'crypto';
@@ -36,10 +36,11 @@ import * as dictSignatures from './@dictionaries/signatures';
 import * as dictICAOs from './@dictionaries/icao';
 
 
+
 export const packages = {
     fs, path, events, xmpp, 
     shapefile, xml2js, sqlite3, jobs, axios, 
-    crypto, os, say, child, turf, jszip
+    crypto, os, say, child, polygonClipping, jszip
 };
 
 export const cache = {

@@ -58,7 +58,7 @@ import * as xmpp from "@xmpp/client";
 import * as shapefile from "shapefile";
 import * as xml2js from "xml2js";
 import * as jobs from "croner";
-import * as turf from "turf";
+import * as polygonClipping from "polygon-clipping";
 import sqlite3 from "better-sqlite3";
 import axios from "axios";
 import crypto from "crypto";
@@ -922,7 +922,7 @@ var packages = {
   os,
   say,
   child,
-  turf,
+  polygonClipping,
   jszip
 };
 var cache = {
@@ -1434,10 +1434,10 @@ var UGCParser = class {
   /**
    * @function getCoordinates
    * @description
-   *     Retrieves geographic coordinates for an array of zone identifiers
-   *     from the shapefiles database. Returns the coordinates of the first
-   *     polygon found for any matching zone. If no polygons are found,
-   *     returns `null`.
+   *     Calculates the outer boundary coordinates for a set of UGC zones by
+   *     querying their geometries from the database, merging them, and extracting
+   *     the largest outer ring. The coordinates are downsampled based on a skip
+   *     setting to reduce complexity. Returns `null` if no valid coordinates are found.
    *
    * @static
    * @param {string[]} zones
@@ -1453,36 +1453,31 @@ var UGCParser = class {
       if (!(row == null ? void 0 : row.geometry)) continue;
       const geom = JSON.parse(row.geometry);
       if ((geom == null ? void 0 : geom.type) === "Polygon") {
-        polygons.push({ type: "Feature", geometry: geom, properties: {} });
+        polygons.push(geom.coordinates);
       }
     }
     if (polygons.length === 0) return null;
-    let merged = polygons[0];
-    for (let i = 1; i < polygons.length; i++) {
-      const u = packages.turf.union(merged, polygons[i]);
-      if (u && u.geometry) merged = u;
-    }
-    if (!(merged == null ? void 0 : merged.geometry)) return null;
+    const unionFn = packages.polygonClipping.union;
+    const mergedCoords = unionFn(...polygons);
+    if (!mergedCoords || mergedCoords.length === 0) return null;
+    let maxArea = -1;
     let outerRing = [];
-    if (merged.geometry.type === "Polygon") {
-      outerRing = merged.geometry.coordinates[0];
-    } else if (merged.geometry.type === "MultiPolygon") {
-      const polys = merged.geometry.coordinates;
-      let maxArea = -1;
-      let maxPoly = polys[0];
-      for (const poly of polys) {
-        const feat = { type: "Feature", geometry: { type: "Polygon", coordinates: poly }, properties: {} };
-        const area = packages.turf.area(feat);
-        if (area > maxArea) {
-          maxArea = area;
-          maxPoly = poly;
-        }
+    for (const poly of mergedCoords) {
+      const ring = poly[0];
+      let area = 0;
+      for (let i = 0; i < ring.length - 1; i++) {
+        const [x1, y1] = ring[i];
+        const [x2, y2] = ring[i + 1];
+        area += x1 * y2 - x2 * y1;
       }
-      outerRing = maxPoly[0];
-    } else {
-      return null;
+      area = Math.abs(area / 2);
+      if (area > maxArea) {
+        maxArea = area;
+        outerRing = ring;
+      }
     }
-    const skip = Math.max(1, parseInt(String(settings.global_settings.shapefile_skip), 10) || 1);
+    if (!outerRing || outerRing.length === 0) return null;
+    const skip = Math.max(1, settings.global_settings.shapefile_skip, 100);
     let skipped = outerRing.filter((_, idx) => idx % skip === 0);
     if (skipped.length < 4) {
       skipped = outerRing.slice();

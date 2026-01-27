@@ -51,6 +51,11 @@ export const tags: Record<string, string> = {
     "FROSTBITE AND HYPOTHERMIA WILL OCCUR IF UNPROTECTED SKIN": "Frostbite and Hypothermia Risk on Unprotected Skin",
     "TEMPERATURES COULD CAUSE RUPTURED WATER PIPES": "Risk of Ruptured Water Pipes",
     "COULD RESULT IN HYPOTHERMIA OR FROSTBITE ON EXPOSED SKIN IF": "Hypothermia or Frostbite Risk on Exposed Skin",
+    "WINDS WILL STRENGTHEN": "Strengthening Winds",
+    "EXPECT ROADS TO RE-FREEZE": "Roads May Re-Freeze",
+    "SLICK AND ICY SPOTS ON ROADS": "Slick and Icy Roads",
+    "ICY PATCHES MAY BE MORE COMMON ON BRIDGES": "Icy Patches Likely on Bridges",
+    "SLICK SPOTS ON UNTREATED ROADS": "Slick Spots on Untreated Roads",
 }
 
 export const cancel_signatures: string[] = [

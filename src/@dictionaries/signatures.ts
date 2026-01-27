@@ -42,7 +42,15 @@ export const tags: Record<string, string> = {
     "FLASH FLOODING CAUSED BY THUNDERSTORMS.": "Caused by Thunderstorm",
     "SOURCE...EMERGENCY MANAGEMENT.": "Confirmed by Emergency Management",
     "FLASH FLOODING CAUSED BY HEAVY RAIN.": "Caused by heavy rain",
-    "SOURCE...LAW ENFORCEMENT REPORTED.": "Confirmed by Law Enforcement"
+    "SOURCE...LAW ENFORCEMENT REPORTED.": "Confirmed by Law Enforcement",
+    "MINOR FLOODING IS OCCURING": "Minor Flooding Occurring",
+    "VERY COLD TEMPERATURES CAN LEAD TO HYPOTHERMIA": "Hypothermia Risk",
+    "SENSITIVE VEGETATION AND POSSIBLY DAMAGE UNPROTECTED OUTDOOR": "Vegetation and Outdoor Plumbing Risk",
+    "RIP CURRENTS CAN SWEEP EVEN THE BEST SWIMMER": "Hazardous to All Swimmers",
+    "HYPOTHERMIA IF PRECAUTIONS ARE NOT TAKEN.": "Hypothermia Risk",
+    "FROSTBITE AND HYPOTHERMIA WILL OCCUR IF UNPROTECTED SKIN": "Frostbite and Hypothermia Risk on Unprotected Skin",
+    "TEMPERATURES COULD CAUSE RUPTURED WATER PIPES": "Risk of Ruptured Water Pipes",
+    "COULD RESULT IN HYPOTHERMIA OR FROSTBITE ON EXPOSED SKIN IF": "Hypothermia or Frostbite Risk on Exposed Skin",
 }
 
 export const cancel_signatures: string[] = [

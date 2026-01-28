@@ -56,6 +56,12 @@ export const tags: Record<string, string> = {
     "SLICK AND ICY SPOTS ON ROADS": "Slick and Icy Roads",
     "ICY PATCHES MAY BE MORE COMMON ON BRIDGES": "Icy Patches Likely on Bridges",
     "SLICK SPOTS ON UNTREATED ROADS": "Slick Spots on Untreated Roads",
+    "TEMPERATURES ARE EXPECTED TO FALL BELOW FREEZING": "Temperatures Expected Below Freezing",
+    "HAZARDOUS ROADWAYS AND BLACK ICE": "Hazardous Roadways and Black Ice",
+    "SLOW DOWN AND ALLOW EXTRA TIME": "Slow Down and Allow Extra Time",
+    "SHOULD EXERCISE CAUTION": "Should Exercise Caution",
+    "LAKE EFFECT SNOW EXPECTED": "Lake Effect Snow Expected",
+    "MODERATE LAKE EFFECT SNOWFALL RATES AND BLOWING SNOW": "Moderate Lake Effect Snowfall and Blowing Snow",
 }
 
 export const cancel_signatures: string[] = [

@@ -1502,7 +1502,7 @@ var UGCParser = class {
       if (!first || !last || first[0] !== last[0] || first[1] !== last[1]) {
         skipped.push([first[0], first[1]]);
       }
-      return skipped.length ? skipped : null;
+      return { type: "Polygon", coordinates: [skipped] };
     } else {
       const multi = [];
       for (const polyCoords of polygons) {
@@ -1527,7 +1527,7 @@ var UGCParser = class {
           }
         }
       }
-      return multi.length ? multi : null;
+      return { type: "MultiPolygon", coordinates: multi };
     }
   }
   /**
@@ -2250,7 +2250,7 @@ var EventParser = class {
       let geometry = { type: "Polygon", coordinates: generated != null ? JSON.parse(Buffer.from(generated, "base64").toString("utf-8")) : null };
       if (settings2.global_settings.shapefile_coordinates && generated == null && ugc != null) {
         const coordinates = yield ugc_default.getCoordinates(ugc.zones, isUnion);
-        geometry = { type: isUnion ? "Polygon" : "MultiPolygon", coordinates };
+        geometry = coordinates;
       }
       return geometry;
     });

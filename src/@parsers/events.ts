@@ -91,7 +91,7 @@ export class EventParser {
         let geometry = { type: "Polygon", coordinates: generated != null ? JSON.parse(Buffer.from(generated, 'base64').toString('utf-8')) : null };
         if (settings.global_settings.shapefile_coordinates && generated == null && ugc != null) {
             const coordinates = await UGCParser.getCoordinates(ugc.zones, isUnion) as any;
-            geometry = { type: isUnion ? "Polygon" : "MultiPolygon", coordinates };
+            geometry = coordinates
         }
         return geometry;
     }

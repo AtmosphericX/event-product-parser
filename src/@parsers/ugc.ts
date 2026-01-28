@@ -168,7 +168,7 @@ export class UGCParser {
             if (!first || !last || first[0] !== last[0] || first[1] !== last[1]) {
                 skipped.push([first[0], first[1]]);
             }
-            return skipped.length ? skipped : null;
+            return {type: "Polygon", coordinates: [skipped]};
         } else {
             const multi: any[] = [];
             for (const polyCoords of polygons) {
@@ -193,7 +193,7 @@ export class UGCParser {
                     }
                 }
             }
-            return multi.length ? multi : null;
+            return {type: "MultiPolygon", coordinates: multi};
         }
     }
 

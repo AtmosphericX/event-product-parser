@@ -1070,7 +1070,7 @@ var definitions = {
     invalid_nickname: `The nickname you provided is invalid, please provide a valid nickname to continue.`,
     eas_no_directory: `You have not set a directory for EAS audio files to be saved to, please set the 'directory' setting in the global settings to enable EAS audio generation.`,
     reconnect_too_fast: `The client is attempting to reconnect too fast. This may be due to network instability. Reconnection attempt has been halted for safety.`,
-    dump_cache: `Found {count} cached alert files and will begin dumping them shortly.`,
+    dump_cache: `Found {count} cached events and will begin dumping them shortly. This may take a while depending on the number of cached events.`,
     dump_cache_complete: `Completed dumping all cached alert files.`
   }
 };
@@ -1456,8 +1456,8 @@ var UGCParser = class {
    * @param {string[]} zones
    * @returns {[number, number][]}
    */
-  static getCoordinates(zones) {
-    const list = [...new Set(zones.map((z) => z.trim()))];
+  static getCoordinates(zones, isUnion = true) {
+    const list = [...new Set(zones.map((z) => z.trim()))].filter((z) => z === "XX000" ? false : true);
     if (list.length === 0) return null;
     const placeholders = list.map(() => "?").join(",");
     const rows = cache.db.prepare(`SELECT geometry FROM shapefiles WHERE id IN (${placeholders})`).all(...list);
@@ -1470,41 +1470,65 @@ var UGCParser = class {
       }
     }
     if (polygons.length === 0) return null;
-    const unionFn = packages.polygonClipping.union;
-    const mergedCoords = unionFn(...polygons);
-    if (!mergedCoords || mergedCoords.length === 0) return null;
-    let maxArea = -1;
-    let bestPoly = [];
-    for (const poly of mergedCoords) {
-      const outerRing2 = poly[0];
-      let area = 0;
-      for (let i = 0; i < outerRing2.length - 1; i++) {
-        const [x1, y1] = outerRing2[i];
-        const [x2, y2] = outerRing2[i + 1];
-        area += x1 * y2 - x2 * y1;
+    if (isUnion) {
+      const unionFn = packages.polygonClipping.union;
+      const mergedCoords = unionFn(...polygons);
+      if (!mergedCoords || mergedCoords.length === 0) return null;
+      let maxArea = -1;
+      let bestPoly = [];
+      for (const poly of mergedCoords) {
+        const outerRing2 = poly[0];
+        let area = 0;
+        for (let i = 0; i < outerRing2.length - 1; i++) {
+          const [x1, y1] = outerRing2[i];
+          const [x2, y2] = outerRing2[i + 1];
+          area += x1 * y2 - x2 * y1;
+        }
+        area = Math.abs(area / 2);
+        if (area > maxArea) {
+          maxArea = area;
+          bestPoly = poly;
+        }
       }
-      area = Math.abs(area / 2);
-      if (area > maxArea) {
-        maxArea = area;
-        bestPoly = poly;
+      if (!bestPoly || bestPoly.length === 0) return null;
+      const outerRing = bestPoly[0];
+      const skip = Math.max(1, parseInt(String(settings.global_settings.shapefile_skip), 10) || 1);
+      let skipped = outerRing.filter((_, idx) => idx % skip === 0);
+      if (skipped.length < 4) {
+        skipped = outerRing.slice();
       }
+      const first = skipped[0];
+      const last = skipped[skipped.length - 1];
+      if (!first || !last || first[0] !== last[0] || first[1] !== last[1]) {
+        skipped.push([first[0], first[1]]);
+      }
+      return skipped.length ? skipped : null;
+    } else {
+      const multi = [];
+      for (const polyCoords of polygons) {
+        if (Array.isArray(polyCoords) && Array.isArray(polyCoords[0])) {
+          multi.push(polyCoords);
+        }
+      }
+      if (multi.length === 0) return null;
+      const skip = Math.max(1, parseInt(String(settings.global_settings.shapefile_skip), 10) || 1);
+      if (skip > 1) {
+        for (let p = 0; p < multi.length; p++) {
+          for (let r = 0; r < multi[p].length; r++) {
+            const ring = multi[p][r];
+            let reduced = ring.filter((_, i) => i % skip === 0);
+            if (reduced.length < 4) reduced = ring.slice();
+            const first = reduced[0];
+            const last = reduced[reduced.length - 1];
+            if (first && last && (first[0] !== last[0] || first[1] !== last[1])) {
+              reduced.push([first[0], first[1]]);
+            }
+            multi[p][r] = reduced;
+          }
+        }
+      }
+      return multi.length ? multi : null;
     }
-    if (!bestPoly || bestPoly.length === 0) return null;
-    const outerRing = bestPoly[0];
-    const skip = Math.max(
-      1,
-      parseInt(String(settings.global_settings.shapefile_skip), 10) || 1
-    );
-    let skipped = outerRing.filter((_, idx) => idx % skip === 0);
-    if (skipped.length < 4) {
-      skipped = outerRing.slice();
-    }
-    const first = skipped[0];
-    const last = skipped[skipped.length - 1];
-    if (!first || !last || first[0] !== last[0] || first[1] !== last[1]) {
-      skipped.push([first[0], first[1]]);
-    }
-    return skipped.length ? skipped : null;
   }
   /**
    * @function getZones
@@ -2220,13 +2244,13 @@ var EventParser = class {
    * @param {types.UGCEntry} [ugc=null]
    * @returns {Promise<types.geometry>}
    */
-  static getEventGeometry(generated, ugc = null) {
+  static getEventGeometry(generated, ugc = null, isUnion = true) {
     return __async(this, null, function* () {
       const settings2 = settings;
       let geometry = { type: "Polygon", coordinates: generated != null ? JSON.parse(Buffer.from(generated, "base64").toString("utf-8")) : null };
       if (settings2.global_settings.shapefile_coordinates && generated == null && ugc != null) {
-        const coordinates = yield ugc_default.getCoordinates(ugc.zones);
-        geometry = { type: "Polygon", coordinates: coordinates != null ? [coordinates] : null };
+        const coordinates = yield ugc_default.getCoordinates(ugc.zones, isUnion);
+        geometry = { type: isUnion ? "Polygon" : "MultiPolygon", coordinates };
       }
       return geometry;
     });
@@ -2831,14 +2855,17 @@ var Utils = class _Utils {
       try {
         const settings2 = settings;
         if (settings2.noaa_weather_wire_service_settings.cache.use_db_for_cache) {
-          const rows = yield cache.db.prepare(`SELECT * FROM stanzas ORDER BY rowid DESC LIMIT ${(_a = settings2.noaa_weather_wire_service_settings.cache.max_db_cache_size) != null ? _a : 5e3}`).all();
+          const maxRows = (_a = settings2.noaa_weather_wire_service_settings.cache.max_db_cache_size) != null ? _a : 5e3;
+          const rows = yield cache.db.prepare(`SELECT * FROM stanzas ORDER BY rowid DESC LIMIT ?`).all(maxRows);
           this.warn(definitions.messages.dump_cache.replace(`{count}`, rows.length.toString()), true);
-          for (const row of rows) {
-            const validate = JSON.parse(row.stanza);
-            const skipMessage = validate.ignore || validate.isCap && !settings2.noaa_weather_wire_service_settings.preferences.cap_only || !validate.isCap && settings2.noaa_weather_wire_service_settings.preferences.cap_only || validate.isCap && !validate.isCapDescription;
-            if (skipMessage) return;
-            yield events_default.eventHandler(validate);
-          }
+          const eventsToProcess = rows.map((row) => {
+            return JSON.parse(row.stanza);
+          }).filter((validate) => {
+            if (!validate) return false;
+            const skip = validate.ignore || validate.isCap && !settings2.noaa_weather_wire_service_settings.preferences.cap_only || !validate.isCap && settings2.noaa_weather_wire_service_settings.preferences.cap_only || validate.isCap && !validate.isCapDescription;
+            return !skip;
+          });
+          yield Promise.all(eventsToProcess.map((validate) => events_default.eventHandler(validate)));
           this.warn(definitions.messages.dump_cache_complete, true);
           return;
         }
@@ -3551,12 +3578,12 @@ var AlertManager = class {
    * @param {types.EventCompiled} event
    * @returns {Promise<GeoJSON.Polygon | null>}
    */
-  getEventPolygon(event) {
+  getEventPolygon(event, isUnion = true) {
     return __async(this, null, function* () {
       var _a, _b, _c, _d;
       const hasGenerated = (_b = (_a = event.properties.geocode) == null ? void 0 : _a.GENERATED) != null ? _b : null;
       const getUgc = (_d = (_c = event.properties.geocode) == null ? void 0 : _c.UGC) != null ? _d : null;
-      return yield events_default.getEventGeometry(hasGenerated, { zones: getUgc });
+      return yield events_default.getEventGeometry(hasGenerated, { zones: getUgc }, isUnion);
     });
   }
   /**

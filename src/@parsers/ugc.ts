@@ -120,8 +120,8 @@ export class UGCParser {
      * @param {string[]} zones
      * @returns {[number, number][]}
      */
-    public static getCoordinates(zones: string[]): any | null {
-        const list = [...new Set(zones.map(z => z.trim()))];
+    public static getCoordinates(zones: string[], isUnion=true): any | null {
+        const list = [...new Set(zones.map(z => z.trim()))].filter(z => z === 'XX000' ? false : true);
         if (list.length === 0) return null;
         const placeholders = list.map(() => "?").join(",");
         const rows = loader.cache.db
@@ -136,41 +136,65 @@ export class UGCParser {
             }
         }
         if (polygons.length === 0) return null;
-        const unionFn = loader.packages.polygonClipping.union as (...polys: any[]) => any;
-        const mergedCoords = unionFn(...polygons);
-        if (!mergedCoords || mergedCoords.length === 0) return null;
-        let maxArea = -1;
-        let bestPoly: any[] = [];
-        for (const poly of mergedCoords) {
-            const outerRing = poly[0];
-            let area = 0;
-            for (let i = 0; i < outerRing.length - 1; i++) {
-                const [x1, y1] = outerRing[i];
-                const [x2, y2] = outerRing[i + 1];
-                area += x1 * y2 - x2 * y1;
+        if (isUnion) {
+            const unionFn = loader.packages.polygonClipping.union as (...polys: any[]) => any;
+            const mergedCoords = unionFn(...polygons);
+            if (!mergedCoords || mergedCoords.length === 0) return null;
+            let maxArea = -1;
+            let bestPoly: any[] = [];
+            for (const poly of mergedCoords) {
+                const outerRing = poly[0];
+                let area = 0;
+                for (let i = 0; i < outerRing.length - 1; i++) {
+                    const [x1, y1] = outerRing[i];
+                    const [x2, y2] = outerRing[i + 1];
+                    area += x1 * y2 - x2 * y1;
+                }
+                area = Math.abs(area / 2);
+                if (area > maxArea) {
+                    maxArea = area;
+                    bestPoly = poly;
+                }
             }
-            area = Math.abs(area / 2);
-            if (area > maxArea) {
-                maxArea = area;
-                bestPoly = poly;
+            if (!bestPoly || bestPoly.length === 0) return null;
+            const outerRing = bestPoly[0];
+            const skip = Math.max(1, parseInt(String(loader.settings.global_settings.shapefile_skip), 10) || 1);
+            let skipped = outerRing.filter((_: any, idx: number) => idx % skip === 0);
+            if (skipped.length < 4) {
+                skipped = outerRing.slice();
             }
+            const first = skipped[0];
+            const last = skipped[skipped.length - 1];
+            if (!first || !last || first[0] !== last[0] || first[1] !== last[1]) {
+                skipped.push([first[0], first[1]]);
+            }
+            return skipped.length ? skipped : null;
+        } else {
+            const multi: any[] = [];
+            for (const polyCoords of polygons) {
+                if (Array.isArray(polyCoords) && Array.isArray(polyCoords[0])) {
+                    multi.push(polyCoords);
+                }
+            }
+            if (multi.length === 0) return null;
+            const skip = Math.max(1, parseInt(String(loader.settings.global_settings.shapefile_skip), 10) || 1);
+            if (skip > 1) {
+                for (let p = 0; p < multi.length; p++) {
+                    for (let r = 0; r < multi[p].length; r++) {
+                        const ring = multi[p][r];
+                        let reduced = ring.filter((_: any, i: number) => i % skip === 0);
+                        if (reduced.length < 4) reduced = ring.slice();
+                        const first = reduced[0];
+                        const last = reduced[reduced.length - 1];
+                        if ( first && last && (first[0] !== last[0] || first[1] !== last[1])) {
+                            reduced.push([first[0], first[1]]);
+                        }
+                        multi[p][r] = reduced;
+                    }
+                }
+            }
+            return multi.length ? multi : null;
         }
-        if (!bestPoly || bestPoly.length === 0) return null;
-        const outerRing = bestPoly[0];
-        const skip = Math.max(
-            1,
-            parseInt(String(loader.settings.global_settings.shapefile_skip), 10) || 1
-        );
-        let skipped = outerRing.filter((_: any, idx: number) => idx % skip === 0);
-        if (skipped.length < 4) {
-            skipped = outerRing.slice();
-        }
-        const first = skipped[0];
-        const last = skipped[skipped.length - 1];
-        if (!first || !last || first[0] !== last[0] || first[1] !== last[1]) {
-            skipped.push([first[0], first[1]]);
-        }
-        return skipped.length ? skipped : null;
     }
 
     /**

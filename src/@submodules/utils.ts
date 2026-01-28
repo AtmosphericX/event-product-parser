@@ -66,19 +66,21 @@ export class Utils {
         try {
             const settings = loader.settings as types.ClientSettingsTypes;
             if (settings.noaa_weather_wire_service_settings.cache.use_db_for_cache) {
-                const rows = await loader.cache.db
-                .prepare(`SELECT * FROM stanzas ORDER BY rowid DESC LIMIT ${settings.noaa_weather_wire_service_settings.cache.max_db_cache_size ?? 5000}`)
-                .all() as { rowid: number; stanza: string }[];
+                const maxRows = settings.noaa_weather_wire_service_settings.cache.max_db_cache_size ?? 5000;
+                const rows = await loader.cache.db.prepare(`SELECT * FROM stanzas ORDER BY rowid DESC LIMIT ?`)
+                    .all(maxRows) as { rowid: number; stanza: string }[];
                 this.warn(loader.definitions.messages.dump_cache.replace(`{count}`, rows.length.toString()), true);
-                for (const row of rows) {
-                    const validate = JSON.parse(row.stanza);
-                    const skipMessage = validate.ignore ||
+                const eventsToProcess = rows
+                    .map(row => {return JSON.parse(row.stanza)})
+                    .filter(validate => {
+                        if (!validate) return false;
+                        const skip = validate.ignore ||
                             (validate.isCap && !settings.noaa_weather_wire_service_settings.preferences.cap_only) ||
                             (!validate.isCap && settings.noaa_weather_wire_service_settings.preferences.cap_only) ||
                             (validate.isCap && !validate.isCapDescription);
-                    if (skipMessage) return;
-                    await EventParser.eventHandler(validate);
-                }
+                        return !skip;
+                    });
+                await Promise.all(eventsToProcess.map(validate => EventParser.eventHandler(validate)));
                 this.warn(loader.definitions.messages.dump_cache_complete, true);
                 return;
             }

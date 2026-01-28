@@ -58,10 +58,10 @@ export class AlertManager {
      * @param {types.EventCompiled} event
      * @returns {Promise<GeoJSON.Polygon | null>}
      */
-    public async getEventPolygon(event: types.EventCompiled) {
+    public async getEventPolygon(event: types.EventCompiled, isUnion: boolean = true) {
         const hasGenerated = event.properties.geocode?.GENERATED ?? null;
         const getUgc = event.properties.geocode?.UGC ?? null;
-        return await EventParser.getEventGeometry(hasGenerated, {zones: getUgc});
+        return await EventParser.getEventGeometry(hasGenerated, {zones: getUgc}, isUnion);
     }
 
     /**

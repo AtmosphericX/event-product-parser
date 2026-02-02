@@ -1,6 +1,6 @@
 {
 	"name": "atmosx-nwws-parser",
-	"version": "1.0.316",
+	"version": "1.0.317",
 	"description": "NOAA Weather Wire Parser - Built for standalone and Project AtmosphericX Integration.",
 	"main": "dist/cjs/index.cjs",
 	"module": "dist/esm/index.mjs",
@@ -11,7 +11,7 @@
 	},
 	"scripts": {
 		"start": "cd ./test && node ./index.js",
-		"build:tsup": "tsup && cd ./test && node ./index.js",
+    	"build": "tsup && cd ./test && node ./index.js",
 		"publish": "tsup && npm publish --access public",
 		"publish-beta": "tsup && npm publish --tag beta --access public"
 	},
@@ -32,19 +32,19 @@
 	},
 	"homepage": "https://github.com/AtmosphericX/atmosx-nwws-parser#readme",
 	"dependencies": {
-		"@xmpp/client": "^0.7.3",
+		"@xmpp/client": "^0.13.0",
 		"axios": "^1.13.2",
 		"better-sqlite3": "^11.10.0",
-		"croner": "^9.1.0",
+		"croner": "^10.0.1",
 		"jszip": "^3.10.1",
 		"polygon-clipping": "^0.15.7",
 		"say": "^0.16.0",
 		"shapefile": "^0.6.6",
-		"typescript": "^5.9.2",
+		"typescript": "^5.9.3",
 		"xml2js": "^0.6.2"
 	},
 	"devDependencies": {
-		"@types/node": "^24.5.2",
-		"tsup": "^8.5.0"
+		"@types/node": "^25.2.0",
+		"tsup": "^8.5.1"
 	}
 }

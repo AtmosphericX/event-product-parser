@@ -32,19 +32,19 @@
 	},
 	"homepage": "https://github.com/AtmosphericX/atmosx-nwws-parser#readme",
 	"dependencies": {
-		"@xmpp/client": "^0.13.0",
-		"axios": "^1.13.2",
-		"better-sqlite3": "^11.10.0",
-		"croner": "^10.0.1",
-		"jszip": "^3.10.1",
-		"polygon-clipping": "^0.15.7",
-		"say": "^0.16.0",
-		"shapefile": "^0.6.6",
-		"typescript": "^5.9.3",
-		"xml2js": "^0.6.2"
+		"@xmpp/client": "0.13.0",
+		"axios": "1.13.2",
+		"better-sqlite3": "11.10.0",
+		"croner": "10.0.1",
+		"jszip": "3.10.1",
+		"polygon-clipping": "0.15.7",
+		"say": "0.16.0",
+		"shapefile": "0.6.6",
+		"typescript": "5.9.3",
+		"xml2js": "0.6.2"
 	},
 	"devDependencies": {
-		"@types/node": "^25.2.0",
-		"tsup": "^8.5.1"
+		"@types/node": "25.2.0",
+		"tsup": "8.5.1"
 	}
 }

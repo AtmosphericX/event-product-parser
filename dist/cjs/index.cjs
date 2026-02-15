@@ -1751,9 +1751,6 @@ var VTECAlerts = class {
               const pVtec = getPVTEC[j];
               const baseProperties = yield events_default.getBaseProperties(message, attributes, getUGC, pVtec, getHVTEC);
               const getHeader = events_default.getHeader(__spreadValues(__spreadValues({}, validated.attributes), baseProperties.raw), baseProperties, pVtec);
-              if (pVtec.isKWNS && (baseProperties == null ? void 0 : baseProperties.sender_icao) != `KWNS`) {
-                continue;
-              }
               processed.push({
                 type: "Feature",
                 properties: __spreadProps(__spreadValues({
@@ -2322,7 +2319,7 @@ var EventParser = class {
     const defEventTable = definitions.enhancedEvents;
     const properties = event == null ? void 0 : event.properties;
     const parameters = properties == null ? void 0 : properties.parameters;
-    const description = (_c = properties == null ? void 0 : properties.description) != null ? _c : `Unknown Description`;
+    const description = ((_c = properties == null ? void 0 : properties.description) != null ? _c : `Unknown Description`).toLowerCase();
     const damageThreatTag = (_d = parameters == null ? void 0 : parameters.damage_threat) != null ? _d : `N/A`;
     const tornadoThreatTag = (_e = parameters == null ? void 0 : parameters.tornado_detection) != null ? _e : `N/A`;
     if (!betterParsing) {
@@ -2332,13 +2329,23 @@ var EventParser = class {
       const [baseEvent, conditions] = Object.entries(eventGroup)[0];
       if (eventName === baseEvent) {
         for (const [specificEvent, condition] of Object.entries(conditions)) {
-          const conditionMet = condition.description && description.includes(condition.description.toLowerCase()) || condition.condition && condition.condition(damageThreatTag || tornadoThreatTag);
+          let conditionMet = false;
+          if (condition.description) {
+            conditionMet = description.includes(condition.description.toLowerCase());
+            if (!conditionMet) continue;
+          }
+          if (!conditionMet && condition.condition) {
+            const tagToCheck = baseEvent.includes("Tornado") ? tornadoThreatTag : damageThreatTag;
+            conditionMet = condition.condition(tagToCheck);
+          }
           if (conditionMet) {
             eventName = specificEvent;
             break;
           }
         }
-        if (baseEvent === "Severe Thunderstorm Warning" && tornadoThreatTag === "POSSIBLE" && !eventName.includes("(TPROB)")) eventName += " (TPROB)";
+        if (baseEvent === "Severe Thunderstorm Warning" && tornadoThreatTag === "POSSIBLE" && !eventName.includes("(TPROB)")) {
+          eventName += " (TPROB)";
+        }
         break;
       }
     }

@@ -114,7 +114,7 @@ export class EventParser {
         const defEventTable = loader.definitions.enhancedEvents;
         const properties = event?.properties;
         const parameters = properties?.parameters;
-        const description = properties?.description ?? `Unknown Description`;
+        const description = (properties?.description ?? `Unknown Description`).toLowerCase();
         const damageThreatTag = parameters?.damage_threat ?? `N/A`;
         const tornadoThreatTag = parameters?.tornado_detection ?? `N/A`;
         if (!betterParsing) { return eventName }
@@ -122,12 +122,24 @@ export class EventParser {
             const [baseEvent, conditions] = Object.entries(eventGroup)[0] as [string, Record<string, types.EnhancedEventCondition>];
             if (eventName === baseEvent) {
                 for (const [specificEvent, condition] of Object.entries(conditions)) {
-                    const conditionMet = (condition.description && description.includes(condition.description.toLowerCase())) || (condition.condition && condition.condition(damageThreatTag || tornadoThreatTag));
-                    if (conditionMet) { eventName = specificEvent; break; }
-                }   
-                if (baseEvent === 'Severe Thunderstorm Warning' && tornadoThreatTag === 'POSSIBLE' && !eventName.includes('(TPROB)')) eventName += ' (TPROB)';
+                    let conditionMet = false;
+                    if (condition.description) {
+                        conditionMet = description.includes(condition.description.toLowerCase());
+                        if (!conditionMet) continue;
+                    }
+                    if (!conditionMet && condition.condition) {
+                        const tagToCheck = baseEvent.includes('Tornado') ? tornadoThreatTag : damageThreatTag;
+                        conditionMet = condition.condition(tagToCheck);
+                    }
+                    if (conditionMet) { 
+                        eventName = specificEvent; 
+                        break; 
+                    }
+                }
+                if (baseEvent === 'Severe Thunderstorm Warning' && tornadoThreatTag === 'POSSIBLE' && !eventName.includes('(TPROB)')) {
+                    eventName += ' (TPROB)';
+                }
                 break;
-
             }
         }
         return useParentEvents ? event?.properties?.event : eventName;

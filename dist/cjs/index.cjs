@@ -8,6 +8,9 @@ var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __typeError = (msg) => {
+  throw TypeError(msg);
+};
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __spreadValues = (a, b) => {
   for (var prop in b || (b = {}))
@@ -33,6 +36,9 @@ var __objRest = (source, exclude) => {
     }
   return target;
 };
+var __commonJS = (cb, mod) => function __require() {
+  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+};
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
@@ -54,8 +60,14 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+var __accessCheck = (obj, member, msg) => member.has(obj) || __typeError("Cannot " + msg);
+var __privateGet = (obj, member, getter) => (__accessCheck(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
+var __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+var __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), setter ? setter.call(obj, value) : member.set(obj, value), value);
+var __privateMethod = (obj, member, method) => (__accessCheck(obj, member, "access private method"), method);
 var __async = (__this, __arguments, generator) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve5, reject) => {
     var fulfilled = (value) => {
       try {
         step(generator.next(value));
@@ -70,10 +82,1022 @@ var __async = (__this, __arguments, generator) => {
         reject(e);
       }
     };
-    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+    var step = (x) => x.done ? resolve5(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
     step((generator = generator.apply(__this, __arguments)).next());
   });
 };
+
+// node_modules/ltx/lib/escape.js
+var require_escape = __commonJS({
+  "node_modules/ltx/lib/escape.js"(exports2) {
+    "use strict";
+    var escapeXMLTable = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&apos;"
+    };
+    function escapeXMLReplace(match) {
+      return escapeXMLTable[match];
+    }
+    var unescapeXMLTable = {
+      "&amp;": "&",
+      "&lt;": "<",
+      "&gt;": ">",
+      "&quot;": '"',
+      "&apos;": "'"
+    };
+    function unescapeXMLReplace(match) {
+      if (match[1] === "#") {
+        const num = match[2] === "x" ? parseInt(match.slice(3), 16) : parseInt(match.slice(2), 10);
+        if (num === 9 || num === 10 || num === 13 || num >= 32 && num <= 55295 || num >= 57344 && num <= 65533 || num >= 65536 && num <= 1114111) {
+          return String.fromCodePoint(num);
+        }
+        throw new Error("Illegal XML character 0x" + num.toString(16));
+      }
+      if (unescapeXMLTable[match]) {
+        return unescapeXMLTable[match] || match;
+      }
+      throw new Error("Illegal XML entity " + match);
+    }
+    function escapeXML2(s) {
+      return s.replace(/["&'<>]/g, escapeXMLReplace);
+    }
+    function unescapeXML2(s) {
+      let result = "";
+      let start = -1;
+      let end = -1;
+      let previous = 0;
+      while ((start = s.indexOf("&", previous)) !== -1 && (end = s.indexOf(";", start + 1)) !== -1) {
+        result = result + s.slice(previous, start) + unescapeXMLReplace(s.slice(start, end + 1));
+        previous = end + 1;
+      }
+      if (previous === 0) return s;
+      result = result + s.substring(previous);
+      return result;
+    }
+    function escapeXMLText2(s) {
+      return s.replace(/[&<>]/g, escapeXMLReplace);
+    }
+    function unescapeXMLText2(s) {
+      return s.replace(/&(amp|#38|lt|#60|gt|#62);/g, unescapeXMLReplace);
+    }
+    exports2.escapeXML = escapeXML2;
+    exports2.escapeXMLText = escapeXMLText2;
+    exports2.unescapeXML = unescapeXML2;
+    exports2.unescapeXMLText = unescapeXMLText2;
+  }
+});
+
+// node_modules/ltx/lib/Element.js
+var require_Element = __commonJS({
+  "node_modules/ltx/lib/Element.js"(exports2, module2) {
+    "use strict";
+    var escape2 = require_escape();
+    var Element3 = class _Element {
+      constructor(name, attrs) {
+        this.name = name;
+        this.parent = null;
+        this.children = [];
+        this.attrs = {};
+        this.setAttrs(attrs);
+      }
+      /* Accessors */
+      /**
+       * if (element.is('message', 'jabber:client')) ...
+       **/
+      is(name, xmlns) {
+        return this.getName() === name && (!xmlns || this.getNS() === xmlns);
+      }
+      /* without prefix */
+      getName() {
+        const idx = this.name.indexOf(":");
+        return idx >= 0 ? this.name.slice(idx + 1) : this.name;
+      }
+      /**
+       * retrieves the namespace of the current element, upwards recursively
+       **/
+      getNS() {
+        const idx = this.name.indexOf(":");
+        if (idx >= 0) {
+          const prefix = this.name.slice(0, idx);
+          return this.findNS(prefix);
+        }
+        return this.findNS();
+      }
+      /**
+       * find the namespace to the given prefix, upwards recursively
+       **/
+      findNS(prefix) {
+        if (!prefix) {
+          if (this.attrs.xmlns) {
+            return this.attrs.xmlns;
+          } else if (this.parent) {
+            return this.parent.findNS();
+          }
+        } else {
+          const attr = "xmlns:" + prefix;
+          if (this.attrs[attr]) {
+            return this.attrs[attr];
+          } else if (this.parent) {
+            return this.parent.findNS(prefix);
+          }
+        }
+      }
+      /**
+       * Recursiverly gets all xmlns defined, in the form of {url:prefix}
+       **/
+      getXmlns() {
+        let namespaces = {};
+        if (this.parent) {
+          namespaces = this.parent.getXmlns();
+        }
+        for (const attr in this.attrs) {
+          const m = attr.match("xmlns:?(.*)");
+          if (this.attrs.hasOwnProperty(attr) && m) {
+            namespaces[this.attrs[attr]] = m[1];
+          }
+        }
+        return namespaces;
+      }
+      setAttrs(attrs) {
+        if (typeof attrs === "string") {
+          this.attrs.xmlns = attrs;
+        } else if (attrs) {
+          Object.assign(this.attrs, attrs);
+        }
+      }
+      /**
+       * xmlns can be null, returns the matching attribute.
+       **/
+      getAttr(name, xmlns) {
+        if (!xmlns) {
+          return this.attrs[name];
+        }
+        const namespaces = this.getXmlns();
+        if (!namespaces[xmlns]) {
+          return null;
+        }
+        return this.attrs[[namespaces[xmlns], name].join(":")];
+      }
+      /**
+       * xmlns can be null
+       **/
+      getChild(name, xmlns) {
+        return this.getChildren(name, xmlns)[0];
+      }
+      /**
+       * xmlns can be null
+       **/
+      getChildren(name, xmlns) {
+        const result = [];
+        for (const child2 of this.children) {
+          if (child2.getName && child2.getName() === name && (!xmlns || child2.getNS() === xmlns)) {
+            result.push(child2);
+          }
+        }
+        return result;
+      }
+      /**
+       * xmlns and recursive can be null
+       **/
+      getChildByAttr(attr, val, xmlns, recursive) {
+        return this.getChildrenByAttr(attr, val, xmlns, recursive)[0];
+      }
+      /**
+       * xmlns and recursive can be null
+       **/
+      getChildrenByAttr(attr, val, xmlns, recursive) {
+        let result = [];
+        for (const child2 of this.children) {
+          if (child2.attrs && child2.attrs[attr] === val && (!xmlns || child2.getNS() === xmlns)) {
+            result.push(child2);
+          }
+          if (recursive && child2.getChildrenByAttr) {
+            result.push(child2.getChildrenByAttr(attr, val, xmlns, true));
+          }
+        }
+        if (recursive) {
+          result = result.flat();
+        }
+        return result;
+      }
+      getChildrenByFilter(filter, recursive) {
+        let result = [];
+        for (const child2 of this.children) {
+          if (filter(child2)) {
+            result.push(child2);
+          }
+          if (recursive && child2.getChildrenByFilter) {
+            result.push(child2.getChildrenByFilter(filter, true));
+          }
+        }
+        if (recursive) {
+          result = result.flat();
+        }
+        return result;
+      }
+      getText() {
+        let text = "";
+        for (const child2 of this.children) {
+          if (typeof child2 === "string" || typeof child2 === "number") {
+            text += child2;
+          }
+        }
+        return text;
+      }
+      getChildText(name, xmlns) {
+        const child2 = this.getChild(name, xmlns);
+        return child2 ? child2.getText() : null;
+      }
+      /**
+       * Return all direct descendents that are Elements.
+       * This differs from `getChildren` in that it will exclude text nodes,
+       * processing instructions, etc.
+       */
+      getChildElements() {
+        return this.getChildrenByFilter((child2) => {
+          return child2 instanceof _Element;
+        });
+      }
+      /* Builder */
+      /** returns uppermost parent */
+      root() {
+        if (this.parent) {
+          return this.parent.root();
+        }
+        return this;
+      }
+      /** just parent or itself */
+      up() {
+        if (this.parent) {
+          return this.parent;
+        }
+        return this;
+      }
+      /** create child node and return it */
+      c(name, attrs) {
+        return this.cnode(new _Element(name, attrs));
+      }
+      cnode(child2) {
+        this.children.push(child2);
+        if (typeof child2 === "object") {
+          child2.parent = this;
+        }
+        return child2;
+      }
+      append(...nodes) {
+        for (const node of nodes) {
+          this.children.push(node);
+          if (typeof node === "object") {
+            node.parent = this;
+          }
+        }
+      }
+      prepend(...nodes) {
+        for (const node of nodes) {
+          this.children.unshift(node);
+          if (typeof node === "object") {
+            node.parent = this;
+          }
+        }
+      }
+      /** add text node and return element */
+      t(text) {
+        this.children.push(text);
+        return this;
+      }
+      /* Manipulation */
+      /**
+       * Either:
+       *   el.remove(childEl)
+       *   el.remove('author', 'urn:...')
+       */
+      remove(el, xmlns) {
+        const filter = typeof el === "string" ? (child2) => {
+          return !(child2.is && child2.is(el, xmlns));
+        } : (child2) => {
+          return child2 !== el;
+        };
+        this.children = this.children.filter(filter);
+        return this;
+      }
+      text(val) {
+        if (val && this.children.length === 1) {
+          this.children[0] = val;
+          return this;
+        }
+        return this.getText();
+      }
+      attr(attr, val) {
+        if (typeof val !== "undefined" || val === null) {
+          if (!this.attrs) {
+            this.attrs = {};
+          }
+          this.attrs[attr] = val;
+          return this;
+        }
+        return this.attrs[attr];
+      }
+      /* Serialization */
+      toString() {
+        let s = "";
+        this.write((c) => {
+          s += c;
+        });
+        return s;
+      }
+      _addChildren(writer) {
+        writer(">");
+        for (const child2 of this.children) {
+          if (child2 != null) {
+            if (child2.write) {
+              child2.write(writer);
+            } else if (typeof child2 === "string") {
+              writer(escape2.escapeXMLText(child2));
+            } else if (child2.toString) {
+              writer(escape2.escapeXMLText(child2.toString(10)));
+            }
+          }
+        }
+        writer("</");
+        writer(this.name);
+        writer(">");
+      }
+      write(writer) {
+        writer("<");
+        writer(this.name);
+        for (const k in this.attrs) {
+          const v = this.attrs[k];
+          if (v != null) {
+            writer(" ");
+            writer(k);
+            writer('="');
+            writer(escape2.escapeXML(typeof v === "string" ? v : v.toString(10)));
+            writer('"');
+          }
+        }
+        if (this.children.length === 0) {
+          writer("/>");
+        } else {
+          this._addChildren(writer);
+        }
+      }
+    };
+    Element3.prototype.tree = Element3.prototype.root;
+    module2.exports = Element3;
+  }
+});
+
+// node_modules/ltx/lib/createElement.js
+var require_createElement = __commonJS({
+  "node_modules/ltx/lib/createElement.js"(exports2, module2) {
+    "use strict";
+    var Element3 = require_Element();
+    function append(el, child2) {
+      if (Array.isArray(child2)) {
+        for (const c of child2) append(el, c);
+        return;
+      }
+      if (child2 === "" || child2 == null || child2 === true || child2 === false) {
+        return;
+      }
+      el.cnode(child2);
+    }
+    function createElement2(name, attrs, ...children) {
+      if (typeof attrs === "object" && attrs !== null) {
+        delete attrs.__source;
+        delete attrs.__self;
+        for (const [key, value] of Object.entries(attrs)) {
+          if (value == null) delete attrs[key];
+          else attrs[key] = value.toString(10);
+        }
+      }
+      const el = new Element3(name, attrs);
+      for (const child2 of children) {
+        append(el, child2);
+      }
+      return el;
+    }
+    module2.exports = createElement2;
+  }
+});
+
+// node_modules/ltx/lib/parsers/ltx.js
+var require_ltx = __commonJS({
+  "node_modules/ltx/lib/parsers/ltx.js"(exports2, module2) {
+    "use strict";
+    var events3 = require("events");
+    var escape2 = require_escape();
+    var STATE_TEXT = 0;
+    var STATE_IGNORE_COMMENT = 1;
+    var STATE_IGNORE_INSTRUCTION = 2;
+    var STATE_TAG_NAME = 3;
+    var STATE_TAG = 4;
+    var STATE_ATTR_NAME = 5;
+    var STATE_ATTR_EQ = 6;
+    var STATE_ATTR_QUOT = 7;
+    var STATE_ATTR_VALUE = 8;
+    var STATE_CDATA = 9;
+    var STATE_IGNORE_CDATA = 10;
+    var SaxLtx = class extends events3.EventEmitter {
+      constructor() {
+        super();
+        let state = STATE_TEXT;
+        let remainder;
+        let parseRemainder;
+        let tagName;
+        let attrs;
+        let endTag;
+        let selfClosing;
+        let attrQuote;
+        let attrQuoteChar;
+        let recordStart = 0;
+        let attrName;
+        this._handleTagOpening = function _handleTagOpening(endTag2, tagName2, attrs2) {
+          if (!endTag2) {
+            this.emit("startElement", tagName2, attrs2);
+            if (selfClosing) {
+              this.emit("endElement", tagName2, true);
+            }
+          } else {
+            this.emit("endElement", tagName2, false);
+          }
+        };
+        this.write = function write(data) {
+          if (typeof data !== "string") {
+            data = data.toString();
+          }
+          let pos = 0;
+          if (remainder) {
+            data = remainder + data;
+            pos += !parseRemainder ? remainder.length : 0;
+            parseRemainder = false;
+            remainder = null;
+          }
+          function endRecording() {
+            if (typeof recordStart === "number") {
+              const recorded = data.slice(recordStart, pos);
+              recordStart = void 0;
+              return recorded;
+            }
+          }
+          for (; pos < data.length; pos++) {
+            switch (state) {
+              case STATE_TEXT: {
+                const lt = data.indexOf("<", pos);
+                if (lt !== -1 && pos !== lt) {
+                  pos = lt;
+                }
+                break;
+              }
+              case STATE_ATTR_VALUE: {
+                const quot = data.indexOf(attrQuoteChar, pos);
+                if (quot !== -1) {
+                  pos = quot;
+                }
+                break;
+              }
+              case STATE_IGNORE_COMMENT: {
+                const endcomment = data.indexOf("-->", pos);
+                if (endcomment !== -1) {
+                  pos = endcomment + 2;
+                }
+                break;
+              }
+              case STATE_IGNORE_CDATA: {
+                const endCDATA = data.indexOf("]]>", pos);
+                if (endCDATA !== -1) {
+                  pos = endCDATA + 2;
+                }
+                break;
+              }
+            }
+            const c = data.charCodeAt(pos);
+            switch (state) {
+              case STATE_TEXT:
+                if (c === 60) {
+                  const text = endRecording();
+                  if (text) {
+                    this.emit("text", escape2.unescapeXML(text));
+                  }
+                  state = STATE_TAG_NAME;
+                  recordStart = pos + 1;
+                  attrs = {};
+                }
+                break;
+              case STATE_CDATA:
+                if (c === 93) {
+                  if (data.substr(pos + 1, 2) === "]>") {
+                    const cData = endRecording();
+                    if (cData) {
+                      this.emit("text", cData);
+                    }
+                    state = STATE_TEXT;
+                  } else if (data.length < pos + 2) {
+                    parseRemainder = true;
+                    pos = data.length;
+                  }
+                }
+                break;
+              case STATE_TAG_NAME:
+                if (c === 47 && recordStart === pos) {
+                  recordStart = pos + 1;
+                  endTag = true;
+                } else if (c === 33) {
+                  if (data.substr(pos + 1, 7) === "[CDATA[") {
+                    recordStart = pos + 8;
+                    state = STATE_CDATA;
+                  } else if (data.length < pos + 8 && "[CDATA[".startsWith(data.slice(pos + 1))) {
+                    parseRemainder = true;
+                    pos = data.length;
+                  } else {
+                    recordStart = void 0;
+                    state = STATE_IGNORE_COMMENT;
+                  }
+                } else if (c === 63) {
+                  recordStart = void 0;
+                  state = STATE_IGNORE_INSTRUCTION;
+                } else if (c <= 32 || c === 47 || c === 62) {
+                  tagName = endRecording();
+                  pos--;
+                  state = STATE_TAG;
+                }
+                break;
+              case STATE_IGNORE_COMMENT:
+                if (c === 62) {
+                  const prevFirst = data.charCodeAt(pos - 1);
+                  const prevSecond = data.charCodeAt(pos - 2);
+                  if (prevFirst === 45 && prevSecond === 45 || prevFirst === 93 && prevSecond === 93) {
+                    state = STATE_TEXT;
+                  }
+                }
+                break;
+              case STATE_IGNORE_INSTRUCTION:
+                if (c === 62) {
+                  const prev = data.charCodeAt(pos - 1);
+                  if (prev === 63) {
+                    state = STATE_TEXT;
+                  }
+                }
+                break;
+              case STATE_TAG:
+                if (c === 62) {
+                  this._handleTagOpening(endTag, tagName, attrs);
+                  tagName = void 0;
+                  attrs = void 0;
+                  endTag = void 0;
+                  selfClosing = void 0;
+                  state = STATE_TEXT;
+                  recordStart = pos + 1;
+                } else if (c === 47) {
+                  selfClosing = true;
+                } else if (c > 32) {
+                  recordStart = pos;
+                  state = STATE_ATTR_NAME;
+                }
+                break;
+              case STATE_ATTR_NAME:
+                if (c <= 32 || c === 61) {
+                  attrName = endRecording();
+                  pos--;
+                  state = STATE_ATTR_EQ;
+                }
+                break;
+              case STATE_ATTR_EQ:
+                if (c === 61) {
+                  state = STATE_ATTR_QUOT;
+                }
+                break;
+              case STATE_ATTR_QUOT:
+                if (c === 34 || c === 39) {
+                  attrQuote = c;
+                  attrQuoteChar = c === 34 ? '"' : "'";
+                  state = STATE_ATTR_VALUE;
+                  recordStart = pos + 1;
+                }
+                break;
+              case STATE_ATTR_VALUE:
+                if (c === attrQuote) {
+                  const value = escape2.unescapeXML(endRecording());
+                  attrs[attrName] = value;
+                  attrName = void 0;
+                  state = STATE_TAG;
+                }
+                break;
+            }
+          }
+          if (typeof recordStart === "number" && recordStart <= data.length) {
+            remainder = data.slice(recordStart);
+            recordStart = 0;
+          }
+        };
+      }
+      end(data) {
+        if (data) {
+          this.write(data);
+        }
+        this.write = function write() {
+        };
+      }
+    };
+    module2.exports = SaxLtx;
+  }
+});
+
+// node_modules/koa-compose/index.js
+var require_koa_compose = __commonJS({
+  "node_modules/koa-compose/index.js"(exports2, module2) {
+    "use strict";
+    module2.exports = compose2;
+    function compose2(middleware2) {
+      if (!Array.isArray(middleware2)) throw new TypeError("Middleware stack must be an array!");
+      for (const fn of middleware2) {
+        if (typeof fn !== "function") throw new TypeError("Middleware must be composed of functions!");
+      }
+      return function(context, next) {
+        let index = -1;
+        return dispatch(0);
+        function dispatch(i) {
+          if (i <= index) return Promise.reject(new Error("next() called multiple times"));
+          index = i;
+          let fn = middleware2[i];
+          if (i === middleware2.length) fn = next;
+          if (!fn) return Promise.resolve();
+          try {
+            return Promise.resolve(fn(context, dispatch.bind(null, i + 1)));
+          } catch (err) {
+            return Promise.reject(err);
+          }
+        }
+      };
+    }
+  }
+});
+
+// node_modules/saslmechanisms/lib/factory.js
+var require_factory = __commonJS({
+  "node_modules/saslmechanisms/lib/factory.js"(exports2, module2) {
+    (function(root, factory) {
+      if (typeof exports2 === "object") {
+        factory(exports2, module2);
+      } else if (typeof define === "function" && define.amd) {
+        define(["exports", "module"], factory);
+      }
+    })(exports2, function(exports3, module3) {
+      function Factory() {
+        this._mechs = [];
+      }
+      Factory.prototype.use = function(name, mech4) {
+        if (!mech4) {
+          mech4 = name;
+          name = mech4.prototype.name;
+        }
+        this._mechs.push({ name, mech: mech4 });
+        return this;
+      };
+      Factory.prototype.create = function(mechs) {
+        for (var i = 0, len = this._mechs.length; i < len; i++) {
+          for (var j2 = 0, jlen = mechs.length; j2 < jlen; j2++) {
+            var entry = this._mechs[i];
+            if (entry.name == mechs[j2]) {
+              return new entry.mech();
+            }
+          }
+        }
+        return null;
+      };
+      exports3 = module3.exports = Factory;
+    });
+  }
+});
+
+// node_modules/saslmechanisms/main.js
+var require_main = __commonJS({
+  "node_modules/saslmechanisms/main.js"(exports2, module2) {
+    (function(root, factory) {
+      if (typeof exports2 === "object") {
+        factory(
+          exports2,
+          module2,
+          require_factory()
+        );
+      } else if (typeof define === "function" && define.amd) {
+        define([
+          "exports",
+          "module",
+          "./lib/factory"
+        ], factory);
+      }
+    })(exports2, function(exports3, module3, Factory) {
+      exports3 = module3.exports = Factory;
+      exports3.Factory = Factory;
+    });
+  }
+});
+
+// node_modules/sasl-scram-sha-1/lib/bitops.js
+var require_bitops = __commonJS({
+  "node_modules/sasl-scram-sha-1/lib/bitops.js"(exports2) {
+    exports2.XOR = function(a, b) {
+      var res = [];
+      if (a.length > b.length) {
+        for (var i = 0; i < b.length; i++) {
+          res.push(a[i] ^ b[i]);
+        }
+      } else {
+        for (var j2 = 0; j2 < a.length; j2++) {
+          res.push(a[j2] ^ b[j2]);
+        }
+      }
+      return new Uint8Array(res);
+    };
+    exports2.H = function(text) {
+      return __async(this, null, function* () {
+        return new Uint8Array(
+          yield crypto.subtle.digest("SHA-1", text)
+        );
+      });
+    };
+    exports2.HMAC = function(key, msg) {
+      return __async(this, null, function* () {
+        const hmac = yield crypto.subtle.importKey(
+          "raw",
+          key,
+          // https://developer.mozilla.org/en-US/docs/Web/API/HmacImportParams
+          { name: "HMAC", hash: "SHA-1" },
+          false,
+          // extractable
+          ["sign"]
+        );
+        return new Uint8Array(yield crypto.subtle.sign(
+          "HMAC",
+          hmac,
+          msg
+        ));
+      });
+    };
+    exports2.Hi = function(text, salt, iterations) {
+      return __async(this, null, function* () {
+        const key = new TextEncoder().encode(text);
+        var concat = new Uint8Array(salt.length + 4);
+        concat.set(salt);
+        concat.set(new Uint8Array([0, 0, 0, 1]), salt.length);
+        var ui1 = yield exports2.HMAC(key, concat);
+        var ui = ui1;
+        for (var i = 0; i < iterations - 1; i++) {
+          ui1 = yield exports2.HMAC(key, ui1);
+          ui = exports2.XOR(ui, ui1);
+        }
+        return ui;
+      });
+    };
+  }
+});
+
+// node_modules/sasl-scram-sha-1/lib/utils.js
+var require_utils = __commonJS({
+  "node_modules/sasl-scram-sha-1/lib/utils.js"(exports2) {
+    exports2.parse = function(chal) {
+      var dtives = {};
+      var tokens = chal.split(/,(?=(?:[^"]|"[^"]*")*$)/);
+      for (var i = 0, len = tokens.length; i < len; i++) {
+        var dtiv = /(\w+)=["]?([^"]+)["]?$/.exec(tokens[i]);
+        if (dtiv) {
+          dtives[dtiv[1]] = dtiv[2];
+        }
+      }
+      return dtives;
+    };
+    exports2.saslname = function(name) {
+      var escaped = [];
+      var curr = "";
+      for (var i = 0; i < name.length; i++) {
+        curr = name[i];
+        if (curr === ",") {
+          escaped.push("=2C");
+        } else if (curr === "=") {
+          escaped.push("=3D");
+        } else {
+          escaped.push(curr);
+        }
+      }
+      return escaped.join("");
+    };
+    exports2.genNonce = function(len) {
+      const bytes = new Uint8Array((len || 32) / 2);
+      crypto.getRandomValues(bytes);
+      return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+    };
+  }
+});
+
+// node_modules/sasl-scram-sha-1/index.js
+var require_sasl_scram_sha_1 = __commonJS({
+  "node_modules/sasl-scram-sha-1/index.js"(exports2, module2) {
+    var bitops = require_bitops();
+    var utils = require_utils();
+    var RESP = {};
+    var CLIENT_KEY = new TextEncoder().encode("Client Key");
+    var SERVER_KEY = new TextEncoder().encode("Server Key");
+    function base64decode(s) {
+      if (atob) {
+        return Uint8Array.from(atob(s), function(c) {
+          return c.charCodeAt(0);
+        });
+      } else {
+        return Uint8Array.from(Buffer.from(s, "base64"));
+      }
+    }
+    function base64encode(s) {
+      if (btoa) {
+        return btoa(s);
+      } else {
+        return Buffer.from(s).toString("base64");
+      }
+    }
+    function Mechanism2(options) {
+      options = options || {};
+      this._genNonce = options.genNonce || utils.genNonce;
+      this._stage = "initial";
+    }
+    Mechanism2.Mechanism = Mechanism2;
+    Mechanism2.prototype.name = "SCRAM-SHA-1";
+    Mechanism2.prototype.clientFirst = true;
+    Mechanism2.prototype.response = function(cred) {
+      return RESP[this._stage](this, cred);
+    };
+    Mechanism2.prototype.challenge = function(chal) {
+      var values = utils.parse(chal);
+      this._salt = base64decode(values.s || "");
+      this._iterationCount = parseInt(values.i, 10);
+      this._nonce = values.r;
+      this._verifier = values.v;
+      this._error = values.e;
+      this._challenge = chal;
+      return this;
+    };
+    RESP.initial = function(mech4, cred) {
+      mech4._cnonce = mech4._genNonce();
+      var authzid = "";
+      if (cred.authzid) {
+        authzid = "a=" + utils.saslname(cred.authzid);
+      }
+      mech4._gs2Header = "n," + authzid + ",";
+      var nonce = "r=" + mech4._cnonce;
+      var username = "n=" + utils.saslname(cred.username || "");
+      mech4._clientFirstMessageBare = username + "," + nonce;
+      var result = mech4._gs2Header + mech4._clientFirstMessageBare;
+      mech4._stage = "challenge";
+      return result;
+    };
+    RESP.challenge = function(mech4, cred) {
+      return __async(this, null, function* () {
+        var gs2Header = base64encode(mech4._gs2Header);
+        mech4._clientFinalMessageWithoutProof = "c=" + gs2Header + ",r=" + mech4._nonce;
+        var saltedPassword, clientKey, serverKey;
+        if (cred.salt && cred.salt.every(function(value, index) {
+          return value === mech4._salt[index];
+        })) {
+          if (cred.clientKey && cred.serverKey) {
+            clientKey = cred.clientKey;
+            serverKey = cred.serverKey;
+          } else if (cred.saltedPassword) {
+            saltedPassword = cred.saltedPassword;
+            clientKey = yield bitops.HMAC(saltedPassword, CLIENT_KEY);
+            serverKey = yield bitops.HMAC(saltedPassword, SERVER_KEY);
+          }
+        } else {
+          saltedPassword = yield bitops.Hi(cred.password || "", mech4._salt, mech4._iterationCount);
+          clientKey = yield bitops.HMAC(saltedPassword, CLIENT_KEY);
+          serverKey = yield bitops.HMAC(saltedPassword, SERVER_KEY);
+        }
+        var storedKey = yield bitops.H(clientKey);
+        var authMessage = new TextEncoder().encode(mech4._clientFirstMessageBare + "," + mech4._challenge + "," + mech4._clientFinalMessageWithoutProof);
+        var clientSignature = yield bitops.HMAC(storedKey, authMessage);
+        var clientProof = base64encode(String.fromCharCode.apply(null, bitops.XOR(clientKey, clientSignature)));
+        mech4._serverSignature = yield bitops.HMAC(serverKey, authMessage);
+        var result = mech4._clientFinalMessageWithoutProof + ",p=" + clientProof;
+        mech4._stage = "final";
+        mech4.cache = {
+          salt: mech4._salt,
+          saltedPassword,
+          clientKey,
+          serverKey
+        };
+        return result;
+      });
+    };
+    RESP.final = function() {
+      return "";
+    };
+    module2.exports = Mechanism2;
+  }
+});
+
+// node_modules/sasl-plain/lib/mechanism.js
+var require_mechanism = __commonJS({
+  "node_modules/sasl-plain/lib/mechanism.js"(exports2, module2) {
+    (function(root, factory) {
+      if (typeof exports2 === "object") {
+        factory(exports2, module2);
+      } else if (typeof define === "function" && define.amd) {
+        define(["exports", "module"], factory);
+      }
+    })(exports2, function(exports3, module3) {
+      function Mechanism2() {
+      }
+      Mechanism2.prototype.name = "PLAIN";
+      Mechanism2.prototype.clientFirst = true;
+      Mechanism2.prototype.response = function(cred) {
+        var str = "";
+        str += cred.authzid || "";
+        str += "\0";
+        str += cred.username;
+        str += "\0";
+        str += cred.password;
+        return str;
+      };
+      Mechanism2.prototype.challenge = function(chal) {
+        return this;
+      };
+      exports3 = module3.exports = Mechanism2;
+    });
+  }
+});
+
+// node_modules/sasl-plain/main.js
+var require_main2 = __commonJS({
+  "node_modules/sasl-plain/main.js"(exports2, module2) {
+    (function(root, factory) {
+      if (typeof exports2 === "object") {
+        factory(
+          exports2,
+          module2,
+          require_mechanism()
+        );
+      } else if (typeof define === "function" && define.amd) {
+        define([
+          "exports",
+          "module",
+          "./lib/mechanism"
+        ], factory);
+      }
+    })(exports2, function(exports3, module3, Mechanism2) {
+      exports3 = module3.exports = Mechanism2;
+      exports3.Mechanism = Mechanism2;
+    });
+  }
+});
+
+// node_modules/sasl-anonymous/lib/mechanism.js
+var require_mechanism2 = __commonJS({
+  "node_modules/sasl-anonymous/lib/mechanism.js"(exports2, module2) {
+    (function(root, factory) {
+      if (typeof exports2 === "object") {
+        factory(exports2, module2);
+      } else if (typeof define === "function" && define.amd) {
+        define(["exports", "module"], factory);
+      }
+    })(exports2, function(exports3, module3) {
+      function Mechanism2() {
+      }
+      Mechanism2.prototype.name = "ANONYMOUS";
+      Mechanism2.prototype.clientFirst = true;
+      Mechanism2.prototype.response = function(cred) {
+        return cred.trace || "";
+      };
+      Mechanism2.prototype.challenge = function(chal) {
+      };
+      exports3 = module3.exports = Mechanism2;
+    });
+  }
+});
+
+// node_modules/sasl-anonymous/main.js
+var require_main3 = __commonJS({
+  "node_modules/sasl-anonymous/main.js"(exports2, module2) {
+    (function(root, factory) {
+      if (typeof exports2 === "object") {
+        factory(
+          exports2,
+          module2,
+          require_mechanism2()
+        );
+      } else if (typeof define === "function" && define.amd) {
+        define([
+          "exports",
+          "module",
+          "./lib/mechanism"
+        ], factory);
+      }
+    })(exports2, function(exports3, module3, Mechanism2) {
+      exports3 = module3.exports = Mechanism2;
+      exports3.Mechanism = Mechanism2;
+    });
+  }
+});
 
 // src/index.ts
 var index_exports = {};
@@ -96,7 +1120,2771 @@ module.exports = __toCommonJS(index_exports);
 var fs = __toESM(require("fs"));
 var path = __toESM(require("path"));
 var events2 = __toESM(require("events"));
-var xmpp = __toESM(require("@xmpp/client"));
+
+// node_modules/@xmpp/client/index.js
+var client_exports = {};
+__export(client_exports, {
+  client: () => client,
+  jid: () => jid_default,
+  xml: () => xml
+});
+
+// node_modules/@xmpp/xml/index.js
+var import_Element2 = __toESM(require_Element(), 1);
+var import_createElement = __toESM(require_createElement(), 1);
+var import_escape = __toESM(require_escape(), 1);
+
+// node_modules/@xmpp/xml/lib/Parser.js
+var import_ltx = __toESM(require_ltx(), 1);
+var import_Element = __toESM(require_Element(), 1);
+
+// node_modules/@xmpp/events/index.js
+var import_events = require("events");
+
+// node_modules/@xmpp/events/lib/TimeoutError.js
+var TimeoutError = class extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "TimeoutError";
+  }
+};
+
+// node_modules/@xmpp/events/lib/delay.js
+function delay(ms) {
+  let timeout2;
+  const promise2 = new Promise((resolve5) => {
+    timeout2 = setTimeout(resolve5, ms);
+  });
+  promise2.timeout = timeout2;
+  return promise2;
+}
+
+// node_modules/@xmpp/events/lib/timeout.js
+function timeout(promise2, ms) {
+  const promiseDelay = delay(ms);
+  function cancelDelay() {
+    clearTimeout(promiseDelay.timeout);
+  }
+  const error = new TimeoutError();
+  return Promise.race([
+    promise2.finally(cancelDelay),
+    promiseDelay.then(() => {
+      throw error;
+    })
+  ]);
+}
+
+// node_modules/@xmpp/events/lib/onoff.js
+var map = /* @__PURE__ */ new WeakMap();
+function onoff(target) {
+  var _a, _b, _c;
+  let m = map.get(target);
+  if (!m) {
+    const on = ((_a = target.addEventListener) != null ? _a : target.addListener).bind(target);
+    const off = ((_b = target.removeEventListener) != null ? _b : target.removeListener).bind(
+      target
+    );
+    const once = ((_c = target.once) != null ? _c : ((event, handler) => target.addEventListener(event, handler, { once: true }))).bind(target);
+    m = { on, off, once };
+    map.set(target, m);
+  }
+  return m;
+}
+
+// node_modules/@xmpp/events/lib/promise.js
+function promise(target, event, rejectEvent = "error", timeout2) {
+  return new Promise((resolve5, reject) => {
+    let timeoutId;
+    const { off, once } = onoff(target);
+    const cleanup = () => {
+      clearTimeout(timeoutId);
+      off(event, onEvent);
+      off(rejectEvent, onError);
+    };
+    function onError(reason) {
+      reject(reason);
+      cleanup();
+    }
+    function onEvent(value) {
+      resolve5(value);
+      cleanup();
+    }
+    once(event, onEvent);
+    if (rejectEvent) {
+      once(rejectEvent, onError);
+    }
+    if (timeout2) {
+      const error = new TimeoutError();
+      timeoutId = setTimeout(() => {
+        cleanup();
+        reject(error);
+      }, timeout2);
+    }
+  });
+}
+
+// node_modules/@xmpp/events/lib/Deferred.js
+function Deferred() {
+  this.promise = new Promise((resolve5, reject) => {
+    this.resolve = resolve5;
+    this.reject = reject;
+  });
+}
+
+// node_modules/@xmpp/events/lib/procedure.js
+function procedure(entity, stanza = null, handler) {
+  return new Promise((resolve5, reject) => {
+    function onError(err) {
+      entity.removeListener("nonza", listener2);
+      reject(err);
+    }
+    function done(...args) {
+      entity.removeListener("nonza", listener2);
+      resolve5(...args);
+    }
+    function listener2(element) {
+      return __async(this, null, function* () {
+        try {
+          yield handler(element, done);
+        } catch (err) {
+          onError(err);
+        }
+      });
+    }
+    stanza && entity.send(stanza).catch(onError);
+    entity.on("nonza", listener2);
+  });
+}
+
+// node_modules/@xmpp/events/lib/listeners.js
+function listeners(events3) {
+  return {
+    subscribe(target) {
+      const { on } = onoff(target);
+      for (const [event, handler] of Object.entries(events3)) {
+        on(event, handler);
+      }
+    },
+    unsubscribe(target) {
+      const { off } = onoff(target);
+      for (const [event, handler] of Object.entries(events3)) {
+        off(event, handler);
+      }
+    }
+  };
+}
+
+// node_modules/@xmpp/xml/lib/XMLError.js
+var XMLError = class extends Error {
+  constructor(...args) {
+    super(...args);
+    this.name = "XMLError";
+  }
+};
+
+// node_modules/@xmpp/xml/lib/Parser.js
+var Parser = class extends import_events.EventEmitter {
+  constructor() {
+    super();
+    const parser = new import_ltx.default();
+    this.root = null;
+    this.cursor = null;
+    parser.on("startElement", this.onStartElement.bind(this));
+    parser.on("endElement", this.onEndElement.bind(this));
+    parser.on("text", this.onText.bind(this));
+    this.parser = parser;
+  }
+  onStartElement(name, attrs) {
+    const element = new import_Element.default(name, attrs);
+    const { root, cursor } = this;
+    if (!root) {
+      this.root = element;
+      this.emit("start", element);
+    } else if (cursor !== root) {
+      cursor.append(element);
+    }
+    this.cursor = element;
+  }
+  onEndElement(name) {
+    const { root, cursor } = this;
+    if (name !== cursor.name) {
+      this.emit("error", new XMLError(`${cursor.name} must be closed.`));
+      return;
+    }
+    if (cursor === root) {
+      this.emit("end", root);
+      return;
+    }
+    if (!cursor.parent) {
+      cursor.parent = root;
+      this.emit("element", cursor);
+      this.cursor = root;
+      return;
+    }
+    this.cursor = cursor.parent;
+  }
+  onText(str) {
+    const { cursor } = this;
+    if (!cursor) {
+      this.emit("error", new XMLError(`${str} must be a child.`));
+      return;
+    }
+    cursor.t(str);
+  }
+  write(data) {
+    this.parser.write(data);
+  }
+  end(data) {
+    if (data) {
+      this.parser.write(data);
+    }
+  }
+};
+Parser.XMLError = XMLError;
+var Parser_default = Parser;
+
+// node_modules/@xmpp/xml/index.js
+function xml(...args) {
+  return (0, import_createElement.default)(...args);
+}
+Object.assign(xml, {
+  Element: import_Element2.default,
+  createElement: import_createElement.default,
+  Parser: Parser_default,
+  escapeXML: import_escape.escapeXML,
+  unescapeXML: import_escape.unescapeXML,
+  escapeXMLText: import_escape.escapeXMLText,
+  unescapeXMLText: import_escape.unescapeXMLText,
+  XMLError,
+  xml
+});
+
+// node_modules/@xmpp/jid/lib/escaping.js
+function detect(local) {
+  if (!local) {
+    return false;
+  }
+  const tmp = local.replaceAll(String.raw`\20`, "").replaceAll(String.raw`\22`, "").replaceAll(String.raw`\26`, "").replaceAll(String.raw`\27`, "").replaceAll(String.raw`\2f`, "").replaceAll(String.raw`\3a`, "").replaceAll(String.raw`\3c`, "").replaceAll(String.raw`\3e`, "").replaceAll(String.raw`\40`, "").replaceAll(String.raw`\5c`, "");
+  const search = tmp.search(/[ "&'/:<>@\\]/g);
+  if (search === -1) {
+    return false;
+  }
+  return true;
+}
+function escape(local) {
+  if (local === null) {
+    return null;
+  }
+  return local.replaceAll(/^\s+|\s+$/g, "").replaceAll("\\", String.raw`\5c`).replaceAll(" ", String.raw`\20`).replaceAll('"', String.raw`\22`).replaceAll("&", String.raw`\26`).replaceAll("'", String.raw`\27`).replaceAll("/", String.raw`\2f`).replaceAll(":", String.raw`\3a`).replaceAll("<", String.raw`\3c`).replaceAll(">", String.raw`\3e`).replaceAll("@", String.raw`\40`);
+}
+function unescape2(local) {
+  if (local === null) {
+    return null;
+  }
+  return local.replaceAll(String.raw`\20`, " ").replaceAll(String.raw`\22`, '"').replaceAll(String.raw`\26`, "&").replaceAll(String.raw`\27`, "'").replaceAll(String.raw`\2f`, "/").replaceAll(String.raw`\3a`, ":").replaceAll(String.raw`\3c`, "<").replaceAll(String.raw`\3e`, ">").replaceAll(String.raw`\40`, "@").replaceAll(String.raw`\5c`, "\\");
+}
+
+// node_modules/@xmpp/jid/lib/JID.js
+var JID = class _JID {
+  constructor(local, domain, resource) {
+    if (typeof domain !== "string" || !domain) {
+      throw new TypeError(`Invalid domain.`);
+    }
+    this.setDomain(domain);
+    this.setLocal(typeof local === "string" ? local : "");
+    this.setResource(typeof resource === "string" ? resource : "");
+  }
+  [Symbol.toPrimitive](hint) {
+    if (hint === "number") {
+      return Number.NaN;
+    }
+    return this.toString();
+  }
+  toString(unescape3) {
+    let s = this._domain;
+    if (this._local) {
+      s = this.getLocal(unescape3) + "@" + s;
+    }
+    if (this._resource) {
+      s = s + "/" + this._resource;
+    }
+    return s;
+  }
+  /**
+   * Convenience method to distinguish users
+   * */
+  bare() {
+    if (this._resource) {
+      return new _JID(this._local, this._domain, null);
+    }
+    return this;
+  }
+  /**
+   * Comparison function
+   * */
+  equals(other) {
+    return this._local === other._local && this._domain === other._domain && this._resource === other._resource;
+  }
+  /**
+   * http://xmpp.org/rfcs/rfc6122.html#addressing-localpart
+   * */
+  setLocal(local, escape2) {
+    escape2 = escape2 || detect(local);
+    if (escape2) {
+      local = escape(local);
+    }
+    this._local = local && local.toLowerCase();
+    return this;
+  }
+  getLocal(unescape3 = false) {
+    let local = null;
+    local = unescape3 ? unescape2(this._local) : this._local;
+    return local;
+  }
+  /**
+   * http://xmpp.org/rfcs/rfc6122.html#addressing-domain
+   */
+  setDomain(domain) {
+    this._domain = domain.toLowerCase();
+    return this;
+  }
+  getDomain() {
+    return this._domain;
+  }
+  /**
+   * http://xmpp.org/rfcs/rfc6122.html#addressing-resourcepart
+   */
+  setResource(resource) {
+    this._resource = resource;
+    return this;
+  }
+  getResource() {
+    return this._resource;
+  }
+};
+Object.defineProperty(JID.prototype, "local", {
+  get: JID.prototype.getLocal,
+  set: JID.prototype.setLocal
+});
+Object.defineProperty(JID.prototype, "domain", {
+  get: JID.prototype.getDomain,
+  set: JID.prototype.setDomain
+});
+Object.defineProperty(JID.prototype, "resource", {
+  get: JID.prototype.getResource,
+  set: JID.prototype.setResource
+});
+var JID_default = JID;
+
+// node_modules/@xmpp/jid/lib/parse.js
+function parse(s) {
+  let local;
+  let resource;
+  const resourceStart = s.indexOf("/");
+  if (resourceStart !== -1) {
+    resource = s.slice(resourceStart + 1);
+    s = s.slice(0, resourceStart);
+  }
+  const atStart = s.indexOf("@");
+  if (atStart !== -1) {
+    local = s.slice(0, atStart);
+    s = s.slice(atStart + 1);
+  }
+  return new JID_default(local, s, resource);
+}
+
+// node_modules/@xmpp/jid/index.js
+function equal(a, b) {
+  return a.equals(b);
+}
+function jid(...args) {
+  if (!args[1] && !args[2]) {
+    return parse(...args);
+  }
+  return new JID_default(...args);
+}
+var j = jid.bind();
+j.jid = jid;
+j.JID = JID_default;
+j.parse = parse;
+j.equal = equal;
+j.detectEscape = detect;
+j.escapeLocal = escape;
+j.unescapeLocal = unescape2;
+var jid_default = j;
+
+// node_modules/@xmpp/error/index.js
+var XMPPError = class extends Error {
+  constructor(condition, text, application) {
+    super(condition + (text ? ` - ${text}` : ""));
+    this.name = "XMPPError";
+    this.condition = condition;
+    this.text = text;
+    this.application = application;
+  }
+  static fromElement(element) {
+    const [condition, second, third] = element.getChildElements();
+    let text;
+    let application;
+    if (second) {
+      if (second.is("text")) {
+        text = second;
+      } else if (second) {
+        application = second;
+      }
+      if (third) application = third;
+    }
+    const error = new this(
+      condition.name,
+      text ? text.text() : "",
+      application
+    );
+    error.element = element;
+    return error;
+  }
+};
+var error_default = XMPPError;
+
+// node_modules/@xmpp/connection/lib/StreamError.js
+var StreamError = class extends error_default {
+  constructor(...args) {
+    super(...args);
+    this.name = "StreamError";
+  }
+};
+var StreamError_default = StreamError;
+
+// node_modules/@xmpp/connection/lib/util.js
+function parseURI(URI) {
+  let { port, hostname, protocol } = new URL(URI);
+  if (hostname === "[::1]") {
+    hostname = "::1";
+  }
+  return { port, hostname, protocol };
+}
+function parseHost(host) {
+  const { port, hostname } = parseURI(`http://${host}`);
+  return { port, hostname };
+}
+function parseService(service) {
+  return service.includes("://") ? parseURI(service) : parseHost(service);
+}
+
+// node_modules/@xmpp/connection/index.js
+var NS_STREAM = "urn:ietf:params:xml:ns:xmpp-streams";
+var NS_JABBER_STREAM = "http://etherx.jabber.org/streams";
+var _socketListeners, _parserListeners, _Connection_instances, onParserError_fn, onSocketClosed_fn, onStreamClosed_fn, _hooks, _hook_events, assertHookEventName_fn, runHooks_fn;
+var Connection = class extends import_events.EventEmitter {
+  constructor(options = {}) {
+    super();
+    __privateAdd(this, _Connection_instances);
+    __privateAdd(this, _socketListeners, null);
+    __privateAdd(this, _parserListeners, null);
+    /* Experimental hooks */
+    __privateAdd(this, _hooks, /* @__PURE__ */ new Map());
+    __privateAdd(this, _hook_events, /* @__PURE__ */ new Set(["close"]));
+    if (typeof options === "string") {
+      options = { domain: options };
+    }
+    this.jid = null;
+    this.timeout = options.timeout || 2e3;
+    this.options = options;
+    this.status = "offline";
+    this.socket = null;
+    this.parser = null;
+    this.root = null;
+  }
+  isSecure() {
+    var _a;
+    return ((_a = this.socket) == null ? void 0 : _a.secure) === true;
+  }
+  _streamError(condition, children) {
+    return __async(this, null, function* () {
+      try {
+        yield this.send(
+          // prettier-ignore
+          xml("stream:error", {}, [
+            xml(condition, { xmlns: NS_STREAM }, children)
+          ])
+        );
+      } catch (e) {
+      }
+      return this.disconnect();
+    });
+  }
+  _onData(data) {
+    const str = data.toString("utf8");
+    this.parser.write(str);
+  }
+  _attachSocket(socket) {
+    var _a;
+    this.socket = socket;
+    (_a = __privateGet(this, _socketListeners)) != null ? _a : __privateSet(this, _socketListeners, listeners({
+      data: this._onData.bind(this),
+      close: __privateMethod(this, _Connection_instances, onSocketClosed_fn).bind(this),
+      connect: () => this._status("connect"),
+      error: (error) => this.emit("error", error)
+    }));
+    __privateGet(this, _socketListeners).subscribe(this.socket);
+  }
+  _detachSocket() {
+    var _a;
+    this.socket && ((_a = __privateGet(this, _socketListeners)) == null ? void 0 : _a.unsubscribe(this.socket));
+    this.socket = null;
+  }
+  _onElement(element) {
+    const isStreamError = element.is("error", NS_JABBER_STREAM);
+    if (isStreamError) {
+      this._onStreamError(element);
+    }
+    this.emit("element", element);
+    this.emit(this.isStanza(element) ? "stanza" : "nonza", element);
+    if (isStreamError) {
+      this.disconnect();
+    }
+  }
+  // https://xmpp.org/rfcs/rfc6120.html#streams-error
+  _onStreamError(element) {
+    const error = StreamError_default.fromElement(element);
+    if (error.condition === "see-other-host") {
+      return this._onSeeOtherHost(error);
+    }
+    this.emit("error", error);
+  }
+  // https://xmpp.org/rfcs/rfc6120.html#streams-error-conditions-see-other-host
+  _onSeeOtherHost(error) {
+    return __async(this, null, function* () {
+      const { protocol } = parseService(this.options.service);
+      const host = error.element.getChildText("see-other-host");
+      const { port } = parseHost(host);
+      let service;
+      service = port ? `${protocol || "xmpp:"}//${host}` : (protocol ? `${protocol}//` : "") + host;
+      try {
+        yield promise(this, "disconnect");
+        const { domain, lang } = this.options;
+        yield this.connect(service);
+        yield this.open({ domain, lang });
+      } catch (err) {
+        this.emit("error", err);
+      }
+    });
+  }
+  _attachParser(parser) {
+    var _a;
+    this.parser = parser;
+    (_a = __privateGet(this, _parserListeners)) != null ? _a : __privateSet(this, _parserListeners, listeners({
+      element: this._onElement.bind(this),
+      error: __privateMethod(this, _Connection_instances, onParserError_fn).bind(this),
+      end: __privateMethod(this, _Connection_instances, onStreamClosed_fn).bind(this),
+      start: (element) => this._status("open", element)
+    }));
+    __privateGet(this, _parserListeners).subscribe(this.parser);
+  }
+  _detachParser() {
+    var _a;
+    this.parser && ((_a = __privateGet(this, _parserListeners)) == null ? void 0 : _a.unsubscribe(this.parser));
+    this.parser = null;
+    this.root = null;
+  }
+  _jid(id2) {
+    this.jid = jid_default(id2);
+    return this.jid;
+  }
+  /*
+  [
+    "offline",
+    // "disconnect",
+    "connecting",
+    "connected",
+    "opening",
+    "open",
+    "online",
+    "closing",
+    "close",
+    "disconnecting",
+    "disconnect",
+    "offline",
+  ];
+  */
+  _status(status2, ...args) {
+    if (this.status === status2) return;
+    this.status = status2;
+    this.emit("status", status2, ...args);
+    this.emit(status2, ...args);
+  }
+  _ready(resumed = false) {
+    if (resumed) {
+      this.status = "online";
+    } else {
+      this._status("online", this.jid);
+    }
+  }
+  disconnect() {
+    return __async(this, null, function* () {
+      let el;
+      try {
+        el = yield this._closeStream();
+      } catch (err) {
+        __privateMethod(this, _Connection_instances, onStreamClosed_fn).call(this, err);
+      }
+      try {
+        yield this._closeSocket();
+      } catch (err) {
+        __privateMethod(this, _Connection_instances, onSocketClosed_fn).call(this, true, err);
+      }
+      return el;
+    });
+  }
+  /**
+   * Opens the socket then opens the stream
+   */
+  start() {
+    return __async(this, null, function* () {
+      if (this.status !== "offline") {
+        throw new Error("Connection is not offline");
+      }
+      const { service, domain, lang } = this.options;
+      yield this.connect(service);
+      const promiseOnline = promise(this, "online");
+      yield this.open({ domain, lang });
+      return promiseOnline;
+    });
+  }
+  /**
+   * Connects the socket
+   */
+  connect(service) {
+    return __async(this, null, function* () {
+      this._status("connecting", service);
+      const socket = new this.Socket();
+      this._attachSocket(socket);
+      socket.connect(this.socketParameters(service));
+      return promise(socket, "connect");
+    });
+  }
+  /**
+   * Disconnects the socket
+   * https://xmpp.org/rfcs/rfc6120.html#streams-close
+   * https://tools.ietf.org/html/rfc7395#section-3.6
+   */
+  _closeSocket() {
+    return __async(this, arguments, function* (timeout2 = this.timeout) {
+      this._status("disconnecting");
+      this.socket.end();
+      yield promise(this.socket, "close", "error", timeout2);
+    });
+  }
+  /**
+   * Opens the stream
+   */
+  open(options) {
+    return __async(this, null, function* () {
+      this._status("opening");
+      const { domain, lang } = options;
+      const headerElement = this.headerElement();
+      headerElement.attrs.to = domain;
+      headerElement.attrs["xml:lang"] = lang;
+      this.root = headerElement;
+      this._attachParser(new this.Parser());
+      yield this.write(this.header(headerElement));
+      return promise(this, "open", "error", this.timeout);
+    });
+  }
+  /**
+   * Closes the stream then closes the socket
+   * https://xmpp.org/rfcs/rfc6120.html#streams-close
+   * https://tools.ietf.org/html/rfc7395#section-3.6
+   */
+  stop() {
+    return __async(this, null, function* () {
+      const el = yield this.disconnect();
+      this._status("offline", el);
+      return el;
+    });
+  }
+  /**
+   * Closes the stream and wait for the server to close it
+   * https://xmpp.org/rfcs/rfc6120.html#streams-close
+   * https://tools.ietf.org/html/rfc7395#section-3.6
+   */
+  _closeStream() {
+    return __async(this, arguments, function* (timeout2 = this.timeout) {
+      yield __privateMethod(this, _Connection_instances, runHooks_fn).call(this, "close");
+      const fragment = this.footer(this.footerElement());
+      yield this.write(fragment);
+      this._status("closing");
+      return promise(this.parser, "end", "error", timeout2);
+    });
+  }
+  /**
+   * Restart the stream
+   * https://xmpp.org/rfcs/rfc6120.html#streams-negotiation-restart
+   */
+  restart() {
+    return __async(this, null, function* () {
+      this._detachParser();
+      const { domain, lang } = this.options;
+      return this.open({ domain, lang });
+    });
+  }
+  send(element) {
+    return __async(this, null, function* () {
+      element.parent = this.root;
+      yield this.write(element.toString());
+      this.emit("send", element);
+    });
+  }
+  sendReceive(element, timeout2 = this.timeout) {
+    return Promise.all([
+      this.send(element),
+      promise(this, "element", "error", timeout2)
+    ]).then(([, el]) => el);
+  }
+  write(string) {
+    return __async(this, null, function* () {
+      if (this.status === "closing") {
+        throw new Error("Connection is closing");
+      }
+      return new Promise((resolve5, reject) => {
+        this.socket.write(string, (err) => err ? reject(err) : resolve5());
+      });
+    });
+  }
+  isStanza(element) {
+    const { name } = element;
+    return name === "iq" || name === "message" || name === "presence";
+  }
+  isNonza(element) {
+    return !this.isStanza(element);
+  }
+  // Override
+  header(el) {
+    return el.toString();
+  }
+  // Override
+  headerElement() {
+    return new xml.Element("", {
+      version: "1.0",
+      xmlns: this.NS
+    });
+  }
+  // Override
+  footer(el) {
+    return el.toString();
+  }
+  // Override
+  footerElement() {
+  }
+  // Override
+  socketParameters() {
+  }
+  hook(event, handler) {
+    __privateMethod(this, _Connection_instances, assertHookEventName_fn).call(this, event);
+    if (!__privateGet(this, _hooks).has(event)) {
+      __privateGet(this, _hooks).set(event, /* @__PURE__ */ new Set());
+    }
+    __privateGet(this, _hooks).get(event).add([handler]);
+  }
+  unhook(event, handler) {
+    __privateMethod(this, _Connection_instances, assertHookEventName_fn).call(this, event);
+    const handlers = __privateGet(this, _hooks).get("event");
+    const item = [...handlers].find((item2) => item2.handler === handler);
+    handlers.remove(item);
+  }
+};
+_socketListeners = new WeakMap();
+_parserListeners = new WeakMap();
+_Connection_instances = new WeakSet();
+onParserError_fn = function(error) {
+  this._streamError("bad-format");
+  this._detachParser();
+  this.emit("error", error);
+};
+onSocketClosed_fn = function(dirty, reason) {
+  this._detachSocket();
+  this._status("disconnect", { clean: !dirty, reason });
+};
+onStreamClosed_fn = function(dirty, reason) {
+  this._detachParser();
+  this._status("close", { clean: !dirty, reason });
+};
+_hooks = new WeakMap();
+_hook_events = new WeakMap();
+assertHookEventName_fn = function(event) {
+  if (!__privateGet(this, _hook_events).has(event)) {
+    throw new Error(`Hook event name "${event}" is unknown.`);
+  }
+};
+runHooks_fn = function(event, ...args) {
+  return __async(this, null, function* () {
+    __privateMethod(this, _Connection_instances, assertHookEventName_fn).call(this, event);
+    const hooks = __privateGet(this, _hooks).get(event);
+    if (!hooks) return;
+    yield Promise.all(
+      [...hooks].map((_0) => __async(this, [_0], function* ([handler]) {
+        try {
+          yield handler(...args);
+        } catch (err) {
+          this.emit("error", err);
+        }
+      }))
+    );
+  });
+};
+Connection.prototype.NS = "";
+Connection.prototype.Socket = null;
+Connection.prototype.Parser = null;
+var connection_default = Connection;
+
+// node_modules/@xmpp/client-core/lib/Client.js
+var Client = class extends connection_default {
+  constructor(options) {
+    super(options);
+    this.transports = [];
+  }
+  send(element, ...args) {
+    return this.Transport.prototype.send.call(this, element, ...args);
+  }
+  sendMany(...args) {
+    return this.Transport.prototype.sendMany.call(this, ...args);
+  }
+  _findTransport(service) {
+    return this.transports.find((Transport) => {
+      try {
+        return Transport.prototype.socketParameters(service) !== void 0;
+      } catch (e) {
+        return false;
+      }
+    });
+  }
+  connect(service) {
+    const Transport = this._findTransport(service);
+    if (!Transport) {
+      throw new Error("No compatible connection method found.");
+    }
+    this.Transport = Transport;
+    this.Socket = Transport.prototype.Socket;
+    this.Parser = Transport.prototype.Parser;
+    return super.connect(service);
+  }
+  socketParameters(...args) {
+    return this.Transport.prototype.socketParameters(...args);
+  }
+  header(headerElement, ...args) {
+    var _a;
+    const from = this.isSecure() && ((_a = this.jid) == null ? void 0 : _a.bare().toString());
+    if (from) headerElement.attrs.from = from;
+    return this.Transport.prototype.header(headerElement, ...args);
+  }
+  headerElement(...args) {
+    return this.Transport.prototype.headerElement(...args);
+  }
+  footer(...args) {
+    return this.Transport.prototype.footer(...args);
+  }
+  footerElement(...args) {
+    return this.Transport.prototype.footerElement(...args);
+  }
+};
+Client.prototype.NS = "jabber:client";
+var Client_default = Client;
+
+// node_modules/@xmpp/reconnect/index.js
+var _onDisconnect;
+var Reconnect = class extends import_events.EventEmitter {
+  constructor(entity) {
+    super();
+    __privateAdd(this, _onDisconnect, () => {
+      this.scheduleReconnect();
+    });
+    this.delay = 1e3;
+    this.entity = entity;
+    this._timeout = null;
+  }
+  scheduleReconnect() {
+    const { entity, delay: delay2, _timeout } = this;
+    clearTimeout(_timeout);
+    this._timeout = setTimeout(() => __async(this, null, function* () {
+      if (entity.status !== "disconnect") {
+        return;
+      }
+      try {
+        yield this.reconnect();
+      } catch (e) {
+      }
+    }), delay2);
+  }
+  reconnect() {
+    return __async(this, null, function* () {
+      const { entity } = this;
+      this.emit("reconnecting");
+      const { service, domain, lang } = entity.options;
+      yield entity.connect(service);
+      yield entity.open({ domain, lang });
+      this.emit("reconnected");
+    });
+  }
+  start() {
+    const { entity } = this;
+    entity.on("disconnect", __privateGet(this, _onDisconnect));
+  }
+  stop() {
+    const { entity, _timeout } = this;
+    entity.removeListener("disconnect", __privateGet(this, _onDisconnect));
+    clearTimeout(_timeout);
+  }
+};
+_onDisconnect = new WeakMap();
+function reconnect({ entity }) {
+  const r = new Reconnect(entity);
+  r.start();
+  return r;
+}
+
+// node_modules/@xmpp/websocket/lib/Socket.js
+var CODE = "ECONNERROR";
+function isSecure(url) {
+  const uri = parseURI(url);
+  if (uri.protocol === "wss:") return true;
+  if (["localhost", "127.0.0.1", "::1"].includes(uri.hostname)) return true;
+  return false;
+}
+var _listeners;
+var Socket = class extends import_events.EventEmitter {
+  constructor() {
+    super(...arguments);
+    __privateAdd(this, _listeners, null);
+    __publicField(this, "socket", null);
+    __publicField(this, "url", null);
+    __publicField(this, "secure", false);
+  }
+  connect(url) {
+    this.url = url;
+    this.secure = isSecure(url);
+    this._attachSocket(new WebSocket(url, ["xmpp"]));
+  }
+  _attachSocket(socket) {
+    var _a;
+    this.socket = socket;
+    (_a = __privateGet(this, _listeners)) != null ? _a : __privateSet(this, _listeners, listeners({
+      open: () => this.emit("connect"),
+      message: ({ data }) => this.emit("data", data),
+      error: (event) => {
+        const { url } = this;
+        let { error } = event;
+        if (!error) {
+          error = new Error(event.message || `WebSocket ${CODE} ${url}`);
+          error.errno = CODE;
+          error.code = CODE;
+        }
+        error.event = event;
+        error.url = url;
+        this.emit("error", error);
+      },
+      close: (event) => {
+        this._detachSocket();
+        this.emit("close", !event.wasClean, event);
+      }
+    }));
+    __privateGet(this, _listeners).subscribe(this.socket);
+  }
+  _detachSocket() {
+    var _a;
+    this.url = null;
+    this.secure = false;
+    this.socket && ((_a = __privateGet(this, _listeners)) == null ? void 0 : _a.unsubscribe(this.socket));
+    this.socket = null;
+  }
+  end() {
+    this.socket.close();
+  }
+  write(data, fn) {
+    function done(err) {
+      if (!fn) return;
+      Promise.resolve().then(() => fn(err));
+    }
+    try {
+      this.socket.send(data);
+    } catch (err) {
+      done(err);
+      return;
+    }
+    done();
+  }
+};
+_listeners = new WeakMap();
+
+// node_modules/@xmpp/websocket/lib/FramedParser.js
+var FramedParser = class extends Parser_default {
+  onStartElement(name, attrs) {
+    const element = new import_Element2.default(name, attrs);
+    const { cursor } = this;
+    if (cursor) {
+      cursor.append(element);
+    }
+    this.cursor = element;
+  }
+  onEndElement(name) {
+    const { cursor } = this;
+    if (name !== cursor.name) {
+      this.emit("error", new XMLError(`${cursor.name} must be closed.`));
+      return;
+    }
+    if (cursor.parent) {
+      this.cursor = cursor.parent;
+      return;
+    }
+    if (cursor.is("open", "urn:ietf:params:xml:ns:xmpp-framing")) {
+      this.emit("start", cursor);
+    } else if (cursor.is("close", "urn:ietf:params:xml:ns:xmpp-framing")) {
+      this.emit("end", cursor);
+    } else {
+      this.emit("element", cursor);
+    }
+    this.cursor = null;
+  }
+};
+
+// node_modules/@xmpp/websocket/lib/Connection.js
+var NS_FRAMING = "urn:ietf:params:xml:ns:xmpp-framing";
+var ConnectionWebSocket = class extends connection_default {
+  send(element, ...args) {
+    var _a, _b;
+    (_b = (_a = element.attrs).xmlns) != null ? _b : _a.xmlns = this.NS;
+    return super.send(element, ...args);
+  }
+  sendMany(elements) {
+    return __async(this, null, function* () {
+      var _a, _b;
+      for (const element of elements) {
+        (_b = (_a = element.attrs).xmlns) != null ? _b : _a.xmlns = this.NS;
+        element.parent = this.root;
+        this.socket.write(element.toString());
+        this.emit("send", element);
+      }
+    });
+  }
+  // https://tools.ietf.org/html/rfc7395#section-3.6
+  footerElement() {
+    return new xml.Element("close", {
+      xmlns: NS_FRAMING
+    });
+  }
+  // https://tools.ietf.org/html/rfc7395#section-3.4
+  headerElement() {
+    const el = super.headerElement();
+    el.name = "open";
+    el.attrs.xmlns = NS_FRAMING;
+    return el;
+  }
+  socketParameters(service) {
+    return /^wss?:\/\//.test(service) ? service : void 0;
+  }
+};
+ConnectionWebSocket.prototype.Socket = Socket;
+ConnectionWebSocket.prototype.NS = "jabber:client";
+ConnectionWebSocket.prototype.Parser = FramedParser;
+var Connection_default = ConnectionWebSocket;
+
+// node_modules/@xmpp/websocket/index.js
+function websocket({ entity }) {
+  entity.transports.push(Connection_default);
+}
+
+// node_modules/@xmpp/connection-tcp/Socket.js
+var import_node_net = require("net");
+var Socket2 = class extends import_node_net.Socket {
+  constructor() {
+    super(...arguments);
+    __publicField(this, "secure", false);
+  }
+};
+
+// node_modules/@xmpp/connection-tcp/index.js
+var NS_STREAM2 = "http://etherx.jabber.org/streams";
+var ConnectionTCP = class extends connection_default {
+  sendMany(elements) {
+    return __async(this, null, function* () {
+      let fragment = "";
+      for (const element of elements) {
+        element.parent = this.root;
+        fragment += element.toString();
+      }
+      yield this.write(fragment);
+      for (const element of elements) {
+        this.emit("send", element);
+      }
+    });
+  }
+  socketParameters(service) {
+    const { port, hostname, protocol } = parseURI(service);
+    return protocol === "xmpp:" ? { port: port ? Number(port) : null, host: hostname } : void 0;
+  }
+  // https://xmpp.org/rfcs/rfc6120.html#streams-open
+  headerElement() {
+    const el = super.headerElement();
+    el.name = "stream:stream";
+    el.attrs["xmlns:stream"] = NS_STREAM2;
+    return el;
+  }
+  // https://xmpp.org/rfcs/rfc6120.html#streams-open
+  header(el) {
+    return `<?xml version='1.0'?>${el.toString().slice(0, -2)}>`;
+  }
+  // https://xmpp.org/rfcs/rfc6120.html#streams-close
+  footer() {
+    return "</stream:stream>";
+  }
+};
+ConnectionTCP.prototype.NS = NS_STREAM2;
+ConnectionTCP.prototype.Socket = Socket2;
+ConnectionTCP.prototype.Parser = Parser_default;
+var connection_tcp_default = ConnectionTCP;
+
+// node_modules/@xmpp/tcp/lib/Connection.js
+var ConnectionTCP2 = class extends connection_tcp_default {
+  socketParameters(service) {
+    const params = super.socketParameters(service);
+    if (!params) return params;
+    params.port = params.port || 5222;
+    return params;
+  }
+};
+ConnectionTCP2.prototype.NS = "jabber:client";
+var Connection_default2 = ConnectionTCP2;
+
+// node_modules/@xmpp/tcp/index.js
+function tcp({ entity }) {
+  entity.transports.push(Connection_default2);
+}
+
+// node_modules/@xmpp/tls/lib/Socket.js
+var import_node_tls = __toESM(require("tls"), 1);
+var _listeners2;
+var Socket3 = class extends import_events.EventEmitter {
+  constructor() {
+    super(...arguments);
+    __publicField(this, "timeout", null);
+    __privateAdd(this, _listeners2, null);
+    __publicField(this, "socket", null);
+    __publicField(this, "secure", true);
+  }
+  connect(...args) {
+    this._attachSocket(import_node_tls.default.connect(...args));
+  }
+  _attachSocket(socket) {
+    var _a;
+    this.socket = socket;
+    (_a = __privateGet(this, _listeners2)) != null ? _a : __privateSet(this, _listeners2, listeners({
+      close: () => {
+        this._detachSocket();
+        this.emit("close");
+      },
+      data: (data) => {
+        this.emit("data", data);
+      },
+      error: (err) => {
+        this.emit("error", err);
+      },
+      secureConnect: () => {
+        if (this.socket.getProtocol() !== "TLSv1.3") {
+          return this.emit("connect");
+        }
+        this.timeout = setTimeout(() => {
+          this.emit("connect");
+        }, 1);
+      }
+    }));
+    __privateGet(this, _listeners2).subscribe(this.socket);
+  }
+  _detachSocket() {
+    __privateGet(this, _listeners2).unsubscribe(this.socket);
+    this.socket = null;
+  }
+  end() {
+    this.socket.end();
+  }
+  write(data, fn) {
+    this.socket.write(data, fn);
+  }
+};
+_listeners2 = new WeakMap();
+var Socket_default = Socket3;
+
+// node_modules/@xmpp/tls/lib/Connection.js
+var ConnectionTLS = class extends connection_tcp_default {
+  socketParameters(service) {
+    const { port, hostname, protocol } = parseURI(service);
+    return protocol === "xmpps:" ? {
+      port: Number(port) || 5223,
+      host: hostname
+    } : void 0;
+  }
+};
+ConnectionTLS.prototype.Socket = Socket_default;
+ConnectionTLS.prototype.NS = "jabber:client";
+var Connection_default3 = ConnectionTLS;
+
+// node_modules/@xmpp/tls/index.js
+function tls2({ entity }) {
+  entity.transports.push(Connection_default3);
+}
+
+// node_modules/@xmpp/middleware/index.js
+var import_koa_compose = __toESM(require_koa_compose(), 1);
+
+// node_modules/@xmpp/middleware/lib/Context.js
+var Context = class {
+  constructor(entity, stanza) {
+    this.stanza = stanza;
+    this.entity = entity;
+    const { name, attrs } = stanza;
+    const { type, id: id2 } = attrs;
+    this.name = name;
+    this.id = id2 || "";
+    if (name === "message") {
+      this.type = type || "normal";
+    } else if (name === "presence") {
+      this.type = type || "available";
+    } else {
+      this.type = type || "";
+    }
+    this.from = null;
+    this.to = null;
+    this.local = "";
+    this.domain = "";
+    this.resource = "";
+  }
+};
+
+// node_modules/@xmpp/middleware/lib/IncomingContext.js
+var IncomingContext = class extends Context {
+  constructor(entity, stanza) {
+    var _a;
+    super(entity, stanza);
+    const { jid: jid2 } = entity;
+    const { domain } = (_a = entity.options) != null ? _a : {};
+    const to = stanza.attrs.to || (jid2 == null ? void 0 : jid2.toString());
+    const from = stanza.attrs.from || domain;
+    if (to) this.to = new jid_default(to);
+    if (from) {
+      this.from = new jid_default(from);
+      this.local = this.from.local;
+      this.domain = this.from.domain;
+      this.resource = this.from.resource;
+    }
+  }
+};
+
+// node_modules/@xmpp/middleware/lib/OutgoingContext.js
+var OutgoingContext = class extends Context {
+  constructor(entity, stanza) {
+    var _a;
+    super(entity, stanza);
+    const { jid: jid2 } = entity;
+    const { domain } = (_a = entity.options) != null ? _a : {};
+    const from = stanza.attrs.from || (jid2 == null ? void 0 : jid2.toString());
+    const to = stanza.attrs.to || domain;
+    if (from) this.from = new jid_default(from);
+    if (to) {
+      this.to = new jid_default(to);
+      this.local = this.to.local;
+      this.domain = this.to.domain;
+      this.resource = this.to.resource;
+    }
+  }
+};
+
+// node_modules/@xmpp/middleware/index.js
+function listener(entity, middleware2, Context2) {
+  return (stanza) => {
+    const ctx = new Context2(entity, stanza);
+    return (0, import_koa_compose.default)(middleware2)(ctx);
+  };
+}
+function errorHandler(entity) {
+  return (ctx, next) => {
+    next().then((reply) => reply && entity.send(reply)).catch((err) => entity.emit("error", err));
+  };
+}
+function middleware({ entity }) {
+  const incoming = [errorHandler(entity)];
+  const outgoing = [];
+  const incomingListener = listener(entity, incoming, IncomingContext);
+  const outgoingListener = listener(entity, outgoing, OutgoingContext);
+  entity.on("element", incomingListener);
+  entity.on("send", outgoingListener);
+  return {
+    use(fn) {
+      incoming.push(fn);
+      return fn;
+    },
+    filter(fn) {
+      outgoing.push(fn);
+      return fn;
+    }
+  };
+}
+
+// node_modules/@xmpp/stream-features/index.js
+function streamFeatures({ middleware: middleware2 }) {
+  function use(name, xmlns, handler) {
+    return middleware2.use((ctx, next) => {
+      const { stanza } = ctx;
+      if (!stanza.is("features", "http://etherx.jabber.org/streams"))
+        return next();
+      const feature = stanza.getChild(name, xmlns);
+      if (!feature) return next();
+      return handler(ctx, next, feature);
+    });
+  }
+  return {
+    use
+  };
+}
+
+// node_modules/@xmpp/id/index.js
+function id() {
+  let i;
+  while (!i) {
+    i = Math.random().toString(36).slice(2, 12);
+  }
+  return i;
+}
+
+// node_modules/@xmpp/middleware/lib/StanzaError.js
+var StanzaError = class extends error_default {
+  constructor(condition, text, application, type) {
+    super(condition, text, application);
+    this.type = type;
+    this.name = "StanzaError";
+  }
+  static fromElement(element) {
+    const error = super.fromElement(element);
+    error.type = element.attrs.type;
+    return error;
+  }
+};
+var StanzaError_default = StanzaError;
+
+// node_modules/@xmpp/iq/caller.js
+function isReply({ name, type }) {
+  if (name !== "iq") return false;
+  if (type !== "error" && type !== "result") return false;
+  return true;
+}
+var IQCaller = class {
+  constructor({ entity, middleware: middleware2 }) {
+    this.handlers = /* @__PURE__ */ new Map();
+    this.entity = entity;
+    this.middleware = middleware2;
+  }
+  start() {
+    this.middleware.use(this._route.bind(this));
+  }
+  _route({ type, name, id: id2, stanza }, next) {
+    if (!isReply({ name, type })) return next();
+    const deferred = this.handlers.get(id2);
+    if (!deferred) {
+      return next();
+    }
+    if (type === "error") {
+      deferred.reject(StanzaError_default.fromElement(stanza.getChild("error")));
+    } else {
+      deferred.resolve(stanza);
+    }
+    this.handlers.delete(id2);
+  }
+  request(_0) {
+    return __async(this, arguments, function* (stanza, timeout2 = 30 * 1e3) {
+      if (!stanza.attrs.id) {
+        stanza.attrs.id = id();
+      }
+      const deferred = new Deferred();
+      this.handlers.set(stanza.attrs.id, deferred);
+      try {
+        yield this.entity.send(stanza);
+        yield timeout(deferred.promise, timeout2);
+      } catch (err) {
+        this.handlers.delete(stanza.attrs.id);
+        throw err;
+      }
+      return deferred.promise;
+    });
+  }
+  _childRequest(type, element, to, ...args) {
+    const {
+      name,
+      attrs: { xmlns }
+    } = element;
+    return this.request(xml("iq", { type, to }, element), ...args).then(
+      (stanza) => stanza.getChild(name, xmlns)
+    );
+  }
+  get(...args) {
+    return __async(this, null, function* () {
+      return this._childRequest("get", ...args);
+    });
+  }
+  set(...args) {
+    return __async(this, null, function* () {
+      return this._childRequest("set", ...args);
+    });
+  }
+};
+function iqCaller(...args) {
+  const iqCaller2 = new IQCaller(...args);
+  iqCaller2.start();
+  return iqCaller2;
+}
+
+// node_modules/@xmpp/iq/callee.js
+var NS_STANZA = "urn:ietf:params:xml:ns:xmpp-stanzas";
+function isQuery({ name, type }) {
+  if (name !== "iq") return false;
+  if (type === "error" || type === "result") return false;
+  return true;
+}
+function isValidQuery({ type }, children, child2) {
+  if (type !== "get" && type !== "set") return false;
+  if (children.length !== 1) return false;
+  if (!child2) return false;
+  return true;
+}
+function buildReply({ stanza }) {
+  return xml("iq", {
+    to: stanza.attrs.from,
+    from: stanza.attrs.to,
+    id: stanza.attrs.id
+  });
+}
+function buildReplyResult(ctx, child2) {
+  const reply = buildReply(ctx);
+  reply.attrs.type = "result";
+  if (child2) {
+    reply.append(child2);
+  }
+  return reply;
+}
+function buildReplyError(ctx, error, child2) {
+  const reply = buildReply(ctx);
+  reply.attrs.type = "error";
+  if (child2) {
+    reply.append(child2);
+  }
+  reply.append(error);
+  return reply;
+}
+function buildError(type, condition) {
+  return xml("error", { type }, xml(condition, NS_STANZA));
+}
+function iqHandler(entity) {
+  return function iqHandler2(ctx, next) {
+    return __async(this, null, function* () {
+      if (!isQuery(ctx)) return next();
+      const { stanza } = ctx;
+      const children = stanza.getChildElements();
+      const [child2] = children;
+      if (!isValidQuery(ctx, children, child2)) {
+        return buildReplyError(ctx, buildError("modify", "bad-request"), child2);
+      }
+      ctx.element = child2;
+      let reply;
+      try {
+        reply = yield next();
+      } catch (err) {
+        entity.emit("error", err);
+        reply = buildError("cancel", "internal-server-error");
+      }
+      if (!reply) {
+        reply = buildError("cancel", "service-unavailable");
+      }
+      if (reply instanceof xml.Element && reply.is("error")) {
+        return buildReplyError(ctx, reply, child2);
+      }
+      return buildReplyResult(
+        ctx,
+        reply instanceof xml.Element ? reply : void 0
+      );
+    });
+  };
+}
+function route(type, ns, name, handler) {
+  return (ctx, next) => {
+    if (ctx.type !== type | !ctx.element || !ctx.element.is(name, ns))
+      return next();
+    return handler(ctx, next);
+  };
+}
+function iqCallee({ middleware: middleware2, entity }) {
+  middleware2.use(iqHandler(entity));
+  return {
+    get(ns, name, handler) {
+      middleware2.use(route("get", ns, name, handler));
+    },
+    set(ns, name, handler) {
+      middleware2.use(route("set", ns, name, handler));
+    }
+  };
+}
+
+// node_modules/@xmpp/resolve/lib/dns.js
+var import_node_dns = __toESM(require("dns"), 1);
+var IGNORE_CODES = ["ENOTFOUND", "ENODATA"];
+function lookup(domain, options = {}) {
+  options.all = true;
+  return new Promise((resolve5, reject) => {
+    import_node_dns.default.lookup(domain, options, (err, addresses) => {
+      if (err) {
+        return reject(err);
+      }
+      const result = [];
+      for (const { family, address } of addresses) {
+        const uri = `://${family === 4 ? address : "[" + address + "]"}:`;
+        result.push(
+          {
+            family,
+            address,
+            uri: "xmpps" + uri + "5223"
+          },
+          {
+            family,
+            address,
+            uri: "xmpp" + uri + "5222"
+          }
+        );
+      }
+      resolve5(result);
+    });
+  });
+}
+function resolveSrv(domain, { service, protocol }) {
+  return new Promise((resolve5, reject) => {
+    import_node_dns.default.resolveSrv(`_${service}._${protocol}.${domain}`, (err, records2) => {
+      if (err && IGNORE_CODES.includes(err.code)) {
+        resolve5([]);
+      } else if (err) {
+        reject(err);
+      } else {
+        resolve5(
+          records2.map((record) => {
+            return Object.assign(record, { service, protocol });
+          })
+        );
+      }
+    });
+  });
+}
+function sortSrv(records2) {
+  return records2.toSorted((a, b) => {
+    const priority = a.priority - b.priority;
+    if (priority !== 0) {
+      return priority;
+    }
+    const weight = b.weight - a.weight;
+    if (weight !== 0) {
+      return weight;
+    }
+    return 0;
+  });
+}
+function lookupSrvs(srvs, options) {
+  const addresses = [];
+  return Promise.all(
+    srvs.map((srv) => __async(null, null, function* () {
+      const srvAddresses = yield lookup(srv.name, options);
+      for (const address of srvAddresses) {
+        const { port, service } = srv;
+        const addr = address.address;
+        addresses.push(__spreadProps(__spreadValues(__spreadValues({}, address), srv), {
+          uri: `${service.split("-")[0]}://${address.family === 6 ? "[" + addr + "]" : addr}:${port}`
+        }));
+      }
+    }))
+  ).then(() => addresses);
+}
+function resolve(domain, options = {}) {
+  if (!options.srv) {
+    options.srv = [
+      {
+        service: "xmpps-client",
+        protocol: "tcp"
+      },
+      {
+        service: "xmpp-client",
+        protocol: "tcp"
+      },
+      {
+        service: "xmpps-server",
+        protocol: "tcp"
+      },
+      {
+        service: "xmpp-server",
+        protocol: "tcp"
+      },
+      {
+        service: "stun",
+        protocol: "tcp"
+      },
+      {
+        service: "stun",
+        protocol: "udp"
+      },
+      {
+        service: "stuns ",
+        protcol: "tcp"
+      },
+      {
+        service: "turn",
+        protocol: "tcp"
+      },
+      {
+        service: "turn",
+        protocol: "udp"
+      },
+      {
+        service: "turns",
+        protcol: "tcp"
+      }
+    ];
+  }
+  const family = { options };
+  return lookup(domain, options).then((addresses) => {
+    return Promise.all(
+      options.srv.map((srv) => {
+        return resolveSrv(domain, __spreadProps(__spreadValues({}, srv), { family })).then((records2) => {
+          return lookupSrvs(records2, options);
+        });
+      })
+    ).then((srvs) => [...sortSrv(srvs.flat()), ...addresses]);
+  });
+}
+
+// node_modules/@xmpp/xml/lib/parse.js
+function parse2(data) {
+  const p = new Parser_default();
+  let result = null;
+  let error = null;
+  p.on("start", (el) => {
+    result = el;
+  });
+  p.on("element", (el) => {
+    result.append(el);
+  });
+  p.on("error", (err) => {
+    error = err;
+  });
+  p.write(data);
+  p.end();
+  if (error) {
+    throw error;
+  } else {
+    return result;
+  }
+}
+
+// node_modules/@xmpp/resolve/lib/alt-connections.js
+function isSecure2(uri) {
+  return uri.startsWith("https") || uri.startsWith("wss");
+}
+function compare(a, b) {
+  let secure;
+  if (isSecure2(a.uri) && !isSecure2(b.uri)) {
+    secure = -1;
+  } else if (!isSecure2(a.uri) && isSecure2(b.uri)) {
+    secure = 1;
+  } else {
+    secure = 0;
+  }
+  if (secure !== 0) {
+    return secure;
+  }
+  let method;
+  if (a.method === b.method) {
+    method = 0;
+  } else if (a.method === "websocket") {
+    method = -1;
+  } else if (b.method === "websocket") {
+    method = 1;
+  } else if (a.method === "xbosh") {
+    method = -1;
+  } else if (b.method === "xbosh") {
+    method = 1;
+  } else if (a.method === "httppoll") {
+    method = -1;
+  } else if (b.method === "httppoll") {
+    method = 1;
+  } else {
+    method = 0;
+  }
+  if (method !== 0) {
+    return method;
+  }
+  return 0;
+}
+
+// node_modules/@xmpp/resolve/lib/http.js
+function resolve2(domain) {
+  return fetch(`https://${domain}/.well-known/host-meta`).then((res) => res.text()).then((res) => {
+    return parse2(res).getChildren("Link").filter(
+      (link) => [
+        "urn:xmpp:alt-connections:websocket",
+        "urn:xmpp:alt-connections:httppoll",
+        "urn:xmpp:alt-connections:xbosh"
+      ].includes(link.attrs.rel)
+    ).map(({ attrs }) => ({
+      rel: attrs.rel,
+      href: attrs.href,
+      method: attrs.rel.split(":").pop(),
+      uri: attrs.href
+    })).toSorted(compare);
+  }).catch(() => {
+    return [];
+  });
+}
+
+// node_modules/@xmpp/resolve/resolve.js
+function resolve3(...args) {
+  return Promise.all([
+    resolve ? resolve(...args) : Promise.resolve([]),
+    resolve2(...args)
+  ]).then(([records2, endpoints]) => [...records2, ...endpoints]);
+}
+
+// node_modules/@xmpp/resolve/index.js
+function fetchURIs(domain) {
+  return __async(this, null, function* () {
+    const result = yield resolve3(domain, {
+      srv: [
+        {
+          service: "xmpps-client",
+          protocol: "tcp"
+        },
+        {
+          service: "xmpp-client",
+          protocol: "tcp"
+        }
+      ]
+    });
+    return [
+      // Remove duplicates
+      ...new Set(result.map((record) => record.uri))
+    ];
+  });
+}
+function filterSupportedURIs(entity, uris) {
+  return uris.filter((uri) => entity._findTransport(uri));
+}
+function fallbackConnect(entity, uris) {
+  return __async(this, null, function* () {
+    if (uris.length === 0) {
+      throw new Error("Couldn't connect");
+    }
+    const uri = uris.shift();
+    const Transport = entity._findTransport(uri);
+    if (!Transport) {
+      return fallbackConnect(entity, uris);
+    }
+    entity._status("connecting", uri);
+    const params = Transport.prototype.socketParameters(uri);
+    const socket = new Transport.prototype.Socket();
+    try {
+      socket.connect(params);
+      yield promise(socket, "connect");
+    } catch (e) {
+      return fallbackConnect(entity, uris);
+    }
+    entity._attachSocket(socket);
+    socket.emit("connect");
+    entity.Transport = Transport;
+    entity.Socket = Transport.prototype.Socket;
+    entity.Parser = Transport.prototype.Parser;
+  });
+}
+function resolve4({ entity }) {
+  const _connect = entity.connect;
+  entity.connect = function connect(service) {
+    return __async(this, null, function* () {
+      if (!service || /:\/\//.test(service)) {
+        return _connect.call(this, service);
+      }
+      const uris = filterSupportedURIs(entity, yield fetchURIs(service));
+      if (uris.length === 0) {
+        throw new Error("No compatible transport found.");
+      }
+      try {
+        yield fallbackConnect(entity, uris);
+      } catch (err) {
+        yield entity.disconnect();
+        entity._status("disconnect");
+        throw err;
+      }
+    });
+  };
+}
+
+// node_modules/@xmpp/starttls/starttls.js
+var import_node_tls2 = __toESM(require("tls"), 1);
+var import_node_net2 = __toESM(require("net"), 1);
+function canUpgrade(socket) {
+  return socket instanceof import_node_net2.default.Socket && !(socket instanceof import_node_tls2.default.TLSSocket);
+}
+function upgrade(_0) {
+  return __async(this, arguments, function* (socket, options = {}) {
+    const tlsSocket = new Socket_default();
+    tlsSocket.connect(__spreadValues({ socket }, options));
+    yield promise(tlsSocket, "connect");
+    return tlsSocket;
+  });
+}
+
+// node_modules/@xmpp/starttls/index.js
+var NS = "urn:ietf:params:xml:ns:xmpp-tls";
+function negotiate(entity) {
+  return __async(this, null, function* () {
+    const element = yield entity.sendReceive(xml("starttls", { xmlns: NS }));
+    if (element.is("proceed", NS)) {
+      return element;
+    }
+    throw new Error("STARTTLS_FAILURE");
+  });
+}
+function starttls({ streamFeatures: streamFeatures2 }) {
+  return streamFeatures2.use("starttls", NS, (_0, _1) => __async(null, [_0, _1], function* ({ entity }, next) {
+    const { socket, options } = entity;
+    if (!canUpgrade(socket)) {
+      return next();
+    }
+    yield negotiate(entity);
+    const tlsSocket = yield upgrade(socket, { host: options.domain });
+    entity._attachSocket(tlsSocket);
+    yield entity.restart();
+  }));
+}
+
+// node_modules/@xmpp/base64/index.js
+function encode(string) {
+  return globalThis.btoa(string);
+}
+function decode(string) {
+  return globalThis.atob(string);
+}
+
+// node_modules/@xmpp/sasl/lib/SASLError.js
+var SASLError = class extends error_default {
+  constructor(...args) {
+    super(...args);
+    this.name = "SASLError";
+  }
+};
+var SASLError_default = SASLError;
+
+// node_modules/@xmpp/sasl/index.js
+var NS2 = "urn:ietf:params:xml:ns:xmpp-sasl";
+function getAvailableMechanisms(element, NS8, saslFactory) {
+  const offered = new Set(
+    element.getChildren("mechanism", NS8).map((m) => m.text())
+  );
+  const supported = saslFactory._mechs.map(({ name }) => name);
+  return supported.filter((mech4) => offered.has(mech4));
+}
+function authenticate(_0) {
+  return __async(this, arguments, function* ({ saslFactory, entity, mechanism, credentials }) {
+    const mech4 = saslFactory.create([mechanism]);
+    if (!mech4) {
+      throw new Error(`SASL: Mechanism ${mechanism} not found.`);
+    }
+    const { domain } = entity.options;
+    const creds = __spreadValues({
+      username: null,
+      password: null,
+      server: domain,
+      host: domain,
+      realm: domain,
+      serviceType: "xmpp",
+      serviceName: domain
+    }, credentials);
+    yield procedure(
+      entity,
+      mech4.clientFirst && xml(
+        "auth",
+        { xmlns: NS2, mechanism: mech4.name },
+        encode(yield mech4.response(creds))
+      ),
+      (element, done) => __async(null, null, function* () {
+        if (element.getNS() !== NS2) return;
+        if (element.name === "challenge") {
+          yield mech4.challenge(decode(element.text()));
+          const resp = yield mech4.response(creds);
+          yield entity.send(
+            xml(
+              "response",
+              { xmlns: NS2, mechanism: mech4.name },
+              typeof resp === "string" ? encode(resp) : ""
+            )
+          );
+          return;
+        }
+        if (element.name === "failure") {
+          throw SASLError_default.fromElement(element);
+        }
+        if (element.name === "success") {
+          return done();
+        }
+      })
+    );
+  });
+}
+function sasl({ streamFeatures: streamFeatures2, saslFactory }, onAuthenticate) {
+  streamFeatures2.use("mechanisms", NS2, (_0, _1, _2) => __async(null, [_0, _1, _2], function* ({ entity }, _next, element) {
+    const mechanisms = getAvailableMechanisms(element, NS2, saslFactory);
+    if (mechanisms.length === 0) {
+      throw new SASLError_default("SASL: No compatible mechanism available.");
+    }
+    function done(credentials, mechanism) {
+      return __async(this, null, function* () {
+        yield authenticate({
+          saslFactory,
+          entity,
+          mechanism,
+          credentials
+        });
+      });
+    }
+    yield onAuthenticate(done, mechanisms, null, entity);
+    yield entity.restart();
+  }));
+}
+
+// node_modules/@xmpp/sasl2/index.js
+var NS3 = "urn:xmpp:sasl:2";
+function authenticate2(_0) {
+  return __async(this, arguments, function* ({
+    saslFactory,
+    entity,
+    mechanism,
+    credentials,
+    userAgent,
+    streamFeatures: streamFeatures2,
+    features
+  }) {
+    const mech4 = saslFactory.create([mechanism]);
+    if (!mech4) {
+      throw new Error(`SASL: Mechanism ${mechanism} not found.`);
+    }
+    const { domain } = entity.options;
+    const creds = __spreadValues({
+      username: null,
+      password: null,
+      server: domain,
+      host: domain,
+      realm: domain,
+      serviceType: "xmpp",
+      serviceName: domain
+    }, credentials);
+    yield procedure(
+      entity,
+      xml("authenticate", { xmlns: NS3, mechanism: mech4.name }, [
+        mech4.clientFirst && xml("initial-response", {}, encode(yield mech4.response(creds))),
+        userAgent,
+        ...streamFeatures2
+      ]),
+      (element, done) => __async(null, null, function* () {
+        var _a, _b;
+        if (element.getNS() !== NS3) return;
+        if (element.name === "challenge") {
+          yield mech4.challenge(decode(element.text()));
+          const resp = yield mech4.response(creds);
+          yield entity.send(
+            xml(
+              "response",
+              { xmlns: NS3, mechanism: mech4.name },
+              typeof resp === "string" ? encode(resp) : ""
+            )
+          );
+          return;
+        }
+        if (element.name === "failure") {
+          throw SASLError_default.fromElement(element);
+        }
+        if (element.name === "continue") {
+          throw new Error("SASL continue is not supported yet");
+        }
+        if (element.name === "success") {
+          const additionalData = (_a = element.getChild("additional-data")) == null ? void 0 : _a.text();
+          if (additionalData && mech4.final) {
+            yield mech4.final(decode(additionalData));
+          }
+          const aid = element.getChildText("authorization-identifier");
+          if (aid) {
+            entity._jid(aid);
+          }
+          for (const child2 of element.getChildElements()) {
+            const feature = features.get(child2.getNS());
+            (_b = feature == null ? void 0 : feature[1]) == null ? void 0 : _b.call(feature, child2);
+          }
+          return done();
+        }
+      })
+    );
+  });
+}
+function sasl2({ streamFeatures: streamFeatures2, saslFactory }, onAuthenticate) {
+  const features = /* @__PURE__ */ new Map();
+  let fast2;
+  streamFeatures2.use(
+    "authentication",
+    NS3,
+    (_0, _1, _2) => __async(null, [_0, _1, _2], function* ({ entity }, _next, element) {
+      const mechanisms = getAvailableMechanisms(element, NS3, saslFactory);
+      const streamFeatures3 = yield getStreamFeatures({ element, features });
+      const fast_available = !!(fast2 == null ? void 0 : fast2.mechanism);
+      if (mechanisms.length === 0 && !fast_available) {
+        throw new SASLError_default("SASL: No compatible mechanism available.");
+      }
+      yield onAuthenticate(
+        done,
+        mechanisms,
+        fast_available ? fast2 : null,
+        entity
+      );
+      function done(credentials, mechanism, userAgent) {
+        return __async(this, null, function* () {
+          const success = yield fast2.auth({
+            authenticate: authenticate2,
+            entity,
+            userAgent,
+            streamFeatures: streamFeatures3,
+            features,
+            credentials
+          });
+          if (success) return;
+          yield authenticate2({
+            entity,
+            userAgent,
+            streamFeatures: streamFeatures3,
+            features,
+            saslFactory,
+            mechanism,
+            credentials
+          });
+        });
+      }
+    })
+  );
+  return {
+    use(ns, req, res) {
+      features.set(ns, [req, res]);
+    },
+    setup({ fast: _fast }) {
+      fast2 = _fast;
+    }
+  };
+}
+function getStreamFeatures(_0) {
+  return __async(this, arguments, function* ({ element, features }) {
+    const promises = [];
+    const inline = element.getChild("inline");
+    if (!inline) return promises;
+    for (const element2 of inline.getChildElements()) {
+      const xmlns = element2.getNS();
+      const feature = features.get(xmlns);
+      if (!feature) continue;
+      promises.push(feature[0](element2));
+    }
+    return Promise.all(promises);
+  });
+}
+
+// node_modules/@xmpp/resource-binding/index.js
+var NS4 = "urn:ietf:params:xml:ns:xmpp-bind";
+function makeBindElement(resource) {
+  return xml("bind", { xmlns: NS4 }, resource && xml("resource", {}, resource));
+}
+function bind(entity, iqCaller2, resource) {
+  return __async(this, null, function* () {
+    const result = yield iqCaller2.set(makeBindElement(resource));
+    const jid2 = result.getChildText("jid");
+    entity._jid(jid2);
+    entity._ready(false);
+    return jid2;
+  });
+}
+function route2({ iqCaller: iqCaller2 }, resource) {
+  return (_0, _1) => __async(null, [_0, _1], function* ({ entity }, next) {
+    resource = typeof resource === "function" ? yield resource() : resource;
+    yield bind(entity, iqCaller2, resource);
+    next();
+  });
+}
+function resourceBinding({ streamFeatures: streamFeatures2, iqCaller: iqCaller2 }, resource) {
+  streamFeatures2.use("bind", NS4, route2({ iqCaller: iqCaller2 }, resource));
+}
+
+// node_modules/@xmpp/time/index.js
+function datetime(d = /* @__PURE__ */ new Date()) {
+  if (typeof d === "string") {
+    d = new Date(d);
+  }
+  return new Date(d).toISOString().split(".")[0] + "Z";
+}
+
+// node_modules/@xmpp/stream-management/bind2.js
+function setupBind2({ bind2: bind22, sm, failed, enabled }) {
+  bind22.use(
+    NS5,
+    // https://xmpp.org/extensions/xep-0198.html#inline-examples
+    (_element) => {
+      return makeEnableElement({ sm });
+    },
+    (element) => __async(null, null, function* () {
+      if (element.is("enabled")) {
+        enabled(element.attrs);
+      } else if (element.is("failed")) {
+        failed();
+      }
+    })
+  );
+}
+
+// node_modules/@xmpp/stream-management/sasl2.js
+function setupSasl2({ sasl2: sasl22, sm, failed, resumed }) {
+  sasl22.use(
+    NS5,
+    (element) => {
+      if (!element.is("sm")) return;
+      if (sm.id) return makeResumeElement({ sm });
+    },
+    (element) => {
+      if (element.is("resumed")) {
+        resumed(element);
+      } else if (element.is("failed")) {
+        failed();
+      }
+    }
+  );
+}
+
+// node_modules/@xmpp/stream-management/stream-feature.js
+function setupStreamFeature({
+  streamFeatures: streamFeatures2,
+  sm,
+  entity,
+  resumed,
+  failed,
+  enabled
+}) {
+  streamFeatures2.use("sm", NS5, (context, next) => __async(null, null, function* () {
+    if (sm.id) {
+      try {
+        const element = yield resume(entity, sm);
+        yield resumed(element);
+        return;
+      } catch (e) {
+        failed();
+      }
+    }
+    yield next();
+    const promiseEnable = enable(entity, sm);
+    if (sm.outbound_q.length > 0) {
+      throw new Error(
+        "Stream Management assertion failure, queue should be empty after enable"
+      );
+    }
+    sm.outbound = 0;
+    try {
+      const response2 = yield promiseEnable;
+      enabled(response2.attrs);
+    } catch (e) {
+      sm.enabled = false;
+      sm.enableSent = false;
+    }
+  }));
+}
+function enable(entity, sm) {
+  return procedure(entity, makeEnableElement({ sm }), (element, done) => {
+    if (element.is("enabled", NS5)) {
+      return done(element);
+    } else if (element.is("failed", NS5)) {
+      throw error_default.fromElement(element);
+    }
+  });
+}
+function resume(entity, sm) {
+  return __async(this, null, function* () {
+    return procedure(entity, makeResumeElement({ sm }), (element, done) => {
+      if (element.is("resumed", NS5)) {
+        return done(element);
+      } else if (element.is("failed", NS5)) {
+        throw error_default.fromElement(element);
+      }
+    });
+  });
+}
+
+// node_modules/@xmpp/stream-management/index.js
+var NS5 = "urn:xmpp:sm:3";
+function makeEnableElement({ sm }) {
+  return xml("enable", {
+    xmlns: NS5,
+    max: sm.preferredMaximum,
+    resume: "true"
+  });
+}
+function makeResumeElement({ sm }) {
+  return xml("resume", { xmlns: NS5, h: sm.inbound, previd: sm.id });
+}
+function streamManagement({
+  streamFeatures: streamFeatures2,
+  entity,
+  middleware: middleware2,
+  bind2: bind22,
+  sasl2: sasl22
+}) {
+  let timeoutTimeout = null;
+  let requestAckTimeout = null;
+  let requestAckDebounce = null;
+  const sm = new import_events.EventEmitter();
+  Object.assign(sm, {
+    preferredMaximum: null,
+    enabled: false,
+    enableSent: false,
+    id: "",
+    outbound_q: [],
+    outbound: 0,
+    inbound: 0,
+    max: null,
+    timeout: 6e4,
+    requestAckInterval: 3e4,
+    requestAckDebounce: 250
+  });
+  function sendAck() {
+    return __async(this, null, function* () {
+      try {
+        yield entity.send(xml("a", { xmlns: NS5, h: sm.inbound }));
+      } catch (e) {
+      }
+    });
+  }
+  entity.on("disconnect", () => {
+    clearTimeout(timeoutTimeout);
+    clearTimeout(requestAckTimeout);
+    clearTimeout(requestAckDebounce);
+    sm.enabled = false;
+    sm.enableSent = false;
+  });
+  entity.hook("close", () => __async(null, null, function* () {
+    if (!sm.enabled) return;
+    yield sendAck();
+  }));
+  function resumed(resumed2) {
+    return __async(this, null, function* () {
+      sm.enabled = true;
+      ackQueue(+resumed2.attrs.h);
+      let q = sm.outbound_q;
+      sm.outbound_q = [];
+      yield entity.sendMany(q.map((item) => queueToStanza({ entity, item })));
+      sm.emit("resumed");
+      entity._ready(true);
+      scheduleRequestAck();
+    });
+  }
+  function failed() {
+    sm.enabled = false;
+    sm.enableSent = false;
+    sm.id = "";
+    failQueue();
+  }
+  function ackQueue(n) {
+    const oldOutbound = sm.outbound;
+    for (let i = 0; i < +n - oldOutbound; i++) {
+      const item = sm.outbound_q.shift();
+      sm.outbound++;
+      sm.emit("ack", item.stanza);
+    }
+  }
+  function failQueue() {
+    let item;
+    while (item = sm.outbound_q.shift()) {
+      sm.emit("fail", item.stanza);
+    }
+    sm.outbound = 0;
+  }
+  function enabled({ id: id2, max }) {
+    sm.enabled = true;
+    sm.id = id2;
+    sm.max = max;
+    sm.inbound = 0;
+    scheduleRequestAck();
+  }
+  entity.on("offline", () => {
+    failQueue();
+    sm.inbound = 0;
+    sm.enabled = false;
+    sm.enableSent = false;
+    sm.id = "";
+  });
+  middleware2.use((context, next) => __async(null, null, function* () {
+    const { stanza } = context;
+    clearTimeout(timeoutTimeout);
+    timeoutTimeout = null;
+    if (["presence", "message", "iq"].includes(stanza.name)) {
+      sm.inbound += 1;
+    } else if (stanza.is("r", NS5)) {
+      yield sendAck();
+    } else if (stanza.is("a", NS5)) {
+      ackQueue(+stanza.attrs.h);
+    }
+    scheduleRequestAck();
+    return next();
+  }));
+  if (bind22) {
+    setupBind2({ bind2: bind22, sm, failed, enabled });
+  }
+  if (sasl22) {
+    setupSasl2({ sasl2: sasl22, sm, failed, resumed });
+  }
+  function scheduleRequestAck(timeout2 = sm.requestAckInterval) {
+    clearTimeout(requestAckTimeout);
+    if (!sm.enabled) return;
+    if (!timeout2) return;
+    requestAckTimeout = setTimeout(requestAck, timeout2);
+  }
+  function requestAck() {
+    clearTimeout(requestAckTimeout);
+    clearTimeout(requestAckDebounce);
+    if (!sm.enabled) return;
+    if (sm.timeout && !timeoutTimeout) {
+      timeoutTimeout = setTimeout(() => {
+        clearTimeout(requestAckTimeout);
+        entity.disconnect().catch(() => {
+        });
+      }, sm.timeout);
+    }
+    entity.send(xml("r", { xmlns: NS5 })).catch(() => {
+    });
+    scheduleRequestAck();
+  }
+  middleware2.filter((context, next) => {
+    const { stanza } = context;
+    if (stanza.is("enable", NS5)) {
+      sm.enableSent = true;
+    }
+    if (!sm.enabled && !sm.enableSent) return next();
+    if (!["presence", "message", "iq"].includes(stanza.name)) return next();
+    sm.outbound_q.push({ stanza, stamp: datetime() });
+    clearTimeout(requestAckTimeout);
+    clearTimeout(requestAckDebounce);
+    requestAckDebounce = setTimeout(requestAck, sm.requestAckDebounce);
+    return next();
+  });
+  if (streamFeatures2) {
+    setupStreamFeature({
+      streamFeatures: streamFeatures2,
+      sm,
+      entity,
+      resumed,
+      failed,
+      enabled
+    });
+  }
+  return sm;
+}
+function queueToStanza({ entity, item }) {
+  const { stanza, stamp } = item;
+  if (stanza.name === "message" && !stanza.getChild("delay", "urn:xmpp:delay")) {
+    stanza.append(
+      xml("delay", {
+        xmlns: "urn:xmpp:delay",
+        from: entity.jid.toString(),
+        stamp
+      })
+    );
+  }
+  return stanza;
+}
+
+// node_modules/@xmpp/client-core/src/bind2/bind2.js
+var NS6 = "urn:xmpp:bind:0";
+function bind2({ sasl2: sasl22, entity }, tag) {
+  const features = /* @__PURE__ */ new Map();
+  sasl22.use(
+    NS6,
+    (element) => __async(null, null, function* () {
+      if (!element.is("bind", NS6)) return;
+      tag = typeof tag === "function" ? yield tag() : tag;
+      const sessionFeatures = yield getSessionFeatures({ element, features });
+      return xml(
+        "bind",
+        { xmlns: "urn:xmpp:bind:0" },
+        tag && xml("tag", null, tag),
+        ...sessionFeatures
+      );
+    }),
+    (element) => {
+      var _a;
+      if (!element.is("bound")) return;
+      entity._ready(false);
+      for (const child2 of element.getChildElements()) {
+        const feature = features.get(child2.getNS());
+        (_a = feature == null ? void 0 : feature[1]) == null ? void 0 : _a.call(feature, child2);
+      }
+    }
+  );
+  return {
+    use(ns, req, res) {
+      features.set(ns, [req, res]);
+    }
+  };
+}
+function getSessionFeatures({ element, features }) {
+  const promises = [];
+  const inline = element.getChild("inline");
+  if (!inline) return promises;
+  for (const element2 of inline.getChildElements()) {
+    const xmlns = element2.attrs.var;
+    const feature = features.get(xmlns);
+    if (!feature) continue;
+    promises.push(feature[0](element2));
+  }
+  return Promise.all(promises);
+}
+
+// node_modules/@xmpp/client-core/src/fast/fast.js
+var import_saslmechanisms = __toESM(require_main(), 1);
+var NS7 = "urn:xmpp:fast:0";
+function fast({ sasl2: sasl22, entity }) {
+  const saslFactory = new import_saslmechanisms.default();
+  let token;
+  const fast2 = new import_events.EventEmitter();
+  Object.assign(fast2, {
+    mechanism: null,
+    mechanisms: [],
+    saveToken(t) {
+      return __async(this, null, function* () {
+        token = t;
+      });
+    },
+    fetchToken() {
+      return __async(this, null, function* () {
+        return token;
+      });
+    },
+    deleteToken() {
+      return __async(this, null, function* () {
+        token = null;
+      });
+    },
+    save(token2) {
+      return __async(this, null, function* () {
+        try {
+          yield this.saveToken(token2);
+        } catch (err) {
+          entity.emit("error", err);
+        }
+      });
+    },
+    fetch() {
+      return __async(this, null, function* () {
+        try {
+          return this.fetchToken();
+        } catch (err) {
+          entity.emit("error", err);
+        }
+      });
+    },
+    delete() {
+      return __async(this, null, function* () {
+        try {
+          yield this.deleteToken();
+        } catch (err) {
+          entity.emit("error", err);
+        }
+      });
+    },
+    saslFactory,
+    auth(_0) {
+      return __async(this, arguments, function* ({
+        authenticate: authenticate3,
+        entity: entity2,
+        userAgent,
+        credentials,
+        streamFeatures: streamFeatures2,
+        features
+      }) {
+        if (!fast2.mechanism) {
+          return false;
+        }
+        const { token: token2 } = credentials;
+        if (!isTokenValid(token2, fast2.mechanisms)) {
+          return onInvalidToken();
+        }
+        try {
+          yield authenticate3({
+            saslFactory: fast2.saslFactory,
+            mechanism: token2.mechanism,
+            credentials: __spreadProps(__spreadValues({}, credentials), {
+              password: token2.token
+            }),
+            streamFeatures: [
+              ...streamFeatures2,
+              xml("fast", {
+                xmlns: NS7
+              })
+            ],
+            entity: entity2,
+            userAgent,
+            features
+          });
+          return true;
+        } catch (err) {
+          if (err instanceof SASLError_default && ["not-authorized", "credentials-expired"].includes(err.condition)) {
+            return onInvalidToken();
+          }
+          entity2.emit("error", err);
+          return false;
+        }
+        function onInvalidToken() {
+          return __async(this, null, function* () {
+            yield fast2.delete();
+            requestToken(streamFeatures2);
+            return false;
+          });
+        }
+      });
+    }
+  });
+  function requestToken(streamFeatures2) {
+    streamFeatures2.push(
+      xml("request-token", {
+        xmlns: NS7,
+        mechanism: fast2.mechanism
+      })
+    );
+  }
+  function reset() {
+    fast2.mechanism = null;
+    fast2.mechanisms = [];
+  }
+  reset();
+  sasl22.use(
+    NS7,
+    (element) => __async(null, null, function* () {
+      if (!element.is("fast", NS7)) return reset();
+      fast2.available = true;
+      const mechanisms = getAvailableMechanisms(element, NS7, saslFactory);
+      const mechanism = mechanisms[0];
+      if (!mechanism) return reset();
+      fast2.mechanisms = mechanisms;
+      fast2.mechanism = mechanism;
+    }),
+    (element) => __async(null, null, function* () {
+      if (element.is("token", NS7)) {
+        yield fast2.save({
+          // The token is bound by the mechanism
+          // > Servers MUST bind tokens to the mechanism selected by the client in its original request, and reject attempts to use them with other mechanisms.
+          mechanism: fast2.mechanism,
+          token: element.attrs.token,
+          expiry: element.attrs.expiry
+        });
+      }
+    })
+  );
+  return fast2;
+}
+function isTokenValid(token, mechanisms) {
+  if (!token) return false;
+  if (!mechanisms.includes(token.mechanism)) {
+    return false;
+  }
+  if (new Date(token.expiry) <= /* @__PURE__ */ new Date()) {
+    return false;
+  }
+  return true;
+}
+
+// node_modules/@xmpp/client/index.js
+var import_saslmechanisms2 = __toESM(require_main(), 1);
+
+// node_modules/@xmpp/sasl-scram-sha-1/index.js
+var import_sasl_scram_sha_1 = __toESM(require_sasl_scram_sha_1(), 1);
+function saslScramSha1(sasl3) {
+  sasl3.use(import_sasl_scram_sha_1.default);
+}
+
+// node_modules/@xmpp/sasl-plain/index.js
+var import_sasl_plain = __toESM(require_main2(), 1);
+function saslPlain(sasl3) {
+  sasl3.use(import_sasl_plain.default);
+}
+
+// node_modules/@xmpp/sasl-anonymous/index.js
+var import_sasl_anonymous = __toESM(require_main3(), 1);
+function saslAnonymous(sasl3) {
+  sasl3.use(import_sasl_anonymous.default);
+}
+
+// node_modules/@xmpp/sasl-ht-sha-256-none/index.js
+function Mechanism() {
+}
+Mechanism.prototype.Mechanism = Mechanism;
+Mechanism.prototype.name = "HT-SHA-256-NONE";
+Mechanism.prototype.clientFirst = true;
+Mechanism.prototype.response = function response(_0) {
+  return __async(this, arguments, function* ({ username, password }) {
+    this.key = yield crypto.subtle.importKey(
+      "raw",
+      new TextEncoder().encode(password),
+      // https://developer.mozilla.org/en-US/docs/Web/API/HmacImportParams
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      // extractable
+      ["sign", "verify"]
+    );
+    const signature = yield crypto.subtle.sign(
+      "HMAC",
+      this.key,
+      new TextEncoder().encode("Initiator")
+    );
+    return `${username}\0${String.fromCodePoint(...new Uint8Array(signature))}`;
+  });
+};
+Mechanism.prototype.final = function final(data) {
+  return __async(this, null, function* () {
+    const signature = Uint8Array.from(data, (c) => c.codePointAt(0));
+    const result = yield crypto.subtle.verify(
+      "HMAC",
+      this.key,
+      signature,
+      new TextEncoder().encode("Responder")
+    );
+    if (result !== true) {
+      throw new Error("Responder message from server was wrong");
+    }
+  });
+};
+function saslHashedToken(sasl3) {
+  sasl3.use(Mechanism);
+}
+
+// node_modules/@xmpp/client/lib/createOnAuthenticate.js
+var ANONYMOUS = "ANONYMOUS";
+var PLAIN = "PLAIN";
+function createOnAuthenticate(credentials, userAgent) {
+  return function onAuthenticate(...args) {
+    return __async(this, null, function* () {
+      var _a;
+      if (typeof credentials === "function") {
+        yield credentials(...args);
+        return;
+      }
+      const [authenticate3, mechanisms, fast2, entity] = args;
+      (_a = credentials.token) != null ? _a : credentials.token = yield fast2 == null ? void 0 : fast2.fetch();
+      const mechanism = getMechanism({ mechanisms, entity, credentials });
+      yield authenticate3(credentials, mechanism, userAgent);
+    });
+  };
+}
+function getMechanism({ mechanisms, entity, credentials }) {
+  if (!(credentials == null ? void 0 : credentials.username) && !(credentials == null ? void 0 : credentials.password) && !(credentials == null ? void 0 : credentials.token) && mechanisms.includes(ANONYMOUS)) {
+    return ANONYMOUS;
+  }
+  if (entity.isSecure()) return mechanisms[0];
+  return mechanisms.find((mechanism) => mechanism !== PLAIN);
+}
+
+// node_modules/@xmpp/client/lib/getDomain.js
+function getDomain(service) {
+  const domain = service.split("://")[1] || service;
+  return domain.split(":")[0].split("/")[0];
+}
+
+// node_modules/@xmpp/client/index.js
+function client(options = {}) {
+  let _a = options, { resource, credentials, username, password, userAgent } = _a, params = __objRest(_a, ["resource", "credentials", "username", "password", "userAgent"]);
+  const { domain, service } = params;
+  if (!domain && service) {
+    params.domain = getDomain(service);
+  }
+  const entity = new Client_default(params);
+  if (username && params.domain) {
+    entity.jid = jid_default(username, params.domain);
+  }
+  const reconnect2 = reconnect({ entity });
+  const websocket2 = websocket({ entity });
+  const tcp2 = setupIfAvailable(tcp, { entity });
+  const tls4 = setupIfAvailable(tls2, { entity });
+  const middleware2 = middleware({ entity });
+  const streamFeatures2 = streamFeatures({ middleware: middleware2 });
+  const iqCaller2 = iqCaller({ middleware: middleware2, entity });
+  const iqCallee2 = iqCallee({ middleware: middleware2, entity });
+  const resolve5 = resolve4({ entity });
+  const saslFactory = new import_saslmechanisms2.default();
+  const mechanisms = Object.entries(__spreadProps(__spreadValues({}, typeof saslScramSha1 === "function" && { scramsha1: saslScramSha1 }), {
+    plain: saslPlain,
+    anonymous: saslAnonymous
+  })).map(([k, v]) => ({ [k]: v(saslFactory) }));
+  userAgent != null ? userAgent : userAgent = xml("user-agent", { id: globalThis.crypto.randomUUID() });
+  const starttls2 = setupIfAvailable(starttls, { streamFeatures: streamFeatures2 });
+  const sasl22 = sasl2(
+    { streamFeatures: streamFeatures2, saslFactory },
+    createOnAuthenticate(credentials != null ? credentials : { username, password }, userAgent)
+  );
+  const fast2 = fast({
+    sasl2: sasl22,
+    entity
+  });
+  sasl22.setup({ fast: fast2 });
+  const bind22 = bind2({ sasl2: sasl22, entity }, resource);
+  saslHashedToken(fast2.saslFactory);
+  const sasl3 = sasl(
+    { streamFeatures: streamFeatures2, saslFactory },
+    createOnAuthenticate(credentials != null ? credentials : { username, password }, userAgent)
+  );
+  const streamManagement2 = streamManagement({
+    streamFeatures: streamFeatures2,
+    entity,
+    middleware: middleware2,
+    bind2: bind22,
+    sasl2: sasl22
+  });
+  const resourceBinding2 = resourceBinding(
+    { iqCaller: iqCaller2, streamFeatures: streamFeatures2 },
+    resource
+  );
+  iqCallee2 == null ? void 0 : iqCallee2.get("urn:xmpp:ping", "ping", () => {
+    return {};
+  });
+  return Object.assign(entity, {
+    entity,
+    reconnect: reconnect2,
+    tcp: tcp2,
+    websocket: websocket2,
+    tls: tls4,
+    middleware: middleware2,
+    streamFeatures: streamFeatures2,
+    iqCaller: iqCaller2,
+    iqCallee: iqCallee2,
+    resolve: resolve5,
+    starttls: starttls2,
+    saslFactory,
+    sasl2: sasl22,
+    sasl: sasl3,
+    resourceBinding: resourceBinding2,
+    streamManagement: streamManagement2,
+    mechanisms,
+    bind2: bind22,
+    fast: fast2
+  });
+}
+function setupIfAvailable(module2, ...args) {
+  if (typeof module2 !== "function") {
+    return void 0;
+  }
+  return module2(...args);
+}
+
+// src/bootstrap.ts
 var shapefile = __toESM(require("shapefile"));
 var xml2js = __toESM(require("xml2js"));
 var jobs = __toESM(require("croner"));
@@ -973,7 +4761,7 @@ var packages = {
   fs,
   path,
   events: events2,
-  xmpp,
+  xmpp: client_exports,
   shapefile,
   xml2js,
   sqlite3: import_better_sqlite3.default,
@@ -1485,9 +5273,9 @@ var UGCParser = class {
       for (const row of rows) {
         locationMap.set(row.id, row.location);
       }
-      const locations = uniqueZones.map((id) => {
+      const locations = uniqueZones.map((id2) => {
         var _a;
-        return (_a = locationMap.get(id)) != null ? _a : id;
+        return (_a = locationMap.get(id2)) != null ? _a : id2;
       });
       return locations.sort();
     });
@@ -1601,8 +5389,8 @@ var UGCParser = class {
           const [start, end] = part.split(">");
           const startNum = parseInt(start.substring(3), 10);
           const endNum = parseInt(end, 10);
-          for (let j = startNum; j <= endNum; j++) {
-            zones.push(`${state}${format}${j.toString().padStart(3, "0")}`);
+          for (let j2 = startNum; j2 <= endNum; j2++) {
+            zones.push(`${state}${format}${j2.toString().padStart(3, "0")}`);
           }
         } else {
           zones.push(part);
@@ -1613,8 +5401,8 @@ var UGCParser = class {
         const [start, end] = part.split(">");
         const startNum = parseInt(start, 10);
         const endNum = parseInt(end, 10);
-        for (let j = startNum; j <= endNum; j++) {
-          zones.push(`${state}${format}${j.toString().padStart(3, "0")}`);
+        for (let j2 = startNum; j2 <= endNum; j2++) {
+          zones.push(`${state}${format}${j2.toString().padStart(3, "0")}`);
         }
       } else {
         zones.push(`${state}${format}${part}`);
@@ -1747,8 +5535,8 @@ var VTECAlerts = class {
           const getHVTEC = yield hvtec_default.HVtecExtractor(message);
           const getUGC = yield ugc_default.ugcExtractor(message);
           if (getPVTEC != null && getUGC != null) {
-            for (let j = 0; j < getPVTEC.length; j++) {
-              const pVtec = getPVTEC[j];
+            for (let j2 = 0; j2 < getPVTEC.length; j2++) {
+              const pVtec = getPVTEC[j2];
               const baseProperties = yield events_default.getBaseProperties(message, attributes, getUGC, pVtec, getHVTEC);
               const getHeader = events_default.getHeader(__spreadValues(__spreadValues({}, validated.attributes), baseProperties.raw), baseProperties, pVtec);
               processed.push({
@@ -2112,9 +5900,9 @@ var APIAlerts = class {
     })() : (() => {
       var _a, _b, _c;
       const wmoMatch = (_a = extracted.wmoidentifier) == null ? void 0 : _a.match(/([A-Z]{4}\d{2})\s+([A-Z]{4})/);
-      const id = (_b = wmoMatch == null ? void 0 : wmoMatch[1]) != null ? _b : "N/A";
+      const id2 = (_b = wmoMatch == null ? void 0 : wmoMatch[1]) != null ? _b : "N/A";
       const station = (_c = wmoMatch == null ? void 0 : wmoMatch[2]) != null ? _c : "N/A";
-      return `${station}-${id}`;
+      return `${station}-${id2}`;
     })();
   }
   /**
@@ -2665,9 +6453,9 @@ var Database = class {
             const name = shape.name;
             const type = shape.id;
             const link = shape.link;
-            const response = yield packages.axios.get(link, { responseType: "arraybuffer" });
+            const response2 = yield packages.axios.get(link, { responseType: "arraybuffer" });
             const zip = new packages.jszip();
-            const content = yield zip.loadAsync(response.data);
+            const content = yield zip.loadAsync(response2.data);
             const dirPath = path2.resolve(__dirname, "../../shapefiles");
             if (!fs2.existsSync(dirPath)) fs2.mkdirSync(dirPath);
             for (const fileName of Object.keys(content.files)) {
@@ -2690,21 +6478,21 @@ var Database = class {
             const insertTransaction = cache.db.transaction((entries) => {
               for (const feature of entries) {
                 const { properties, geometry } = feature;
-                let final, location;
+                let final2, location;
                 if (properties.FIPS) {
-                  final = `${properties.STATE}${shape.id}${properties.FIPS.substring(2)}`;
+                  final2 = `${properties.STATE}${shape.id}${properties.FIPS.substring(2)}`;
                   location = `${properties.COUNTYNAME}, ${properties.STATE}`;
                 } else if (properties.FULLSTAID) {
-                  final = `${properties.ST}${shape.id}${properties.WFO}`;
+                  final2 = `${properties.ST}${shape.id}${properties.WFO}`;
                   location = `${properties.CITY}, ${properties.STATE}`;
                 } else if (properties.STATE) {
-                  final = `${properties.STATE}${shape.id}${properties.ZONE}`;
+                  final2 = `${properties.STATE}${shape.id}${properties.ZONE}`;
                   location = `${properties.NAME}, ${properties.STATE}`;
                 } else {
-                  final = properties.ID;
+                  final2 = properties.ID;
                   location = properties.NAME;
                 }
-                insertStmt.run(final, location, JSON.stringify(geometry));
+                insertStmt.run(final2, location, JSON.stringify(geometry));
               }
             });
             fs2.unlinkSync(filepath + ".shp");
@@ -2874,7 +6662,7 @@ var Utils = class _Utils {
    */
   static sleep(ms) {
     return __async(this, null, function* () {
-      return new Promise((resolve) => setTimeout(resolve, ms));
+      return new Promise((resolve5) => setTimeout(resolve5, ms));
     });
   }
   /**
@@ -2962,12 +6750,12 @@ var Utils = class _Utils {
     return __async(this, null, function* () {
       try {
         const settings2 = settings;
-        const response = yield this.createHttpRequest(
+        const response2 = yield this.createHttpRequest(
           settings2.national_weather_service_settings.endpoint
         );
-        if (response.error) return;
+        if (response2.error) return;
         events_default.eventHandler({
-          message: JSON.stringify(response.message),
+          message: JSON.stringify(response2.message),
           attributes: {},
           isCap: true,
           isApi: true,
@@ -3136,7 +6924,7 @@ var EAS = class {
    * @returns {Promise<string | null>}
    */
   static generateEASAudio(message, header) {
-    return new Promise((resolve) => __async(this, null, function* () {
+    return new Promise((resolve5) => __async(this, null, function* () {
       const settings2 = settings;
       const assetsDir = settings2.global_settings.eas_settings.directory;
       const rngFile = `${header.replace(/[^a-zA-Z0-9]/g, `_`)}`.substring(0, 32).replace(/^_+|_+$/g, "");
@@ -3146,7 +6934,7 @@ var EAS = class {
       }
       if (!assetsDir) {
         utils_default.warn(definitions.messages.eas_no_directory);
-        return resolve(null);
+        return resolve5(null);
       }
       if (!packages.fs.existsSync(assetsDir)) {
         packages.fs.mkdirSync(assetsDir);
@@ -3182,7 +6970,7 @@ var EAS = class {
         const toneWav = this.parseWavPCM16(toneBuffer);
         if (toneWav == null) {
           console.log(`[EAS] Intro tone WAV file is not valid PCM 16-bit format.`);
-          return resolve(null);
+          return resolve5(null);
         }
         const toneSamples = toneWav.sampleRate !== 8e3 ? this.resamplePCM16(toneWav.samples, toneWav.sampleRate, 8e3) : toneWav.samples;
         toneRadio = this.applyNWREffect(toneSamples, 8e3);
@@ -3204,7 +6992,7 @@ var EAS = class {
           throw error;
         }
       }
-      return resolve(outTTS);
+      return resolve5(outTTS);
     }));
   }
   /**
@@ -3284,12 +7072,12 @@ var EAS = class {
     let data = null;
     let i = 12;
     while (i + 8 <= buffer.length) {
-      const id = buffer.toString("ascii", i, i + 4);
+      const id2 = buffer.toString("ascii", i, i + 4);
       const size = buffer.readUInt32LE(i + 4);
       const start = i + 8;
       const end = start + size;
-      if (id === "fmt ") fmt = buffer.slice(start, end);
-      if (id === "data") data = buffer.slice(start, end);
+      if (id2 === "fmt ") fmt = buffer.slice(start, end);
+      if (id2 === "data") data = buffer.slice(start, end);
       i = end + size % 2;
     }
     if (!fmt || !data) return null;
@@ -3589,8 +7377,8 @@ var EAS = class {
       const body = this.generateAFSK(bodyBits, sampleRate);
       const extendedBodyDuration = Math.round(preMarkSec * sampleRate);
       const extendedBody = new Int16Array(extendedBodyDuration + gap.length);
-      for (let j = 0; j < extendedBodyDuration; j++) {
-        extendedBody[j] = Math.round(body[j % body.length] * 0.2);
+      for (let j2 = 0; j2 < extendedBodyDuration; j2++) {
+        extendedBody[j2] = Math.round(body[j2 % body.length] * 0.2);
       }
       extendedBody.set(gap, extendedBodyDuration);
       bursts.push(extendedBody);

@@ -4470,7 +4470,8 @@ var cancel_signatures = [
   "has weakened below severe"
 ];
 var message_signatures = [
-  { regex: /\*/g, replacement: "." },
+  { regex: /\*/g, replacement: "" },
+  { regex: /\.{3,}/g, replacement: "" },
   { regex: /\bUTC\b/g, replacement: "Coordinated Universal Time" },
   { regex: /\bGMT\b/g, replacement: "Greenwich Mean Time" },
   { regex: /\bEST\b(?!\w)/g, replacement: "Eastern Standard Time" },

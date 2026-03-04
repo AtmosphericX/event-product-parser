@@ -65,8 +65,6 @@ export const tags: Record<string, string> = {
 }
 
 export const cancel_signatures: string[] = [
-    "THIS_MESSAGE_IS_FOR_TEST_PURPOSES_ONLY", 
-    "this is a test", 
     "subsided sufficiently for the advisory to be cancelled", 
     "has been cancelled", 
     "will be allowed to expire", 

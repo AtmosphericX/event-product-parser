@@ -85,6 +85,7 @@ export class CapAlerts {
                         parent: extracted.event ?? `N/A`,
                         action_type: extracted.msgtype ?? `N/A`,
                         description: extracted.description ?? `N/A`,
+                        intruction: `N/A`,
                         sender_name: extracted.sendername ?? `N/A`,
                         sender_icao: extracted.wmoidentifier ? extracted.wmoidentifier.substring(extracted.wmoidentifier.length - 4) : `N/A`,
                         attributes: attributes,

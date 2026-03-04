@@ -127,6 +127,7 @@ interface LocalEventProperties {
     expires?: string;
     geocode?: { UGC: string[], GENERATED?: string | null };
     description?: string;
+    instruction?: string;
     sender_name?: string;
     sender_icao?: string;
     raw?: DefaultAttributesType;
@@ -209,6 +210,7 @@ export interface geometry {
 
 export interface EventCompiled {
     performance?: number;
+    id?: string;
     tracking?: string;
     header?: string;
     pvtec?: string;

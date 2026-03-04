@@ -55,6 +55,7 @@ export class EventParser {
             expires: getCorrectExpiry,
             geocode: { UGC: ugc?.zones ?? [`XX000`], GENERATED: definitions.polygon.length > 0 ? Buffer.from(JSON.stringify([definitions.polygon])).toString('base64')  : null},
             description: definitions.description,
+            intruction: `N/A`,
             sender_name: getOffice.name,
             sender_icao: getOffice.icao,
             raw: {...Object.fromEntries(Object.entries(metadata).filter(([key]) => key !== 'message'))},
@@ -174,12 +175,12 @@ export class EventParser {
             const originalEvent = this.buildDefaultSignature(event);
             const props = originalEvent?.properties;
             const ugcs = props?.geocode?.UGC ?? [];
-            const { details, ...eventWithoutPerformance } = originalEvent.properties
+            const { details, ...properties } = originalEvent.properties; 
             originalEvent.properties.parent = originalEvent.properties.event;          
             originalEvent.properties.event = this.betterParsedEventName(originalEvent, bools?.better_event_parsing, bools?.parent_events_only);
-            originalEvent.properties.hash = loader.packages.crypto.createHash('md5').update(JSON.stringify(eventWithoutPerformance)).digest('hex');
+            originalEvent.properties.hash = loader.packages.crypto.createHash('md5').update(JSON.stringify(properties)).digest('hex');
             if (originalEvent.properties.is_test == true && bools?.ignore_test_products) return false;
-            if (bools?.check_expired && originalEvent.properties.is_cancelled == true) return false;
+            if (bools?.check_expired && (originalEvent.properties.is_cancelled == true)) return false;
             for (const key in sets) {
                 const setting = sets[key];
                 if (key === 'events' && setting.size > 0 && !setting.has(originalEvent.properties.event.toLowerCase())) return false; 
@@ -325,28 +326,31 @@ export class EventParser {
         const defEventTags = loader.definitions.tags;
         const tags = Object.entries(defEventTags).filter(([key]) => props?.description.toLowerCase().includes(key.toLowerCase())).map(([, value]) => value)
         props.tags = tags.length > 0 ? tags : [`N/A`];
-        const setAction = (type: `C` | `U` | `I` | `E`) => { 
-            props.is_cancelled = type === `C`; 
-            props.is_updated = type === `U`; 
-            props.is_issued = type === `I`; 
-            props.is_expired = type === `E`;
-        };
         if (statusCorrelation) { 
             props.action_type = statusCorrelation.forward ?? props.action_type; 
             props.is_updated = !!statusCorrelation.update; props.is_issued = !!statusCorrelation.new;
             props.is_cancelled = !!statusCorrelation.cancel;
-        } else { setAction(`I`); }
+        } else { 
+            props.is_issued = true
+        }
         if (props.description) { 
             const detectedPhrase = loader.definitions.cancelSignatures.find(sig => props.description.toLowerCase().includes(sig.toLowerCase()));
-            if (detectedPhrase) { setAction(`C`); }
+            if (detectedPhrase) { 
+                props.is_cancelled = true;
+            }
         }
-        if (event.pvtec) { 
-            const getType = event.pvtec.split(`.`)[0];
+        if (props.details?.pvtec) { 
+            const getType = props.details.pvtec.split(`.`)[0]?.replace(`/`, ``)
             const isTestProduct = loader.definitions.productTypes[getType] == `Test Product`
-            if (isTestProduct) { setAction(`C`); props.is_test = true; }
+            const isTestSig = [`This is a test message`, `THIS_MESSAGE_IS_FOR_TEST_PURPOSES_ONLY`]
+            if (isTestProduct || isTestSig.some(sig => props.description.toLowerCase().includes(sig.toLowerCase()) || props?.instruction?.toLowerCase().includes(sig.toLowerCase()))) {
+                props.is_test = true
+            }
         }
-        if (new Date(props?.expires).getTime() < new Date().getTime()) { setAction(`E`); }
-        return event;
+        if (new Date(props?.expires).getTime() < new Date().getTime()) {
+            props.is_cancelled = true
+        }
+        return event; 
     }
 }
 

@@ -4446,8 +4446,6 @@ var tags = {
   "MODERATE LAKE EFFECT SNOWFALL RATES AND BLOWING SNOW": "Moderate Lake Effect Snowfall and Blowing Snow"
 };
 var cancel_signatures = [
-  "THIS_MESSAGE_IS_FOR_TEST_PURPOSES_ONLY",
-  "this is a test",
   "subsided sufficiently for the advisory to be cancelled",
   "has been cancelled",
   "will be allowed to expire",
@@ -5825,6 +5823,7 @@ var CapAlerts = class {
               parent: (_f = extracted.event) != null ? _f : `N/A`,
               action_type: (_g = extracted.msgtype) != null ? _g : `N/A`,
               description: (_h = extracted.description) != null ? _h : `N/A`,
+              intruction: `N/A`,
               sender_name: (_i = extracted.sendername) != null ? _i : `N/A`,
               sender_icao: extracted.wmoidentifier ? extracted.wmoidentifier.substring(extracted.wmoidentifier.length - 4) : `N/A`,
               attributes,
@@ -5886,13 +5885,19 @@ var APIAlerts = class {
       const vtecValue = Array.isArray(extracted.pVtec) ? extracted.pVtec[0] : extracted.pVtec;
       const splitPVTEC = vtecValue.split(".");
       return `${splitPVTEC[2]}-${splitPVTEC[3]}-${splitPVTEC[4]}-${splitPVTEC[5]}`;
+    })() : (extracted == null ? void 0 : extracted.featureId) ? (() => {
+      var _a, _b, _c, _d;
+      const wmoMatch = (_a = extracted.wmoidentifier) == null ? void 0 : _a.match(/([A-Z]{4}\d{2})\s+([A-Z]{4})/);
+      const idMatch = (_b = extracted.featureId) == null ? void 0 : _b.match(/([a-f0-9]+)\.(\d+)\.(\d+)$/);
+      const station = (_c = wmoMatch == null ? void 0 : wmoMatch[2]) != null ? _c : "N/A";
+      return `${station}-${(_d = idMatch == null ? void 0 : idMatch[1]) != null ? _d : `N/A`}`;
     })() : (() => {
       var _a, _b, _c;
       const wmoMatch = (_a = extracted.wmoidentifier) == null ? void 0 : _a.match(/([A-Z]{4}\d{2})\s+([A-Z]{4})/);
       const id2 = (_b = wmoMatch == null ? void 0 : wmoMatch[1]) != null ? _b : "N/A";
       const station = (_c = wmoMatch == null ? void 0 : wmoMatch[2]) != null ? _c : "N/A";
       return `${station}-${id2}`;
-    })();
+    });
   }
   /**
    * @function getICAO
@@ -5923,7 +5928,7 @@ var APIAlerts = class {
    */
   static event(validated) {
     return __async(this, null, function* () {
-      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra;
+      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta;
       let processed = [];
       const settings2 = settings;
       const messages = Object.values(JSON.parse(validated.message).features);
@@ -5948,22 +5953,23 @@ var APIAlerts = class {
             parent: (_F = (_E = feature == null ? void 0 : feature.properties) == null ? void 0 : _E.event) != null ? _F : `N/A`,
             action_type: (_H = (_G = feature == null ? void 0 : feature.properties) == null ? void 0 : _G.messageType) != null ? _H : `N/A`,
             description: (_J = (_I = feature == null ? void 0 : feature.properties) == null ? void 0 : _I.description) != null ? _J : `N/A`,
-            sender_name: (_K = getOffice.name) != null ? _K : `N/A`,
-            sender_icao: (_L = getOffice.icao) != null ? _L : `N/A`,
+            instruction: (_L = (_K = feature == null ? void 0 : feature.properties) == null ? void 0 : _K.instruction) != null ? _L : `N/A`,
+            sender_name: (_M = getOffice.name) != null ? _M : `N/A`,
+            sender_icao: (_N = getOffice.icao) != null ? _N : `N/A`,
             attributes: validated.attributes,
             geocode: {
-              UGC: (_O = (_N = (_M = feature == null ? void 0 : feature.properties) == null ? void 0 : _M.geocode) == null ? void 0 : _N.UGC) != null ? _O : [`XX000`],
-              GENERATED: ((_P = feature == null ? void 0 : feature.geometry) == null ? void 0 : _P.coordinates.length) > 0 ? Buffer.from(JSON.stringify([(_Q = feature == null ? void 0 : feature.geometry) == null ? void 0 : _Q.coordinates[0]])).toString("base64") : null
+              UGC: (_Q = (_P = (_O = feature == null ? void 0 : feature.properties) == null ? void 0 : _O.geocode) == null ? void 0 : _P.UGC) != null ? _Q : [`XX000`],
+              GENERATED: ((_R = feature == null ? void 0 : feature.geometry) == null ? void 0 : _R.coordinates.length) > 0 ? Buffer.from(JSON.stringify([(_S = feature == null ? void 0 : feature.geometry) == null ? void 0 : _S.coordinates[0]])).toString("base64") : null
             },
             raw: {},
             parameters: {
-              wmo: (_V = (_U = (_T = (_S = (_R = feature == null ? void 0 : feature.properties) == null ? void 0 : _R.parameters) == null ? void 0 : _S.WMOidentifier) == null ? void 0 : _T[0]) != null ? _U : getWmo) != null ? _V : `N/A`,
+              wmo: (_X = (_W = (_V = (_U = (_T = feature == null ? void 0 : feature.properties) == null ? void 0 : _T.parameters) == null ? void 0 : _U.WMOidentifier) == null ? void 0 : _V[0]) != null ? _W : getWmo) != null ? _X : `N/A`,
               source: getSource,
-              max_hail_size: (_Y = (_X = (_W = feature == null ? void 0 : feature.properties) == null ? void 0 : _W.parameters) == null ? void 0 : _X.maxHailSize) != null ? _Y : `N/A`,
-              max_wind_gust: (_$ = (__ = (_Z = feature == null ? void 0 : feature.properties) == null ? void 0 : _Z.parameters) == null ? void 0 : __.maxWindGust) != null ? _$ : `N/A`,
-              damage_threat: (_da = (_ca = (_ba = (_aa = feature == null ? void 0 : feature.properties) == null ? void 0 : _aa.parameters) == null ? void 0 : _ba.thunderstormDamageThreat) == null ? void 0 : _ca[0]) != null ? _da : `N/A`,
-              tornado_detection: (_ha = (_ga = (_fa = (_ea = feature == null ? void 0 : feature.properties) == null ? void 0 : _ea.parameters) == null ? void 0 : _fa.tornadoDetection) == null ? void 0 : _ga[0]) != null ? _ha : `N/A`,
-              flood_detection: (_la = (_ka = (_ja = (_ia = feature == null ? void 0 : feature.properties) == null ? void 0 : _ia.parameters) == null ? void 0 : _ja.floodDetection) == null ? void 0 : _ka[0]) != null ? _la : `N/A`,
+              max_hail_size: (__ = (_Z = (_Y = feature == null ? void 0 : feature.properties) == null ? void 0 : _Y.parameters) == null ? void 0 : _Z.maxHailSize) != null ? __ : `N/A`,
+              max_wind_gust: (_ba = (_aa = (_$ = feature == null ? void 0 : feature.properties) == null ? void 0 : _$.parameters) == null ? void 0 : _aa.maxWindGust) != null ? _ba : `N/A`,
+              damage_threat: (_fa = (_ea = (_da = (_ca = feature == null ? void 0 : feature.properties) == null ? void 0 : _ca.parameters) == null ? void 0 : _da.thunderstormDamageThreat) == null ? void 0 : _ea[0]) != null ? _fa : `N/A`,
+              tornado_detection: (_ja = (_ia = (_ha = (_ga = feature == null ? void 0 : feature.properties) == null ? void 0 : _ga.parameters) == null ? void 0 : _ha.tornadoDetection) == null ? void 0 : _ia[0]) != null ? _ja : `N/A`,
+              flood_detection: (_na = (_ma = (_la = (_ka = feature == null ? void 0 : feature.properties) == null ? void 0 : _ka.parameters) == null ? void 0 : _la.floodDetection) == null ? void 0 : _ma[0]) != null ? _na : `N/A`,
               discussion_tornado_intensity: "N/A",
               discussion_wind_intensity: `N/A`,
               discussion_hail_intensity: `N/A`
@@ -5971,13 +5977,18 @@ var APIAlerts = class {
             details: {
               performance: performance.now() - tick,
               source: `api-parser`,
-              tracking: this.getTracking({ pVtec: getPVTEC, wmoidentifier: getWmo, ugc: getUgc ? getUgc.join(`,`) : null }),
+              tracking: this.getTracking({
+                pVtec: getPVTEC,
+                wmoidentifier: getWmo,
+                featureId: feature == null ? void 0 : feature.id,
+                ugc: getUgc ? getUgc.join(`,`) : null
+              }),
               header: getHeader,
               pvtec: getPVTEC != null ? getPVTEC : `N/A`,
               history: [{
-                description: (_na = (_ma = feature == null ? void 0 : feature.properties) == null ? void 0 : _ma.description) != null ? _na : `N/A`,
-                action: (_pa = (_oa = feature == null ? void 0 : feature.properties) == null ? void 0 : _oa.messageType) != null ? _pa : `N/A`,
-                time: ((_qa = feature == null ? void 0 : feature.properties) == null ? void 0 : _qa.sent) ? new Date((_ra = feature == null ? void 0 : feature.properties) == null ? void 0 : _ra.sent).toLocaleString() : `N/A`
+                description: (_pa = (_oa = feature == null ? void 0 : feature.properties) == null ? void 0 : _oa.description) != null ? _pa : `N/A`,
+                action: (_ra = (_qa = feature == null ? void 0 : feature.properties) == null ? void 0 : _qa.messageType) != null ? _ra : `N/A`,
+                time: ((_sa = feature == null ? void 0 : feature.properties) == null ? void 0 : _sa.sent) ? new Date((_ta = feature == null ? void 0 : feature.properties) == null ? void 0 : _ta.sent).toLocaleString() : `N/A`
               }]
             }
           }
@@ -6035,6 +6046,7 @@ var EventParser = class {
         expires: getCorrectExpiry,
         geocode: { UGC: (_q = ugc == null ? void 0 : ugc.zones) != null ? _q : [`XX000`], GENERATED: definitions2.polygon.length > 0 ? Buffer.from(JSON.stringify([definitions2.polygon])).toString("base64") : null },
         description: definitions2.description,
+        intruction: `N/A`,
         sender_name: getOffice.name,
         sender_icao: getOffice.icao,
         raw: __spreadValues({}, Object.fromEntries(Object.entries(metadata).filter(([key]) => key !== "message"))),
@@ -6164,10 +6176,10 @@ var EventParser = class {
         const originalEvent = this.buildDefaultSignature(event);
         const props = originalEvent == null ? void 0 : originalEvent.properties;
         const ugcs = (_b2 = (_a2 = props == null ? void 0 : props.geocode) == null ? void 0 : _a2.UGC) != null ? _b2 : [];
-        const _c2 = originalEvent.properties, { details } = _c2, eventWithoutPerformance = __objRest(_c2, ["details"]);
+        const _c2 = originalEvent.properties, { details } = _c2, properties = __objRest(_c2, ["details"]);
         originalEvent.properties.parent = originalEvent.properties.event;
         originalEvent.properties.event = this.betterParsedEventName(originalEvent, bools == null ? void 0 : bools.better_event_parsing, bools == null ? void 0 : bools.parent_events_only);
-        originalEvent.properties.hash = packages.crypto.createHash("md5").update(JSON.stringify(eventWithoutPerformance)).digest("hex");
+        originalEvent.properties.hash = packages.crypto.createHash("md5").update(JSON.stringify(properties)).digest("hex");
         if (originalEvent.properties.is_test == true && (bools == null ? void 0 : bools.ignore_test_products)) return false;
         if ((bools == null ? void 0 : bools.check_expired) && originalEvent.properties.is_cancelled == true) return false;
         for (const key in sets) {
@@ -6304,42 +6316,39 @@ var EventParser = class {
    * @returns {any}
    */
   static buildDefaultSignature(event) {
-    var _a, _b;
+    var _a, _b, _c, _d;
     const props = (_a = event.properties) != null ? _a : {};
     const statusCorrelation = definitions.correlations.find((c) => c.type === props.action_type);
     const defEventTags = definitions.tags;
     const tags2 = Object.entries(defEventTags).filter(([key]) => props == null ? void 0 : props.description.toLowerCase().includes(key.toLowerCase())).map(([, value]) => value);
     props.tags = tags2.length > 0 ? tags2 : [`N/A`];
-    const setAction = (type) => {
-      props.is_cancelled = type === `C`;
-      props.is_updated = type === `U`;
-      props.is_issued = type === `I`;
-      props.is_expired = type === `E`;
-    };
     if (statusCorrelation) {
       props.action_type = (_b = statusCorrelation.forward) != null ? _b : props.action_type;
       props.is_updated = !!statusCorrelation.update;
       props.is_issued = !!statusCorrelation.new;
       props.is_cancelled = !!statusCorrelation.cancel;
     } else {
-      setAction(`I`);
+      props.is_issued = true;
     }
     if (props.description) {
       const detectedPhrase = definitions.cancelSignatures.find((sig) => props.description.toLowerCase().includes(sig.toLowerCase()));
       if (detectedPhrase) {
-        setAction(`C`);
+        props.is_cancelled = true;
       }
     }
-    if (event.pvtec) {
-      const getType = event.pvtec.split(`.`)[0];
+    if ((_c = props.details) == null ? void 0 : _c.pvtec) {
+      const getType = (_d = props.details.pvtec.split(`.`)[0]) == null ? void 0 : _d.replace(`/`, ``);
       const isTestProduct = definitions.productTypes[getType] == `Test Product`;
-      if (isTestProduct) {
-        setAction(`C`);
+      const isTestSig = [`This is a test message`, `THIS_MESSAGE_IS_FOR_TEST_PURPOSES_ONLY`];
+      if (isTestProduct || isTestSig.some((sig) => {
+        var _a2;
+        return props.description.toLowerCase().includes(sig.toLowerCase()) || ((_a2 = props == null ? void 0 : props.instruction) == null ? void 0 : _a2.toLowerCase().includes(sig.toLowerCase()));
+      })) {
         props.is_test = true;
       }
     }
     if (new Date(props == null ? void 0 : props.expires).getTime() < (/* @__PURE__ */ new Date()).getTime()) {
-      setAction(`E`);
+      props.is_cancelled = true;
     }
     return event;
   }

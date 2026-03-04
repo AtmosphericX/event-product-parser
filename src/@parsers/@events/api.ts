@@ -36,12 +36,17 @@ export class APIAlerts {
             const vtecValue = Array.isArray(extracted.pVtec) ? extracted.pVtec[0] : extracted.pVtec;
             const splitPVTEC = vtecValue.split('.');
             return `${splitPVTEC[2]}-${splitPVTEC[3]}-${splitPVTEC[4]}-${splitPVTEC[5]}`;
+        })() : extracted?.featureId ? (() => {
+            const wmoMatch = extracted.wmoidentifier?.match(/([A-Z]{4}\d{2})\s+([A-Z]{4})/);
+            const idMatch = extracted.featureId?.match(/([a-f0-9]+)\.(\d+)\.(\d+)$/);
+            const station = wmoMatch?.[2] ?? 'N/A';
+            return `${station}-${idMatch?.[1] ?? `N/A`}`;
         })() : (() => {
             const wmoMatch = extracted.wmoidentifier?.match(/([A-Z]{4}\d{2})\s+([A-Z]{4})/);
             const id = wmoMatch?.[1] ?? 'N/A';
             const station = wmoMatch?.[2] ?? 'N/A';
             return `${station}-${id}`;
-        })();
+        })   
     }
 
     /**
@@ -96,6 +101,7 @@ export class APIAlerts {
                     parent: feature?.properties?.event ?? `N/A`,
                     action_type: feature?.properties?.messageType ?? `N/A`,
                     description: feature?.properties?.description ?? `N/A`,
+                    instruction: feature?.properties?.instruction ?? `N/A`,
                     sender_name: getOffice.name ?? `N/A`,
                     sender_icao: getOffice.icao ?? `N/A`,
                     attributes: validated.attributes,
@@ -119,7 +125,12 @@ export class APIAlerts {
                     details: {
                         performance: performance.now() - tick,
                         source: `api-parser`,
-                        tracking: this.getTracking({ pVtec: getPVTEC, wmoidentifier: getWmo, ugc: getUgc ? getUgc.join(`,`) : null }),
+                        tracking: this.getTracking({ 
+                            pVtec: getPVTEC, 
+                            wmoidentifier: getWmo, 
+                            featureId: feature?.id, 
+                            ugc: getUgc ? getUgc.join(`,`) : null 
+                        }),
                         header: getHeader,
                         pvtec: getPVTEC ?? `N/A`,
                         history: [{

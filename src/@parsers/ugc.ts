@@ -75,12 +75,14 @@ export class UGCParser {
      * @returns {Date | null}
      */
     public static getExpiry(message: string): Date | null {
-        const start = message.match(loader.definitions.regular_expressions.ugc3);
-        const day = parseInt(start[0].substring(0, 2), 10);
-        const hour = parseInt(start[0].substring(2, 4), 10);
-        const minute = parseInt(start[0].substring(4, 6), 10);
+        const match = message.match(/\b(\d{6})-/);
+        if (!match) return null;
+        const token = match[1];
+        const day = parseInt(token.slice(0, 2), 10);
+        const hour = parseInt(token.slice(2, 4), 10);
+        const minute = parseInt(token.slice(4, 6), 10);
         const now = new Date();
-        const expires = new Date(now.getUTCFullYear(), now.getUTCMonth(), day, hour, minute, 0);
+        const expires = new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),day,hour,minute));
         return expires;
     }
 

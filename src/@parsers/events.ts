@@ -179,16 +179,38 @@ export class EventParser {
             originalEvent.properties.parent = originalEvent.properties.event;          
             originalEvent.properties.event = this.betterParsedEventName(originalEvent, bools?.better_event_parsing, bools?.parent_events_only);
             originalEvent.properties.hash = loader.packages.crypto.createHash('md5').update(JSON.stringify(properties)).digest('hex');
-            if (originalEvent.properties.is_test == true && bools?.ignore_test_products) return false;
-            if (bools?.check_expired && (originalEvent.properties.is_cancelled == true)) return false;
+            if (originalEvent.properties.is_test == true) {
+                loader.cache.events.emit(`onTest`, originalEvent);
+                if (bools?.ignore_test_products) {
+                    return false;
+                }
+            }
+            if (originalEvent.properties.is_cancelled == true) {
+                loader.cache.events.emit(`onExpired`, originalEvent);
+                if (bools?.check_expired) {
+                    return false;
+                }
+            }
             for (const key in sets) {
                 const setting = sets[key];
-                if (key === 'events' && setting.size > 0 && !setting.has(originalEvent.properties.event.toLowerCase())) return false; 
-                if (key === 'ignored_events' && setting.size > 0 && setting.has(originalEvent.properties.event.toLowerCase())) return false;
-                if (key === 'filtered_icao' && setting.size > 0 && props.sender_icao != null && !setting.has(props.sender_icao.toLowerCase())) return false;
-                if (key === 'ignored_icao' && setting.size > 0 && props.sender_icao != null && setting.has(props.sender_icao.toLowerCase())) return false;
-                if (key === 'ugc_filter' && setting.size > 0 && ugcs.length > 0 && !ugcs.some((ugc: string) => setting.has(ugc.toLowerCase()))) return false;
-                if (key === 'state_filter' && setting.size > 0 && ugcs.length > 0 && !ugcs.some((ugc: string) => setting.has(ugc.substring(0, 2).toLowerCase()))) return false;
+                if (key === 'events' && setting.size > 0 && !setting.has(originalEvent.properties.event.toLowerCase())) { 
+                    loader.cache.events.emit(`onFilteredEvent`, originalEvent); return false 
+                } 
+                if (key === 'ignored_events' && setting.size > 0 && setting.has(originalEvent.properties.event.toLowerCase())) { 
+                    loader.cache.events.emit(`onIgnoredEvent`, originalEvent); return false 
+                } 
+                if (key === 'filtered_icao' && setting.size > 0 && props.sender_icao != null && !setting.has(props.sender_icao.toLowerCase())) { 
+                    loader.cache.events.emit(`onFilteredICAO`, originalEvent); return false 
+                }
+                if (key === 'ignored_icao' && setting.size > 0 && props.sender_icao != null && setting.has(props.sender_icao.toLowerCase())) { 
+                    loader.cache.events.emit(`onIgnoredICAO`, originalEvent); return false 
+                }
+                if (key === 'ugc_filter' && setting.size > 0 && ugcs.length > 0 && !ugcs.some((ugc: string) => setting.has(ugc.toLowerCase()))) { 
+                    loader.cache.events.emit(`onFilteredUGC`, originalEvent); return false 
+                }
+                if (key === 'state_filter' && setting.size > 0 && ugcs.length > 0 && !ugcs.some((ugc: string) => setting.has(ugc.substring(0, 2).toLowerCase()))) { 
+                    loader.cache.events.emit(`onFilteredState`, originalEvent); return false 
+                }
             }
             loader.cache.events.emit(`on${originalEvent.properties.parent.replace(/\s+/g, '')}`) 
             loader.cache.events.emit(`on${originalEvent.properties.event.replace(/\s+/g, '')}`) 

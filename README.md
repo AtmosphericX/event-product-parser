@@ -1,6 +1,6 @@
 <h1 style='font-size: 65px'; align="center">🌪️ AtmosphericX - NOAA Wire + API Parser ⚠️</h1>
 <div align="center">
-  	<p align = "center">This repository contains the primary parser for AtmosphericX's NOAA Weather Wire Service (NWWS) and National Weather Service (NWS) API. It is designed to handle real-time weather alerts and messages from the National Weather Service, using both XMPP (NWWS) and direct API access (Slower). This parser is intended for developers who want to integrate real-time weather alerts, watches, warnings, and forecast data from the NWS seamlessly into their applications or services. It is not recommended for users without basic programming knowledge. If you wish to access NOAA weather data without programming, consider using our end-user project, which leverages this parser and provides an easy-to-use interface for tracking weather alerts.</small></p>
+  	<p align = "center">This repository contains the primary parser for AtmosphericX's NOAA Weather Wire Service (NWWS) and National Weather Service (NWS) API. It is designed to handle real time weather alerts and messages from the National Weather Service, using both XMPP (NWWS) and direct API access (Slower). This parser is intended for developers who want to integrate real time weather alerts, watches, warnings, and forecast data from the NWS seamlessly into their applications or services. It is not recommended for users without basic programming knowledge. If you wish to access NOAA weather data without programming, consider using our end-user project, which leverages this parser and provides an easy-to-use interface for tracking weather alerts.</small></p>
   	<p align = "center">Documentation written by @k3yomi</p>
 	<div align="center" style="border: none;">
 		<img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/k3yomi/atmosx-nwws-parser">
@@ -12,7 +12,8 @@
 
 ## Installation (NPM)
 ```bash
-npm install atmosx-nwws-parser
+npm install atmosx-nwws-parser@latest # Latest
+npm install atmosx-nwws-parser@beta # Beta
 ```
 
 ## Example Usage
@@ -134,6 +135,60 @@ parser.on(`onMessage`, (data) => {
 });
 ```
 
+### Event `onTest`
+Triggered when a test message comes in. Ex: Test Tsunami Warning
+```javascript
+parser.on(`onTest`, (alert) => {
+    console.log(`Test alert received for ${alert.properties.locations}`);
+});
+```
+
+### Event `onExpired`
+Triggered when an alert expires.
+```javascript
+parser.on(`onExpired`, (alert) => {
+    console.log(`Alert expired for ${alert.properties.event} for locations of ${alert.properties.locations}`);
+});
+```
+
+### Event `onFilteredEvent` / `onIgnoredEvent`
+Triggered when an alert is filtered out.
+```javascript
+parser.on(`onFilteredEvent`, (alert) => {
+    console.log(`Alert filtered for ${alert.properties.event}`);
+});
+parser.on(`onIgnoredEvent`, (alert) => {
+    console.log(`Alert ignored for ${alert.properties.event}`);
+});
+```
+
+### Event `onFilteredICAO` / (`onIgnoredICAO`)
+Triggered when an alert is filtered out based on its ICAO code.
+```javascript
+parser.on(`onFilteredICAO`, (alert) => {
+    console.log(`Alert filtered for ${alert.properties.event}`);
+});
+parser.on(`onIgnoredICAO`, (alert) => {
+    console.log(`Alert ignored for ${alert.properties.event}`);
+});
+```
+
+### Event `onFilteredUGC`
+Triggered when an alert is filtered out based on its UGC zone.
+```javascript
+parser.on(`onFilteredUGC`, (alert) => {
+    console.log(`Alert filtered for ${alert.properties.event}`);
+});
+```
+
+### Event `onFilteredState`
+Triggered when an alert is filtered out based on its state (Abbreviation)
+```javascript
+parser.on(`onFilteredState`, (alert) => {
+    console.log(`Alert filtered for ${alert.properties.event}`);
+});
+```
+
 ### Event `log`
 Triggered for logging purposes, providing log level and message.
 ```javascript
@@ -152,6 +207,7 @@ parser.setDisplayName(`My Weather Parser`);
 
 ### Function `createEasAudio(description, header)`
 Generates an EAS audio file based on the provided description and header. Audio file will be located based on settings provided in the global_settings.eas_settings object.
+If you are running linux, festival is required to use this or it will error out.
 ```javascript
 parser.createEasAudio(`This is a test alert`, `EAS Header Info`);
 ```

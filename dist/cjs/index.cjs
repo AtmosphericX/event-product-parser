@@ -5241,12 +5241,14 @@ var UGCParser = class {
    * @returns {Date | null}
    */
   static getExpiry(message) {
-    const start = message.match(definitions.regular_expressions.ugc3);
-    const day = parseInt(start[0].substring(0, 2), 10);
-    const hour = parseInt(start[0].substring(2, 4), 10);
-    const minute = parseInt(start[0].substring(4, 6), 10);
+    const match = message.match(/\b(\d{6})-/);
+    if (!match) return null;
+    const token = match[1];
+    const day = parseInt(token.slice(0, 2), 10);
+    const hour = parseInt(token.slice(2, 4), 10);
+    const minute = parseInt(token.slice(4, 6), 10);
     const now = /* @__PURE__ */ new Date();
-    const expires = new Date(now.getUTCFullYear(), now.getUTCMonth(), day, hour, minute, 0);
+    const expires = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), day, hour, minute));
     return expires;
   }
   /**
@@ -6192,16 +6194,44 @@ var EventParser = class {
         originalEvent.properties.parent = originalEvent.properties.event;
         originalEvent.properties.event = this.betterParsedEventName(originalEvent, bools == null ? void 0 : bools.better_event_parsing, bools == null ? void 0 : bools.parent_events_only);
         originalEvent.properties.hash = packages.crypto.createHash("md5").update(JSON.stringify(properties)).digest("hex");
-        if (originalEvent.properties.is_test == true && (bools == null ? void 0 : bools.ignore_test_products)) return false;
-        if ((bools == null ? void 0 : bools.check_expired) && originalEvent.properties.is_cancelled == true) return false;
+        if (originalEvent.properties.is_test == true) {
+          cache.events.emit(`onTest`, originalEvent);
+          if (bools == null ? void 0 : bools.ignore_test_products) {
+            return false;
+          }
+        }
+        if (originalEvent.properties.is_cancelled == true) {
+          cache.events.emit(`onExpired`, originalEvent);
+          if (bools == null ? void 0 : bools.check_expired) {
+            return false;
+          }
+        }
         for (const key in sets) {
           const setting = sets[key];
-          if (key === "events" && setting.size > 0 && !setting.has(originalEvent.properties.event.toLowerCase())) return false;
-          if (key === "ignored_events" && setting.size > 0 && setting.has(originalEvent.properties.event.toLowerCase())) return false;
-          if (key === "filtered_icao" && setting.size > 0 && props.sender_icao != null && !setting.has(props.sender_icao.toLowerCase())) return false;
-          if (key === "ignored_icao" && setting.size > 0 && props.sender_icao != null && setting.has(props.sender_icao.toLowerCase())) return false;
-          if (key === "ugc_filter" && setting.size > 0 && ugcs.length > 0 && !ugcs.some((ugc) => setting.has(ugc.toLowerCase()))) return false;
-          if (key === "state_filter" && setting.size > 0 && ugcs.length > 0 && !ugcs.some((ugc) => setting.has(ugc.substring(0, 2).toLowerCase()))) return false;
+          if (key === "events" && setting.size > 0 && !setting.has(originalEvent.properties.event.toLowerCase())) {
+            cache.events.emit(`onFilteredEvent`, originalEvent);
+            return false;
+          }
+          if (key === "ignored_events" && setting.size > 0 && setting.has(originalEvent.properties.event.toLowerCase())) {
+            cache.events.emit(`onIgnoredEvent`, originalEvent);
+            return false;
+          }
+          if (key === "filtered_icao" && setting.size > 0 && props.sender_icao != null && !setting.has(props.sender_icao.toLowerCase())) {
+            cache.events.emit(`onFilteredICAO`, originalEvent);
+            return false;
+          }
+          if (key === "ignored_icao" && setting.size > 0 && props.sender_icao != null && setting.has(props.sender_icao.toLowerCase())) {
+            cache.events.emit(`onIgnoredICAO`, originalEvent);
+            return false;
+          }
+          if (key === "ugc_filter" && setting.size > 0 && ugcs.length > 0 && !ugcs.some((ugc) => setting.has(ugc.toLowerCase()))) {
+            cache.events.emit(`onFilteredUGC`, originalEvent);
+            return false;
+          }
+          if (key === "state_filter" && setting.size > 0 && ugcs.length > 0 && !ugcs.some((ugc) => setting.has(ugc.substring(0, 2).toLowerCase()))) {
+            cache.events.emit(`onFilteredState`, originalEvent);
+            return false;
+          }
         }
         cache.events.emit(`on${originalEvent.properties.parent.replace(/\s+/g, "")}`);
         cache.events.emit(`on${originalEvent.properties.event.replace(/\s+/g, "")}`);

@@ -33,18 +33,18 @@ export class EventParser {
     public static async getBaseProperties(message: string, metadata: types.DefaultAttributesType, ugc: types.UGCEntry = null, pVtec: types.PVtecEntry = null, hVtec: types.HVtecEntry = null) {
         const settings = loader.settings as types.ClientSettingsTypes;
         const definitions = {
-            tornado: TextParser.textProductToString(message, `TORNADO...`) ?? TextParser.textProductToString(message, `WATERSPOUT...`) ?? `N/A`,
-            hail: TextParser.textProductToString(message, `MAX HAIL SIZE...`, [`IN`]) ?? TextParser.textProductToString(message, `HAIL...`, [`IN`]) ?? `N/A`,
-            gusts: TextParser.textProductToString(message, `MAX WIND GUST...`) ?? TextParser.textProductToString(message, `WIND...`) ?? `N/A`,
-            flood: TextParser.textProductToString(message, `FLASH FLOOD...`) ?? `N/A`,
-            damage: TextParser.textProductToString(message, `DAMAGE THREAT...`) ?? `N/A`,
-            source: TextParser.textProductToString(message, `SOURCE...`, [`.`]) ?? `N/A`,
+            tornado: TextParser.textProductToString(message, `TORNADO...`) ?? TextParser.textProductToString(message, `WATERSPOUT...`) ?? null,
+            hail: TextParser.textProductToString(message, `MAX HAIL SIZE...`, [`IN`]) ?? TextParser.textProductToString(message, `HAIL...`, [`IN`]) ?? null,
+            gusts: TextParser.textProductToString(message, `MAX WIND GUST...`) ?? TextParser.textProductToString(message, `WIND...`) ?? null,
+            flood: TextParser.textProductToString(message, `FLASH FLOOD...`) ?? null,
+            damage: TextParser.textProductToString(message, `DAMAGE THREAT...`) ?? null,
+            source: TextParser.textProductToString(message, `SOURCE...`, [`.`]) ?? null,
             description: TextParser.textProductToDescription(message, pVtec?.raw ?? null),
             polygon: TextParser.textProductToPolygon(message),
-            wmo: message.match(loader.definitions.regular_expressions.wmo)?.[0] ?? `N/A`,
-            mdTorIntensity: TextParser.textProductToString(message, `MOST PROBABLE PEAK TORNADO INTENSITY...`) ?? `N/A`,
-            mdWindGusts: TextParser.textProductToString(message, `MOST PROBABLE PEAK WIND GUST...`) ?? `N/A`,
-            mdHailSize: TextParser.textProductToString(message, `MOST PROBABLE PEAK HAIL SIZE...`) ?? `N/A`,
+            wmo: message.match(loader.definitions.regular_expressions.wmo)?.[0] ?? null,
+            mdTorIntensity: TextParser.textProductToString(message, `MOST PROBABLE PEAK TORNADO INTENSITY...`) ?? null,
+            mdWindGusts: TextParser.textProductToString(message, `MOST PROBABLE PEAK WIND GUST...`) ?? null,
+            mdHailSize: TextParser.textProductToString(message, `MOST PROBABLE PEAK HAIL SIZE...`) ?? null,
         };
         const getOffice = this.getICAO(pVtec, metadata, definitions.wmo);
         const getCorrectIssued = this.getCorrectIssuedDate(metadata);
@@ -53,14 +53,17 @@ export class EventParser {
             locations: ugc?.locations.join(`; `) ?? `No Location Specified (UGC Missing)`,
             issued: getCorrectIssued,
             expires: getCorrectExpiry,
-            geocode: { UGC: ugc?.zones ?? [`XX000`], GENERATED: definitions.polygon.length > 0 ? Buffer.from(JSON.stringify([definitions.polygon])).toString('base64')  : null},
+            geocode: { 
+                UGC: ugc?.zones ?? [], 
+                generated: definitions.polygon.length > 0 ? Buffer.from(JSON.stringify([definitions.polygon])).toString('base64') : null
+            },
             description: definitions.description,
-            intruction: `N/A`,
+            instruction: null,
             sender_name: getOffice.name,
             sender_icao: getOffice.icao,
             raw: {...Object.fromEntries(Object.entries(metadata).filter(([key]) => key !== 'message'))},
             parameters: {
-                wmo: Array.isArray(definitions.wmo) ? definitions.wmo[0] : (definitions.wmo ?? `N/A`),
+                wmo: Array.isArray(definitions.wmo) ? definitions.wmo[0] : (definitions.wmo ?? null),
                 source: definitions.source,
                 max_hail_size: definitions.hail,
                 max_wind_gust: definitions.gusts,
@@ -116,8 +119,8 @@ export class EventParser {
         const properties = event?.properties;
         const parameters = properties?.parameters;
         const description = (properties?.description ?? `Unknown Description`).toLowerCase();
-        const damageThreatTag = parameters?.damage_threat ?? `N/A`;
-        const tornadoThreatTag = parameters?.tornado_detection ?? `N/A`;
+        const damageThreatTag = parameters?.damage_threat ?? null;
+        const tornadoThreatTag = parameters?.tornado_detection ?? null;
         if (!betterParsing) { return eventName }
         for (const eventGroup of defEventTable) {
             const [baseEvent, conditions] = Object.entries(eventGroup)[0] as [string, Record<string, types.EnhancedEventCondition>];
@@ -218,7 +221,9 @@ export class EventParser {
         })
             for (const event of filtered as types.EventCompiled[]) {
                 if (!loader.settings.global_settings.ignore_geometry_parsing) {
-                const geometry = await this.getEventGeometry(event.properties.geocode.GENERATED, {zones: event.properties.geocode != null ? event.properties.geocode.UGC : null})
+                const geometry = await this.getEventGeometry(event.properties.geocode.generated, {
+                    zones: event.properties.geocode != null ? event.properties.geocode.UGC : null
+                })
                 event.geometry = geometry;
             }
         } 
@@ -274,7 +279,7 @@ export class EventParser {
      * @description
      *     Determines the ICAO code and corresponding name for an event.
      *     Priority is given to the VTEC tracking code, then the attributes' `cccc` property, 
-     *     and finally the WMO code if available. Returns "N/A" if none are found.
+     *     and finally the WMO code if available. Returns null if none are found.
      *
      * @private
      * @static
@@ -284,8 +289,8 @@ export class EventParser {
      * @returns {{ icao: string; name: string }}
      */
     private static getICAO(pVtec: types.PVtecEntry, metadata: types.DefaultAttributesType, WMO: RegExpMatchArray | string | null) {
-        const icao = pVtec != null ? pVtec?.tracking.split(`-`)[0] : (metadata.attributes?.cccc || (WMO != null ? (Array.isArray(WMO) ? WMO[0] : WMO) : `N/A`));
-        const name = loader.definitions.ICAO?.[icao] ?? `N/A`;
+        const icao = pVtec != null ? pVtec?.tracking.split(`-`)[0] : (metadata.attributes?.cccc || (WMO != null ? (Array.isArray(WMO) ? WMO[0] : WMO) : null));
+        const name = loader.definitions.ICAO?.[icao] ?? null;
         return { icao, name };
     }
 
@@ -346,8 +351,8 @@ export class EventParser {
         const props = event.properties ?? {};
         const statusCorrelation = loader.definitions.correlations.find((c: { type: string }) => c.type === props.action_type);
         const defEventTags = loader.definitions.tags;
-        const tags = Object.entries(defEventTags).filter(([key]) => props?.description.toLowerCase().includes(key.toLowerCase())).map(([, value]) => value)
-        props.tags = tags.length > 0 ? tags : [`N/A`];
+        const tags = Object.entries(defEventTags).filter(([key]) => props?.description?.toLowerCase().includes(key.toLowerCase())).map(([, value]) => value)
+        props.tags = tags.length > 0 ? tags : [];
         if (statusCorrelation) { 
             props.action_type = statusCorrelation.forward ?? props.action_type; 
             props.is_updated = !!statusCorrelation.update; props.is_issued = !!statusCorrelation.new;
@@ -365,7 +370,7 @@ export class EventParser {
             const getType = props.details.pvtec.split(`.`)[0]?.replace(`/`, ``)
             const isTestProduct = loader.definitions.productTypes[getType] == `Test Product`
             const isTestSig = [`This is a test message`, `THIS_MESSAGE_IS_FOR_TEST_PURPOSES_ONLY`]
-            if (isTestProduct || isTestSig.some(sig => props.description.toLowerCase().includes(sig.toLowerCase()) || props?.instruction?.toLowerCase().includes(sig.toLowerCase()))) {
+            if (isTestProduct || isTestSig.some(sig => props?.description?.toLowerCase().includes(sig.toLowerCase()) || props?.instruction?.toLowerCase().includes(sig.toLowerCase()))) {
                 props.is_test = true
             }
         }

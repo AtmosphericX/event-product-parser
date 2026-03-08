@@ -7,6 +7,7 @@
 		<img alt="GitHub forks" src="https://img.shields.io/github/forks/k3yomi/atmosx-nwws-parser">
 		<img alt="GitHub issues" src="https://img.shields.io/github/issues/k3yomi/atmosx-nwws-parser">
 		<img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/k3yomi/atmosx-nwws-parser">
+        <a href="https://nodei.co/npm/atmosx-nwws-parser/"><img src="https://nodei.co/npm/atmosx-nwws-parser.svg?style=shields&data=n&color=red"></a>
 	</div>
 </div>
 
@@ -220,7 +221,7 @@ console.log(alertTypes);
 ```
 
 ### Function `getEventPolygon(event)`
-Retrieves the geographical polygon for a given event based on its GENERATED geocode and UGC zones. (Returns in GeoJSON format)
+Retrieves the geographical polygon for a given event based on its generated geocode and UGC zones. (Returns in GeoJSON format)
 ```javascript
 const polygon = await parser.getEventPolygon(event);
 console.log(polygon);

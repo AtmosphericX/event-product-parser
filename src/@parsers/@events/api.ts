@@ -60,8 +60,8 @@ export class APIAlerts {
      * @returns {{ icao: any; name: any; }} 
      */
     private static getICAO(pVtec: string) {
-        const icao = pVtec ? pVtec.split(`.`)[2] : `N/A`;
-        const name = loader.definitions.ICAO?.[icao] ?? `N/A`;
+        const icao = pVtec ? pVtec.split(`.`)[2] : null;
+        const name = loader.definitions.ICAO?.[icao] ?? null;
         return { icao, name };
     }
     
@@ -89,38 +89,38 @@ export class APIAlerts {
             const getDescription = `${getHeadline} ${feature?.properties?.description ?? ``}`
             const getAWIP = feature?.properties?.parameters?.AWIPSidentifier?.[0] ?? null;
             const getHeader = EventParser.getHeader({ ...{ getAwip: {prefix: getAWIP?.slice(0, -3) }},} as types.StanzaAttributes);
-            const getSource = TextParser.textProductToString(getDescription, `SOURCE...`, [`.`]) ?? `N/A`;
+            const getSource = TextParser.textProductToString(getDescription, `SOURCE...`, [`.`]) ?? null;
             const getOffice = this.getICAO(getPVTEC ?? ``);
             processed.push({
                 type: "Feature",
                 properties: {
-                    locations: feature?.properties?.areaDesc ?? `N/A`,
-                    event: feature?.properties?.event ?? `N/A`,
-                    issued: feature?.properties?.sent ? new Date(feature?.properties?.sent).toLocaleString() : `N/A`,
-                    expires: feature?.properties?.expires ? new Date(feature?.properties?.expires).toLocaleString() : `N/A`,
-                    parent: feature?.properties?.event ?? `N/A`,
-                    action_type: feature?.properties?.messageType ?? `N/A`,
-                    description: feature?.properties?.description ?? `N/A`,
-                    instruction: feature?.properties?.instruction ?? `N/A`,
-                    sender_name: getOffice.name ?? `N/A`,
-                    sender_icao: getOffice.icao ?? `N/A`,
+                    locations: feature?.properties?.areaDesc ?? null,
+                    event: feature?.properties?.event ?? null,
+                    issued: feature?.properties?.sent ? new Date(feature?.properties?.sent).toLocaleString() : null,
+                    expires: feature?.properties?.expires ? new Date(feature?.properties?.expires).toLocaleString() : null,
+                    parent: feature?.properties?.event ?? null,
+                    action_type: feature?.properties?.messageType ?? null,
+                    description: feature?.properties?.description ?? null,
+                    instruction: feature?.properties?.instruction ?? null,
+                    sender_name: getOffice.name ?? null,
+                    sender_icao: getOffice.icao ?? null,
                     attributes: validated.attributes,
                     geocode: {
-                        UGC: feature?.properties?.geocode?.UGC ?? [`XX000`], 
-                        GENERATED: feature?.geometry?.coordinates.length > 0 ? Buffer.from(JSON.stringify([feature?.geometry?.coordinates[0]])).toString('base64') : null,
+                        UGC: feature?.properties?.geocode?.UGC ?? [], 
+                        generated: feature?.geometry?.coordinates.length > 0 ? Buffer.from(JSON.stringify([feature?.geometry?.coordinates[0]])).toString('base64') : null,
                     },
                     raw: {},
                     parameters: {
-                        wmo: feature?.properties?.parameters?.WMOidentifier?.[0] ?? getWmo ?? `N/A`,
+                        wmo: feature?.properties?.parameters?.WMOidentifier?.[0] ?? getWmo ?? null,
                         source: getSource,
-                        max_hail_size: feature?.properties?.parameters?.maxHailSize ?? `N/A`,
-                        max_wind_gust: feature?.properties?.parameters?.maxWindGust ?? `N/A`,
-                        damage_threat: feature?.properties?.parameters?.thunderstormDamageThreat?.[0] ?? `N/A`,
-                        tornado_detection: feature?.properties?.parameters?.tornadoDetection?.[0] ?? `N/A`,
-                        flood_detection: feature?.properties?.parameters?.floodDetection?.[0] ?? `N/A`,
-                        discussion_tornado_intensity: "N/A", 
-                        discussion_wind_intensity: `N/A`,
-                        discussion_hail_intensity: `N/A`,
+                        max_hail_size: feature?.properties?.parameters?.maxHailSize ?? null,
+                        max_wind_gust: feature?.properties?.parameters?.maxWindGust ?? null,
+                        damage_threat: feature?.properties?.parameters?.thunderstormDamageThreat?.[0] ?? null,
+                        tornado_detection: feature?.properties?.parameters?.tornadoDetection?.[0] ?? null,
+                        flood_detection: feature?.properties?.parameters?.floodDetection?.[0] ?? null,
+                        discussion_tornado_intensity: null, 
+                        discussion_wind_intensity: null,
+                        discussion_hail_intensity: null,
                     },
                     details: {
                         performance: performance.now() - tick,
@@ -132,11 +132,11 @@ export class APIAlerts {
                             ugc: getUgc ? getUgc.join(`,`) : null 
                         }),
                         header: getHeader,
-                        pvtec: getPVTEC ?? `N/A`,
+                        pvtec: getPVTEC ?? null,
                         history: [{
-                            description: feature?.properties?.description ?? `N/A`,
-                            action: feature?.properties?.messageType ?? `N/A`,
-                            time: feature?.properties?.sent ? new Date(feature?.properties?.sent).toLocaleString() : `N/A`
+                            description: feature?.properties?.description ?? null,
+                            action: feature?.properties?.messageType ?? null,
+                            time: feature?.properties?.sent ? new Date(feature?.properties?.sent).toLocaleString() : null
                         }],
                     },
                 },

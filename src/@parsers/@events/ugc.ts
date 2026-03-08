@@ -27,11 +27,11 @@ export class UGCAlerts {
      *
      * @private
      * @static
-     * @param {types.EventProperties} baseProperties 
+     * @param {types.EventProperties} properties 
      * @returns {string} 
      */
-    private static getTracking(baseProperties: types.EventProperties) {
-        return `${baseProperties.sender_icao}-${baseProperties.raw.attributes.ttaaii}-${baseProperties.raw.attributes.id.slice(-4)}`
+    private static getTracking(properties: types.EventProperties) {
+        return `${properties.sender_icao}-${properties.raw.attributes.ttaaii}-${properties?.raw?.attributes?.id.slice(-4) ?? 'N/A'}`;
     }
 
     /**
@@ -96,8 +96,8 @@ export class UGCAlerts {
                                 source: `ugc-parser`,
                                 tracking: this.getTracking(baseProperties),
                                 header: getHeader,
-                                pvtec: `N/A`,
-                                hvtec: `N/A`,
+                                pvtec: null,
+                                hvtec: null,
                                 history: [{ description: baseProperties.description, issued: baseProperties.issued, type: `Issued` }],
                             }  
                         },

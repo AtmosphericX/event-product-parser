@@ -40,7 +40,7 @@ export class PVtecParser {
                 tracking: `${parts[2]}-${parts[3]}-${parts[4]}-${parts[5]}`,
                 event: `${loader.definitions.events[parts[3]]} ${loader.definitions.actions[parts[4]]}`,
                 status: loader.definitions.status[parts[1]],
-                wmo: message.match(loader.definitions.regular_expressions.wmo)?.[0] || `N/A`,
+                wmo: message.match(loader.definitions.regular_expressions.wmo)?.[0] || null,
                 expires: this.parseExpiryDate(dates),
                 isKWNS: (parts[4] == `A` || parts[4] == `Y`) && (parts[3] == `TO` || parts[3] == `SV`) ? true : false,
             });

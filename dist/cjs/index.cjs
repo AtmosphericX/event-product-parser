@@ -6387,7 +6387,7 @@ var Database = class {
       try {
         const db = cache.db;
         if (!db) return;
-        db.prepare(`INSERT OR IGNORE INTO stanzas (type, stanza, issued) VALUES (?, ?, ?)`).run(JSON.stringify(stanza), (_a = stanza == null ? void 0 : stanza.awipsType) == null ? void 0 : _a.type, (_b = stanza == null ? void 0 : stanza.attributes) == null ? void 0 : _b.issue);
+        db.prepare(`INSERT OR IGNORE INTO stanzas (type, stanza, issued) VALUES (?, ?, ?)`).run((_a = stanza == null ? void 0 : stanza.awipsType) == null ? void 0 : _a.type, JSON.stringify(stanza), (_b = stanza == null ? void 0 : stanza.attributes) == null ? void 0 : _b.issue);
         const countRow = db.prepare(`SELECT COUNT(*) AS total FROM stanzas`).get();
         const totalRows = countRow.total;
         const maxHistory = settings2.noaa_weather_wire_service_settings.cache.max_db_history;

@@ -41,7 +41,7 @@ export class Database {
         try {
             const db = loader.cache.db;
             if (!db) return;
-            db.prepare(`INSERT OR IGNORE INTO stanzas (type, stanza, issued) VALUES (?, ?, ?)`).run(JSON.stringify(stanza), stanza?.awipsType?.type, stanza?.attributes?.issue);
+            db.prepare(`INSERT OR IGNORE INTO stanzas (type, stanza, issued) VALUES (?, ?, ?)`).run(stanza?.awipsType?.type, JSON.stringify(stanza), stanza?.attributes?.issue);
             const countRow = db.prepare(`SELECT COUNT(*) AS total FROM stanzas`).get() as { total: number };
             const totalRows = countRow.total;
             const maxHistory = settings.noaa_weather_wire_service_settings.cache.max_db_history;

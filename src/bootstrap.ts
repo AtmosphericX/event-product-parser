@@ -11,7 +11,6 @@
     Written by: k3yomi@GitHub                        
 */
 
-
 import * as fs from 'fs';
 import * as path from 'path';
 import * as events from 'events';
@@ -30,7 +29,6 @@ import jszip from 'jszip';
 
 
 import * as dictEvents from './@dictionaries/events';
-import * as dictOffshore from './@dictionaries/offshore';
 import * as dictAwips from './@dictionaries/awips';
 import * as dictSignatures from './@dictionaries/signatures';
 import * as dictICAOs from './@dictionaries/icao';
@@ -123,7 +121,7 @@ export const definitions = {
     status: dictEvents.status,
     productTypes: dictEvents.types,
     correlations: dictEvents.status_correlations,
-    offshore: dictOffshore.offshore,
+    offshore: dictEvents.offshore,
     awips: dictAwips.awips,
     causes: dictEvents.causes,
     records: dictEvents.records,
@@ -138,6 +136,9 @@ export const definitions = {
             "PDS Tornado Warning": { description: "particularly dangerous situation", condition: (damageThreatTag: string) => damageThreatTag === 'CONSIDERABLE'},
             "Confirmed Tornado Warning": { condition: (tornadoThreatTag: string) => tornadoThreatTag === 'OBSERVED'},
             "Radar Indicated Tornado Warning": {condition: (tornadoThreatTag: string) => tornadoThreatTag !== 'OBSERVED'},
+        }},
+        {"Special Marine Warning": {
+            "Tornadic Special Marine Warning": {condition: (tornadoThreatTag: string) => tornadoThreatTag !== 'POSSIBLE'},
         }},
         {"Tornado Watch": {
             "PDS Tornado Watch": { description: "particularly dangerous situation"}

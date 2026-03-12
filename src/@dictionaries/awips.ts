@@ -1,3 +1,16 @@
+/*
+                                            _               _     __   __
+         /\  | |                           | |             (_)    \ \ / /
+        /  \ | |_ _ __ ___   ___  ___ _ __ | |__   ___ _ __ _  ___ \ V / 
+       / /\ \| __| "_ ` _ \ / _ \/ __| "_ \| "_ \ / _ \ "__| |/ __| > <  
+      / ____ \ |_| | | | | | (_) \__ \ |_) | | | |  __/ |  | | (__ / . \ 
+     /_/    \_\__|_| |_| |_|\___/|___/ .__/|_| |_|\___|_|  |_|\___/_/ \_\
+                                     | |                                 
+                                     |_|                                                                                                                
+    
+    Written by: KiyoWx (k3yomi)                
+*/
+
 export const awips: Record<string, string> = {
     ABV: `rawinsonde-data-above-100-millibars`,
     ADA: `alarm-alert-administrative-message`,
@@ -276,7 +289,10 @@ export const awips: Record<string, string> = {
     SUM: `space-weather-message`,
     SVR: `severe-thunderstorm-warning`,
     SVS: `severe-weather-statement`,
-    SWO: `severe-storm-outlook`,
+    SWOMCD: `mesoscale-discussion`,
+    SWODY1: `day-1`,
+    SWODY2: `day-2`,
+    SWODY3: `day-3`,
     SWS: `state-weather-summary`,
     SYN: `regional-weather-synopsis`,
     TAF: `terminal-aerodrome-forecast`,

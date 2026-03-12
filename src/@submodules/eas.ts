@@ -11,12 +11,9 @@
     Written by: KiyoWx (k3yomi)                
 */
 
-
 import * as loader from '../bootstrap';
 import * as types from '../types';
 import Utils from './utils';
-
-
 
 export class EAS {
 

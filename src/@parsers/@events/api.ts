@@ -16,7 +16,6 @@ import * as loader from '../../bootstrap';
 import EventParser from '../events';
 import TextParser from '../text';
 
-
 export class APIAlerts {
     
     /**
@@ -78,7 +77,6 @@ export class APIAlerts {
      */
     public static async event(validated: types.StanzaCompiled) {
         let processed = [] as unknown[];
-        const settings = loader.settings as types.ClientSettingsTypes;
         const messages = Object.values(JSON.parse(validated.message).features) as types.EventCompiled[];
         for (let feature of messages) {
             const tick = performance.now();

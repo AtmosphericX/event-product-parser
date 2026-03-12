@@ -17,7 +17,6 @@ import hVtecParser from '../hvtec';
 import UgcParser from '../ugc';
 import EventParser from '../events';
 
-
 export class VTECAlerts {
 
     /**
@@ -35,11 +34,11 @@ export class VTECAlerts {
      */
     public static async event(validated: types.StanzaCompiled) {
         let processed = [] as unknown[];
-        const blocks = validated.message.split(/\[SoF\]/gim)?.map(msg => msg.trim());
+        const blocks = validated.message.split(/\[SoF\]/gim)?.map(msg => msg.trim())?.filter(Boolean);
         for (const block of blocks) {
             const cachedAttribute = block.match(/STANZA ATTRIBUTES\.\.\.(\{.*\})/);
-            const messages = block.split(/(?=\$\$)/g)?.map(msg => msg.trim());
-            if (!messages || messages.length == 0) return;
+            const messages = block?.split(/(?=\$\$)/g)?.map(msg => msg.trim())?.filter(msg => msg && msg !== "$$");
+            if (!messages || messages.length == 0) { continue };
             for (let i = 0; i < messages.length; i++) {
                 const tick = performance.now();
                 const message = messages[i]

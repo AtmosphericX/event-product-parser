@@ -14,7 +14,6 @@
 import * as loader from '../bootstrap';
 import * as types from '../types';
 
-
 export class UGCParser {
     
     /**

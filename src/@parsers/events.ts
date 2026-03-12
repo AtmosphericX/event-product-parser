@@ -1,4 +1,15 @@
-
+/*
+                                            _               _     __   __
+         /\  | |                           | |             (_)    \ \ / /
+        /  \ | |_ _ __ ___   ___  ___ _ __ | |__   ___ _ __ _  ___ \ V / 
+       / /\ \| __| "_ ` _ \ / _ \/ __| "_ \| "_ \ / _ \ "__| |/ __| > <  
+      / ____ \ |_| | | | | | (_) \__ \ |_) | | | |  __/ |  | | (__ / . \ 
+     /_/    \_\__|_| |_| |_|\___/|___/ .__/|_| |_|\___|_|  |_|\___/_/ \_\
+                                     | |                                 
+                                     |_|                                                                                                                
+    
+    Written by: KiyoWx (k3yomi)                
+*/
 
 import * as loader from '../bootstrap';
 import * as types from '../types';
@@ -9,7 +20,6 @@ import UGCAlerts from './@events/ugc';
 import TextAlerts from './@events/text';
 import CAPAlerts from './@events/cap';
 import APIAlerts from './@events/api';
-
 
 export class EventParser {
     
@@ -194,6 +204,7 @@ export class EventParser {
                     return false;
                 }
             }
+            loader.cache.events.emit(`on${originalEvent.properties.event.replace(/\s+/g, '')}`, originalEvent);
             for (const key in sets) {
                 const setting = sets[key];
                 if (key === 'events' && setting.size > 0 && !setting.has(originalEvent.properties.event.toLowerCase())) { 
@@ -215,8 +226,6 @@ export class EventParser {
                     loader.cache.events.emit(`onFilteredState`, originalEvent); return false 
                 }
             }
-            loader.cache.events.emit(`on${originalEvent.properties.parent.replace(/\s+/g, '')}`) 
-            loader.cache.events.emit(`on${originalEvent.properties.event.replace(/\s+/g, '')}`) 
             return true;
         })
             for (const event of filtered as types.EventCompiled[]) {

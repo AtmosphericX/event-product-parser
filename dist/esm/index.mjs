@@ -3949,6 +3949,18 @@ var events = {
   "ZR": "Freezing Rain",
   "ZY": "Freezing Spray"
 };
+var offshore = {
+  "Special Weather Statement": "Special Weather Statement",
+  "Hurricane Warning": "Hurricane Warning",
+  "Hurricane Force Wind Warning": "Hurricane Force Wind Warning",
+  "Hurricane Watch": "Hurricane Watch",
+  "Tropical Storm Warning": "Tropical Storm Warning",
+  "Tropical Storm Watch": "Tropical Storm Watch",
+  "High Wind Warning": "High Wind Warning",
+  "Gale Warning": "Gale Warning",
+  "Small Craft Advisory": "Small Craft Advisory",
+  "Small Craft Warning": "Small Craft Warning"
+};
 var actions = {
   "W": "Warning",
   "F": "Forecast",
@@ -4019,20 +4031,6 @@ var severity = {
   2: "Moderate",
   3: "Major",
   U: "Unknown"
-};
-
-// src/@dictionaries/offshore.ts
-var offshore = {
-  "Special Weather Statement": "Special Weather Statement",
-  "Hurricane Warning": "Hurricane Warning",
-  "Hurricane Force Wind Warning": "Hurricane Force Wind Warning",
-  "Hurricane Watch": "Hurricane Watch",
-  "Tropical Storm Warning": "Tropical Storm Warning",
-  "Tropical Storm Watch": "Tropical Storm Watch",
-  "High Wind Warning": "High Wind Warning",
-  "Gale Warning": "Gale Warning",
-  "Small Craft Advisory": "Small Craft Advisory",
-  "Small Craft Warning": "Small Craft Warning"
 };
 
 // src/@dictionaries/awips.ts
@@ -4314,7 +4312,10 @@ var awips = {
   SUM: `space-weather-message`,
   SVR: `severe-thunderstorm-warning`,
   SVS: `severe-weather-statement`,
-  SWO: `severe-storm-outlook`,
+  SWOMCD: `mesoscale-discussion`,
+  SWODY1: `day-1`,
+  SWODY2: `day-2`,
+  SWODY3: `day-3`,
   SWS: `state-weather-summary`,
   SYN: `regional-weather-synopsis`,
   TAF: `terminal-aerodrome-forecast`,
@@ -4853,6 +4854,9 @@ var definitions = {
       "PDS Tornado Warning": { description: "particularly dangerous situation", condition: (damageThreatTag) => damageThreatTag === "CONSIDERABLE" },
       "Confirmed Tornado Warning": { condition: (tornadoThreatTag) => tornadoThreatTag === "OBSERVED" },
       "Radar Indicated Tornado Warning": { condition: (tornadoThreatTag) => tornadoThreatTag !== "OBSERVED" }
+    } },
+    { "Special Marine Warning": {
+      "Tornadic Special Marine Warning": { condition: (tornadoThreatTag) => tornadoThreatTag !== "POSSIBLE" }
     } },
     { "Tornado Watch": {
       "PDS Tornado Watch": { description: "particularly dangerous situation" }
@@ -5509,13 +5513,16 @@ var VTECAlerts = class {
    */
   static event(validated) {
     return __async(this, null, function* () {
-      var _a, _b;
+      var _a, _b, _c, _d;
       let processed = [];
-      const blocks = (_a = validated.message.split(/\[SoF\]/gim)) == null ? void 0 : _a.map((msg) => msg.trim());
+      const blocks = (_b = (_a = validated.message.split(/\[SoF\]/gim)) == null ? void 0 : _a.map((msg) => msg.trim())) == null ? void 0 : _b.filter(Boolean);
       for (const block of blocks) {
         const cachedAttribute = block.match(/STANZA ATTRIBUTES\.\.\.(\{.*\})/);
-        const messages = (_b = block.split(/(?=\$\$)/g)) == null ? void 0 : _b.map((msg) => msg.trim());
-        if (!messages || messages.length == 0) return;
+        const messages = (_d = (_c = block == null ? void 0 : block.split(/(?=\$\$)/g)) == null ? void 0 : _c.map((msg) => msg.trim())) == null ? void 0 : _d.filter((msg) => msg && msg !== "$$");
+        if (!messages || messages.length == 0) {
+          continue;
+        }
+        ;
         for (let i = 0; i < messages.length; i++) {
           const tick = performance.now();
           const message = messages[i];
@@ -5608,13 +5615,16 @@ var UGCAlerts = class {
    */
   static event(validated) {
     return __async(this, null, function* () {
-      var _a, _b;
+      var _a, _b, _c, _d;
       let processed = [];
-      const blocks = (_a = validated.message.split(/\[SoF\]/gim)) == null ? void 0 : _a.map((msg) => msg.trim());
+      const blocks = (_b = (_a = validated.message.split(/\[SoF\]/gim)) == null ? void 0 : _a.map((msg) => msg.trim())) == null ? void 0 : _b.filter(Boolean);
       for (const block of blocks) {
         const cachedAttribute = block.match(/STANZA ATTRIBUTES\.\.\.(\{.*\})/);
-        const messages = (_b = block.split(/(?=\$\$)/g)) == null ? void 0 : _b.map((msg) => msg.trim());
-        if (!messages || messages.length == 0) return;
+        const messages = (_d = (_c = block == null ? void 0 : block.split(/(?=\$\$)/g)) == null ? void 0 : _c.map((msg) => msg.trim())) == null ? void 0 : _d.filter((msg) => msg && msg !== "$$");
+        if (!messages || messages.length == 0) {
+          continue;
+        }
+        ;
         for (let i = 0; i < messages.length; i++) {
           const tick = performance.now();
           const message = messages[i];
@@ -5704,13 +5714,16 @@ var TextAlerts = class {
    */
   static event(validated) {
     return __async(this, null, function* () {
-      var _a, _b;
+      var _a, _b, _c, _d, _e;
       let processed = [];
-      const blocks = (_a = validated.message.split(/\[SoF\]/gim)) == null ? void 0 : _a.map((msg) => msg.trim());
+      const blocks = (_c = (_b = (_a = validated == null ? void 0 : validated.message) == null ? void 0 : _a.split(/\[SoF\]/gim)) == null ? void 0 : _b.map((msg) => msg.trim())) == null ? void 0 : _c.filter(Boolean);
       for (const block of blocks) {
         const cachedAttribute = block.match(/STANZA ATTRIBUTES\.\.\.(\{.*\})/);
-        const messages = (_b = block.split(/(?=\$\$)/g)) == null ? void 0 : _b.map((msg) => msg.trim());
-        if (!messages || messages.length == 0) return;
+        const messages = (_e = (_d = block == null ? void 0 : block.split(/(?=\$\$)/g)) == null ? void 0 : _d.map((msg) => msg.trim())) == null ? void 0 : _e.filter((msg) => msg && msg !== "$$");
+        if (!messages || messages.length == 0) {
+          continue;
+        }
+        ;
         for (let i = 0; i < messages.length; i++) {
           const tick = performance.now();
           const message = messages[i];
@@ -5778,15 +5791,17 @@ var CapAlerts = class {
    */
   static event(validated) {
     return __async(this, null, function* () {
-      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t;
+      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v;
       let processed = [];
       const tick = performance.now();
-      const settings2 = settings;
-      const blocks = (_a = validated.message.split(/\[SoF\]/gim)) == null ? void 0 : _a.map((msg) => msg.trim());
+      const blocks = (_b = (_a = validated.message.split(/\[SoF\]/gim)) == null ? void 0 : _a.map((msg) => msg.trim())) == null ? void 0 : _b.filter(Boolean);
       for (const block of blocks) {
         const cachedAttribute = block.match(/STANZA ATTRIBUTES\.\.\.(\{.*\})/);
-        const messages = (_b = block.split(/(?=\$\$)/g)) == null ? void 0 : _b.map((msg) => msg.trim());
-        if (!messages || messages.length == 0) return;
+        const messages = (_d = (_c = block == null ? void 0 : block.split(/(?=\$\$)/g)) == null ? void 0 : _c.map((msg) => msg.trim())) == null ? void 0 : _d.filter((msg) => msg && msg !== "$$");
+        if (!messages || messages.length == 0) {
+          continue;
+        }
+        ;
         for (let i = 0; i < messages.length; i++) {
           let message = messages[i];
           const attributes = cachedAttribute != null ? JSON.parse(cachedAttribute[1]) : validated;
@@ -5815,37 +5830,37 @@ var CapAlerts = class {
             `flooddetection`
           ]);
           const getHeader = events_default.getHeader(__spreadValues({}, validated.attributes));
-          const getSource = (_c = text_default.textProductToString(extracted.description, `SOURCE...`, [`.`])) != null ? _c : null;
+          const getSource = (_e = text_default.textProductToString(extracted.description, `SOURCE...`, [`.`])) != null ? _e : null;
           processed.push({
             type: "Feature",
             properties: {
-              locations: (_d = extracted.areadesc) != null ? _d : null,
-              event: (_e = extracted.event) != null ? _e : null,
+              locations: (_f = extracted.areadesc) != null ? _f : null,
+              event: (_g = extracted.event) != null ? _g : null,
               issued: extracted.sent ? new Date(extracted.sent).toLocaleString() : null,
               expires: extracted.expires ? new Date(extracted.expires).toLocaleString() : null,
-              parent: (_f = extracted.event) != null ? _f : null,
-              action_type: (_g = extracted.msgtype) != null ? _g : null,
-              description: (_h = extracted.description) != null ? _h : null,
+              parent: (_h = extracted.event) != null ? _h : null,
+              action_type: (_i = extracted.msgtype) != null ? _i : null,
+              description: (_j = extracted.description) != null ? _j : null,
               instruction: null,
-              sender_name: (_i = extracted.sendername) != null ? _i : null,
+              sender_name: (_k = extracted.sendername) != null ? _k : null,
               sender_icao: extracted.wmoidentifier ? extracted.wmoidentifier.substring(extracted.wmoidentifier.length - 4) : null,
               attributes,
               geocode: {
                 UGC: extracted.ugc ? Array.isArray(extracted.ugc) ? extracted.ugc : [extracted.ugc] : [],
-                generated: ((_j = extracted == null ? void 0 : extracted.polygon) == null ? void 0 : _j.length) > 0 ? Buffer.from(JSON.stringify([extracted.polygon.split(" ").map((coord) => {
+                generated: ((_l = extracted == null ? void 0 : extracted.polygon) == null ? void 0 : _l.length) > 0 ? Buffer.from(JSON.stringify([extracted.polygon.split(" ").map((coord) => {
                   const [lat, lon] = coord.split(",").map(Number);
                   return [lon, lat];
                 })])).toString("base64") : null
               },
               raw: { attributes },
               parameters: {
-                wmo: (_k = extracted.wmoidentifier) != null ? _k : null,
+                wmo: (_m = extracted.wmoidentifier) != null ? _m : null,
                 source: getSource,
-                max_hail_size: (_l = extracted.maxHailSize) != null ? _l : null,
-                max_wind_gust: (_m = extracted.maxWindGust) != null ? _m : null,
-                damage_threat: (_n = extracted.thunderstormdamagethreat) != null ? _n : null,
-                tornado_detection: (_p = (_o = extracted.tornadodetection) != null ? _o : extracted.waterspoutdetection) != null ? _p : null,
-                flood_detection: (_q = extracted.flooddetection) != null ? _q : null,
+                max_hail_size: (_n = extracted.maxHailSize) != null ? _n : null,
+                max_wind_gust: (_o = extracted.maxWindGust) != null ? _o : null,
+                damage_threat: (_p = extracted.thunderstormdamagethreat) != null ? _p : null,
+                tornado_detection: (_r = (_q = extracted.tornadodetection) != null ? _q : extracted.waterspoutdetection) != null ? _r : null,
+                flood_detection: (_s = extracted.flooddetection) != null ? _s : null,
                 discussion_tornado_intensity: null,
                 discussion_wind_intensity: null,
                 discussion_hail_intensity: null
@@ -5855,9 +5870,9 @@ var CapAlerts = class {
                 source: `cap-parser`,
                 tracking: this.getTracking(extracted, attributes),
                 header: getHeader,
-                pvtec: (_r = extracted.vtec) != null ? _r : null,
+                pvtec: (_t = extracted.vtec) != null ? _t : null,
                 hvtec: null,
-                history: [{ description: (_s = extracted.description) != null ? _s : null, issued: extracted.sent ? new Date(extracted.sent).toLocaleString() : null, type: (_t = extracted.msgtype) != null ? _t : null }]
+                history: [{ description: (_u = extracted.description) != null ? _u : null, issued: extracted.sent ? new Date(extracted.sent).toLocaleString() : null, type: (_v = extracted.msgtype) != null ? _v : null }]
               }
             }
           });
@@ -5933,7 +5948,6 @@ var APIAlerts = class {
     return __async(this, null, function* () {
       var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta;
       let processed = [];
-      const settings2 = settings;
       const messages = Object.values(JSON.parse(validated.message).features);
       for (let feature of messages) {
         const tick = performance.now();
@@ -6198,6 +6212,7 @@ var EventParser = class {
             return false;
           }
         }
+        cache.events.emit(`on${originalEvent.properties.event.replace(/\s+/g, "")}`, originalEvent);
         for (const key in sets) {
           const setting = sets[key];
           if (key === "events" && setting.size > 0 && !setting.has(originalEvent.properties.event.toLowerCase())) {
@@ -6225,8 +6240,6 @@ var EventParser = class {
             return false;
           }
         }
-        cache.events.emit(`on${originalEvent.properties.parent.replace(/\s+/g, "")}`);
-        cache.events.emit(`on${originalEvent.properties.event.replace(/\s+/g, "")}`);
         return true;
       });
       for (const event of filtered) {

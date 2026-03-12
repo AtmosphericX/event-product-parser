@@ -16,7 +16,6 @@ import * as loader from '../../bootstrap';
 import EventParser from '../events';
 import TextParser from '../text';
 
-
 export class CapAlerts {
     
     /**
@@ -53,12 +52,11 @@ export class CapAlerts {
     public static async event(validated: types.StanzaCompiled) {
         let processed = [] as unknown[];
         const tick = performance.now();
-        const settings = loader.settings as types.ClientSettingsTypes;
-        const blocks = validated.message.split(/\[SoF\]/gim)?.map(msg => msg.trim());
+        const blocks = validated.message.split(/\[SoF\]/gim)?.map(msg => msg.trim())?.filter(Boolean);
         for (const block of blocks) {
             const cachedAttribute = block.match(/STANZA ATTRIBUTES\.\.\.(\{.*\})/);
-            const messages = block.split(/(?=\$\$)/g)?.map(msg => msg.trim());
-            if (!messages || messages.length == 0) return;
+            const messages = block?.split(/(?=\$\$)/g)?.map(msg => msg.trim())?.filter(msg => msg && msg !== "$$");
+            if (!messages || messages.length == 0) { continue };
             for (let i = 0; i < messages.length; i++) {
                 let message = messages[i]
                 const attributes = cachedAttribute != null ? JSON.parse(cachedAttribute[1]) : validated;

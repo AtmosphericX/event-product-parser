@@ -11,7 +11,6 @@
     Written by: KiyoWx (k3yomi)                
 */
 
-
 import * as loader from '../bootstrap';
 import * as types from '../types';
 import StanzaParser from '../@parsers/stanza';

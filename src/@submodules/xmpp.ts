@@ -119,7 +119,7 @@ export class Xmpp {
                             (validate.isCap && !validate.isCapDescription);
                     if (skipMessage) return;
                     await EventParser.eventHandler(validate);
-                    await Database.stanzaCacheImport(JSON.stringify(validate));
+                    await Database.stanzaCacheImport(validate);
                     loader.cache.events.emit('onMessage', validate);
                 }
                 if (stanza.is('presence') && stanza.attrs.from?.startsWith('nwws@conference.nwws-oi.weather.gov/')) {

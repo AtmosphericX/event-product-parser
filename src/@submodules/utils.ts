@@ -54,17 +54,16 @@ export class Utils {
     /**
      * @function loadCollectionCache
      * @description
-     *     Loads cached NWWS messages from disk, validates them, and passes them
-     *     to the event parser. Honors CAP preferences and ignores empty or
-     *     incompatible files.
-     *
+     *      Loads cached stanzas from the database, validates them, and processes them through the event parser. 
+     *      Only processes stanzas that are not marked to be ignored and match the CAP preferences.
+     *     
      * @static
      * @async
      */
     public static async loadCollectionCache() {
         try {
             const settings = loader.settings as types.ClientSettingsTypes;
-            if (settings.noaa_weather_wire_service_settings.cache.use_db_for_cache) {
+            if (settings.noaa_weather_wire_service_settings.cache.enabled) {
                 const maxRows = settings.noaa_weather_wire_service_settings.cache.max_db_cache_size ?? 5000;
                 const rows = await loader.cache.db.prepare(`SELECT * FROM stanzas ORDER BY rowid DESC LIMIT ?`)
                     .all(maxRows) as { rowid: number; stanza: string }[];
@@ -82,24 +81,6 @@ export class Utils {
                 await Promise.all(eventsToProcess.map(validate => EventParser.eventHandler(validate)));
                 this.warn(loader.definitions.messages.dump_cache_complete, true);
                 return;
-            }
-            if (settings.noaa_weather_wire_service_settings.cache.enabled && settings.noaa_weather_wire_service_settings.cache.directory) {
-                if (!loader.packages.fs.existsSync(settings.noaa_weather_wire_service_settings.cache.directory)) return;
-                const cacheDir = settings.noaa_weather_wire_service_settings.cache.directory;
-                const getAllFiles = loader.packages.fs.readdirSync(cacheDir).filter((file: string) => file.endsWith('.bin') && file.startsWith('cache-'));
-                this.warn(loader.definitions.messages.dump_cache.replace(`{count}`, getAllFiles.length.toString()), true);
-                for (const file of getAllFiles) {
-                    const filepath = loader.packages.path.join(cacheDir, file);
-                    const readFile = loader.packages.fs.readFileSync(filepath, { encoding: 'utf-8' });
-                    const readSize = loader.packages.fs.statSync(filepath).size;
-                    if (readSize == 0) { continue; }
-                    const isCap = readFile.includes(`<?xml`);
-                    if (isCap && !settings.noaa_weather_wire_service_settings.preferences.cap_only) continue;
-                    if (!isCap && settings.noaa_weather_wire_service_settings.preferences.cap_only) continue;
-                    const validate = StanzaParser.validate(readFile, { isCap: isCap, raw: true });
-                    await EventParser.eventHandler(validate);
-                }
-                this.warn(loader.definitions.messages.dump_cache_complete, true);
             }
         } catch (error: any) {
             Utils.warn(`Failed to load cache: ${error.stack}`);
@@ -180,44 +161,6 @@ export class Utils {
     }
 
     /**
-     * @function garbageCollectionCache
-     * @description
-     *     Deletes cache files exceeding the specified size limit to free disk space.
-     *     Recursively traverses the cache directory and removes files larger than
-     *     the given maximum.
-     *
-     * @static
-     * @param {number} maxFileMegabytes
-     */
-    public static garbageCollectionCache(maxFileMegabytes: number) {
-        try {
-            const settings = loader.settings as types.ClientSettingsTypes;
-            const cacheDir = settings.noaa_weather_wire_service_settings.cache.directory;
-            if (!cacheDir) return;
-            const { fs, path } = loader.packages;
-            if (!fs.existsSync(cacheDir)) return;
-            const maxBytes = maxFileMegabytes * 1024 * 1024;
-            const stackDirs: string[] = [cacheDir];
-            const files: { file: string; size: number }[] = [];
-            while (stackDirs.length) {
-                const currentDir = stackDirs.pop()!;
-                fs.readdirSync(currentDir).forEach(file => {
-                    const fullPath = path.join(currentDir, file);
-                    const stat = fs.statSync(fullPath);
-                    if (stat.isDirectory()) stackDirs.push(fullPath);
-                    else files.push({ file: fullPath, size: stat.size });
-                });
-            }
-            files.forEach(f => {
-                if (f.size > maxBytes) fs.unlinkSync(f.file);
-            });
-        } catch (error: unknown) {
-            const msg = error instanceof Error ? error.message : String(error);
-            Utils.warn(`Failed to perform garbage collection: ${msg}`);
-        }
-    }
-
-    /**
      * @function handleCronJob
      * @description
      *     Performs scheduled tasks for NWWS XMPP session maintenance or GeoJSON data
@@ -232,9 +175,6 @@ export class Utils {
             const cache = settings.noaa_weather_wire_service_settings.cache;
             const reconnections = settings.noaa_weather_wire_service_settings.reconnection_settings;
             if (isWire) {
-                if (cache.enabled) {
-                    void this.garbageCollectionCache(cache.max_file_size_mb);
-                }
                 if (reconnections.enabled) {
                     void Xmpp.isSessionReconnectionEligible(reconnections.interval);
                 }

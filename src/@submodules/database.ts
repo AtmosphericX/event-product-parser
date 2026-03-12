@@ -36,12 +36,12 @@ export class Database {
      * @example
      *     await Database.stanzaCacheImport("<alert>...</alert>");
      */
-    public static async stanzaCacheImport(stanza: string): Promise<void> {
+    public static async stanzaCacheImport(stanza: Record<string, any>): Promise<void> {
         const settings = loader.settings as types.ClientSettingsTypes;
         try {
             const db = loader.cache.db;
             if (!db) return;
-            db.prepare(`INSERT OR IGNORE INTO stanzas (stanza) VALUES (?)`).run(stanza);
+            db.prepare(`INSERT OR IGNORE INTO stanzas (type, stanza, issued) VALUES (?, ?, ?)`).run(JSON.stringify(stanza), stanza?.awipsType?.type, stanza?.attributes?.issue);
             const countRow = db.prepare(`SELECT COUNT(*) AS total FROM stanzas`).get() as { total: number };
             const totalRows = countRow.total;
             const maxHistory = settings.noaa_weather_wire_service_settings.cache.max_db_history;
@@ -61,7 +61,7 @@ export class Database {
             }
         } catch (error: unknown) {
             const msg = error instanceof Error ? error.message : String(error);
-            Utils.warn(`Failed to import stanza into cache: ${msg}`);
+            Utils.warn(`Failed to import stanza into cache: ${msg}. Please try to delete ${settings.database} and restart the application.`);
         }
     }
 
@@ -91,6 +91,8 @@ export class Database {
             loader.cache.db.prepare(`
                 CREATE TABLE IF NOT EXISTS stanzas (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    type TEXT,
+                    issued TEXT,
                     stanza TEXT
                 )
             `).run();

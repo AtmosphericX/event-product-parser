@@ -69,39 +69,35 @@ export class UGCAlerts {
      */
     public static async event(validated: types.StanzaCompiled) {
         let processed = [] as unknown[];
-        const blocks = validated.message.split(/\[SoF\]/gim)?.map(msg => msg.trim())?.filter(Boolean);
-        for (const block of blocks) {
-            const cachedAttribute = block.match(/STANZA ATTRIBUTES\.\.\.(\{.*\})/);
-            const messages = block?.split(/(?=\$\$)/g)?.map(msg => msg.trim())?.filter(msg => msg && msg !== "$$");
-            if (!messages || messages.length == 0) { continue };
-            for (let i = 0; i < messages.length; i++) {
-                const tick = performance.now();
-                const message = messages[i]
-                const getUGC = await UgcParser.ugcExtractor(message) as types.UGCEntry
-                if (getUGC != null) {
-                    const attributes = cachedAttribute != null ? JSON.parse(cachedAttribute[1]) : validated;
-                    const baseProperties = await EventParser.getBaseProperties(message, attributes, getUGC) as types.EventProperties;
-                    const getHeader = EventParser.getHeader({ ...attributes, ...baseProperties.raw } as types.StanzaAttributes, baseProperties);
-                    const getEvent = this.getEvent(message, attributes);
-                    processed.push({
-                        type: "Feature",
-                        properties: { 
-                            event: getEvent, 
-                            parent: getEvent, 
-                            action_type: `Issued`, 
-                            ...baseProperties, 
-                            details: {
-                                performance: performance.now() - tick,
-                                source: `ugc-parser`,
-                                tracking: this.getTracking(baseProperties),
-                                header: getHeader,
-                                pvtec: null,
-                                hvtec: null,
-                                history: [{ description: baseProperties.description, issued: baseProperties.issued, type: `Issued` }],
-                            }  
-                        },
-                    })
-                }
+        const messages = validated?.message?.split(/(?=\$\$)/g)?.map(msg => msg.trim())?.filter(msg => msg && msg !== "$$");
+        if (!messages || messages.length == 0) { return }
+        for (let i = 0; i < messages.length; i++) {
+            const tick = performance.now();
+            const message = messages[i]
+            const getUGC = await UgcParser.ugcExtractor(message) as types.UGCEntry
+            if (getUGC != null) {
+                const attributes = validated as types.StanzaAttributes;
+                const baseProperties = await EventParser.getBaseProperties(message, attributes, getUGC) as types.EventProperties;
+                const getHeader = EventParser.getHeader({ ...attributes, ...baseProperties.raw } as types.StanzaAttributes, baseProperties);
+                const getEvent = this.getEvent(message, attributes);
+                processed.push({
+                    type: "Feature",
+                    properties: { 
+                        event: getEvent, 
+                        parent: getEvent, 
+                        action_type: `Issued`, 
+                        ...baseProperties, 
+                        details: {
+                            performance: performance.now() - tick,
+                            source: `ugc-parser`,
+                            tracking: this.getTracking(baseProperties),
+                            header: getHeader,
+                            pvtec: null,
+                            hvtec: null,
+                            history: [{ description: baseProperties.description, issued: baseProperties.issued, type: `Issued` }],
+                        }  
+                    },
+                })
             }
         }
         EventParser.validateEvents(processed);

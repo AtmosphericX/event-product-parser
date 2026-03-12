@@ -38,11 +38,8 @@ const parser = new AlertManager({
         },   
         cache: {
             enabled: false,
-            max_file_size_mb: 5,
-            directory: `./nwws_cache`,
             max_db_history: 5000,
             max_db_cache_size: 1000,
-            use_db_for_cache: true,
         },
         preferences: {
             disable_ugc: false,

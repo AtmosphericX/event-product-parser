@@ -4793,12 +4793,9 @@ var settings = {
       nickname: "AtmosphericX Standalone Parser"
     },
     cache: {
-      enabled: false,
-      max_file_size_mb: 5,
-      directory: null,
+      enabled: true,
       max_db_history: 5e3,
-      max_db_cache_size: 1e3,
-      use_db_for_cache: true
+      max_db_cache_size: 1e3
     },
     preferences: {
       disable_ugc: false,
@@ -4901,124 +4898,6 @@ var definitions = {
     dump_cache_complete: `Completed dumping all cached alert files.`
   }
 };
-
-// src/@parsers/stanza.ts
-var StanzaParser = class {
-  /**
-   * @function validate
-   * @description
-   *     Validates and parses a stanza message, extracting its attributes and metadata.
-   *     Handles both raw message strings (for debug/testing) and actual stanza objects.
-   *     Determines whether the message is a CAP alert, contains VTEC codes, or contains UGCs,
-   *     and identifies the AWIPS product type and prefix.
-   *
-   * @static
-   * @param {any} stanza
-   * @param {boolean | types.StanzaAttributes} [isDebug=false]
-   * @returns {{
-   *     message: string;
-   *     attributes: types.StanzaAttributes;
-   *     isCap: boolean,
-   *     isPVtec: boolean;
-   *     isCapDescription: boolean;
-   *     awipsType: Record<string, string>;
-   *     isApi: boolean;
-   *     ignore: boolean;
-   *     isUGC?: boolean;
-   * }}
-   */
-  static validate(stanza, isDebug = false) {
-    var _a;
-    if (isDebug !== false) {
-      const vTypes = isDebug;
-      const message = stanza;
-      const attributes = vTypes;
-      const isCap = (_a = vTypes.isCap) != null ? _a : message.includes(`<?xml`);
-      const isCapDescription = message.includes(`<areaDesc>`);
-      const isPVtec = message.match(definitions.regular_expressions.pvtec) != null;
-      const isUGC = message.match(definitions.regular_expressions.ugc1) != null;
-      const awipsType = this.getType(attributes);
-      return { message, attributes, isCap, isPVtec, isUGC, isCapDescription, awipsType, isApi: false, ignore: false };
-    }
-    if (stanza.is(`message`)) {
-      let cb = stanza.getChild(`x`);
-      if (cb && cb.children) {
-        let message = unescape(cb.children[0]);
-        let attributes = cb.attrs;
-        if (attributes.awipsid && attributes.awipsid.length > 1) {
-          const isCap = message.includes(`<?xml`);
-          const isCapDescription = message.includes(`<areaDesc>`);
-          const isPVtec = message.match(definitions.regular_expressions.pvtec) != null;
-          const isUGC = message.match(definitions.regular_expressions.ugc1) != null;
-          const awipsType = this.getType(attributes);
-          this.cache(message, { attributes, isCap, isPVtec, awipsType });
-          return { message, attributes, isCap, isPVtec, isUGC, isCapDescription, awipsType, isApi: false, ignore: false };
-        }
-      }
-    }
-    return { message: null, attributes: null, isApi: null, isCap: null, isPVtec: null, isUGC: null, isCapDescription: null, awipsType: null, ignore: true };
-  }
-  /**
-   * @function getType
-   * @description
-   *     Determines the AWIPS product type and prefix from a stanza's attributes.
-   *     Returns a default type of 'XX' if the attributes are missing or the AWIPS ID
-   *     does not match any known definitions.
-   *
-   * @private
-   * @static
-   * @param {unknown} attributes
-   * @returns {Record<string, string>}
-   */
-  static getType(attributes) {
-    const attrs = attributes;
-    if (!(attrs == null ? void 0 : attrs.awipsid)) return { type: "XX", prefix: "XX" };
-    const awipsDefs = definitions.awips;
-    for (const [prefix, type] of Object.entries(awipsDefs)) {
-      if (attrs.awipsid.startsWith(prefix)) {
-        return { type, prefix };
-      }
-    }
-    return { type: "XX", prefix: "XX" };
-  }
-  /**
-   * @function cache
-   * @description
-   *     Saves a compiled stanza message to the local cache directory.
-   *     Ensures the message contains "STANZA ATTRIBUTES..." metadata and timestamps,
-   *     and appends the formatted entry to both a category-specific file and a general cache file.
-   *
-   * @private
-   * @static
-   * @async
-   * @param {unknown} compiled
-   * @returns {Promise<void>}
-   */
-  static cache(message, compiled) {
-    return __async(this, null, function* () {
-      if (!compiled) return;
-      const data = compiled;
-      const settings2 = settings;
-      const { fs: fs2, path: path2 } = packages;
-      if (!message || !settings2.noaa_weather_wire_service_settings.cache.directory) return;
-      const cacheDir = settings2.noaa_weather_wire_service_settings.cache.directory;
-      if (!fs2.existsSync(cacheDir)) fs2.mkdirSync(cacheDir, { recursive: true });
-      const prefix = `category-${data.awipsType.prefix}-${data.awipsType.type}s`;
-      const suffix = `${data.isCap ? "cap" : "raw"}${data.isPVtec ? "-vtec" : ""}`;
-      const categoryFile = path2.join(cacheDir, `${prefix}-${suffix}.bin`);
-      const cacheFile = path2.join(cacheDir, `cache-${suffix}.bin`);
-      const entry = `[SoF]
-STANZA ATTRIBUTES...${JSON.stringify(compiled)}
-[EoF]
-${message}`;
-      yield Promise.all([
-        fs2.promises.appendFile(categoryFile, entry, "utf8"),
-        fs2.promises.appendFile(cacheFile, entry, "utf8")
-      ]);
-    });
-  }
-};
-var stanza_default = StanzaParser;
 
 // src/@parsers/text.ts
 var TextParser = class {
@@ -5513,47 +5392,42 @@ var VTECAlerts = class {
    */
   static event(validated) {
     return __async(this, null, function* () {
-      var _a, _b, _c, _d;
+      var _a, _b, _c;
       let processed = [];
-      const blocks = (_b = (_a = validated.message.split(/\[SoF\]/gim)) == null ? void 0 : _a.map((msg) => msg.trim())) == null ? void 0 : _b.filter(Boolean);
-      for (const block of blocks) {
-        const cachedAttribute = block.match(/STANZA ATTRIBUTES\.\.\.(\{.*\})/);
-        const messages = (_d = (_c = block == null ? void 0 : block.split(/(?=\$\$)/g)) == null ? void 0 : _c.map((msg) => msg.trim())) == null ? void 0 : _d.filter((msg) => msg && msg !== "$$");
-        if (!messages || messages.length == 0) {
-          continue;
-        }
-        ;
-        for (let i = 0; i < messages.length; i++) {
-          const tick = performance.now();
-          const message = messages[i];
-          const attributes = cachedAttribute != null ? JSON.parse(cachedAttribute[1]) : validated;
-          const getPVTEC = yield pvtec_default.pVtecExtractor(message);
-          const getHVTEC = yield hvtec_default.HVtecExtractor(message);
-          const getUGC = yield ugc_default.ugcExtractor(message);
-          if (getPVTEC != null && getUGC != null) {
-            for (let j2 = 0; j2 < getPVTEC.length; j2++) {
-              const pVtec = getPVTEC[j2];
-              const baseProperties = yield events_default.getBaseProperties(message, attributes, getUGC, pVtec, getHVTEC);
-              const getHeader = events_default.getHeader(__spreadValues(__spreadValues({}, validated.attributes), baseProperties.raw), baseProperties, pVtec);
-              processed.push({
-                type: "Feature",
-                properties: __spreadProps(__spreadValues({
-                  event: pVtec.event,
-                  parent: pVtec.event,
-                  action_type: pVtec.status
-                }, baseProperties), {
-                  details: {
-                    performance: performance.now() - tick,
-                    source: `pvtec-parser`,
-                    tracking: pVtec.tracking,
-                    header: getHeader,
-                    pvtec: pVtec.raw,
-                    hvtec: getHVTEC != null ? getHVTEC.raw : null,
-                    history: [{ description: baseProperties.description, issued: baseProperties.issued, type: pVtec.status }]
-                  }
-                })
-              });
-            }
+      const messages = (_c = (_b = (_a = validated == null ? void 0 : validated.message) == null ? void 0 : _a.split(/(?=\$\$)/g)) == null ? void 0 : _b.map((msg) => msg.trim())) == null ? void 0 : _c.filter((msg) => msg && msg !== "$$");
+      if (!messages || messages.length == 0) {
+        return;
+      }
+      for (let i = 0; i < messages.length; i++) {
+        const tick = performance.now();
+        const message = messages[i];
+        const attributes = validated;
+        const getPVTEC = yield pvtec_default.pVtecExtractor(message);
+        const getHVTEC = yield hvtec_default.HVtecExtractor(message);
+        const getUGC = yield ugc_default.ugcExtractor(message);
+        if (getPVTEC != null && getUGC != null) {
+          for (let j2 = 0; j2 < getPVTEC.length; j2++) {
+            const pVtec = getPVTEC[j2];
+            const baseProperties = yield events_default.getBaseProperties(message, attributes, getUGC, pVtec, getHVTEC);
+            const getHeader = events_default.getHeader(__spreadValues(__spreadValues({}, validated.attributes), baseProperties.raw), baseProperties, pVtec);
+            processed.push({
+              type: "Feature",
+              properties: __spreadProps(__spreadValues({
+                event: pVtec.event,
+                parent: pVtec.event,
+                action_type: pVtec.status
+              }, baseProperties), {
+                details: {
+                  performance: performance.now() - tick,
+                  source: `pvtec-parser`,
+                  tracking: pVtec.tracking,
+                  header: getHeader,
+                  pvtec: pVtec.raw,
+                  hvtec: getHVTEC != null ? getHVTEC.raw : null,
+                  history: [{ description: baseProperties.description, issued: baseProperties.issued, type: pVtec.status }]
+                }
+              })
+            });
           }
         }
       }
@@ -5615,44 +5489,39 @@ var UGCAlerts = class {
    */
   static event(validated) {
     return __async(this, null, function* () {
-      var _a, _b, _c, _d;
+      var _a, _b, _c;
       let processed = [];
-      const blocks = (_b = (_a = validated.message.split(/\[SoF\]/gim)) == null ? void 0 : _a.map((msg) => msg.trim())) == null ? void 0 : _b.filter(Boolean);
-      for (const block of blocks) {
-        const cachedAttribute = block.match(/STANZA ATTRIBUTES\.\.\.(\{.*\})/);
-        const messages = (_d = (_c = block == null ? void 0 : block.split(/(?=\$\$)/g)) == null ? void 0 : _c.map((msg) => msg.trim())) == null ? void 0 : _d.filter((msg) => msg && msg !== "$$");
-        if (!messages || messages.length == 0) {
-          continue;
-        }
-        ;
-        for (let i = 0; i < messages.length; i++) {
-          const tick = performance.now();
-          const message = messages[i];
-          const getUGC = yield ugc_default.ugcExtractor(message);
-          if (getUGC != null) {
-            const attributes = cachedAttribute != null ? JSON.parse(cachedAttribute[1]) : validated;
-            const baseProperties = yield events_default.getBaseProperties(message, attributes, getUGC);
-            const getHeader = events_default.getHeader(__spreadValues(__spreadValues({}, attributes), baseProperties.raw), baseProperties);
-            const getEvent = this.getEvent(message, attributes);
-            processed.push({
-              type: "Feature",
-              properties: __spreadProps(__spreadValues({
-                event: getEvent,
-                parent: getEvent,
-                action_type: `Issued`
-              }, baseProperties), {
-                details: {
-                  performance: performance.now() - tick,
-                  source: `ugc-parser`,
-                  tracking: this.getTracking(baseProperties),
-                  header: getHeader,
-                  pvtec: null,
-                  hvtec: null,
-                  history: [{ description: baseProperties.description, issued: baseProperties.issued, type: `Issued` }]
-                }
-              })
-            });
-          }
+      const messages = (_c = (_b = (_a = validated == null ? void 0 : validated.message) == null ? void 0 : _a.split(/(?=\$\$)/g)) == null ? void 0 : _b.map((msg) => msg.trim())) == null ? void 0 : _c.filter((msg) => msg && msg !== "$$");
+      if (!messages || messages.length == 0) {
+        return;
+      }
+      for (let i = 0; i < messages.length; i++) {
+        const tick = performance.now();
+        const message = messages[i];
+        const getUGC = yield ugc_default.ugcExtractor(message);
+        if (getUGC != null) {
+          const attributes = validated;
+          const baseProperties = yield events_default.getBaseProperties(message, attributes, getUGC);
+          const getHeader = events_default.getHeader(__spreadValues(__spreadValues({}, attributes), baseProperties.raw), baseProperties);
+          const getEvent = this.getEvent(message, attributes);
+          processed.push({
+            type: "Feature",
+            properties: __spreadProps(__spreadValues({
+              event: getEvent,
+              parent: getEvent,
+              action_type: `Issued`
+            }, baseProperties), {
+              details: {
+                performance: performance.now() - tick,
+                source: `ugc-parser`,
+                tracking: this.getTracking(baseProperties),
+                header: getHeader,
+                pvtec: null,
+                hvtec: null,
+                history: [{ description: baseProperties.description, issued: baseProperties.issued, type: `Issued` }]
+              }
+            })
+          });
         }
       }
       events_default.validateEvents(processed);
@@ -5714,42 +5583,37 @@ var TextAlerts = class {
    */
   static event(validated) {
     return __async(this, null, function* () {
-      var _a, _b, _c, _d, _e;
+      var _a, _b, _c;
       let processed = [];
-      const blocks = (_c = (_b = (_a = validated == null ? void 0 : validated.message) == null ? void 0 : _a.split(/\[SoF\]/gim)) == null ? void 0 : _b.map((msg) => msg.trim())) == null ? void 0 : _c.filter(Boolean);
-      for (const block of blocks) {
-        const cachedAttribute = block.match(/STANZA ATTRIBUTES\.\.\.(\{.*\})/);
-        const messages = (_e = (_d = block == null ? void 0 : block.split(/(?=\$\$)/g)) == null ? void 0 : _d.map((msg) => msg.trim())) == null ? void 0 : _e.filter((msg) => msg && msg !== "$$");
-        if (!messages || messages.length == 0) {
-          continue;
-        }
-        ;
-        for (let i = 0; i < messages.length; i++) {
-          const tick = performance.now();
-          const message = messages[i];
-          const attributes = cachedAttribute != null ? JSON.parse(cachedAttribute[1]) : validated;
-          const baseProperties = yield events_default.getBaseProperties(message, attributes);
-          const getHeader = events_default.getHeader(__spreadValues(__spreadValues({}, validated.attributes), baseProperties.raw), baseProperties);
-          const getEvent = this.getEvent(message, attributes);
-          processed.push({
-            properties: __spreadProps(__spreadValues({
-              event: getEvent,
-              parent: getEvent,
-              action_type: `Issued`
-            }, baseProperties), {
-              details: {
-                type: "Feature",
-                performance: performance.now() - tick,
-                source: `text-parser`,
-                tracking: this.getTracking(baseProperties),
-                header: getHeader,
-                pvtec: null,
-                hvtec: null,
-                history: [{ description: baseProperties.description, issued: baseProperties.issued, type: `Issued` }]
-              }
-            })
-          });
-        }
+      const messages = (_c = (_b = (_a = validated == null ? void 0 : validated.message) == null ? void 0 : _a.split(/(?=\$\$)/g)) == null ? void 0 : _b.map((msg) => msg.trim())) == null ? void 0 : _c.filter((msg) => msg && msg !== "$$");
+      if (!messages || messages.length == 0) {
+        return;
+      }
+      for (let i = 0; i < messages.length; i++) {
+        const tick = performance.now();
+        const message = messages[i];
+        const attributes = validated;
+        const baseProperties = yield events_default.getBaseProperties(message, attributes);
+        const getHeader = events_default.getHeader(__spreadValues(__spreadValues({}, validated.attributes), baseProperties.raw), baseProperties);
+        const getEvent = this.getEvent(message, attributes);
+        processed.push({
+          properties: __spreadProps(__spreadValues({
+            event: getEvent,
+            parent: getEvent,
+            action_type: `Issued`
+          }, baseProperties), {
+            details: {
+              type: "Feature",
+              performance: performance.now() - tick,
+              source: `text-parser`,
+              tracking: this.getTracking(baseProperties),
+              header: getHeader,
+              pvtec: null,
+              hvtec: null,
+              history: [{ description: baseProperties.description, issued: baseProperties.issued, type: `Issued` }]
+            }
+          })
+        });
       }
       events_default.validateEvents(processed);
     });
@@ -5791,92 +5655,87 @@ var CapAlerts = class {
    */
   static event(validated) {
     return __async(this, null, function* () {
-      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v;
+      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u;
       let processed = [];
-      const tick = performance.now();
-      const blocks = (_b = (_a = validated.message.split(/\[SoF\]/gim)) == null ? void 0 : _a.map((msg) => msg.trim())) == null ? void 0 : _b.filter(Boolean);
-      for (const block of blocks) {
-        const cachedAttribute = block.match(/STANZA ATTRIBUTES\.\.\.(\{.*\})/);
-        const messages = (_d = (_c = block == null ? void 0 : block.split(/(?=\$\$)/g)) == null ? void 0 : _c.map((msg) => msg.trim())) == null ? void 0 : _d.filter((msg) => msg && msg !== "$$");
-        if (!messages || messages.length == 0) {
-          continue;
-        }
-        ;
-        for (let i = 0; i < messages.length; i++) {
-          let message = messages[i];
-          const attributes = cachedAttribute != null ? JSON.parse(cachedAttribute[1]) : validated;
-          message = message.substring(message.indexOf(`<?xml version="1.0"`), message.lastIndexOf(`>`) + 1);
-          const parser = new packages.xml2js.Parser({ explicitArray: false, mergeAttrs: true, trim: true });
-          const parsed = yield parser.parseStringPromise(message);
-          if (parsed == null || parsed.alert == null) continue;
-          const extracted = text_default.getXmlValues(parsed, [
-            `vtec`,
-            `wmoidentifier`,
-            `ugc`,
-            `areadesc`,
-            `expires`,
-            `sent`,
-            `msgtype`,
-            `description`,
-            `event`,
-            `sendername`,
-            `tornadodetection`,
-            `polygon`,
-            `maxHailSize`,
-            `maxWindGust`,
-            `thunderstormdamagethreat`,
-            `tornadodamagethreat`,
-            `waterspoutdetection`,
-            `flooddetection`
-          ]);
-          const getHeader = events_default.getHeader(__spreadValues({}, validated.attributes));
-          const getSource = (_e = text_default.textProductToString(extracted.description, `SOURCE...`, [`.`])) != null ? _e : null;
-          processed.push({
-            type: "Feature",
-            properties: {
-              locations: (_f = extracted.areadesc) != null ? _f : null,
-              event: (_g = extracted.event) != null ? _g : null,
-              issued: extracted.sent ? new Date(extracted.sent).toLocaleString() : null,
-              expires: extracted.expires ? new Date(extracted.expires).toLocaleString() : null,
-              parent: (_h = extracted.event) != null ? _h : null,
-              action_type: (_i = extracted.msgtype) != null ? _i : null,
-              description: (_j = extracted.description) != null ? _j : null,
-              instruction: null,
-              sender_name: (_k = extracted.sendername) != null ? _k : null,
-              sender_icao: extracted.wmoidentifier ? extracted.wmoidentifier.substring(extracted.wmoidentifier.length - 4) : null,
-              attributes,
-              geocode: {
-                UGC: extracted.ugc ? Array.isArray(extracted.ugc) ? extracted.ugc : [extracted.ugc] : [],
-                generated: ((_l = extracted == null ? void 0 : extracted.polygon) == null ? void 0 : _l.length) > 0 ? Buffer.from(JSON.stringify([extracted.polygon.split(" ").map((coord) => {
-                  const [lat, lon] = coord.split(",").map(Number);
-                  return [lon, lat];
-                })])).toString("base64") : null
-              },
-              raw: { attributes },
-              parameters: {
-                wmo: (_m = extracted.wmoidentifier) != null ? _m : null,
-                source: getSource,
-                max_hail_size: (_n = extracted.maxHailSize) != null ? _n : null,
-                max_wind_gust: (_o = extracted.maxWindGust) != null ? _o : null,
-                damage_threat: (_p = extracted.thunderstormdamagethreat) != null ? _p : null,
-                tornado_detection: (_r = (_q = extracted.tornadodetection) != null ? _q : extracted.waterspoutdetection) != null ? _r : null,
-                flood_detection: (_s = extracted.flooddetection) != null ? _s : null,
-                discussion_tornado_intensity: null,
-                discussion_wind_intensity: null,
-                discussion_hail_intensity: null
-              },
-              details: {
-                performance: performance.now() - tick,
-                source: `cap-parser`,
-                tracking: this.getTracking(extracted, attributes),
-                header: getHeader,
-                pvtec: (_t = extracted.vtec) != null ? _t : null,
-                hvtec: null,
-                history: [{ description: (_u = extracted.description) != null ? _u : null, issued: extracted.sent ? new Date(extracted.sent).toLocaleString() : null, type: (_v = extracted.msgtype) != null ? _v : null }]
-              }
+      const messages = (_c = (_b = (_a = validated == null ? void 0 : validated.message) == null ? void 0 : _a.split(/(?=\$\$)/g)) == null ? void 0 : _b.map((msg) => msg.trim())) == null ? void 0 : _c.filter((msg) => msg && msg !== "$$");
+      if (!messages || messages.length == 0) {
+        return;
+      }
+      for (let i = 0; i < messages.length; i++) {
+        const tick = performance.now();
+        let message = messages[i];
+        const attributes = validated;
+        message = message.substring(message.indexOf(`<?xml version="1.0"`), message.lastIndexOf(`>`) + 1);
+        const parser = new packages.xml2js.Parser({ explicitArray: false, mergeAttrs: true, trim: true });
+        const parsed = yield parser.parseStringPromise(message);
+        if (parsed == null || parsed.alert == null) continue;
+        const extracted = text_default.getXmlValues(parsed, [
+          `vtec`,
+          `wmoidentifier`,
+          `ugc`,
+          `areadesc`,
+          `expires`,
+          `sent`,
+          `msgtype`,
+          `description`,
+          `event`,
+          `sendername`,
+          `tornadodetection`,
+          `polygon`,
+          `maxHailSize`,
+          `maxWindGust`,
+          `thunderstormdamagethreat`,
+          `tornadodamagethreat`,
+          `waterspoutdetection`,
+          `flooddetection`
+        ]);
+        const getHeader = events_default.getHeader(__spreadValues({}, validated.attributes));
+        const getSource = (_d = text_default.textProductToString(extracted.description, `SOURCE...`, [`.`])) != null ? _d : null;
+        processed.push({
+          type: "Feature",
+          properties: {
+            locations: (_e = extracted.areadesc) != null ? _e : null,
+            event: (_f = extracted.event) != null ? _f : null,
+            issued: extracted.sent ? new Date(extracted.sent).toLocaleString() : null,
+            expires: extracted.expires ? new Date(extracted.expires).toLocaleString() : null,
+            parent: (_g = extracted.event) != null ? _g : null,
+            action_type: (_h = extracted.msgtype) != null ? _h : null,
+            description: (_i = extracted.description) != null ? _i : null,
+            instruction: null,
+            sender_name: (_j = extracted.sendername) != null ? _j : null,
+            sender_icao: extracted.wmoidentifier ? extracted.wmoidentifier.substring(extracted.wmoidentifier.length - 4) : null,
+            attributes,
+            geocode: {
+              UGC: extracted.ugc ? Array.isArray(extracted.ugc) ? extracted.ugc : [extracted.ugc] : [],
+              generated: ((_k = extracted == null ? void 0 : extracted.polygon) == null ? void 0 : _k.length) > 0 ? Buffer.from(JSON.stringify([extracted.polygon.split(" ").map((coord) => {
+                const [lat, lon] = coord.split(",").map(Number);
+                return [lon, lat];
+              })])).toString("base64") : null
+            },
+            raw: { attributes },
+            parameters: {
+              wmo: (_l = extracted.wmoidentifier) != null ? _l : null,
+              source: getSource,
+              max_hail_size: (_m = extracted.maxHailSize) != null ? _m : null,
+              max_wind_gust: (_n = extracted.maxWindGust) != null ? _n : null,
+              damage_threat: (_o = extracted.thunderstormdamagethreat) != null ? _o : null,
+              tornado_detection: (_q = (_p = extracted.tornadodetection) != null ? _p : extracted.waterspoutdetection) != null ? _q : null,
+              flood_detection: (_r = extracted.flooddetection) != null ? _r : null,
+              discussion_tornado_intensity: null,
+              discussion_wind_intensity: null,
+              discussion_hail_intensity: null
+            },
+            details: {
+              performance: performance.now() - tick,
+              source: `cap-parser`,
+              tracking: this.getTracking(extracted, attributes),
+              header: getHeader,
+              pvtec: (_s = extracted.vtec) != null ? _s : null,
+              hvtec: null,
+              history: [{ description: (_t = extracted.description) != null ? _t : null, issued: extracted.sent ? new Date(extracted.sent).toLocaleString() : null, type: (_u = extracted.msgtype) != null ? _u : null }]
             }
-          });
-        }
+          }
+        });
       }
       events_default.validateEvents(processed);
     });
@@ -6407,6 +6266,87 @@ var EventParser = class {
 };
 var events_default = EventParser;
 
+// src/@parsers/stanza.ts
+var StanzaParser = class {
+  /**
+   * @function validate
+   * @description
+   *     Validates and parses a stanza message, extracting its attributes and metadata.
+   *     Handles both raw message strings (for debug/testing) and actual stanza objects.
+   *     Determines whether the message is a CAP alert, contains VTEC codes, or contains UGCs,
+   *     and identifies the AWIPS product type and prefix.
+   *
+   * @static
+   * @param {any} stanza
+   * @param {boolean | types.StanzaAttributes} [isDebug=false]
+   * @returns {{
+   *     message: string;
+   *     attributes: types.StanzaAttributes;
+   *     isCap: boolean,
+   *     isPVtec: boolean;
+   *     isCapDescription: boolean;
+   *     awipsType: Record<string, string>;
+   *     isApi: boolean;
+   *     ignore: boolean;
+   *     isUGC?: boolean;
+   * }}
+   */
+  static validate(stanza, isDebug = false) {
+    var _a;
+    if (isDebug !== false) {
+      const vTypes = isDebug;
+      const message = stanza;
+      const attributes = vTypes;
+      const isCap = (_a = vTypes.isCap) != null ? _a : message.includes(`<?xml`);
+      const isCapDescription = message.includes(`<areaDesc>`);
+      const isPVtec = message.match(definitions.regular_expressions.pvtec) != null;
+      const isUGC = message.match(definitions.regular_expressions.ugc1) != null;
+      const awipsType = this.getType(attributes);
+      return { message, attributes, isCap, isPVtec, isUGC, isCapDescription, awipsType, isApi: false, ignore: false };
+    }
+    if (stanza.is(`message`)) {
+      let cb = stanza.getChild(`x`);
+      if (cb && cb.children) {
+        let message = unescape(cb.children[0]);
+        let attributes = cb.attrs;
+        if (attributes.awipsid && attributes.awipsid.length > 1) {
+          const isCap = message.includes(`<?xml`);
+          const isCapDescription = message.includes(`<areaDesc>`);
+          const isPVtec = message.match(definitions.regular_expressions.pvtec) != null;
+          const isUGC = message.match(definitions.regular_expressions.ugc1) != null;
+          const awipsType = this.getType(attributes);
+          return { message, attributes, isCap, isPVtec, isUGC, isCapDescription, awipsType, isApi: false, ignore: false };
+        }
+      }
+    }
+    return { message: null, attributes: null, isApi: null, isCap: null, isPVtec: null, isUGC: null, isCapDescription: null, awipsType: null, ignore: true };
+  }
+  /**
+   * @function getType
+   * @description
+   *     Determines the AWIPS product type and prefix from a stanza's attributes.
+   *     Returns a default type of 'XX' if the attributes are missing or the AWIPS ID
+   *     does not match any known definitions.
+   *
+   * @private
+   * @static
+   * @param {unknown} attributes
+   * @returns {Record<string, string>}
+   */
+  static getType(attributes) {
+    const attrs = attributes;
+    if (!(attrs == null ? void 0 : attrs.awipsid)) return { type: "XX", prefix: "XX" };
+    const awipsDefs = definitions.awips;
+    for (const [prefix, type] of Object.entries(awipsDefs)) {
+      if (attrs.awipsid.startsWith(prefix)) {
+        return { type, prefix };
+      }
+    }
+    return { type: "XX", prefix: "XX" };
+  }
+};
+var stanza_default = StanzaParser;
+
 // src/@submodules/database.ts
 var Database = class {
   /**
@@ -6430,11 +6370,12 @@ var Database = class {
    */
   static stanzaCacheImport(stanza) {
     return __async(this, null, function* () {
+      var _a, _b;
       const settings2 = settings;
       try {
         const db = cache.db;
         if (!db) return;
-        db.prepare(`INSERT OR IGNORE INTO stanzas (stanza) VALUES (?)`).run(stanza);
+        db.prepare(`INSERT OR IGNORE INTO stanzas (type, stanza, issued) VALUES (?, ?, ?)`).run(JSON.stringify(stanza), (_a = stanza == null ? void 0 : stanza.awipsType) == null ? void 0 : _a.type, (_b = stanza == null ? void 0 : stanza.attributes) == null ? void 0 : _b.issue);
         const countRow = db.prepare(`SELECT COUNT(*) AS total FROM stanzas`).get();
         const totalRows = countRow.total;
         const maxHistory = settings2.noaa_weather_wire_service_settings.cache.max_db_history;
@@ -6454,7 +6395,7 @@ var Database = class {
         }
       } catch (error) {
         const msg = error instanceof Error ? error.message : String(error);
-        utils_default.warn(`Failed to import stanza into cache: ${msg}`);
+        utils_default.warn(`Failed to import stanza into cache: ${msg}. Please try to delete ${settings2.database} and restart the application.`);
       }
     });
   }
@@ -6485,6 +6426,8 @@ var Database = class {
         cache.db.prepare(`
                 CREATE TABLE IF NOT EXISTS stanzas (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    type TEXT,
+                    issued TEXT,
                     stanza TEXT
                 )
             `).run();
@@ -6674,7 +6617,7 @@ var Xmpp = class {
             const skipMessage = validate.ignore || validate.isCap && !settings2.noaa_weather_wire_service_settings.preferences.cap_only || !validate.isCap && settings2.noaa_weather_wire_service_settings.preferences.cap_only || validate.isCap && !validate.isCapDescription;
             if (skipMessage) return;
             yield events_default.eventHandler(validate);
-            yield database_default.stanzaCacheImport(JSON.stringify(validate));
+            yield database_default.stanzaCacheImport(validate);
             cache.events.emit("onMessage", validate);
           }
           if (stanza.is("presence") && ((_a2 = stanza.attrs.from) == null ? void 0 : _a2.startsWith("nwws@conference.nwws-oi.weather.gov/"))) {
@@ -6735,10 +6678,9 @@ var Utils = class _Utils {
   /**
    * @function loadCollectionCache
    * @description
-   *     Loads cached NWWS messages from disk, validates them, and passes them
-   *     to the event parser. Honors CAP preferences and ignores empty or
-   *     incompatible files.
-   *
+   *      Loads cached stanzas from the database, validates them, and processes them through the event parser. 
+   *      Only processes stanzas that are not marked to be ignored and match the CAP preferences.
+   *     
    * @static
    * @async
    */
@@ -6747,7 +6689,7 @@ var Utils = class _Utils {
       var _a;
       try {
         const settings2 = settings;
-        if (settings2.noaa_weather_wire_service_settings.cache.use_db_for_cache) {
+        if (settings2.noaa_weather_wire_service_settings.cache.enabled) {
           const maxRows = (_a = settings2.noaa_weather_wire_service_settings.cache.max_db_cache_size) != null ? _a : 5e3;
           const rows = yield cache.db.prepare(`SELECT * FROM stanzas ORDER BY rowid DESC LIMIT ?`).all(maxRows);
           this.warn(definitions.messages.dump_cache.replace(`{count}`, rows.length.toString()), true);
@@ -6761,26 +6703,6 @@ var Utils = class _Utils {
           yield Promise.all(eventsToProcess.map((validate) => events_default.eventHandler(validate)));
           this.warn(definitions.messages.dump_cache_complete, true);
           return;
-        }
-        if (settings2.noaa_weather_wire_service_settings.cache.enabled && settings2.noaa_weather_wire_service_settings.cache.directory) {
-          if (!packages.fs.existsSync(settings2.noaa_weather_wire_service_settings.cache.directory)) return;
-          const cacheDir = settings2.noaa_weather_wire_service_settings.cache.directory;
-          const getAllFiles = packages.fs.readdirSync(cacheDir).filter((file) => file.endsWith(".bin") && file.startsWith("cache-"));
-          this.warn(definitions.messages.dump_cache.replace(`{count}`, getAllFiles.length.toString()), true);
-          for (const file of getAllFiles) {
-            const filepath = packages.path.join(cacheDir, file);
-            const readFile = packages.fs.readFileSync(filepath, { encoding: "utf-8" });
-            const readSize = packages.fs.statSync(filepath).size;
-            if (readSize == 0) {
-              continue;
-            }
-            const isCap = readFile.includes(`<?xml`);
-            if (isCap && !settings2.noaa_weather_wire_service_settings.preferences.cap_only) continue;
-            if (!isCap && settings2.noaa_weather_wire_service_settings.preferences.cap_only) continue;
-            const validate = stanza_default.validate(readFile, { isCap, raw: true });
-            yield events_default.eventHandler(validate);
-          }
-          this.warn(definitions.messages.dump_cache_complete, true);
         }
       } catch (error) {
         _Utils.warn(`Failed to load cache: ${error.stack}`);
@@ -6862,43 +6784,6 @@ var Utils = class _Utils {
     });
   }
   /**
-   * @function garbageCollectionCache
-   * @description
-   *     Deletes cache files exceeding the specified size limit to free disk space.
-   *     Recursively traverses the cache directory and removes files larger than
-   *     the given maximum.
-   *
-   * @static
-   * @param {number} maxFileMegabytes
-   */
-  static garbageCollectionCache(maxFileMegabytes) {
-    try {
-      const settings2 = settings;
-      const cacheDir = settings2.noaa_weather_wire_service_settings.cache.directory;
-      if (!cacheDir) return;
-      const { fs: fs2, path: path2 } = packages;
-      if (!fs2.existsSync(cacheDir)) return;
-      const maxBytes = maxFileMegabytes * 1024 * 1024;
-      const stackDirs = [cacheDir];
-      const files = [];
-      while (stackDirs.length) {
-        const currentDir = stackDirs.pop();
-        fs2.readdirSync(currentDir).forEach((file) => {
-          const fullPath = path2.join(currentDir, file);
-          const stat = fs2.statSync(fullPath);
-          if (stat.isDirectory()) stackDirs.push(fullPath);
-          else files.push({ file: fullPath, size: stat.size });
-        });
-      }
-      files.forEach((f) => {
-        if (f.size > maxBytes) fs2.unlinkSync(f.file);
-      });
-    } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      _Utils.warn(`Failed to perform garbage collection: ${msg}`);
-    }
-  }
-  /**
    * @function handleCronJob
    * @description
    *     Performs scheduled tasks for NWWS XMPP session maintenance or GeoJSON data
@@ -6913,9 +6798,6 @@ var Utils = class _Utils {
       const cache2 = settings2.noaa_weather_wire_service_settings.cache;
       const reconnections = settings2.noaa_weather_wire_service_settings.reconnection_settings;
       if (isWire) {
-        if (cache2.enabled) {
-          void this.garbageCollectionCache(cache2.max_file_size_mb);
-        }
         if (reconnections.enabled) {
           void xmpp_default.isSessionReconnectionEligible(reconnections.interval);
         }

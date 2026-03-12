@@ -49,8 +49,6 @@ interface LocalClientCredentialSettings {
 
 interface LocalCacheSettings { 
     enabled?: boolean;
-    max_file_size_mb?: number;
-    directory?: string;
     max_db_history?: number;
     use_db_for_cache?: boolean;
     max_db_cache_size?: number;

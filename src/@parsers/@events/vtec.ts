@@ -34,42 +34,38 @@ export class VTECAlerts {
      */
     public static async event(validated: types.StanzaCompiled) {
         let processed = [] as unknown[];
-        const blocks = validated.message.split(/\[SoF\]/gim)?.map(msg => msg.trim())?.filter(Boolean);
-        for (const block of blocks) {
-            const cachedAttribute = block.match(/STANZA ATTRIBUTES\.\.\.(\{.*\})/);
-            const messages = block?.split(/(?=\$\$)/g)?.map(msg => msg.trim())?.filter(msg => msg && msg !== "$$");
-            if (!messages || messages.length == 0) { continue };
-            for (let i = 0; i < messages.length; i++) {
-                const tick = performance.now();
-                const message = messages[i]
-                const attributes = cachedAttribute != null ? JSON.parse(cachedAttribute[1]) : validated;
-                const getPVTEC = await pVtecParser.pVtecExtractor(message) as types.PVtecEntry[]
-                const getHVTEC = await hVtecParser.HVtecExtractor(message) as types.HVtecEntry
-                const getUGC = await UgcParser.ugcExtractor(message) as types.UGCEntry
-                if (getPVTEC != null && getUGC != null) {
-                    for (let j = 0; j < getPVTEC.length; j++) {
-                        const pVtec = getPVTEC[j];
-                        const baseProperties = await EventParser.getBaseProperties(message, attributes, getUGC, pVtec, getHVTEC) as types.EventProperties;
-                        const getHeader = EventParser.getHeader({ ...validated.attributes, ...baseProperties.raw } as types.StanzaAttributes, baseProperties, pVtec);
-                        processed.push({
-                            type: "Feature",
-                            properties: { 
-                                event: pVtec.event, 
-                                parent: pVtec.event, 
-                                action_type: pVtec.status, 
-                                ...baseProperties, 
-                                details: {
-                                    performance: performance.now() - tick,
-                                    source: `pvtec-parser`,
-                                    tracking: pVtec.tracking,
-                                    header: getHeader,
-                                    pvtec: pVtec.raw,
-                                    hvtec: getHVTEC != null ? getHVTEC.raw : null,
-                                    history: [{ description: baseProperties.description, issued: baseProperties.issued, type: pVtec.status }],
-                                },
+        const messages = validated?.message?.split(/(?=\$\$)/g)?.map(msg => msg.trim())?.filter(msg => msg && msg !== "$$");
+        if (!messages || messages.length == 0) { return }
+        for (let i = 0; i < messages.length; i++) {
+            const tick = performance.now();
+            const message = messages[i]
+            const attributes = validated as types.StanzaAttributes;
+            const getPVTEC = await pVtecParser.pVtecExtractor(message) as types.PVtecEntry[]
+            const getHVTEC = await hVtecParser.HVtecExtractor(message) as types.HVtecEntry
+            const getUGC = await UgcParser.ugcExtractor(message) as types.UGCEntry
+            if (getPVTEC != null && getUGC != null) {
+                for (let j = 0; j < getPVTEC.length; j++) {
+                    const pVtec = getPVTEC[j];
+                    const baseProperties = await EventParser.getBaseProperties(message, attributes, getUGC, pVtec, getHVTEC) as types.EventProperties;
+                    const getHeader = EventParser.getHeader({ ...validated.attributes, ...baseProperties.raw } as types.StanzaAttributes, baseProperties, pVtec);
+                    processed.push({
+                        type: "Feature",
+                        properties: { 
+                            event: pVtec.event, 
+                            parent: pVtec.event, 
+                            action_type: pVtec.status, 
+                            ...baseProperties, 
+                            details: {
+                                performance: performance.now() - tick,
+                                source: `pvtec-parser`,
+                                tracking: pVtec.tracking,
+                                header: getHeader,
+                                pvtec: pVtec.raw,
+                                hvtec: getHVTEC != null ? getHVTEC.raw : null,
+                                history: [{ description: baseProperties.description, issued: baseProperties.issued, type: pVtec.status }],
                             },
-                        })
-                    }
+                        },
+                    })
                 }
             }
         }

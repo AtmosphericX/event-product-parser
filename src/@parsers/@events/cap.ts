@@ -50,75 +50,71 @@ export class CapAlerts {
      * @returns {*} 
      */
     public static async event(validated: types.StanzaCompiled) {
-        let processed = [] as unknown[];
-        const tick = performance.now();
-        const blocks = validated.message.split(/\[SoF\]/gim)?.map(msg => msg.trim())?.filter(Boolean);
-        for (const block of blocks) {
-            const cachedAttribute = block.match(/STANZA ATTRIBUTES\.\.\.(\{.*\})/);
-            const messages = block?.split(/(?=\$\$)/g)?.map(msg => msg.trim())?.filter(msg => msg && msg !== "$$");
-            if (!messages || messages.length == 0) { continue };
-            for (let i = 0; i < messages.length; i++) {
-                let message = messages[i]
-                const attributes = cachedAttribute != null ? JSON.parse(cachedAttribute[1]) : validated;
-                message = message.substring(message.indexOf(`<?xml version="1.0"`), message.lastIndexOf(`>`) + 1);
-                const parser = new loader.packages.xml2js.Parser({ explicitArray: false, mergeAttrs: true, trim: true })
-                const parsed = await parser.parseStringPromise(message);
-                if (parsed == null || parsed.alert == null) continue;
-                const extracted = TextParser.getXmlValues(parsed, [
-                    `vtec`, `wmoidentifier`, `ugc`, `areadesc`, 
-                    `expires`, `sent`, `msgtype`, `description`,
-                    `event`, `sendername`, `tornadodetection`, `polygon`,
-                    `maxHailSize`, `maxWindGust`, `thunderstormdamagethreat`,
-                    `tornadodamagethreat`, `waterspoutdetection`, `flooddetection`,
-                ]);
-                const getHeader = EventParser.getHeader({ ...validated.attributes,} as types.StanzaAttributes);
-                const getSource = TextParser.textProductToString(extracted.description, `SOURCE...`, [`.`]) ?? null;
-                processed.push({
-                    type: "Feature",
-                    properties: {
-                        locations: extracted.areadesc ?? null,
-                        event: extracted.event ?? null,
-                        issued: extracted.sent ? new Date(extracted.sent).toLocaleString() : null,
-                        expires: extracted.expires ? new Date(extracted.expires).toLocaleString() : null,
-                        parent: extracted.event ?? null,
-                        action_type: extracted.msgtype ?? null,
-                        description: extracted.description ?? null,
-                        instruction: null,
-                        sender_name: extracted.sendername ?? null,
-                        sender_icao: extracted.wmoidentifier ? extracted.wmoidentifier.substring(extracted.wmoidentifier.length - 4) : null,
-                        attributes: attributes,
-                        geocode: {
-                            UGC: extracted.ugc ? (Array.isArray(extracted.ugc) ? extracted.ugc : [extracted.ugc]) : [],
-                            generated: extracted?.polygon?.length > 0 ? Buffer.from(JSON.stringify([extracted.polygon.split(' ').map((coord: string) => {
-                                const [lat, lon] = coord.split(',').map(Number);
-                                return [lon, lat];
-                            })])).toString('base64') : null,
-                        },
-                        raw: {attributes},
-                        parameters: {
-                            wmo: extracted.wmoidentifier ?? null,
-                            source: getSource,
-                            max_hail_size: extracted.maxHailSize ?? null,
-                            max_wind_gust: extracted.maxWindGust ?? null,
-                            damage_threat: extracted.thunderstormdamagethreat ?? null,
-                            tornado_detection: extracted.tornadodetection ?? extracted.waterspoutdetection ?? null,
-                            flood_detection: extracted.flooddetection ?? null,
-                            discussion_tornado_intensity: null,
-                            discussion_wind_intensity: null,
-                            discussion_hail_intensity: null,
-                        },
-                        details: {
-                            performance: performance.now() - tick,
-                            source: `cap-parser`,
-                            tracking: this.getTracking(extracted, attributes),
-                            header: getHeader,
-                            pvtec: extracted.vtec ?? null,
-                            hvtec: null,
-                            history: [{ description: extracted.description ?? null, issued: extracted.sent ? new Date(extracted.sent).toLocaleString() : null, type: extracted.msgtype ?? null }],
-                        },
+      let processed = [] as unknown[];
+      const messages = validated?.message?.split(/(?=\$\$)/g)?.map(msg => msg.trim())?.filter(msg => msg && msg !== "$$");
+      if (!messages || messages.length == 0) { return }
+      for (let i = 0; i < messages.length; i++) {
+          const tick = performance.now();
+          let message = messages[i]
+          const attributes = validated as types.StanzaAttributes;
+            message = message.substring(message.indexOf(`<?xml version="1.0"`), message.lastIndexOf(`>`) + 1);
+            const parser = new loader.packages.xml2js.Parser({ explicitArray: false, mergeAttrs: true, trim: true })
+            const parsed = await parser.parseStringPromise(message);
+            if (parsed == null || parsed.alert == null) continue;
+            const extracted = TextParser.getXmlValues(parsed, [
+                `vtec`, `wmoidentifier`, `ugc`, `areadesc`, 
+                `expires`, `sent`, `msgtype`, `description`,
+                `event`, `sendername`, `tornadodetection`, `polygon`,
+                `maxHailSize`, `maxWindGust`, `thunderstormdamagethreat`,
+                `tornadodamagethreat`, `waterspoutdetection`, `flooddetection`,
+            ]);
+            const getHeader = EventParser.getHeader({ ...validated.attributes,} as types.StanzaAttributes);
+            const getSource = TextParser.textProductToString(extracted.description, `SOURCE...`, [`.`]) ?? null;
+            processed.push({
+                type: "Feature",
+                properties: {
+                    locations: extracted.areadesc ?? null,
+                    event: extracted.event ?? null,
+                    issued: extracted.sent ? new Date(extracted.sent).toLocaleString() : null,
+                    expires: extracted.expires ? new Date(extracted.expires).toLocaleString() : null,
+                    parent: extracted.event ?? null,
+                    action_type: extracted.msgtype ?? null,
+                    description: extracted.description ?? null,
+                    instruction: null,
+                    sender_name: extracted.sendername ?? null,
+                    sender_icao: extracted.wmoidentifier ? extracted.wmoidentifier.substring(extracted.wmoidentifier.length - 4) : null,
+                    attributes: attributes,
+                    geocode: {
+                        UGC: extracted.ugc ? (Array.isArray(extracted.ugc) ? extracted.ugc : [extracted.ugc]) : [],
+                        generated: extracted?.polygon?.length > 0 ? Buffer.from(JSON.stringify([extracted.polygon.split(' ').map((coord: string) => {
+                            const [lat, lon] = coord.split(',').map(Number);
+                            return [lon, lat];
+                        })])).toString('base64') : null,
                     },
-                })
-            }
+                    raw: {attributes},
+                    parameters: {
+                        wmo: extracted.wmoidentifier ?? null,
+                        source: getSource,
+                        max_hail_size: extracted.maxHailSize ?? null,
+                        max_wind_gust: extracted.maxWindGust ?? null,
+                        damage_threat: extracted.thunderstormdamagethreat ?? null,
+                        tornado_detection: extracted.tornadodetection ?? extracted.waterspoutdetection ?? null,
+                        flood_detection: extracted.flooddetection ?? null,
+                        discussion_tornado_intensity: null,
+                        discussion_wind_intensity: null,
+                        discussion_hail_intensity: null,
+                    },
+                    details: {
+                        performance: performance.now() - tick,
+                        source: `cap-parser`,
+                        tracking: this.getTracking(extracted, attributes),
+                        header: getHeader,
+                        pvtec: extracted.vtec ?? null,
+                        hvtec: null,
+                        history: [{ description: extracted.description ?? null, issued: extracted.sent ? new Date(extracted.sent).toLocaleString() : null, type: extracted.msgtype ?? null }],
+                    },
+                },
+            })
         }
         EventParser.validateEvents(processed);
     }

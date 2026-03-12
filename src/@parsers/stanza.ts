@@ -62,7 +62,6 @@ export class StanzaParser {
                     const isPVtec = message.match(loader.definitions.regular_expressions.pvtec) != null;
                     const isUGC = message.match(loader.definitions.regular_expressions.ugc1) != null;
                     const awipsType = this.getType(attributes);
-                    this.cache(message, {attributes, isCap, isPVtec, awipsType });
                     return { message, attributes, isCap, isPVtec, isUGC, isCapDescription, awipsType: awipsType, isApi: false, ignore: false  };
                 }
             }
@@ -92,40 +91,7 @@ export class StanzaParser {
             }
         }
         return { type: 'XX', prefix: 'XX' };
-    }
-
-    /**
-     * @function cache
-     * @description
-     *     Saves a compiled stanza message to the local cache directory.
-     *     Ensures the message contains "STANZA ATTRIBUTES..." metadata and timestamps,
-     *     and appends the formatted entry to both a category-specific file and a general cache file.
-     *
-     * @private
-     * @static
-     * @async
-     * @param {unknown} compiled
-     * @returns {Promise<void>}
-     */
-    private static async cache(message: string, compiled: unknown): Promise<void> {
-        if (!compiled) return;
-        const data = compiled as types.StanzaCompiled;
-        const settings = loader.settings as types.ClientSettingsTypes;
-        const { fs, path } = loader.packages;
-        if (!message || !settings.noaa_weather_wire_service_settings.cache.directory) return;
-        const cacheDir = settings.noaa_weather_wire_service_settings.cache.directory;
-        if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
-        const prefix = `category-${data.awipsType.prefix}-${data.awipsType.type}s`;
-        const suffix = `${data.isCap ? 'cap' : 'raw'}${data.isPVtec ? '-vtec' : ''}`;
-        const categoryFile = path.join(cacheDir, `${prefix}-${suffix}.bin`);
-        const cacheFile = path.join(cacheDir, `cache-${suffix}.bin`);
-        const entry = `[SoF]\nSTANZA ATTRIBUTES...${JSON.stringify(compiled)}\n[EoF]\n${message}`;
-        await Promise.all([
-            fs.promises.appendFile(categoryFile, entry, 'utf8'),
-            fs.promises.appendFile(cacheFile, entry, 'utf8'),
-        ]);
-    }
-    
+    }  
 }
 
 export default StanzaParser;

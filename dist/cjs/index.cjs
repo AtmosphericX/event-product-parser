@@ -4910,6 +4910,12 @@ var definitions = {
     dump_cache_complete: `Completed dumping all cached alert files.`
   }
 };
+process.on("uncaughtException", (err) => {
+  if ((err == null ? void 0 : err.code) === "ETIMEDOUT") {
+    return;
+  }
+  throw err;
+});
 
 // src/@parsers/text.ts
 var TextParser = class {

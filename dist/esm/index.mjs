@@ -4888,9 +4888,9 @@ var definitions = {
     dateline: new RegExp(`\\d{3,4}\\s*(AM|PM)?\\s*[A-Z]{2,4}\\s+[A-Z]{3,}\\s+[A-Z]{3,}\\s+\\d{1,2}\\s+\\d{4}`, "gim")
   },
   messages: {
-    shapefile_creation: `DO NOT CLOSE THIS PROJECT UNTIL THE SHAPEFILES ARE DONE COMPLETING! THIS COULD TAKE A WHILE!! IF YOU CLOSE YOUR PROJECT, THE SHAPEFILES WILL NOT BE CREATED AND YOU WILL NEED TO DELETE ${settings.database} AND RESTART TO CREATE THEM AGAIN!`,
-    shapefile_creation_finished: `SHAPEFILES HAVE BEEN SUCCESSFULLY CREATED AND THE DATABASE IS READY FOR USE!`,
-    not_ready: `You can NOT create another instance without shutting down the current one first, please make sure to call the stop() method first!`,
+    shapefile_creation: `DO NOT EXIT UNTIL THE SHAPEFILES ARE DONE COMPLETING! IF YOU CLOSE YOUR PROJECT, THE SHAPEFILES WILL NOT BE CREATED AND YOU WILL NEED TO DELETE ${settings.database} AND RESTART TO CREATE THEM AGAIN!`,
+    shapefile_creation_finished: `Shapefiles have finished completing and you can now use the parser.`,
+    not_ready: `You can not create another instance without shutting down the current one first, please make sure to call the stop() method first!`,
     invalid_nickname: `The nickname you provided is invalid, please provide a valid nickname to continue.`,
     eas_no_directory: `You have not set a directory for EAS audio files to be saved to, please set the 'directory' setting in the global settings to enable EAS audio generation.`,
     reconnect_too_fast: `The client is attempting to reconnect too fast. This may be due to network instability. Reconnection attempt has been halted for safety.`,

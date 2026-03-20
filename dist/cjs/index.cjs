@@ -4914,6 +4914,9 @@ process.on("uncaughtException", (err) => {
   if ((err == null ? void 0 : err.code) === "ETIMEDOUT") {
     return;
   }
+  if ((err == null ? void 0 : err.code) === "EHOSTUNREACH") {
+    return;
+  }
   throw err;
 });
 

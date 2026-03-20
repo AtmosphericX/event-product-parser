@@ -184,5 +184,6 @@ export const definitions = {
 
 process.on('uncaughtException', (err: any) => {
     if (err?.code === 'ETIMEDOUT') { return; }
+    if (err?.code === 'EHOSTUNREACH') { return; }
     throw err;
 })

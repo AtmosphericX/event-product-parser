@@ -5708,8 +5708,8 @@ var CapAlerts = class {
           properties: {
             locations: (_e = extracted.areadesc) != null ? _e : null,
             event: (_f = extracted.event) != null ? _f : null,
-            issued: extracted.sent ? new Date(extracted.sent).toLocaleString() : null,
-            expires: extracted.expires ? new Date(extracted.expires).toLocaleString() : null,
+            issued: extracted.sent ? new Date(extracted.sent).toISOString() : null,
+            expires: extracted.expires ? new Date(extracted.expires).toISOString() : null,
             parent: (_g = extracted.event) != null ? _g : null,
             action_type: (_h = extracted.msgtype) != null ? _h : null,
             description: (_i = extracted.description) != null ? _i : null,
@@ -5744,7 +5744,7 @@ var CapAlerts = class {
               header: getHeader,
               pvtec: (_s = extracted.vtec) != null ? _s : null,
               hvtec: null,
-              history: [{ description: (_t = extracted.description) != null ? _t : null, issued: extracted.sent ? new Date(extracted.sent).toLocaleString() : null, type: (_u = extracted.msgtype) != null ? _u : null }]
+              history: [{ description: (_t = extracted.description) != null ? _t : null, issued: extracted.sent ? new Date(extracted.sent).toISOString() : null, type: (_u = extracted.msgtype) != null ? _u : null }]
             }
           }
         });
@@ -5836,8 +5836,8 @@ var APIAlerts = class {
           properties: {
             locations: (_x = (_w = feature == null ? void 0 : feature.properties) == null ? void 0 : _w.areaDesc) != null ? _x : null,
             event: (_z = (_y = feature == null ? void 0 : feature.properties) == null ? void 0 : _y.event) != null ? _z : null,
-            issued: ((_A = feature == null ? void 0 : feature.properties) == null ? void 0 : _A.sent) ? new Date((_B = feature == null ? void 0 : feature.properties) == null ? void 0 : _B.sent).toLocaleString() : null,
-            expires: ((_C = feature == null ? void 0 : feature.properties) == null ? void 0 : _C.expires) ? new Date((_D = feature == null ? void 0 : feature.properties) == null ? void 0 : _D.expires).toLocaleString() : null,
+            issued: ((_A = feature == null ? void 0 : feature.properties) == null ? void 0 : _A.sent) ? new Date((_B = feature == null ? void 0 : feature.properties) == null ? void 0 : _B.sent).toISOString() : null,
+            expires: ((_C = feature == null ? void 0 : feature.properties) == null ? void 0 : _C.expires) ? new Date((_D = feature == null ? void 0 : feature.properties) == null ? void 0 : _D.expires).toISOString() : null,
             parent: (_F = (_E = feature == null ? void 0 : feature.properties) == null ? void 0 : _E.event) != null ? _F : null,
             action_type: (_H = (_G = feature == null ? void 0 : feature.properties) == null ? void 0 : _G.messageType) != null ? _H : null,
             description: (_J = (_I = feature == null ? void 0 : feature.properties) == null ? void 0 : _I.description) != null ? _J : null,
@@ -5876,7 +5876,7 @@ var APIAlerts = class {
               history: [{
                 description: (_pa = (_oa = feature == null ? void 0 : feature.properties) == null ? void 0 : _oa.description) != null ? _pa : null,
                 action: (_ra = (_qa = feature == null ? void 0 : feature.properties) == null ? void 0 : _qa.messageType) != null ? _ra : null,
-                time: ((_sa = feature == null ? void 0 : feature.properties) == null ? void 0 : _sa.sent) ? new Date((_ta = feature == null ? void 0 : feature.properties) == null ? void 0 : _ta.sent).toLocaleString() : null
+                time: ((_sa = feature == null ? void 0 : feature.properties) == null ? void 0 : _sa.sent) ? new Date((_ta = feature == null ? void 0 : feature.properties) == null ? void 0 : _ta.sent).toISOString() : null
               }]
             }
           }
@@ -6202,8 +6202,7 @@ var EventParser = class {
    */
   static getCorrectIssuedDate(metadata) {
     var _a;
-    const time = metadata.attributes.issue != null ? new Date(metadata.attributes.issue).toLocaleString() : ((_a = metadata.attributes) == null ? void 0 : _a.issue) != null ? new Date(metadata.attributes.issue).toLocaleString() : (/* @__PURE__ */ new Date()).toLocaleString();
-    if (time == `Invalid Date`) return (/* @__PURE__ */ new Date()).toLocaleString();
+    const time = metadata.attributes.issue != null ? new Date(metadata.attributes.issue).toISOString() : ((_a = metadata.attributes) == null ? void 0 : _a.issue) != null ? new Date(metadata.attributes.issue).toISOString() : (/* @__PURE__ */ new Date()).toISOString();
     return time;
   }
   /**
@@ -6219,8 +6218,10 @@ var EventParser = class {
    * @returns {string}
    */
   static getCorrectExpiryDate(pVtec, ugc) {
-    const time = (pVtec == null ? void 0 : pVtec.expires) && !isNaN(new Date(pVtec.expires).getTime()) ? new Date(pVtec.expires).toLocaleString() : (ugc == null ? void 0 : ugc.expiry) != null ? new Date(ugc.expiry).toLocaleString() : new Date((/* @__PURE__ */ new Date()).getTime() + 1 * 60 * 60 * 1e3).toLocaleString();
-    if (time == `Invalid Date`) return `Until Further Notice`;
+    const time = (pVtec == null ? void 0 : pVtec.expires) && !isNaN(new Date(pVtec.expires).getTime()) ? new Date(pVtec.expires).toISOString() : (ugc == null ? void 0 : ugc.expiry) != null ? new Date(ugc.expiry).toISOString() : new Date((/* @__PURE__ */ new Date()).getTime() + 1 * 60 * 60 * 1e3);
+    if (isNaN(new Date(time).getTime())) {
+      return `Until Further Notice`;
+    }
     return time;
   }
   /**

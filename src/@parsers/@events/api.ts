@@ -94,8 +94,8 @@ export class APIAlerts {
                 properties: {
                     locations: feature?.properties?.areaDesc ?? null,
                     event: feature?.properties?.event ?? null,
-                    issued: feature?.properties?.sent ? new Date(feature?.properties?.sent).toLocaleString() : null,
-                    expires: feature?.properties?.expires ? new Date(feature?.properties?.expires).toLocaleString() : null,
+                    issued: feature?.properties?.sent ? new Date(feature?.properties?.sent).toISOString() : null,
+                    expires: feature?.properties?.expires ? new Date(feature?.properties?.expires).toISOString() : null,
                     parent: feature?.properties?.event ?? null,
                     action_type: feature?.properties?.messageType ?? null,
                     description: feature?.properties?.description ?? null,
@@ -134,7 +134,7 @@ export class APIAlerts {
                         history: [{
                             description: feature?.properties?.description ?? null,
                             action: feature?.properties?.messageType ?? null,
-                            time: feature?.properties?.sent ? new Date(feature?.properties?.sent).toLocaleString() : null
+                            time: feature?.properties?.sent ? new Date(feature?.properties?.sent).toISOString() : null
                         }],
                     },
                 },

@@ -316,10 +316,9 @@ export class EventParser {
      */
     private static getCorrectIssuedDate(metadata: types.DefaultAttributesType) {
         const time = metadata.attributes.issue != null ? 
-            new Date(metadata.attributes.issue).toLocaleString() : (metadata.attributes?.issue != null ? 
-            new Date(metadata.attributes.issue).toLocaleString() : 
-            new Date().toLocaleString());
-        if (time == `Invalid Date`) return new Date().toLocaleString();
+            new Date(metadata.attributes.issue).toISOString() : (metadata.attributes?.issue != null ? 
+            new Date(metadata.attributes.issue).toISOString() : 
+            new Date().toISOString());
         return time;
     }
 
@@ -337,10 +336,10 @@ export class EventParser {
      */
     private static getCorrectExpiryDate(pVtec: types.PVtecEntry, ugc: types.UGCEntry) {
         const time =  pVtec?.expires && !isNaN(new Date(pVtec.expires).getTime()) ? 
-            new Date(pVtec.expires).toLocaleString() : 
-            (ugc?.expiry != null ? new Date(ugc.expiry).toLocaleString() : 
-            new Date(new Date().getTime() + 1 * 60 * 60 * 1000).toLocaleString())
-        if (time == `Invalid Date`) return `Until Further Notice`;
+            new Date(pVtec.expires).toISOString() : (ugc?.expiry != null ? new Date(ugc.expiry).toISOString() : new Date(new Date().getTime() + 1 * 60 * 60 * 1000))
+        if (isNaN(new Date(time).getTime())) {
+            return `Until Further Notice`
+        }
         return time;
     }
 

@@ -75,8 +75,8 @@ export class CapAlerts {
                 properties: {
                     locations: extracted.areadesc ?? null,
                     event: extracted.event ?? null,
-                    issued: extracted.sent ? new Date(extracted.sent).toLocaleString() : null,
-                    expires: extracted.expires ? new Date(extracted.expires).toLocaleString() : null,
+                    issued: extracted.sent ? new Date(extracted.sent).toISOString() : null,
+                    expires: extracted.expires ? new Date(extracted.expires).toISOString() : null,
                     parent: extracted.event ?? null,
                     action_type: extracted.msgtype ?? null,
                     description: extracted.description ?? null,
@@ -111,7 +111,7 @@ export class CapAlerts {
                         header: getHeader,
                         pvtec: extracted.vtec ?? null,
                         hvtec: null,
-                        history: [{ description: extracted.description ?? null, issued: extracted.sent ? new Date(extracted.sent).toLocaleString() : null, type: extracted.msgtype ?? null }],
+                        history: [{ description: extracted.description ?? null, issued: extracted.sent ? new Date(extracted.sent).toISOString() : null, type: extracted.msgtype ?? null }],
                     },
                 },
             })

@@ -242,7 +242,6 @@ export class UGCParser {
         }
         return zones.filter(item => item !== '');
     }
-   
 }
 
 export default UGCParser;

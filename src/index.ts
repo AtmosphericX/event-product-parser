@@ -24,7 +24,7 @@ import PVtecParser from './@parsers/pvtec';
 import HVtecParser from './@parsers/hvtec';
 import UGCParser from './@parsers/ugc';
 
-export class AlertManager { 
+export class Manager { 
     isNoaaWeatherWireService: boolean
     job: any
     constructor(metadata: types.ClientSettingsTypes) { this.start(metadata) }
@@ -55,9 +55,9 @@ export class AlertManager {
      * 
      * @async
      * @param {types.EventCompiled} event
-     * @returns {Promise<GeoJSON.Polygon | null>}
+     * @returns {Promise<types.geometry | null>}
      */
-    public async getEventPolygon(event: types.EventCompiled, isUnion: boolean = true) {
+    public async getEventPolygon(event: types.EventCompiled, isUnion: boolean = true): Promise<types.geometry | null> {
         const hasGenerated = event.properties.geocode?.generated ?? null;
         const getUgc = event.properties.geocode?.UGC ?? null;
         return await EventParser.getEventGeometry(hasGenerated, {zones: getUgc}, isUnion);
@@ -72,9 +72,9 @@ export class AlertManager {
      * @async
      * @param {string} description
      * @param {string} header
-     * @returns {Promise<Buffer>}
+     * @returns {Promise<string>}
      */
-    public async createEasAudio(description: string, header: string) {
+    public async createEasAudio(description: string, header: string): Promise<string> {
         return await EAS.generateEASAudio(description, header);
     }
 
@@ -104,9 +104,9 @@ export class AlertManager {
      * @async
      * @param {string} query
      * @param {number} [limit=250]
-     * @returns {Promise<any[]>}
+     * @returns {Promise<string[]>}
      */
-    public async searchStanzaDatabase(query: string, limit: number = 250) {
+    public async searchStanzaDatabase(query: string, limit: number = 250): Promise<string[]> {
         const escapeLike = (s: string) => s.replace(/[%_]/g, '\\$&');
         const rows = await loader.cache.db
             .prepare(`SELECT * FROM stanzas WHERE stanza LIKE ? ESCAPE '\\' ORDER BY id DESC LIMIT ${limit}`)
@@ -124,7 +124,7 @@ export class AlertManager {
      * @param {types.ClientSettingsTypes} settings
      * @returns {Promise<void>}
      */
-    public async setSettings(settings: types.ClientSettingsTypes) {
+    public async setSettings(settings: types.ClientSettingsTypes): Promise<void> {
         Utils.mergeClientSettings(loader.settings, settings);
     }
 
@@ -138,7 +138,7 @@ export class AlertManager {
      * @param {(...args: any[]) => void} callback
      * @returns {() => void}
      */
-    public on(event: string, callback: (...args: any[]) => void) {
+    public on(event: string, callback: (...args: any[]) => void): () => void {
         loader.cache.events.on(event, callback);
         return () => loader.cache.events.off(event, callback);
     }
@@ -211,8 +211,8 @@ export class AlertManager {
             this.isNoaaWeatherWireService = false;
         }
     }
-
 }
 
-export default AlertManager;
+export default Manager;
+export type * as types from './types';
 export { StanzaParser, EventParser, TextParser, PVtecParser, HVtecParser, UGCParser, EAS, Database, Utils };

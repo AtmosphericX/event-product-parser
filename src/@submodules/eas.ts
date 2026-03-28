@@ -32,7 +32,7 @@ export class EAS {
      * @param {string} header
      * @returns {Promise<string | null>}
      */
-    public static generateEASAudio(message: string, header: string) {
+    public static generateEASAudio(message: string, header: string): Promise<string | null> {
         return new Promise(async (resolve) => {
             const settings = loader.settings as types.ClientSettingsTypes;
             const assetsDir = settings.global_settings.eas_settings.directory;
@@ -108,7 +108,7 @@ export class EAS {
      * @param {number} [sampleRate=8000]
      * @returns {Buffer}
      */
-    private static encodeWavPCM16(samples: Record<string, number>[], sampleRate: number = 8000) {
+    private static encodeWavPCM16(samples: Record<string, number>[], sampleRate: number = 8000): Buffer {
         const bytesPerSample = 2;
         const blockAlign = 1 * bytesPerSample;
         const byteRate = sampleRate * blockAlign;
@@ -155,7 +155,7 @@ export class EAS {
      * @returns { { samples: Int16Array; sampleRate: number; channels: number; bitsPerSample: number } | null }
      */
 
-    private static parseWavPCM16(buffer: Buffer) {
+    private static parseWavPCM16(buffer: Buffer): { samples: Int16Array; sampleRate: number; channels: number; bitsPerSample: number } | null {
         if (buffer.toString("ascii", 0, 4) !== "RIFF" || buffer.toString("ascii", 8, 12) !== "WAVE") { return null; }
         let fmt = null;
         let data = null;
@@ -190,7 +190,7 @@ export class EAS {
      * @param {Int16Array[]} arrays
      * @returns {Int16Array}
      */
-    private static concatPCM16(arrays: Int16Array[]) {
+    private static concatPCM16(arrays: Int16Array[]): Int16Array {
         let total = 0;
         for (const a of arrays) total += a.length;
         const out = new Int16Array(total);
@@ -213,7 +213,7 @@ export class EAS {
      * @param {Int16Array} int16
      * @returns {Float32Array}
      */
-    private static pcm16toFloat(int16: Int16Array) {
+    private static pcm16toFloat(int16: Int16Array): Float32Array {
         const out = new Float32Array(int16.length);
         for (let i = 0; i < int16.length; i++) out[i] = int16[i] / 32768;
         return out;
@@ -231,7 +231,7 @@ export class EAS {
      * @returns {Int16Array}
      */
 
-    private static floatToPcm16(float32: Float32Array) {
+    private static floatToPcm16(float32: Float32Array): Int16Array {
         const out = new Int16Array(float32.length);
         for (let i = 0; i < float32.length; i++) {
             let v = Math.max(-1, Math.min(1, float32[i]));
@@ -253,7 +253,7 @@ export class EAS {
      * @param {number} targetRate
      * @returns {Int16Array}
      */
-    private static resamplePCM16(int16: Int16Array, originalRate: number, targetRate: number) {
+    private static resamplePCM16(int16: Int16Array, originalRate: number, targetRate: number): Int16Array {
         if (originalRate === targetRate) return int16;
         const ratio = targetRate / originalRate;
         const outLen = Math.max(1, Math.round(int16.length * ratio));
@@ -281,7 +281,7 @@ export class EAS {
      * @param {number} [sampleRate=8000]
      * @returns {Int16Array}
      */
-    private static generateSilence(ms: number, sampleRate:number = 8000) { 
+    private static generateSilence(ms: number, sampleRate:number = 8000): Int16Array {
         return new Int16Array(Math.floor(ms * sampleRate));
     }
 
@@ -297,7 +297,7 @@ export class EAS {
      * @param {number} [sampleRate=8000]
      * @returns {Int16Array}
      */
-    private static generateAttentionTone(ms, sampleRate: number = 8000) {
+    private static generateAttentionTone(ms: number, sampleRate: number = 8000): Int16Array {
         const len = Math.floor(ms * sampleRate);
         const out = new Int16Array(len);
         const f1 = 853;
@@ -331,7 +331,7 @@ export class EAS {
      * @param {number} [sampleRate=8000]
      * @returns {Int16Array}
      */
-    private static applyNWREffect(int16: Int16Array, sampleRate: number = 8000) {
+    private static applyNWREffect(int16: Int16Array, sampleRate: number = 8000): Int16Array {
         const hpCut = 3555;
         const lpCut = 1600;
         const noiseLevel = 0.0;
@@ -374,7 +374,7 @@ export class EAS {
      * @param {number} [noiseLevel=0.02]
      * @returns {Int16Array}
      */
-    private static addNoise(int16: Int16Array, noiseLevel: number = 0.02) {
+    private static addNoise(int16: Int16Array, noiseLevel: number = 0.02): Int16Array {
         const x = this.pcm16toFloat(int16);
         for (let i = 0; i < x.length; i++) x[i] += (Math.random() * 2 - 1) * noiseLevel;
         let peak = 0;
@@ -395,7 +395,7 @@ export class EAS {
      * @param {string} str
      * @returns {number[]}
      */
-    private static asciiTo8N1Bits(str: string) { 
+    private static asciiTo8N1Bits(str: string): number[] {
         const bits = [];
         for (let i = 0; i < str.length; i++) {
             const c = str.charCodeAt(i) & 0xFF;
@@ -419,7 +419,7 @@ export class EAS {
      * @param {number} [sampleRate=8000]
      * @returns {Int16Array}
      */
-    private static generateAFSK(bits: number[], sampleRate: number = 8000) {
+    private static generateAFSK(bits: number[], sampleRate: number = 8000): Int16Array {
         const baud = 520.83;
         const markFreq = 2083.3;
         const spaceFreq = 1562.5;
@@ -466,7 +466,7 @@ export class EAS {
      * @param {{preMarkSec?: number, gapSec?: number}} [options={}]
      * @returns {Int16Array}
      */ 
-    private static generateSAMEHeader(vtec: string, repeats: number, sampleRate: number = 8000, options: {preMarkSec?: number, gapSec?: number} = {}) {
+    private static generateSAMEHeader(vtec: string, repeats: number, sampleRate: number = 8000, options: {preMarkSec?: number, gapSec?: number} = {}): Int16Array {
         const preMarkSec = options.preMarkSec ?? 0.3;
         const gapSec = options.gapSec ?? 0.1;
         const bursts = [];

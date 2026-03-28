@@ -30,23 +30,22 @@ export class APIAlerts {
      * @param {Record<string, string>} extracted 
      * @returns {string} 
      */
-    private static getTracking(extracted: Record<string, string>) {
-        return extracted.pVtec ? (() => {
-            const vtecValue = Array.isArray(extracted.pVtec) ? extracted.pVtec[0] : extracted.pVtec;
+     private static getTracking(extracted: Record<string, string>): string {
+        if (extracted.pVtec) {
+            const vtecValue = Array.isArray(extracted.pVtec) 
+                ? extracted.pVtec[0] : extracted.pVtec;
             const splitPVTEC = vtecValue.split('.');
             return `${splitPVTEC[2]}-${splitPVTEC[3]}-${splitPVTEC[4]}-${splitPVTEC[5]}`;
-        })() : extracted?.featureId ? (() => {
-            const wmoMatch = extracted.wmoidentifier?.match(/([A-Z]{4}\d{2})\s+([A-Z]{4})/);
-            const idMatch = extracted.featureId?.match(/([a-f0-9]+)\.(\d+)\.(\d+)$/);
-            const station = wmoMatch?.[2] ?? 'N/A';
-            return `${station}-${idMatch?.[1] ?? `N/A`}`;
-        })() : (() => {
-            const wmoMatch = extracted.wmoidentifier?.match(/([A-Z]{4}\d{2})\s+([A-Z]{4})/);
-            const id = wmoMatch?.[1] ?? 'N/A';
-            const station = wmoMatch?.[2] ?? 'N/A';
-            return `${station}-${id}`;
-        })   
-    }
+        }
+        const wmoMatch = extracted.wmoidentifier?.match(/([A-Z]{4}\d{2})\s+([A-Z]{4})/);
+        const station = wmoMatch?.[2] ?? 'N/A';
+        if (extracted.featureId) {
+            const idMatch = extracted.featureId.match(/([a-f0-9]+)\.(\d+)\.(\d+)$/);
+            return `${station}-${idMatch?.[1] ?? 'N/A'}`;
+        }
+        const id = wmoMatch?.[1] ?? 'N/A';
+        return `${station}-${id}`;
+     }
 
     /**
      * @function getICAO
@@ -58,7 +57,7 @@ export class APIAlerts {
      * @param {string} pVtec 
      * @returns {{ icao: any; name: any; }} 
      */
-    private static getICAO(pVtec: string) {
+    private static getICAO(pVtec: string): { icao: any; name: any; } {
         const icao = pVtec ? pVtec.split(`.`)[2] : null;
         const name = loader.definitions.ICAO?.[icao] ?? null;
         return { icao, name };
@@ -75,7 +74,7 @@ export class APIAlerts {
      * @param {types.StanzaCompiled} validated 
      * @returns {*} 
      */
-    public static async event(validated: types.StanzaCompiled) {
+    public static async event(validated: types.StanzaCompiled): Promise<void> {
         let processed = [] as unknown[];
         const messages = Object.values(JSON.parse(validated.message).features) as types.EventCompiled[];
         for (let feature of messages) {

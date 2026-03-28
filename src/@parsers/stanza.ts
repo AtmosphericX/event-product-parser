@@ -54,7 +54,7 @@ export class StanzaParser {
         if (stanza.is(`message`)) {
             let cb = stanza.getChild(`x`)
             if (cb && cb.children) {
-                let message = unescape(cb.children[0])
+                let message = decodeURI(cb.children[0]);
                 let attributes = cb.attrs
                 if (attributes.awipsid && attributes.awipsid.length > 1) {
                     const isCap = message.includes(`<?xml`);

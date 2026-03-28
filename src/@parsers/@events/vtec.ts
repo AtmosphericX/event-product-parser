@@ -32,7 +32,7 @@ export class VTECAlerts {
      * @param {types.StanzaCompiled} validated
      * @returns {Promise<void>}
      */
-    public static async event(validated: types.StanzaCompiled) {
+    public static async event(validated: types.StanzaCompiled): Promise<void> {
         let processed = [] as unknown[];
         const messages = validated?.message?.split(/(?=\$\$)/g)?.map(msg => msg.trim())?.filter(msg => msg && msg !== "$$");
         if (!messages || messages.length == 0) { return }

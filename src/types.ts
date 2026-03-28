@@ -136,6 +136,14 @@ interface LocalEventProperties {
     messageType?: string;
     sent?: string;
     areaDesc?: string;
+    action_type?: string;
+    is_updated?: boolean;
+    is_cancelled?: boolean;
+    is_issued?: boolean;
+    is_test?: boolean;
+    hash?: string;
+    tags?: string[];
+    details?: Record<string, any>;
 }
 
 // --- Exports --- //

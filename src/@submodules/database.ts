@@ -26,15 +26,8 @@ export class Database {
      *
      * @static
      * @async
-     * @param {string} stanza
-     *     The raw stanza XML or text to store in the database.
-     * 
-     * @returns {Promise<void>}
-     *     Resolves when the stanza has been inserted and any necessary pruning
-     *     of old stanzas has been performed.
-     *
-     * @example
-     *     await Database.stanzaCacheImport("<alert>...</alert>");
+     * @param {string} stanza - The raw stanza XML or text to store in the database.
+     * @returns {Promise<void>} - Resolves when the stanza has been inserted and any necessary pruning of old stanzas has been performed.
      */
     public static async stanzaCacheImport(stanza: Record<string, any>): Promise<void> {
         const settings = loader.settings as types.ClientSettingsTypes;
@@ -75,12 +68,7 @@ export class Database {
      *
      * @static
      * @async
-     * @returns {Promise<void>}
-     *     Resolves when the database and shapefiles have been initialized.
-     *
-     * @example
-     *     await Database.loadDatabase();
-     *     console.log('Database initialized and shapefiles imported.');
+     * @returns {Promise<void>} - Resolves when the database has been initialized and shapefiles have been imported if necessary.
      */
     public static async loadDatabase(): Promise<void> {
         const settings = loader.settings as types.ClientSettingsTypes;
@@ -169,7 +157,6 @@ export class Database {
             Utils.warn(`Failed to load database: ${msg}`);
         }
     }
-
 }
 
 export default Database;

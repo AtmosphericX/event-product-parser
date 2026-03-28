@@ -5,6 +5,7 @@ export default defineConfig({
 	outDir: 'dist',
 	format: ['esm', 'cjs'],
 	noExternal: ["@xmpp/client", "@xmpp/sasl", "@xmpp/sasl-plain"],
+	dts: true,
 	clean: true,
 	outExtension({ format }) {
 		return { js: format === 'esm' ? '.mjs' : '.cjs' }

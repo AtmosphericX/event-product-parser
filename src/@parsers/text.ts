@@ -159,8 +159,7 @@ export class TextParser {
             extracted[key] = uniqueValues.length === 0 ? null : (uniqueValues.length === 1 ? uniqueValues[0] : uniqueValues);
         }
         return extracted;
-    }
-    
+    } 
 }
 
 export default TextParser;

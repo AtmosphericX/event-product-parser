@@ -25,10 +25,10 @@ export class TextAlerts {
      *
      * @private
      * @static
-     * @param {types.EventProperties} baseProperties 
+     * @param {types.EventProperties} properties 
      * @returns {string} 
      */
-    private static getTracking(properties: types.EventProperties) {
+    private static getTracking(properties: types.EventProperties): string {
         return `${properties.sender_icao}-${properties.raw.attributes.ttaaii}-${properties?.raw?.attributes?.id.slice(-4) ?? 'N/A'}`;
     }
 
@@ -46,7 +46,7 @@ export class TextAlerts {
      * @param {types.StanzaAttributes} metadata
      * @returns {string}
      */
-    private static getEvent(message: string, metadata: types.StanzaAttributes) {
+    private static getEvent(message: string, metadata: types.StanzaAttributes): string {
         const offshoreEvent = Object.keys(loader.definitions.offshore).find(event => message.toLowerCase().includes(event.toLowerCase()));
         if (offshoreEvent != undefined ) return Object.keys(loader.definitions.offshore).find(event => message.toLowerCase().includes(event.toLowerCase()));
         return metadata.awipsType.type.split(`-`).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(` `)
@@ -67,7 +67,7 @@ export class TextAlerts {
      * @param {types.StanzaCompiled} validated
      * @returns {Promise<void>}
      */
-    public static async event(validated: types.StanzaCompiled) {
+    public static async event(validated: types.StanzaCompiled): Promise<void> {
         let processed = [] as unknown[];
         const messages = validated?.message?.split(/(?=\$\$)/g)?.map(msg => msg.trim())?.filter(msg => msg && msg !== "$$");
         if (!messages || messages.length == 0) { return }

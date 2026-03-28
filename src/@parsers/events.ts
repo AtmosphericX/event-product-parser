@@ -34,13 +34,13 @@ export class EventParser {
      * @static
      * @async
      * @param {string} message
-     * @param {types.StanzaCompiled} validated
+     * @param {types.StanzaCompiled} metadata
      * @param {types.UGCEntry} [ugc=null]
      * @param {types.PVtecEntry} [pVtec=null]
      * @param {types.HVtecEntry} [hVtec=null]
      * @returns {Promise<Record<string, any>>}
      */
-    public static async getBaseProperties(message: string, metadata: types.DefaultAttributesType, ugc: types.UGCEntry = null, pVtec: types.PVtecEntry = null, hVtec: types.HVtecEntry = null) {
+    public static async getBaseProperties(message: string, metadata: types.DefaultAttributesType, ugc: types.UGCEntry = null, pVtec: types.PVtecEntry = null, hVtec: types.HVtecEntry = null): Promise<Record<string, any>> {
         const settings = loader.settings as types.ClientSettingsTypes;
         const definitions = {
             tornado: TextParser.textProductToString(message, `TORNADO...`) ?? TextParser.textProductToString(message, `WATERSPOUT...`) ?? null,
@@ -96,7 +96,7 @@ export class EventParser {
      *   back to null if no geometry can be determined.
      * 
      * @static
-     * @param {string} message
+     * @param {string} generated
      * @param {types.UGCEntry} [ugc=null]
      * @returns {Promise<types.geometry>}
      */
@@ -123,7 +123,7 @@ export class EventParser {
      * @param {boolean} [useParentEvents=false]
      * @returns {string}
      */
-    public static betterParsedEventName(event: types.EventCompiled, betterParsing?: boolean, useParentEvents?: boolean) {
+    public static betterParsedEventName(event: types.EventCompiled, betterParsing?: boolean, useParentEvents?: boolean): string {
         let eventName = event?.properties?.event ?? `Unknown Event`;
         const defEventTable = loader.definitions.enhancedEvents;
         const properties = event?.properties;
@@ -169,9 +169,9 @@ export class EventParser {
      *
      * @static
      * @param {unknown[]} events
-     * @returns {void}
+     * @returns {Promise<void>}
      */
-    public static async validateEvents(events: unknown[]) {
+    public static async validateEvents(events: unknown[]): Promise<void> {
         if (events.length == 0) return;
         const filteringSettings = loader.settings?.global_settings?.filtering;
         const easSettings = loader.settings?.global_settings?.eas_settings;
@@ -251,7 +251,7 @@ export class EventParser {
      * @param {types.PVtecEntry} [pVtec]
      * @returns {string}
      */
-    public static getHeader(attributes: types.StanzaAttributes, properties?: types.EventProperties, pVtec?: types.PVtecEntry) {
+    public static getHeader(attributes: types.StanzaAttributes, properties?: types.EventProperties, pVtec?: types.PVtecEntry): string {
         const parent = `ATSX`
         const alertType = attributes?.awipsType?.type ?? attributes?.getAwip?.prefix ?? `XX`;
         const ugc = properties?.geocode?.UGC != null ? properties?.geocode?.UGC.join(`-`) : `000000`;
@@ -269,10 +269,10 @@ export class EventParser {
      *     based on its type flags: API, CAP, pVTEC (Primary VTEC), UGC, or plain text.
      *
      * @static
-     * @param {types.StanzaCompiled} validated
+     * @param {types.StanzaCompiled} metadata
      * @returns {void}
      */
-    public static eventHandler(metadata: types.StanzaCompiled) {
+    public static eventHandler(metadata: types.StanzaCompiled): Promise<void> {
         const settings = loader.settings as types.ClientSettingsTypes;
         const preferences = settings.noaa_weather_wire_service_settings.preferences;
         if (metadata.isApi) return APIAlerts.event(metadata)
@@ -293,11 +293,11 @@ export class EventParser {
      * @private
      * @static
      * @param {types.PVtecEntry | null} pVtec
-     * @param {Record<string, string>} attributes
+     * @param {Record<string, string>} metadata
      * @param {RegExpMatchArray | string | null} WMO
      * @returns {{ icao: string; name: string }}
      */
-    private static getICAO(pVtec: types.PVtecEntry, metadata: types.DefaultAttributesType, WMO: RegExpMatchArray | string | null) {
+    private static getICAO(pVtec: types.PVtecEntry, metadata: types.DefaultAttributesType, WMO: RegExpMatchArray | string | null): { icao: string; name: string } {
         const icao = pVtec != null ? pVtec?.tracking.split(`-`)[0] : (metadata.attributes?.cccc || (WMO != null ? (Array.isArray(WMO) ? WMO[0] : WMO) : null));
         const name = loader.definitions.ICAO?.[icao] ?? null;
         return { icao, name };
@@ -311,10 +311,10 @@ export class EventParser {
      *
      * @private
      * @static
-     * @param {Record<string, string>} attributes
+     * @param {Record<string, string>} metadata
      * @returns {string}
      */
-    private static getCorrectIssuedDate(metadata: types.DefaultAttributesType) {
+    private static getCorrectIssuedDate(metadata: types.DefaultAttributesType): string {
         const time = metadata.attributes.issue != null ? 
             new Date(metadata.attributes.issue).toISOString() : (metadata.attributes?.issue != null ? 
             new Date(metadata.attributes.issue).toISOString() : 
@@ -334,7 +334,7 @@ export class EventParser {
      * @param {types.UGCEntry} ugc
      * @returns {string}
      */
-    private static getCorrectExpiryDate(pVtec: types.PVtecEntry, ugc: types.UGCEntry) {
+    private static getCorrectExpiryDate(pVtec: types.PVtecEntry, ugc: types.UGCEntry): string | Date {
         const time =  pVtec?.expires && !isNaN(new Date(pVtec.expires).getTime()) ? 
             new Date(pVtec.expires).toISOString() : (ugc?.expiry != null ? new Date(ugc.expiry).toISOString() : new Date(new Date().getTime() + 1 * 60 * 60 * 1000))
         if (isNaN(new Date(time).getTime())) {
@@ -353,9 +353,9 @@ export class EventParser {
      * @private
      * @static
      * @param {any} event
-     * @returns {any}
+     * @returns {types.EventCompiled}
      */
-    private static buildDefaultSignature(event: any) {
+    private static buildDefaultSignature(event: types.EventCompiled): types.EventCompiled {
         const props = event.properties ?? {};
         const statusCorrelation = loader.definitions.correlations.find((c: { type: string }) => c.type === props.action_type);
         const defEventTags = loader.definitions.tags;

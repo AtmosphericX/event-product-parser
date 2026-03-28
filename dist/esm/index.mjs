@@ -1365,7 +1365,7 @@ function escape(local) {
   }
   return local.replaceAll(/^\s+|\s+$/g, "").replaceAll("\\", String.raw`\5c`).replaceAll(" ", String.raw`\20`).replaceAll('"', String.raw`\22`).replaceAll("&", String.raw`\26`).replaceAll("'", String.raw`\27`).replaceAll("/", String.raw`\2f`).replaceAll(":", String.raw`\3a`).replaceAll("<", String.raw`\3c`).replaceAll(">", String.raw`\3e`).replaceAll("@", String.raw`\40`);
 }
-function unescape2(local) {
+function unescape(local) {
   if (local === null) {
     return null;
   }
@@ -1388,10 +1388,10 @@ var JID = class _JID {
     }
     return this.toString();
   }
-  toString(unescape3) {
+  toString(unescape2) {
     let s = this._domain;
     if (this._local) {
-      s = this.getLocal(unescape3) + "@" + s;
+      s = this.getLocal(unescape2) + "@" + s;
     }
     if (this._resource) {
       s = s + "/" + this._resource;
@@ -1424,9 +1424,9 @@ var JID = class _JID {
     this._local = local && local.toLowerCase();
     return this;
   }
-  getLocal(unescape3 = false) {
+  getLocal(unescape2 = false) {
     let local = null;
-    local = unescape3 ? unescape2(this._local) : this._local;
+    local = unescape2 ? unescape(this._local) : this._local;
     return local;
   }
   /**
@@ -1498,7 +1498,7 @@ j.parse = parse;
 j.equal = equal;
 j.detectEscape = detect;
 j.escapeLocal = escape;
-j.unescapeLocal = unescape2;
+j.unescapeLocal = unescape;
 var jid_default = j;
 
 // node_modules/@xmpp/error/index.js
@@ -5478,7 +5478,7 @@ var UGCAlerts = class {
    * @private
    * @static
    * @param {string} message
-   * @param {Record<string, any>} attributes
+   * @param {Record<string, any>} metadata
    * @returns {string}
    */
   static getEvent(message, metadata) {
@@ -5552,7 +5552,7 @@ var TextAlerts = class {
    *
    * @private
    * @static
-   * @param {types.EventProperties} baseProperties 
+   * @param {types.EventProperties} properties 
    * @returns {string} 
    */
   static getTracking(properties) {
@@ -5770,23 +5770,20 @@ var APIAlerts = class {
    * @returns {string} 
    */
   static getTracking(extracted) {
-    return extracted.pVtec ? (() => {
+    var _a, _b, _c, _d;
+    if (extracted.pVtec) {
       const vtecValue = Array.isArray(extracted.pVtec) ? extracted.pVtec[0] : extracted.pVtec;
       const splitPVTEC = vtecValue.split(".");
       return `${splitPVTEC[2]}-${splitPVTEC[3]}-${splitPVTEC[4]}-${splitPVTEC[5]}`;
-    })() : (extracted == null ? void 0 : extracted.featureId) ? (() => {
-      var _a, _b, _c, _d;
-      const wmoMatch = (_a = extracted.wmoidentifier) == null ? void 0 : _a.match(/([A-Z]{4}\d{2})\s+([A-Z]{4})/);
-      const idMatch = (_b = extracted.featureId) == null ? void 0 : _b.match(/([a-f0-9]+)\.(\d+)\.(\d+)$/);
-      const station = (_c = wmoMatch == null ? void 0 : wmoMatch[2]) != null ? _c : "N/A";
-      return `${station}-${(_d = idMatch == null ? void 0 : idMatch[1]) != null ? _d : `N/A`}`;
-    })() : (() => {
-      var _a, _b, _c;
-      const wmoMatch = (_a = extracted.wmoidentifier) == null ? void 0 : _a.match(/([A-Z]{4}\d{2})\s+([A-Z]{4})/);
-      const id2 = (_b = wmoMatch == null ? void 0 : wmoMatch[1]) != null ? _b : "N/A";
-      const station = (_c = wmoMatch == null ? void 0 : wmoMatch[2]) != null ? _c : "N/A";
-      return `${station}-${id2}`;
-    });
+    }
+    const wmoMatch = (_a = extracted.wmoidentifier) == null ? void 0 : _a.match(/([A-Z]{4}\d{2})\s+([A-Z]{4})/);
+    const station = (_b = wmoMatch == null ? void 0 : wmoMatch[2]) != null ? _b : "N/A";
+    if (extracted.featureId) {
+      const idMatch = extracted.featureId.match(/([a-f0-9]+)\.(\d+)\.(\d+)$/);
+      return `${station}-${(_c = idMatch == null ? void 0 : idMatch[1]) != null ? _c : "N/A"}`;
+    }
+    const id2 = (_d = wmoMatch == null ? void 0 : wmoMatch[1]) != null ? _d : "N/A";
+    return `${station}-${id2}`;
   }
   /**
    * @function getICAO
@@ -5901,7 +5898,7 @@ var EventParser = class {
    * @static
    * @async
    * @param {string} message
-   * @param {types.StanzaCompiled} validated
+   * @param {types.StanzaCompiled} metadata
    * @param {types.UGCEntry} [ugc=null]
    * @param {types.PVtecEntry} [pVtec=null]
    * @param {types.HVtecEntry} [hVtec=null]
@@ -5965,7 +5962,7 @@ var EventParser = class {
    *   back to null if no geometry can be determined.
    * 
    * @static
-   * @param {string} message
+   * @param {string} generated
    * @param {types.UGCEntry} [ugc=null]
    * @returns {Promise<types.geometry>}
    */
@@ -6041,7 +6038,7 @@ var EventParser = class {
    *
    * @static
    * @param {unknown[]} events
-   * @returns {void}
+   * @returns {Promise<void>}
    */
   static validateEvents(events3) {
     return __async(this, null, function* () {
@@ -6156,7 +6153,7 @@ var EventParser = class {
    *     based on its type flags: API, CAP, pVTEC (Primary VTEC), UGC, or plain text.
    *
    * @static
-   * @param {types.StanzaCompiled} validated
+   * @param {types.StanzaCompiled} metadata
    * @returns {void}
    */
   static eventHandler(metadata) {
@@ -6179,7 +6176,7 @@ var EventParser = class {
    * @private
    * @static
    * @param {types.PVtecEntry | null} pVtec
-   * @param {Record<string, string>} attributes
+   * @param {Record<string, string>} metadata
    * @param {RegExpMatchArray | string | null} WMO
    * @returns {{ icao: string; name: string }}
    */
@@ -6197,7 +6194,7 @@ var EventParser = class {
    *
    * @private
    * @static
-   * @param {Record<string, string>} attributes
+   * @param {Record<string, string>} metadata
    * @returns {string}
    */
   static getCorrectIssuedDate(metadata) {
@@ -6234,7 +6231,7 @@ var EventParser = class {
    * @private
    * @static
    * @param {any} event
-   * @returns {any}
+   * @returns {types.EventCompiled}
    */
   static buildDefaultSignature(event) {
     var _a, _b, _c, _d;
@@ -6320,7 +6317,7 @@ var StanzaParser = class {
     if (stanza.is(`message`)) {
       let cb = stanza.getChild(`x`);
       if (cb && cb.children) {
-        let message = unescape(cb.children[0]);
+        let message = decodeURI(cb.children[0]);
         let attributes = cb.attrs;
         if (attributes.awipsid && attributes.awipsid.length > 1) {
           const isCap = message.includes(`<?xml`);
@@ -6371,15 +6368,8 @@ var Database = class {
    *
    * @static
    * @async
-   * @param {string} stanza
-   *     The raw stanza XML or text to store in the database.
-   * 
-   * @returns {Promise<void>}
-   *     Resolves when the stanza has been inserted and any necessary pruning
-   *     of old stanzas has been performed.
-   *
-   * @example
-   *     await Database.stanzaCacheImport("<alert>...</alert>");
+   * @param {string} stanza - The raw stanza XML or text to store in the database.
+   * @returns {Promise<void>} - Resolves when the stanza has been inserted and any necessary pruning of old stanzas has been performed.
    */
   static stanzaCacheImport(stanza) {
     return __async(this, null, function* () {
@@ -6422,12 +6412,7 @@ var Database = class {
    *
    * @static
    * @async
-   * @returns {Promise<void>}
-   *     Resolves when the database and shapefiles have been initialized.
-   *
-   * @example
-   *     await Database.loadDatabase();
-   *     console.log('Database initialized and shapefiles imported.');
+   * @returns {Promise<void>} - Resolves when the database has been initialized and shapefiles have been imported if necessary.
    */
   static loadDatabase() {
     return __async(this, null, function* () {
@@ -6680,6 +6665,7 @@ var Utils = class _Utils {
    * @static
    * @param {string} message
    * @param {boolean} [force=false]
+   * @returns {void}
    */
   static warn(message, force = false) {
     cache.events.emit("log", message);
@@ -6696,6 +6682,7 @@ var Utils = class _Utils {
    *     
    * @static
    * @async
+   * @returns {Promise<void>}
    */
   static loadCollectionCache() {
     return __async(this, null, function* () {
@@ -6730,6 +6717,7 @@ var Utils = class _Utils {
    *
    * @static
    * @async
+   * @returns {Promise<void>}
    */
   static loadGeoJsonData() {
     return __async(this, null, function* () {
@@ -6804,6 +6792,7 @@ var Utils = class _Utils {
    *
    * @static
    * @param {boolean} isWire
+   * @returns {void}
    */
   static handleCronJob(isWire) {
     try {
@@ -7335,7 +7324,7 @@ var EAS = class {
 var eas_default = EAS;
 
 // src/index.ts
-var AlertManager = class {
+var Manager = class {
   constructor(metadata) {
     this.start(metadata);
   }
@@ -7364,7 +7353,7 @@ var AlertManager = class {
    * 
    * @async
    * @param {types.EventCompiled} event
-   * @returns {Promise<GeoJSON.Polygon | null>}
+   * @returns {Promise<types.geometry | null>}
    */
   getEventPolygon(event, isUnion = true) {
     return __async(this, null, function* () {
@@ -7383,7 +7372,7 @@ var AlertManager = class {
    * @async
    * @param {string} description
    * @param {string} header
-   * @returns {Promise<Buffer>}
+   * @returns {Promise<string>}
    */
   createEasAudio(description, header) {
     return __async(this, null, function* () {
@@ -7415,7 +7404,7 @@ var AlertManager = class {
    * @async
    * @param {string} query
    * @param {number} [limit=250]
-   * @returns {Promise<any[]>}
+   * @returns {Promise<string[]>}
    */
   searchStanzaDatabase(query, limit = 250) {
     return __async(this, null, function* () {
@@ -7537,13 +7526,13 @@ var AlertManager = class {
     });
   }
 };
-var index_default = AlertManager;
+var index_default = Manager;
 export {
-  AlertManager,
   database_default as Database,
   eas_default as EAS,
   events_default as EventParser,
   hvtec_default as HVtecParser,
+  Manager,
   pvtec_default as PVtecParser,
   stanza_default as StanzaParser,
   text_default as TextParser,

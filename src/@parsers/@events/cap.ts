@@ -30,7 +30,7 @@ export class CapAlerts {
      * @param {Record<string, string>} extracted 
      * @returns {string} 
      */
-    private static getTracking(extracted: Record<string, string>, metadata: types.StanzaAttributes) {
+    private static getTracking(extracted: Record<string, string>, metadata: types.StanzaAttributes): string {
         return extracted.vtec ? (() => {
             const vtecValue = Array.isArray(extracted.vtec) ? extracted.vtec[0] : extracted.vtec;
             const splitPVTEC = vtecValue.split('.');
@@ -49,7 +49,7 @@ export class CapAlerts {
      * @param {types.StanzaCompiled} validated 
      * @returns {*} 
      */
-    public static async event(validated: types.StanzaCompiled) {
+    public static async event(validated: types.StanzaCompiled): Promise<void> {
       let processed = [] as unknown[];
       const messages = validated?.message?.split(/(?=\$\$)/g)?.map(msg => msg.trim())?.filter(msg => msg && msg !== "$$");
       if (!messages || messages.length == 0) { return }

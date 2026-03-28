@@ -29,7 +29,7 @@ export class Utils {
      * @param {number} ms
      * @returns {Promise<void>}
      */
-    public static async sleep(ms: number) {
+    public static async sleep(ms: number): Promise<void> {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
@@ -42,8 +42,9 @@ export class Utils {
      * @static
      * @param {string} message
      * @param {boolean} [force=false]
+     * @returns {void}
      */
-    public static warn(message: string, force: boolean = false) {
+    public static warn(message: string, force: boolean = false): void {
         loader.cache.events.emit('log', message)
         if (!loader.settings.journal) return;
         if (loader.cache.lastWarn != null && (Date.now() - loader.cache.lastWarn < 500) && !force) return;
@@ -59,8 +60,9 @@ export class Utils {
      *     
      * @static
      * @async
+     * @returns {Promise<void>}
      */
-    public static async loadCollectionCache() {
+    public static async loadCollectionCache(): Promise<void> {
         try {
             const settings = loader.settings as types.ClientSettingsTypes;
             if (settings.noaa_weather_wire_service_settings.cache.enabled) {
@@ -95,8 +97,9 @@ export class Utils {
      *
      * @static
      * @async
+     * @returns {Promise<void>}
      */
-    public static async loadGeoJsonData() {
+    public static async loadGeoJsonData(): Promise<void> {
         try {
             const settings = loader.settings as types.ClientSettingsTypes;
             const response = await this.createHttpRequest<types.GenericHTTPResponse >(
@@ -132,7 +135,7 @@ export class Utils {
      * @param {types.HTTPSettings} [options]
      * @returns {Promise<{ error: boolean; message: T | string }>}
      */
-    public static async createHttpRequest<T = unknown>(url: string, options?: types.HTTPSettings): Promise<{ error: boolean; message: T | string }> {
+    public static async createHttpRequest<T = unknown>(url: string, options?: types.HTTPSettings): Promise<{ error: boolean; message: T | string }> {   
         const defaultOptions = { 
             timeout: 10000,
             headers: { 
@@ -168,8 +171,9 @@ export class Utils {
      *
      * @static
      * @param {boolean} isWire
+     * @returns {void}
      */
-    public static handleCronJob(isWire: boolean) {
+    public static handleCronJob(isWire: boolean): void {
         try {
             const settings = loader.settings as types.ClientSettingsTypes;
             const cache = settings.noaa_weather_wire_service_settings.cache;

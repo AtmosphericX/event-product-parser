@@ -1377,7 +1377,7 @@ function escape(local) {
   }
   return local.replaceAll(/^\s+|\s+$/g, "").replaceAll("\\", String.raw`\5c`).replaceAll(" ", String.raw`\20`).replaceAll('"', String.raw`\22`).replaceAll("&", String.raw`\26`).replaceAll("'", String.raw`\27`).replaceAll("/", String.raw`\2f`).replaceAll(":", String.raw`\3a`).replaceAll("<", String.raw`\3c`).replaceAll(">", String.raw`\3e`).replaceAll("@", String.raw`\40`);
 }
-function unescape(local) {
+function unescape2(local) {
   if (local === null) {
     return null;
   }
@@ -1400,10 +1400,10 @@ var JID = class _JID {
     }
     return this.toString();
   }
-  toString(unescape2) {
+  toString(unescape3) {
     let s = this._domain;
     if (this._local) {
-      s = this.getLocal(unescape2) + "@" + s;
+      s = this.getLocal(unescape3) + "@" + s;
     }
     if (this._resource) {
       s = s + "/" + this._resource;
@@ -1436,9 +1436,9 @@ var JID = class _JID {
     this._local = local && local.toLowerCase();
     return this;
   }
-  getLocal(unescape2 = false) {
+  getLocal(unescape3 = false) {
     let local = null;
-    local = unescape2 ? unescape(this._local) : this._local;
+    local = unescape3 ? unescape2(this._local) : this._local;
     return local;
   }
   /**
@@ -1510,7 +1510,7 @@ j.parse = parse;
 j.equal = equal;
 j.detectEscape = detect;
 j.escapeLocal = escape;
-j.unescapeLocal = unescape;
+j.unescapeLocal = unescape2;
 var jid_default = j;
 
 // node_modules/@xmpp/error/index.js
@@ -6329,7 +6329,7 @@ var StanzaParser = class {
     if (stanza.is(`message`)) {
       let cb = stanza.getChild(`x`);
       if (cb && cb.children) {
-        let message = decodeURI(cb.children[0]);
+        let message = unescape(cb.children[0]);
         let attributes = cb.attrs;
         if (attributes.awipsid && attributes.awipsid.length > 1) {
           const isCap = message.includes(`<?xml`);

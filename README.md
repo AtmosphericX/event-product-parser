@@ -250,10 +250,18 @@ parser.stop();
 ```
 
 ## References
-- [NOAA NWWS Information](https://www.weather.gov/nwws/)
-- [NWS API Documentation](https://www.weather.gov/documentation/services-web-api)
-- [XMPP Protocol](https://xmpp.org/about/technology-overview/)
-- [AtmosphericX](https://github.com/k3yomi/AtmosphericX)
+[NOAA NWWS Information](https://www.weather.gov/nwws/) | 
+[NWS API Documentation](https://www.weather.gov/documentation/services-web-api) |
+[XMPP Protocol](https://xmpp.org/about/technology-overview/) |
+[AtmosphericX](https://github.com/k3yomi/AtmosphericX) |\
+[Documentation](https://atmosphericx.scriptkitty.cafe/documentation) |
+[Discord Server](https://atmosphericx-discord.scriptkitty.cafe) |
+[Project Board](https://github.com/users/AtmosphericX/projects/2) |\
+[Code of Conduct](/CODE_OF_CONDUCT.md) |
+[Contributing](/CONTRIBUTING.md) |
+[License](/LICENSE) | 
+[Security](/SECURITY.md) | 
+[Changelogs](/CHANGELOGS.md) |
 
 ## Acknowledgements
 - [k3yomi](https://github.com/k3yomi)

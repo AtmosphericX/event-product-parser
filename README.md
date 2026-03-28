@@ -12,8 +12,7 @@
 
 ## Installation (NPM)
 ```bash
-npm install @atmosx/event-product-parser@latest # Latest
-npm install @atmosx/event-product-parser@beta # Beta
+npm install @atmosx/event-product-parser@latest
 ```
 
 ## Example Usage

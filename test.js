@@ -1,4 +1,4 @@
-const { AlertManager } = require(`atmosx-nwws-parser`)
+const { AlertManager } = require(`@atmosx/event-product-parser`)
 
 
 const parser = new AlertManager({ 

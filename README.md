@@ -1,26 +1,25 @@
-<h1 style='font-size: 65px'; align="center">🌪️ AtmosphericX - NOAA Wire + API Parser ⚠️</h1>
+<h1 style='font-size: 65px'; align="center">🌪️ AtmosphericX - Event Product Parser ⚠️</h1>
 <div align="center">
   	<p align = "center">This repository contains the primary parser for AtmosphericX's NOAA Weather Wire Service (NWWS) and National Weather Service (NWS) API. It is designed to handle real time weather alerts and messages from the National Weather Service, using both XMPP (NWWS) and direct API access (Slower). This parser is intended for developers who want to integrate real time weather alerts, watches, warnings, and forecast data from the NWS seamlessly into their applications or services. It is not recommended for users without basic programming knowledge. If you wish to access NOAA weather data without programming, consider using our end-user project, which leverages this parser and provides an easy-to-use interface for tracking weather alerts.</small></p>
   	<p align = "center">Documentation written by @k3yomi</p>
 	<div align="center" style="border: none;">
-		<img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/k3yomi/atmosx-nwws-parser">
-		<img alt="GitHub forks" src="https://img.shields.io/github/forks/k3yomi/atmosx-nwws-parser">
-		<img alt="GitHub issues" src="https://img.shields.io/github/issues/k3yomi/atmosx-nwws-parser">
-		<img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/k3yomi/atmosx-nwws-parser">
-        <a href="https://nodei.co/npm/atmosx-nwws-parser/"><img src="https://nodei.co/npm/atmosx-nwws-parser.svg?style=shields&data=n&color=red"></a>
+		<img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/AtmosphericX/event-product-parser">
+		<img alt="GitHub forks" src="https://img.shields.io/github/forks/AtmosphericX/event-product-parser">
+		<img alt="GitHub issues" src="https://img.shields.io/github/issues/AtmosphericX/event-product-parser">
+		<img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/AtmosphericX/event-product-parser">
 	</div>
 </div>
 
 ## Installation (NPM)
 ```bash
-npm install atmosx-nwws-parser@latest # Latest
-npm install atmosx-nwws-parser@beta # Beta
+npm install @atmosx/event-product-parser@latest # Latest
+npm install @atmosx/event-product-parser@beta # Beta
 ```
 
 ## Example Usage
 ```javascript
-const { AlertManager } = require('atmosx-nwws-parser'); // CJS
-import { AlertManager } from 'atmosx-nwws-parser'; // ESM
+const { AlertManager } = require('@atmosx/product-parser'); // CJS
+import { AlertManager } from '@atmosx/product-parser'; // ESM
 
 const parser = new AlertManager({
     database: `shapefiles.db`,

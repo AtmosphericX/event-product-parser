@@ -6513,6 +6513,41 @@ var Database = class {
       }
     });
   }
+  /**
+   * @function loadCollectionCache
+   * @description
+   *      Loads cached stanzas from the database, validates them, and processes them through the event parser. 
+   *      Only processes stanzas that are not marked to be ignored and match the CAP preferences.
+   *     
+   * @static
+   * @async
+   * @returns {Promise<void>}
+   */
+  static loadCollectionCache() {
+    return __async(this, null, function* () {
+      var _a;
+      try {
+        const settings2 = settings;
+        if (settings2.noaa_weather_wire_service_settings.cache.enabled) {
+          const maxRows = (_a = settings2.noaa_weather_wire_service_settings.cache.max_db_cache_size) != null ? _a : 5e3;
+          const rows = yield cache.db.prepare(`SELECT * FROM stanzas ORDER BY rowid DESC LIMIT ?`).all(maxRows);
+          utils_default.warn(definitions.messages.dump_cache.replace(`{count}`, rows.length.toString()), true);
+          const eventsToProcess = rows.map((row) => {
+            return JSON.parse(row.stanza);
+          }).filter((validate) => {
+            if (!validate) return false;
+            const skip = validate.ignore || validate.isCap && !settings2.noaa_weather_wire_service_settings.preferences.cap_only || !validate.isCap && settings2.noaa_weather_wire_service_settings.preferences.cap_only || validate.isCap && !validate.isCapDescription;
+            return !skip;
+          });
+          yield Promise.all(eventsToProcess.map((validate) => events_default.eventHandler(validate)));
+          utils_default.warn(definitions.messages.dump_cache_complete, true);
+          return;
+        }
+      } catch (error) {
+        utils_default.warn(`Failed to load cache: ${error.stack}`);
+      }
+    });
+  }
 };
 var database_default = Database;
 
@@ -6685,41 +6720,6 @@ var Utils = class _Utils {
     if (cache.lastWarn != null && Date.now() - cache.lastWarn < 500 && !force) return;
     cache.lastWarn = Date.now();
     console.warn(`\x1B[33m[ATMOSX-PARSER]\x1B[0m [${(/* @__PURE__ */ new Date()).toLocaleString()}] ${message}`);
-  }
-  /**
-   * @function loadCollectionCache
-   * @description
-   *      Loads cached stanzas from the database, validates them, and processes them through the event parser. 
-   *      Only processes stanzas that are not marked to be ignored and match the CAP preferences.
-   *     
-   * @static
-   * @async
-   * @returns {Promise<void>}
-   */
-  static loadCollectionCache() {
-    return __async(this, null, function* () {
-      var _a;
-      try {
-        const settings2 = settings;
-        if (settings2.noaa_weather_wire_service_settings.cache.enabled) {
-          const maxRows = (_a = settings2.noaa_weather_wire_service_settings.cache.max_db_cache_size) != null ? _a : 5e3;
-          const rows = yield cache.db.prepare(`SELECT * FROM stanzas ORDER BY rowid DESC LIMIT ?`).all(maxRows);
-          this.warn(definitions.messages.dump_cache.replace(`{count}`, rows.length.toString()), true);
-          const eventsToProcess = rows.map((row) => {
-            return JSON.parse(row.stanza);
-          }).filter((validate) => {
-            if (!validate) return false;
-            const skip = validate.ignore || validate.isCap && !settings2.noaa_weather_wire_service_settings.preferences.cap_only || !validate.isCap && settings2.noaa_weather_wire_service_settings.preferences.cap_only || validate.isCap && !validate.isCapDescription;
-            return !skip;
-          });
-          yield Promise.all(eventsToProcess.map((validate) => events_default.eventHandler(validate)));
-          this.warn(definitions.messages.dump_cache_complete, true);
-          return;
-        }
-      } catch (error) {
-        _Utils.warn(`Failed to load cache: ${error.stack}`);
-      }
-    });
   }
   /**
    * @function loadGeoJsonData
@@ -7480,7 +7480,7 @@ var Manager = class {
         (() => __async(this, null, function* () {
           try {
             yield xmpp_default.deploySession();
-            yield utils_default.loadCollectionCache();
+            yield database_default.loadCollectionCache();
           } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
             utils_default.warn(`Failed to initialize NWWS services: ${msg}`);

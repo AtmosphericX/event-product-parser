@@ -14,6 +14,7 @@
 import * as loader from '../bootstrap';
 import * as types from '../types';
 import Utils from './utils';
+import EventParser from '../@parsers/events';
 
 export class Database {
 
@@ -155,6 +156,43 @@ export class Database {
         } catch (error: unknown) {
             const msg = error instanceof Error ? error.message : String(error);
             Utils.warn(`Failed to load database: ${msg}`);
+        }
+    }
+    
+    /**
+     * @function loadCollectionCache
+     * @description
+     *      Loads cached stanzas from the database, validates them, and processes them through the event parser. 
+     *      Only processes stanzas that are not marked to be ignored and match the CAP preferences.
+     *     
+     * @static
+     * @async
+     * @returns {Promise<void>}
+     */
+    public static async loadCollectionCache(): Promise<void> {
+        try {
+            const settings = loader.settings as types.ClientSettingsTypes;
+            if (settings.noaa_weather_wire_service_settings.cache.enabled) {
+                const maxRows = settings.noaa_weather_wire_service_settings.cache.max_db_cache_size ?? 5000;
+                const rows = await loader.cache.db.prepare(`SELECT * FROM stanzas ORDER BY rowid DESC LIMIT ?`)
+                    .all(maxRows) as { rowid: number; stanza: string }[];
+                Utils.warn(loader.definitions.messages.dump_cache.replace(`{count}`, rows.length.toString()), true);
+                const eventsToProcess = rows
+                    .map(row => {return JSON.parse(row.stanza)})
+                    .filter(validate => {
+                        if (!validate) return false;
+                        const skip = validate.ignore ||
+                            (validate.isCap && !settings.noaa_weather_wire_service_settings.preferences.cap_only) ||
+                            (!validate.isCap && settings.noaa_weather_wire_service_settings.preferences.cap_only) ||
+                            (validate.isCap && !validate.isCapDescription);
+                        return !skip;
+                    });
+                await Promise.all(eventsToProcess.map(validate => EventParser.eventHandler(validate)));
+                Utils.warn(loader.definitions.messages.dump_cache_complete, true);
+                return;
+            }
+        } catch (error: any) {
+            Utils.warn(`Failed to load cache: ${error.stack}`);
         }
     }
 }

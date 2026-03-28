@@ -168,7 +168,7 @@ export class Manager {
             (async () => {
                 try {
                     await Xmpp.deploySession();
-                    await Utils.loadCollectionCache();
+                    await Database.loadCollectionCache();
                 } catch (err: unknown) {
                     const msg = err instanceof Error ? err.message : String(err);
                     Utils.warn(`Failed to initialize NWWS services: ${msg}`);

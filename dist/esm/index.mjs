@@ -4898,18 +4898,6 @@ var definitions = {
     dump_cache_complete: `Completed dumping all cached alert files.`
   }
 };
-process.on("uncaughtException", (err) => {
-  if ((err == null ? void 0 : err.code) === "ETIMEDOUT") {
-    return;
-  }
-  if ((err == null ? void 0 : err.code) === "ECONNRESET") {
-    return;
-  }
-  if ((err == null ? void 0 : err.code) === "EHOSTUNREACH") {
-    return;
-  }
-  throw err;
-});
 
 // src/@parsers/text.ts
 var TextParser = class {
@@ -7326,6 +7314,7 @@ var eas_default = EAS;
 // src/index.ts
 var Manager = class {
   constructor(metadata) {
+    this.sigCatch();
     this.start(metadata);
   }
   /**
@@ -7467,7 +7456,7 @@ var Manager = class {
       if (this.isNoaaWeatherWireService) {
         (() => __async(this, null, function* () {
           try {
-            yield xmpp_default.deploySession();
+            yield xmpp_default.depl2oySession();
             yield database_default.loadCollectionCache();
           } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
@@ -7523,6 +7512,25 @@ var Manager = class {
         cache.session = null;
         this.isNoaaWeatherWireService = false;
       }
+    });
+  }
+  /**
+   * @function sigCatch
+   * @description
+   *     Sets up a global handler for uncaught exceptions, ignoring specific error codes
+   *
+   * @async
+   * @returns void
+   */
+  sigCatch() {
+    process.on("uncaughtException", (err) => {
+      var _a, _b;
+      const ignored = ["ETIMEDOUT", "ECONNRESET", "EHOSTUNREACH", "STARTTLS_FAILURE"];
+      if (ignored.includes(err == null ? void 0 : err.code)) {
+        utils_default.warn(`XMPP Critical Error: ${(_a = err == null ? void 0 : err.code) != null ? _a : "Unknown error code"}. This may indicate a connection issue. Attempting to continue...`);
+        return;
+      }
+      utils_default.warn(`Uncaught Exception: ${err instanceof Error ? (_b = err.stack) != null ? _b : err.message : String(err)}`);
     });
   }
 };

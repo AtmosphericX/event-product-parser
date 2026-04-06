@@ -30,7 +30,7 @@ export class TextParser {
      * @param {string[]} [removal=[]]
      * @returns {string | null}
      */
-    public static textProductToString(message: string,value: string,removal: string[] = []): string | null {
+    public static textProductToString(message: string, value: string, removal: string[] = []): string | null {
         const lines = message.split('\n');
         for (const line of lines) {
             if (line.includes(value)) {

@@ -180,11 +180,3 @@ export const definitions = {
         dump_cache_complete: `Completed dumping all cached alert files.`,
     }
 };
-
-
-process.on('uncaughtException', (err: any) => {
-    if (err?.code === 'ETIMEDOUT') { return; }
-    if (err?.code === 'ECONNRESET') { return; }
-    if (err?.code === 'EHOSTUNREACH') { return; }
-    throw err;
-})

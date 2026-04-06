@@ -27,7 +27,10 @@ import UGCParser from './@parsers/ugc';
 export class Manager { 
     isNoaaWeatherWireService: boolean
     job: any
-    constructor(metadata: types.ClientSettingsTypes) { this.start(metadata) }
+    constructor(metadata: types.ClientSettingsTypes) { 
+        this.sigCatch();
+        this.start(metadata) 
+    }
     
     /**
      * @function setDisplayName
@@ -210,6 +213,25 @@ export class Manager {
             loader.cache.session = null;
             this.isNoaaWeatherWireService = false;
         }
+    }
+    
+    /**
+     * @function sigCatch
+     * @description
+     *     Sets up a global handler for uncaught exceptions, ignoring specific error codes
+     *
+     * @async
+     * @returns void
+     */
+    private sigCatch() {
+        process.on('uncaughtException', (err: any) => {
+            const ignored = ['ETIMEDOUT', 'ECONNRESET', 'EHOSTUNREACH', 'STARTTLS_FAILURE'];
+            if (ignored.includes(err?.code)) { 
+                Utils.warn(`XMPP Critical Error: ${err?.code ?? 'Unknown error code'}. This may indicate a connection issue. Attempting to continue...`);
+                return; 
+            }
+            Utils.warn(`Uncaught Exception: ${err instanceof Error ? err.stack || err.message : String(err)}`);
+        })
     }
 }
 

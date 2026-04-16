@@ -4865,7 +4865,7 @@ var definitions = {
       "Radar Indicated Tornado Warning": { condition: (tornadoThreatTag) => tornadoThreatTag !== "OBSERVED" }
     } },
     { "Special Marine Warning": {
-      "Tornadic Special Marine Warning": { condition: (tornadoThreatTag) => tornadoThreatTag !== "POSSIBLE" }
+      "Tornadic Special Marine Warning": { condition: (tornadoThreatTag) => tornadoThreatTag === "POSSIBLE" }
     } },
     { "Tornado Watch": {
       "PDS Tornado Watch": { description: "particularly dangerous situation" }

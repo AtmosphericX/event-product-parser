@@ -135,7 +135,7 @@ export const definitions = {
             "Radar Indicated Tornado Warning": {condition: (tornadoThreatTag: string) => tornadoThreatTag !== 'OBSERVED'},
         }},
         {"Special Marine Warning": {
-            "Tornadic Special Marine Warning": {condition: (tornadoThreatTag: string) => tornadoThreatTag !== 'POSSIBLE'},
+            "Tornadic Special Marine Warning": {condition: (tornadoThreatTag: string) => tornadoThreatTag === 'POSSIBLE'},
         }},
         {"Tornado Watch": {
             "PDS Tornado Watch": { description: "particularly dangerous situation"}

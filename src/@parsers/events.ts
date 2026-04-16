@@ -142,7 +142,7 @@ export class EventParser {
                         if (!conditionMet) continue;
                     }
                     if (!conditionMet && condition.condition) {
-                        const tagToCheck = baseEvent.includes('Tornado') ? tornadoThreatTag : damageThreatTag;
+                        const tagToCheck = baseEvent.includes('Tornado') || baseEvent.includes('Special Marine Warning')  ? tornadoThreatTag : damageThreatTag;
                         conditionMet = condition.condition(tagToCheck);
                     }
                     if (conditionMet) { 

@@ -2,8 +2,7 @@
 	"name": "@atmosx/event-product-parser",
 	"version": "3.0.8",
 	"description": "NOAA Weather Wire & NWS API Parser - Built for standalone and Project AtmosphericX Integration.",
-	"main": "dist/cjs/index.cjs",
-	"module": "dist/esm/index.mjs",
+	"main": "dist/index.cjs",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/AtmosphericX/event-product-parser",
@@ -48,7 +47,6 @@
 	"devDependencies": {
 		"@types/better-sqlite3": "7.6.13",
 		"@types/d3-geo": "3.1.0",
-		"@types/node": "25.2.0",
 		"@types/shapefile": "0.6.4",
 		"@types/topojson-client": "3.1.5",
 		"@types/xmpp__client": "0.14.1"

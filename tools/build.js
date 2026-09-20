@@ -3,21 +3,6 @@ const watch = process.argv.includes("--watch");
 
 const commands = [
     {
-        name: "esm",
-        args: [
-            "--bundle",
-            "--platform=node",
-            "--target=node22",
-            "--format=esm",
-            "--external:better-sqlite3",
-            "--external:sharp",
-            "--out-extension:.js=.mjs",
-            "--outdir=dist/esm",
-            ...(watch ? ["--watch"] : []),
-            "./src/index.ts",
-        ],
-    },
-    {
         name: "cjs",
         args: [
             "--bundle",
@@ -27,7 +12,7 @@ const commands = [
             "--external:better-sqlite3",
             "--external:sharp",
             "--out-extension:.js=.cjs",
-            "--outdir=dist/cjs",
+            "--outdir=dist",
             ...(watch ? ["--watch"] : []),
             "./src/index.ts",
         ],

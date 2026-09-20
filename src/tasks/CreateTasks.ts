@@ -16,14 +16,14 @@
     Independent Package: @atmosx/event-product-parser
 */
 
-import { TypeSettings } from "Types/Settings"
-import { TypeEvent } from "StaticTypes/Event"
-import { TypeActions } from "Types/Actions"
+import { TypeSettings } from "TypesStandard/Settings"
+import { TypeEvent } from "TypesEvent/Event"
+import { TypeActions } from "TypesStandard/Actions"
 import { Bootstrap } from "@Bootstrap"
 import { SetDebug } from "@Utilities/SetDebug"
 import { GetMatched } from "@Utilities/GetMatched"
-import { GetStringText } from "@Utilities/GetStringText"
-import { GetCleanedEvent } from "@Building/GetCleanedEvent"
+import { GetStringText } from "@Formatting/GetStringText"
+import { GetCleanedEvent } from "@BuilderComponents/GetCleanedEvent"
 import { GenerateAudioMessage } from "@Audio/GenerateAudioMessage"
 import { TaskGenerateText } from "@Tasks/TaskGenerateText"
 import { TaskGenerateJSON } from "@Tasks/TaskGenerateJSON"

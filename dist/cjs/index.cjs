@@ -15368,7 +15368,7 @@ var EnumThemes = [
 var import_node_events = require("node:events");
 var import_path = require("path");
 var Bootstrap = {
-  Version: `3.0.75`,
+  Version: `3.0.8`,
   Ready: true,
   Ratelimits: {},
   Session: null,
@@ -15455,10 +15455,8 @@ var Bootstrap = {
     },
     ActionSettings: [],
     GlobalSettings: {
-      EventManagement: true,
       DisableGeometryParsing: false,
       UseShapefileCoordinates: true,
-      SPCWatchesOnly: true,
       CensusPopulationData: true,
       NodeTTL: 60,
       NodeMaxDistance: 120,
@@ -15511,15 +15509,15 @@ var SetWarning = ({ Title, Message, Tree }) => {
 var CreateQuery = function({ Query, Parameters }) {
   try {
     const parameters = Array.isArray(Parameters) ? Parameters : [];
-    const statement = Bootstrap.Database.prepare(Query);
-    return /^\s*select/i.test(Query) ? statement.all(...parameters) : statement.run(...parameters);
+    const statement = Bootstrap?.Database?.prepare(Query);
+    return /^\s*select/i.test(Query) ? statement?.all(...parameters) : statement?.run(...parameters);
   } catch (error) {
     SetWarning({ Message: `Database Query Error: ${error instanceof Error ? error.stack ?? error.message : String(error)}` });
     throw error;
   }
 };
 
-// src/components/utilities/GetUnionPolygon.ts
+// src/components/geometry/GetUnionPolygon.ts
 var import_polygon_clipping = __toESM(require_polygon_clipping_cjs());
 var GetUnionPolygon = ({ Polygons }) => {
   if (!Polygons || Polygons.length === 0) {
@@ -15575,7 +15573,7 @@ var GetZonePolygon = ({ Zones, Union }) => {
   }
 };
 
-// src/building/GetEventGeometry.ts
+// src/components/events/components/GetEventGeometry.ts
 var GetEventGeometry = ({ Event, Union }) => {
   const { properties } = Event;
   const settings = Bootstrap.Settings;
@@ -15597,7 +15595,7 @@ var GetEventGeometry = ({ Event, Union }) => {
   return geo;
 };
 
-// src/building/GetCleanedEvent.ts
+// src/components/events/components/GetCleanedEvent.ts
 var GetCleanedEvent = (event) => {
   for (const key of Object.keys(event)) {
     const value = event[key];
@@ -16263,16 +16261,20 @@ var EnumStateFIPS = {
   "56": "WY"
 };
 
-// src/components/utilities/GetStringText.ts
+// src/components/formatting/GetStringText.ts
 var GetStringText = (event) => {
   const timezone = Bootstrap.Settings.Timezone ?? `UTC`;
   const line = (label, value, condition = true) => condition && value ? `${label} ${value}` : null;
   const isStatement = event.properties.status_metadata.is_statement;
   const isExpired = event.properties.status_metadata.is_expired;
+  const isIssued = event.properties.status_metadata.is_issued;
+  const isUpdated = event.properties.status_metadata.is_updated;
   return [
     line(`Locations:`, event?.properties?.locations?.slice(0, 100)),
-    line(`Issued:`, `${new Date(event.properties.issued).toLocaleString([], { timeZone: timezone })} (${timezone.replace(`America/`, ``)})`, !isExpired),
-    line(`Expires:`, `${new Date(event.properties.expires).toLocaleString([], { timeZone: timezone })} (${timezone.replace(`America/`, ``)})`, !isStatement),
+    line(`Issued:`, `${new Date(event.properties.issued).toLocaleString([], { timeZone: timezone })} (${timezone.replace(`America/`, ``)})`, isIssued),
+    line(`Updated:`, `${new Date(event.properties.issued).toLocaleString([], { timeZone: timezone })} (${timezone.replace(`America/`, ``)})`, isUpdated && !isExpired),
+    line(`Expires:`, `${new Date(event.properties.expires).toLocaleString([], { timeZone: timezone })} (${timezone.replace(`America/`, ``)})`, !isStatement && !isExpired),
+    line(`Expired:`, `${new Date(event.properties.expires).toLocaleString([], { timeZone: timezone })} (${timezone.replace(`America/`, ``)})`, isExpired),
     line(`Damage Threat:`, event?.properties?.parameters?.damage_threat, !isExpired),
     line(`Flood Threat:`, event?.properties?.parameters?.flood_threat, !isExpired),
     line(`Tornado Threat:`, event?.properties?.parameters?.tornado_threat, !isExpired),
@@ -18262,7 +18264,7 @@ var GenerateGraphic = async ({ File, Regions, Event, MaxMiles = 350, Width = 120
     renders.counties = GetParsedBoundary(boundaries.counties);
   }
   if (Event) {
-    polygons = coordinates.length > 0 ? Event.geometry : await GetEventGeometry({ Event });
+    polygons = coordinates?.length > 0 ? Event?.geometry : await GetEventGeometry({ Event });
     if (polygons.coordinates.length == 0) {
       return null;
     }
@@ -18396,10 +18398,29 @@ var GenerateGraphic = async ({ File, Regions, Event, MaxMiles = 350, Width = 120
   return dir + `/${name}${name.includes(`.png`) ? `` : `.png`}`;
 };
 
-// src/core/SetNode.ts
+// src/exports/GetNearestCity.ts
+var GetNearestCity = ({ Radius = 15, Coordinates }) => {
+  const A2 = CreateQuery({
+    Query: `SELECT * FROM cities WHERE lat BETWEEN ? AND ? AND lon BETWEEN ? AND ? AND population > 0 ORDER BY ((lat - ?) * (lat - ?) + (lon - ?) * (lon - ?)) ASC LIMIT 1`,
+    Parameters: [
+      Coordinates.Latitude - Radius / 69,
+      Coordinates.Latitude + Radius / 69,
+      Coordinates.Longitude - Radius / 69,
+      Coordinates.Longitude + Radius / 69,
+      Coordinates.Latitude,
+      Coordinates.Latitude,
+      Coordinates.Longitude,
+      Coordinates.Longitude
+    ]
+  });
+  return A2?.[0] ?? null;
+};
+
+// src/exports/SetNode.ts
 var SetNode = ({ Identifier, Delete, Coordinates }) => {
   const nodes = Bootstrap.Cache.Nodes.features;
   const exists = nodes.find((node) => node.properties.identifier === Identifier);
+  const nearest = GetNearestCity({ Coordinates, Radius: 25 });
   if (Delete) {
     if (exists) {
       const index = nodes.indexOf(exists);
@@ -18425,9 +18446,16 @@ var SetNode = ({ Identifier, Delete, Coordinates }) => {
       geometry: {
         type: "Point",
         coordinates: [Coordinates.Longitude, Coordinates.Latitude]
+      },
+      properties: {
+        ...exists.properties,
+        city: nearest?.name ?? null,
+        county: nearest?.county ?? null,
+        state: nearest?.state ?? null,
+        population: nearest?.population ?? null
       }
     };
-    SetWarning({ Message: `Node with identifier '${Identifier}' updated.` });
+    SetWarning({ Message: `Node with identifier '${Identifier}' updated. (${nearest?.name ?? "---"}, ${nearest?.county ?? "---"}, ${nearest?.state ?? "---"})` });
     return SetEventEmit({
       Event: `onNodeUpdate`,
       Metadata: {
@@ -18443,10 +18471,14 @@ var SetNode = ({ Identifier, Delete, Coordinates }) => {
       coordinates: [Coordinates.Longitude, Coordinates.Latitude]
     },
     properties: {
-      identifier: Identifier
+      identifier: Identifier,
+      city: nearest?.name ?? null,
+      county: nearest?.county ?? null,
+      state: nearest?.state ?? null,
+      population: nearest?.population ?? null
     }
   });
-  SetWarning({ Message: `Node with identifier '${Identifier}' added.` });
+  SetWarning({ Message: `Node with identifier '${Identifier}' added. (${nearest?.name ?? "---"}, ${nearest?.county ?? "---"}, ${nearest?.state ?? "---"})` });
   return SetEventEmit({
     Event: `onNodeAdd`,
     Metadata: {
@@ -18456,12 +18488,12 @@ var SetNode = ({ Identifier, Delete, Coordinates }) => {
   });
 };
 
-// src/core/GetEvents.ts
+// src/exports/GetEvents.ts
 var GetEvents = () => {
   return Bootstrap.Cache.Events;
 };
 
-// src/core/GetNodes.ts
+// src/exports/GetNodes.ts
 var GetNodes = () => {
   return Bootstrap.Cache.Nodes;
 };
@@ -19226,9 +19258,9 @@ var EnumICAO = {
   "PAJK": "Juneau, AK"
 };
 
-// src/building/GetEventOffice.ts
+// src/components/events/components/GetEventOffice.ts
 var GetEventOffice = ({ Attributes, Organization, VTEC }) => {
-  const office = VTEC != null ? VTEC?.Tracking?.split(`.`)[0] : Attributes?.cccc ?? (Organization != null ? Array.isArray(Organization) ? Organization?.[0] : Organization : null);
+  const office = VTEC != null ? VTEC?.tracking?.split(`.`)[0] : Attributes?.cccc ?? (Organization != null ? Array.isArray(Organization) ? Organization?.[0] : Organization : null);
   const name = EnumICAO?.[office] ?? null;
   return { office, name };
 };
@@ -19377,7 +19409,7 @@ var EnumTags = {
   ]
 };
 
-// src/building/GetEventTags.ts
+// src/components/events/components/GetEventTags.ts
 var GetEventTags = (message) => {
   if (!message) return [];
   return [...new Set(
@@ -19385,7 +19417,7 @@ var GetEventTags = (message) => {
   )];
 };
 
-// src/building/GetEventDirection.ts
+// src/components/events/components/GetEventDirection.ts
 var GetEventDirection = (message) => {
   const direction = message.replace(/\s+/g, " ").match(/moving\s+(north|south|east|west|northeast|northwest|southeast|southwest)\s+at\s+(\d+)\s+mph/i);
   if (direction) {
@@ -19394,7 +19426,7 @@ var GetEventDirection = (message) => {
   return null;
 };
 
-// src/building/GetEventProperties.ts
+// src/components/events/components/GetEventProperties.ts
 var GetEventProperties = ({ Message, Attributes, UGC, VTEC }) => {
   const organization = Message.match(EnumExpressions.wmo)?.[0] ?? null;
   const polygons = GetPolygonFromProduct(Message);
@@ -19408,7 +19440,7 @@ var GetEventProperties = ({ Message, Attributes, UGC, VTEC }) => {
       const abbrs = [...new Set(UGC?.Zones?.map((l) => l.match(/^([A-Z]{2})[CZ](\d{3})$/)?.[1]).filter(Boolean) ?? [])];
       return abbrs.length ? abbrs.join(`-`) : null;
     })(),
-    description: GetDescriptionFromProduct({ Message, Handle: VTEC?.Raw ?? null }),
+    description: GetDescriptionFromProduct({ Message, Handle: VTEC?.raw ?? null }),
     attributes: Attributes,
     geocode: {
       office: GetEventOffice({ Attributes, Organization: organization, VTEC }),
@@ -19442,7 +19474,7 @@ var GetEventProperties = ({ Message, Attributes, UGC, VTEC }) => {
       discussion_watch_issuance: GetTextFromProduct({ Message, Find: [`Probability of Watch Issuance...`], Removal: [`percent`] }) ?? null
     },
     watch_parameters: {
-      watch_number: VTEC?.Watch ? GetTextFromProduct({ Message, Find: [`ITIES FOR`, `UPDATE FOR`, `Watch Number `], Removal: [`%`, `<`, `:`] })?.replace(/(WT|WS|)/g, "")?.trim()?.toString()?.padStart(4, "0") ?? VTEC?.Tracking?.slice(-4)?.toString()?.padStart(4, "0") ?? null : null,
+      watch_number: VTEC?.watch ? GetTextFromProduct({ Message, Find: [`ITIES FOR`, `UPDATE FOR`, `Watch Number `], Removal: [`%`, `<`, `:`] })?.replace(/(WT|WS|)/g, "")?.trim()?.toString()?.padStart(4, "0") ?? VTEC?.tracking?.slice(-4)?.toString()?.padStart(4, "0") ?? null : null,
       watch_type: Message.includes(`TORNADO WATCH`) ? `Tornado` : Message.includes(`SEVERE`) ? `Severe` : null,
       additional_tornadoes_probability: GetTextFromProduct({ Message, Find: [`PROB OF 2 OR MORE TORNADOES`], Removal: [`%`, `<`, `:`] }) ?? null,
       strong_tornadoes_probability: GetTextFromProduct({ Message, Find: [`PROB OF 1 OR MORE STRONG /EF2-EF5/ TORNADOES`], Removal: [`%`, `<`, `:`] }) ?? null,
@@ -19462,15 +19494,15 @@ var GetEventProperties = ({ Message, Attributes, UGC, VTEC }) => {
   return properties;
 };
 
-// src/building/GetEventHeader.ts
+// src/components/events/components/GetEventHeader.ts
 var GetEventHeader = ({ Properties, VTEC, Type }) => {
   const properties = Properties;
   const vtec = VTEC ?? null;
   const ugc = properties.geocode.ugc != null ? properties.geocode.ugc.join(`-`) : `0`;
-  return `ZCZC-ATMOSX-${Type?.Prefix}-${ugc}-${vtec?.Status ?? `Issued`}-${(/* @__PURE__ */ new Date()).toISOString().replace(/[-:]/g, "").split(".")[0]}-${properties.geocode.office.office ?? `KWNS`}`;
+  return `ZCZC-ATMOSX-${Type?.Prefix}-${ugc}-${vtec?.status ?? `Issued`}-${(/* @__PURE__ */ new Date()).toISOString().replace(/[-:]/g, "").split(".")[0]}-${properties.geocode.office.office ?? `KWNS`}`;
 };
 
-// src/building/GetEventTracking.ts
+// src/components/events/components/GetEventTracking.ts
 var GetEventTracking = ({ Type, Stanza, Attributes, Properties, WMO, VTEC }) => {
   if (Type === `RAW`) {
     const getWatchNumber = Properties?.watch_parameters?.watch_number ?? null;
@@ -19480,11 +19512,11 @@ var GetEventTracking = ({ Type, Stanza, Attributes, Properties, WMO, VTEC }) => 
     return `${Properties.geocode.office.office}.${Attributes.ttaaii}.${Attributes.id.slice(-4).replace(`.`, ``) ?? "0"}`;
   }
   if (Type === `VTEC`) {
-    return VTEC?.Tracking;
+    return VTEC?.tracking;
   }
   if (Type === `API`) {
     if (VTEC) {
-      const vtecValue = Array.isArray(VTEC) ? VTEC[0].vtec : VTEC?.Raw;
+      const vtecValue = Array.isArray(VTEC) ? VTEC[0].vtec : VTEC?.raw;
       const splitVTEC = vtecValue.split(".");
       return `${splitVTEC[2]}.${splitVTEC[3]}.${splitVTEC[4]}.${splitVTEC[5]}`;
     }
@@ -19515,7 +19547,7 @@ var GetMatched = ({ Strings, String: String2 }) => {
   return isMatched;
 };
 
-// src/building/GetEventTheme.ts
+// src/components/events/components/GetEventTheme.ts
 var GetEventTheme = (Event) => {
   return Bootstrap.Settings.GlobalSettings.Themes.find((theme) => GetMatched({ Strings: [theme.Event], String: Event }))?.RGB ?? EnumThemes.find((theme) => theme.Event === `Default`)?.RGB ?? `rgb(56, 72, 88)`;
 };
@@ -19870,15 +19902,15 @@ var VTECExtract = (message) => {
     if (sub?.length < 7) continue;
     const dates = sub[6]?.split(`-`);
     vtecs.push({
-      Raw: vtec,
-      ProductType: EnumProducts[sub[0]],
-      Tracking: `${sub[2]}.${sub[3]}.${sub[4]}.${sub[5]}`,
-      Event: `${EnumEvents[sub[3]]} ${EnumActions[sub[4]]}`,
-      Status: EnumStatus[sub[1]],
-      WMO: message.match(EnumExpressions.wmo)?.[0] ?? null,
-      Expires: GetExpiry2(dates),
-      Watch: (sub[4] == `A` || sub[4] == `Y`) && (sub[3] == `TO` || sub[3] == `SV`),
-      PredictionCenter: sub[2] == `KWNS` ? true : false
+      raw: vtec,
+      type: EnumProducts[sub[0]],
+      tracking: `${sub[2]}.${sub[3]}.${sub[4]}.${sub[5]}`,
+      event: `${EnumEvents[sub[3]]} ${EnumActions[sub[4]]}`,
+      status: EnumStatus[sub[1]],
+      wmo: message.match(EnumExpressions.wmo)?.[0] ?? null,
+      expires: GetExpiry2(dates),
+      watch: (sub[4] == `A` || sub[4] == `Y`) && (sub[3] == `TO` || sub[3] == `SV`),
+      wou: sub[2] == `KWNS` ? true : false
     });
   }
   return vtecs.length > 0 ? vtecs : null;
@@ -19929,10 +19961,10 @@ var HVExtract = (message) => {
     const sub = vtec.split(`.`);
     if (sub.length < 7) continue;
     vtecs.push({
-      HVTEC: vtec,
-      Severity: EnumSeverity[sub[1]],
-      Cause: EnumCauses[sub[2]],
-      Record: EnumRecords[sub[6]]
+      hvtec: vtec,
+      severity: EnumSeverity[sub[1]],
+      cause: EnumCauses[sub[2]],
+      record: EnumRecords[sub[6]]
     });
   }
   return vtecs.length > 0 ? vtecs : null;
@@ -19953,7 +19985,7 @@ var ParseVTEC = async (Stanza) => {
         const props = GetEventProperties({ Message: message, Attributes: attributes, UGC: ugc, VTEC: vtec });
         const header = GetEventHeader({ Properties: props, VTEC: vtec, Type: Stanza.Type });
         const issued = new Date(attributes.issue) ?? /* @__PURE__ */ new Date();
-        const expires = new Date(vtec.Expires);
+        const expires = new Date(vtec.expires);
         Bootstrap.Cache.Parsed.push({
           type: `Feature`,
           geometry: {
@@ -19961,12 +19993,12 @@ var ParseVTEC = async (Stanza) => {
             coordinates: []
           },
           properties: {
-            event: vtec.Event,
-            parent: vtec.Event,
-            status: vtec.Status,
+            event: vtec.event,
+            parent: vtec.event,
+            status: vtec.status,
             issued: !isNaN(issued.getTime()) ? issued.toISOString() : (/* @__PURE__ */ new Date()).toISOString(),
             expires: !isNaN(expires.getTime()) ? expires.toISOString() : ugc.Expires ?? new Date(issued.getTime() + 60 * 60 * 1e3).toISOString(),
-            theme: GetEventTheme(vtec.Event),
+            theme: GetEventTheme(vtec.event),
             ...props,
             metadata: {
               ms: performance.now() - tick,
@@ -19980,7 +20012,7 @@ var ParseVTEC = async (Stanza) => {
                 {
                   description: props.description,
                   issued: !isNaN(issued.getTime()) ? issued.toISOString() : (/* @__PURE__ */ new Date()).toISOString(),
-                  status: vtec.Status
+                  status: vtec.status
                 }
               ]
             }
@@ -20024,8 +20056,8 @@ var ParseAPI = async (Stanza) => {
         theme: GetEventTheme(feature2?.properties?.event),
         geocode: {
           office: {
-            office: VTEC ? VTEC?.[0]?.Tracking.split(`.`)[0] : null,
-            name: EnumICAO[VTEC ? VTEC?.[0]?.Tracking.split(`.`)[0] : null] ?? null
+            office: VTEC ? VTEC?.[0]?.tracking.split(`.`)[0] : null,
+            name: EnumICAO[VTEC ? VTEC?.[0]?.tracking.split(`.`)[0] : null] ?? null
           },
           organization: feature2?.properties?.parameters?.WMOidentifier?.[0],
           ugc: feature2?.properties?.geocode?.UGC ?? [],
@@ -20060,7 +20092,7 @@ var ParseAPI = async (Stanza) => {
           discussion_watch_issuance: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`Probability of Watch Issuance...`], Removal: [`percent`] }) ?? null
         },
         watch_parameters: {
-          watch_number: VTEC?.[0]?.Watch && (GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`ITIES FOR`, `UPDATE FOR`, `Watch Number `], Removal: [`%`, `<`, `:`] })?.replace(/(WT|WS|)/g, "")?.trim()?.toString()?.padStart(4, "0") ?? VTEC?.[0]?.Tracking?.slice(-4)?.toString()?.padStart(4, "0") ?? null),
+          watch_number: VTEC?.[0]?.watch && (GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`ITIES FOR`, `UPDATE FOR`, `Watch Number `], Removal: [`%`, `<`, `:`] })?.replace(/(WT|WS|)/g, "")?.trim()?.toString()?.padStart(4, "0") ?? VTEC?.[0]?.tracking?.slice(-4)?.toString()?.padStart(4, "0") ?? null),
           watch_type: feature2?.properties?.description.includes(`TORNADO WATCH`) ? `Tornado` : feature2?.properties?.description.includes(`SEVERE`) ? `Severe` : null,
           additional_tornadoes_probability: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`PROB OF 2 OR MORE TORNADOES`], Removal: [`%`, `<`, `:`] }) ?? null,
           strong_tornadoes_probability: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`PROB OF 1 OR MORE STRONG /EF2-EF5/ TORNADOES`], Removal: [`%`, `<`, `:`] }) ?? null,
@@ -20141,7 +20173,7 @@ var EnumEnhanced = {
   }
 };
 
-// src/building/GetEventEnhancedName.ts
+// src/components/events/components/GetEventEnhancedName.ts
 var GetEventEnhancedName = (event) => {
   let name = event?.properties?.event;
   const damage = event?.properties?.parameters?.damage_threat ?? event?.properties?.parameters?.flood_threat;
@@ -20232,7 +20264,7 @@ var EnumHail = {
   "4.00": "CD/DVD"
 };
 
-// src/building/GetEventSignature.ts
+// src/components/events/components/GetEventSignature.ts
 var GetEventSignature = (event) => {
   const properties = event?.properties;
   const vtec = event?.properties?.metadata?.vtec;
@@ -20249,7 +20281,7 @@ var GetEventSignature = (event) => {
   if (csig) {
     properties.status_metadata = { ...properties.status_metadata, is_expired: true };
   }
-  const getProduct = vtec?.Raw?.split(`.`)[0]?.replace(`/`, ``);
+  const getProduct = vtec?.raw?.split(`.`)[0]?.replace(`/`, ``);
   const isTestProduct = EnumProducts[getProduct] == `Test Product`;
   if (isTestProduct || EnumTesting.some((sig) => properties.description?.toLowerCase().includes(sig.toLowerCase()) ?? properties?.parameters?.instructions?.toLowerCase().includes(sig.toLowerCase()))) {
     properties.status_metadata = { ...properties.status_metadata, is_test: true };
@@ -20347,17 +20379,17 @@ var TaskSendNTFY = async function({ Event, Priority, Body, Topic }) {
     ...configurations?.MediaStorage?.AUDIO ? [{
       "action": "view",
       "label": "View Audio",
-      "url": `${configurations.MediaStorage.AUDIO}/${properties.regions_string}/${properties.event}_${properties.metadata.tracking}.wav`
+      "url": `${configurations.MediaStorage.AUDIO}/${properties.regions_string}/${properties.event}_${properties.metadata.tracking}.wav?unix=${(/* @__PURE__ */ new Date()).getTime()}`
     }] : [],
     ...configurations?.MediaStorage?.TEXT ? [{
       "action": "view",
       "label": "View Text",
-      "url": `${configurations.MediaStorage.TEXT}/${properties.regions_string}/${properties.event}_${properties.metadata.tracking}.txt`
+      "url": `${configurations.MediaStorage.TEXT}/${properties.regions_string}/${properties.event}_${properties.metadata.tracking}.txt?unix=${(/* @__PURE__ */ new Date()).getTime()}`
     }] : [],
     ...SPCGraphic ? [{
       "action": "view",
       "label": "View Graphic",
-      "url": SPCGraphic.link
+      "url": SPCGraphic.link + `?unix=${(/* @__PURE__ */ new Date()).getTime()}`
     }] : [],
     ...[{
       "action": "copy",
@@ -20371,7 +20403,7 @@ Tags: ${properties.parameters.tags?.join(",") ?? "N/A"}`
     "Title": `${properties.event} (${properties.status})`,
     "Tags": properties.parameters.tags?.join(",") ?? "N/A",
     "Priority": Priority ?? "5",
-    ...image && { "Attach": image.link },
+    ...image && { "Attach": image.link + `?unix=${(/* @__PURE__ */ new Date()).getTime()}` },
     ...buttons.length > 0 && { "Actions": JSON.stringify(buttons) }
   };
   const post = async (topic) => {
@@ -20388,21 +20420,26 @@ Tags: ${properties.parameters.tags?.join(",") ?? "N/A"}`
     }
   };
   const topics = [
+    `GLOBAL`,
     Topic,
     ...properties.metadata.filtered_proximity ? [`${Topic}-LOCAL`] : []
   ];
   await Promise.all([...new Set(topics)].map(post));
 };
 
-// src/components/utilities/GetEmbededText.ts
+// src/components/formatting/GetEmbededText.ts
 var GetEmbededText = (event) => {
   const line = (label, value, condition = true) => condition && value ? `${label} ${value}` : null;
   const isStatement = event.properties.status_metadata.is_statement;
   const isExpired = event.properties.status_metadata.is_expired;
+  const isIssued = event.properties.status_metadata.is_issued;
+  const isUpdated = event.properties.status_metadata.is_updated;
   return [
     line(`**Locations:**`, event?.properties?.locations?.slice(0, 100)),
-    line(`**Issued:**`, `<t:${Math.floor(new Date(event.properties.issued).getTime() / 1e3)}:R>`, !isExpired),
-    line(`**Expires:**`, `<t:${Math.floor(new Date(event.properties.expires).getTime() / 1e3)}:R>`, !isStatement),
+    line(`**Issued:**`, `<t:${Math.floor(new Date(event.properties.issued).getTime() / 1e3)}:R>`, isIssued),
+    line(`**Updated:**`, `<t:${Math.floor(new Date(event.properties.issued).getTime() / 1e3)}:R>`, isUpdated && !isExpired),
+    line(`**Expires:**`, `<t:${Math.floor(new Date(event.properties.expires).getTime() / 1e3)}:R>`, !isStatement && !isExpired),
+    line(`**Expired:**`, `<t:${Math.floor(new Date(event.properties.expires).getTime() / 1e3)}:R>`, isExpired),
     line(`**Damage Threat:**`, event?.properties?.parameters?.damage_threat, !isExpired),
     line(`**Flood Threat:**`, event?.properties?.parameters?.flood_threat, !isExpired),
     line(`**Tornado Threat:**`, event?.properties?.parameters?.tornado_threat, !isExpired),
@@ -20627,7 +20664,7 @@ var CreateTasks = async (events) => {
   }
 };
 
-// src/manager/SetHash.ts
+// src/components/events/utilities/SetHash.ts
 var SetHash = ({ Event, Entry }) => {
   if (!Entry) {
     Bootstrap.Cache.Hashes.push({
@@ -20641,7 +20678,7 @@ var SetHash = ({ Event, Entry }) => {
   Entry.Expires = Event.properties.expires;
 };
 
-// src/components/utilities/GetShapeNearestPoint.ts
+// src/components/geometry/GetShapeNearestPoint.ts
 var GetShapeNearestPoint = ({ Coordinates, Point }) => {
   if (!Coordinates || !Point) {
     return { Proximity: false, Point: [0, 0], Distance: null };
@@ -20732,7 +20769,7 @@ var GetShapeNearestPoint = ({ Coordinates, Point }) => {
   return { Proximity: distanceMiles === 0, Point: closestPoint, Distance: distanceMiles, DistanceKm: distanceKm, DistanceMeters: distanceMeters };
 };
 
-// src/building/GetEventNodes.ts
+// src/components/events/components/GetEventNodes.ts
 var GetEventNodes = async (event) => {
   const nodes = Bootstrap.Cache.Nodes.features;
   if (!nodes || nodes.length === 0) {
@@ -20770,7 +20807,7 @@ var GetEventNodes = async (event) => {
   };
 };
 
-// src/manager/UpdateNode.ts
+// src/components/events/utilities/UpdateNode.ts
 var UpdateNode = async (selected) => {
   const events = Bootstrap.Cache.Events.features;
   const ttl = Bootstrap.Settings.GlobalSettings.NodeTTL * 1e3;
@@ -20805,8 +20842,34 @@ var UpdateNode = async (selected) => {
   }
 };
 
-// src/manager/MakeEvents.ts
-var MakeEvents = async (events) => {
+// src/components/events/components/GetEventMerged.ts
+var uniqueBy = (items, getKey) => {
+  const seen = /* @__PURE__ */ new Set();
+  return items.filter((item) => {
+    const key = getKey(item);
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+};
+var GetEventMerged = ({ Event1, Event2 }) => {
+  const history = uniqueBy([...Event1.properties.metadata?.history ?? [], ...Event2.properties.metadata?.history ?? []], (item) => `${item.description}|${item.issued}`);
+  return {
+    ...Event2,
+    properties: {
+      ...Event2.properties,
+      metadata: {
+        ...Event2.properties?.metadata,
+        history
+      }
+    }
+  };
+};
+
+// src/components/events/CreateEvents.ts
+var CreateEvents = async (events) => {
   let tasked = [];
   const settings = Bootstrap.Settings;
   if (events.length === 0) return;
@@ -20818,7 +20881,6 @@ var MakeEvents = async (events) => {
     const isHashed = isEntry?.Hashes?.includes(getHash) ?? false;
     const isNodeFiltering = settings.GlobalSettings.EventFiltering.NodeLocationFiltering;
     const getNodes = Bootstrap.Cache.Nodes.features;
-    const getFeature = features.find((feature2) => feature2.properties.metadata.tracking === getTracking);
     if (isHashed || event.properties.status_metadata.is_expired) return;
     SetHash({ Event: event, Entry: isEntry });
     await UpdateNode(event);
@@ -20828,7 +20890,10 @@ var MakeEvents = async (events) => {
       }
     }
     const isRatelimited = SetTimeoutAction({ Identifier: getTracking, Interval: 1, Max: 1, AddTime: true });
-    const isLocal = event.properties.metadata.filtered_proximity ? `[LOCAL] ` : ``;
+    const isLocal = event?.properties?.metadata?.filtered_proximity ? `[LOCAL] ` : ``;
+    const getFeature = features.find((feature2) => feature2.properties.metadata.tracking === getTracking);
+    const isWatch = event?.properties?.metadata?.vtec?.watch;
+    const isWOU = event?.properties?.metadata?.vtec?.wou;
     if (!isRatelimited.Limited) {
       SetEventEmit({
         Event: `onEventStatus`,
@@ -20840,31 +20905,21 @@ var MakeEvents = async (events) => {
         Message: `${isLocal}[${getFeature ? "Updated" : "New"}] ${event.properties.event} (${event.properties.status}) (${event.properties.metadata.tracking})`
       });
     }
-    if (settings.GlobalSettings.EventManagement) {
-      if (event.properties.status_metadata.is_issued || event.properties.status_metadata.is_updated) {
-        if (getFeature) {
-          const getIndex = features.indexOf(getFeature);
-          const cHistory = getFeature?.properties?.metadata?.history ?? [];
-          const iHistory = event.properties?.metadata?.history ?? [];
-          const mHistory = [...cHistory, ...iHistory].filter((v2, i, a) => a.indexOf(v2) === i).filter((v2, i, a) => a.findIndex((h) => h.description === v2.description && h.issued === v2.issued) === i);
-          Bootstrap.Cache.Events.features[getIndex] = {
-            ...event,
-            properties: {
-              ...event.properties,
-              metadata: {
-                ...event?.properties?.metadata,
-                history: mHistory
-              }
-            }
-          };
-          tasked.push(Bootstrap.Cache.Events.features[getIndex]);
-        } else {
-          features.push(event);
-          tasked.push(event);
+    if (event.properties.status_metadata.is_issued || event.properties.status_metadata.is_updated) {
+      if (getFeature) {
+        const getIndex = features.indexOf(getFeature);
+        if (isWatch && isWOU) {
+          return;
         }
+        Bootstrap.Cache.Events.features[getIndex] = GetEventMerged({ Event1: getFeature, Event2: event });
+        tasked.push(Bootstrap.Cache.Events.features[getIndex]);
+      } else {
+        features.push(event);
+        tasked.push(event);
       }
     }
   }));
+  tasked = tasked.filter((v2, i, a) => a.reduce((last, t, index) => t.properties.metadata.tracking === v2.properties.metadata.tracking ? index : last, -1) === i);
   SetEventEmit({ Event: `onEventCache`, Metadata: Bootstrap.Cache.Events, Limited: true });
   return await CreateTasks(tasked);
 };
@@ -20874,8 +20929,8 @@ var EnumStrings = {
   cancellation: `{EVENT} has been allowed to expire. This event is no longer in effect.`
 };
 
-// src/manager/RemoveEvent.ts
-var RemoveEvent = async ({ Event, IsTimeBasedExpiration }) => {
+// src/components/events/RemoveEvents.ts
+var RemoveEvents = async ({ Event, IsTimeBasedExpiration }) => {
   const gTracking = Event.properties.metadata.tracking;
   const isTrackingEventLogged = Bootstrap.Cache.Events.features.find((f2) => f2?.properties?.metadata?.tracking === gTracking);
   const isStatement = Event.properties.status_metadata.is_statement;
@@ -20924,7 +20979,7 @@ var GetLatestIssuance = () => {
   return latest.toString().padStart(4, "0");
 };
 
-// src/building/GetEventAttachments.ts
+// src/components/events/components/GetEventAttachments.ts
 var GetEventAttachments = (event) => {
   let attachments = [];
   const settings = Bootstrap.Settings;
@@ -20973,7 +21028,7 @@ var GetEventAttachments = (event) => {
   return attachments;
 };
 
-// src/building/GetEventPopulation.ts
+// src/components/events/components/GetEventPopulation.ts
 var GetEventPopulation = (geometry) => {
   const coordinates = geometry?.coordinates;
   if (!coordinates || !Array.isArray(coordinates) || coordinates.length === 0 || !Bootstrap.Settings.GlobalSettings.CensusPopulationData) {
@@ -21004,9 +21059,9 @@ var GetEventPopulation = (geometry) => {
   return { population, cities };
 };
 
-// src/manager/ValidateEvents.ts
+// src/components/events/FilterEvents.ts
 var import_crypto2 = require("crypto");
-var ValidateEvents = async (events) => {
+var FilterEvents = async (events) => {
   const tick = performance.now();
   if (events.length === 0) return;
   const configurations = Bootstrap.Settings;
@@ -21032,18 +21087,15 @@ var ValidateEvents = async (events) => {
     }
     if (properties.status_metadata.is_expired) {
       SetEventEmit({ Event: `onExpiredProduct`, Metadata: define2 });
-      RemoveEvent({ Event: define2, IsTimeBasedExpiration: false });
+      RemoveEvents({ Event: define2, IsTimeBasedExpiration: false });
       return true;
     }
-    if (properties.metadata?.vtec?.Watch && properties.metadata.source != `events.api`) {
-      const isSPC = properties.metadata?.vtec?.PredictionCenter;
-      SetEventEmit({ Event: isSPC ? `onStormPredictionWatch` : `onNonStormPredictionWatch`, Metadata: define2 });
-      if (bools?.SPCWatchesOnly && !isSPC) {
-        return true;
+    if (properties.metadata?.vtec?.watch && properties.metadata.source != `events.api`) {
+      const isWOU = properties.metadata?.vtec?.wou;
+      if (!isWOU) {
+        properties.metadata.tracking = properties.metadata.tracking.replace(properties.metadata.tracking.split(`.`)[0], `KWNS`);
       }
-      if (!bools?.SPCWatchesOnly && isSPC) {
-        return true;
-      }
+      SetEventEmit({ Event: isWOU ? `onWatchOutlineUpdate` : `onWatchCountyNotification`, Metadata: define2 });
     }
     for (const key in sets) {
       const setting = sets[key];
@@ -21117,12 +21169,12 @@ var ValidateEvents = async (events) => {
     SetEventEmit({ Event: `onProductType${enhanced.replace(/\s+/g, "")}`, Metadata: define2 });
     return !filtered;
   });
-  SetDebug({ Title: `ValidateEvents (${filtering.length}/${events.length})`, Message: `${Math.round(performance.now() - tick)}ms` });
-  await MakeEvents(filtering);
+  SetDebug({ Title: `FilterEvents (${filtering.length}/${events.length})`, Message: `${Math.round(performance.now() - tick)}ms` });
+  await CreateEvents(filtering);
 };
 
-// src/building/CreateEvent.ts
-var CreateEvent = async (Stanza) => {
+// src/components/events/ProcessStanza.ts
+var ProcessStanza = async (Stanza) => {
   const settings = Bootstrap.Settings;
   const StanzaSettings = settings.NOAAWeatherWireServiceSettings.StanzaSettings;
   const isVtecEvent = Stanza.VTEC && Stanza.UGC;
@@ -21143,11 +21195,11 @@ var CreateEvent = async (Stanza) => {
       await ParseText(Stanza);
       break;
   }
-  await ValidateEvents(Bootstrap.Cache.Parsed);
+  await FilterEvents(Bootstrap.Cache.Parsed);
   return "nothing picked";
 };
 
-// src/core/ManualEvent.ts
+// src/exports/ManualEvent.ts
 var ManualEvent = async ({ Message, Awipsid }) => {
   const isCapEvent = Message.includes(`<?xml`);
   const isCapAreaDescription = Message.includes(`<areaDesc>`);
@@ -21173,15 +21225,15 @@ var ManualEvent = async ({ Message, Awipsid }) => {
     NWWS: true,
     Type: getType
   };
-  await CreateEvent(result);
+  await ProcessStanza(result);
 };
 
-// src/core/GetRandomEvent.ts
+// src/exports/GetRandomEvent.ts
 var GetRandomEvent = () => {
   return Bootstrap.Cache.Events.features[Math.floor(Math.random() * Bootstrap.Cache.Events.features.length)];
 };
 
-// src/core/QueryStanza.ts
+// src/exports/QueryStanza.ts
 var QueryStanza = async ({ Search, Max }) => {
   const query = CreateQuery({
     Query: `SELECT * FROM stanzas WHERE stanza LIKE ? LIMIT ?`,
@@ -21191,7 +21243,7 @@ var QueryStanza = async ({ Search, Max }) => {
   return events;
 };
 
-// src/core/ClearEvents.ts
+// src/exports/ClearEvents.ts
 var ClearEvents = () => {
   Bootstrap.Cache.Events.features = [];
   Bootstrap.Cache.Hashes = [];
@@ -21247,10 +21299,10 @@ var ReconnectXMPP = async (interval) => {
   }
 };
 
-// src/components/utilities/SetCronSchedule.ts
+// src/components/utilities/EmitThread.ts
 var import_fs3 = require("fs");
 var import_path5 = require("path");
-var SetCronSchedule = async () => {
+var EmitThread = async () => {
   const settings = Bootstrap.Settings;
   const TTL = settings.GlobalSettings.ArchiveSettings.TTL;
   const TTLCUT = Date.now() - TTL * 1e3;
@@ -21268,17 +21320,18 @@ var SetCronSchedule = async () => {
         try {
           (0, import_fs3.unlinkSync)(fullPath);
         } catch (err) {
-          console.error(`Failed to delete ${fullPath}:`, err);
         }
       }
     }
     if (deleteFolder) {
       try {
+        if ((0, import_fs3.readdirSync)(dir).length === 0 && (0, import_fs3.statSync)(dir).mtime.getTime() < Date.now() - 36e5) {
+          (0, import_fs3.rmdirSync)(dir);
+        }
         if ((0, import_fs3.readdirSync)(dir).length === 0 && (0, import_fs3.statSync)(dir).mtime.getTime() < TTLCUT) {
           (0, import_fs3.rmdirSync)(dir);
         }
       } catch (err) {
-        console.error(`Failed to delete directory ${dir}:`, err);
       }
     }
   };
@@ -21317,7 +21370,7 @@ var SetCronSchedule = async () => {
         Error: false
       }
     });
-    await CreateEvent({ Message: response2.message, NWWS: false });
+    await ProcessStanza({ Message: response2.message, NWWS: false });
   }
 };
 
@@ -24037,7 +24090,7 @@ var ValidateStanza = ({ Stanza }) => {
   return { Ignored: true };
 };
 
-// src/components/database/ImportStanza.ts
+// src/components/database/imports/Stanza.ts
 var ImportStanza = async (Stanza) => {
   const settings = Bootstrap.Settings;
   try {
@@ -24079,7 +24132,7 @@ var StanzaXMPP = () => {
       if (isSkippable) {
         return;
       }
-      await CreateEvent(result);
+      await ProcessStanza(result);
       await ImportStanza(result);
     }
     if (stanza.is(`presence`) && msgFrom.startsWith("nwws@conference.nwws-oi.weather.gov/")) {
@@ -24150,12 +24203,12 @@ var SetSleep = async ({ Timeout }) => {
   });
 };
 
-// src/components/database/ImportShapefiles.ts
+// src/components/database/imports/Shapefiles.ts
 var import_fs4 = require("fs");
 var import_path6 = require("path");
 var import_jszip = __toESM(require_lib3());
 var import_shapefile = __toESM(require_shapefile_node());
-var ImportShapefiles = async () => {
+var Shapefiles = async () => {
   try {
     const tShapefiles = CreateQuery({ Query: `SELECT COUNT(*) AS count FROM shapefiles` })[0];
     if (tShapefiles.count === 0) {
@@ -24215,8 +24268,8 @@ var ImportShapefiles = async () => {
   }
 };
 
-// src/components/database/ImportBroadcastify.ts
-var ImportBroadcastify = async () => {
+// src/components/database/imports/Broadcastify.ts
+var Broadcastify = async () => {
   const settings = Bootstrap.Settings;
   const broadcastify = await CreateHttp({
     URL: settings.BroadcastifySettings.BroadcastifyDatabase,
@@ -24253,9 +24306,9 @@ var ImportBroadcastify = async () => {
   }
 };
 
-// src/components/database/ImportBoundaries.ts
+// src/components/database/imports/Boundaires.ts
 var import_topojson_client = __toESM(require_topojson_client());
-var ImportBoundaries = async () => {
+var Boundaries = async () => {
   try {
     const existing = CreateQuery({ Query: `SELECT type, COUNT(*) AS count FROM boundaries GROUP BY type` });
     const existingStates = existing.find((row) => row.type === `state`)?.count ?? 0;
@@ -24366,8 +24419,8 @@ var ImportBoundaries = async () => {
   }
 };
 
-// src/components/database/ImportCities.ts
-var ImportCities = async () => {
+// src/components/database/imports/Census.ts
+var Census = async () => {
   const cities = await CreateHttp({
     URL: Bootstrap.Settings.BoundarySettings.CityDatabase,
     Timeout: 5e3
@@ -24440,16 +24493,16 @@ var InitializeDatabase = async () => {
       CreateQuery({ Query: `CREATE TABLE IF NOT EXISTS cities ( id TEXT PRIMARY KEY, name TEXT, state TEXT, county TEXT, population TEXT, lat REAL NOT NULL, lon REAL NOT NULL);` });
       SetWarning({ Message: `Required database tables are currently building, please ${Bootstrap.Colors.Red}DO NOT${Bootstrap.Colors.Reset} close your terminal. The building will not finish and will remain incomplete. If you do mess up, you will need to delete ${settings.Database} and restart the application.` });
       if (isNeedingCities.length === 0) {
-        await ImportCities();
+        await Census();
       }
       if (isNeedingBroadcastify.length === 0) {
-        await ImportBroadcastify();
+        await Broadcastify();
       }
       if (isNeedingBoundaries.length === 0) {
-        await ImportBoundaries();
+        await Boundaries();
       }
       if (isNeedingShapefiles.length === 0) {
-        await ImportShapefiles();
+        await Shapefiles();
       }
       SetWarning({ Message: `Database initialization complete. You may now close your terminal or continue using the application.` });
     }
@@ -24459,7 +24512,7 @@ var InitializeDatabase = async () => {
   }
 };
 
-// src/components/database/GetCachedEvents.ts
+// src/components/events/utilities/GetCachedEvents.ts
 var GetCachedEvents = async () => {
   try {
     const settings = Bootstrap.Settings;
@@ -24479,7 +24532,7 @@ var GetCachedEvents = async () => {
         return !isSkippable;
       });
       events = events.sort((a, b2) => b2.issued - a.issued);
-      await Promise.all(events.map((event) => CreateEvent(event)));
+      await Promise.all(events.map((event) => ProcessStanza(event)));
       SetWarning({ Message: `Processed ${events.length} cached stanzas in ${Math.floor(performance.now() - tick)} ms` });
     }
   } catch (error) {
@@ -24488,13 +24541,13 @@ var GetCachedEvents = async () => {
   }
 };
 
-// src/manager/UpdateEvents.ts
+// src/components/events/utilities/UpdateEvents.ts
 var UpdateEvents = async (selected) => {
   const events = Bootstrap.Cache.Events.features;
   async function update(event) {
     if (new Date(event.properties.expires) < /* @__PURE__ */ new Date()) {
       SetEventEmit({ Event: `onExpiredProduct`, Metadata: event });
-      await RemoveEvent({ Event: event, IsTimeBasedExpiration: true });
+      await RemoveEvents({ Event: event, IsTimeBasedExpiration: true });
     }
   }
   if (!selected) {
@@ -25158,7 +25211,7 @@ var E = class {
   }
 };
 
-// src/core/StartService.ts
+// src/exports/StartService.ts
 var StartService = async (configurations) => {
   if (!Bootstrap.Ready) {
     return SetWarning({
@@ -25177,7 +25230,7 @@ var StartService = async (configurations) => {
       await DeployXMPP();
     })();
   }
-  await SetCronSchedule();
+  await EmitThread();
   let scheduleInterval = !settings.EnableWireService ? settings.NationalWeatherServiceSettings.CallbackInterval : 1;
   if (!settings.EnableWireService && scheduleInterval < 15) {
     SetWarning({ Message: `Schedule interval of ${scheduleInterval} seconds is too low, setting to 15 seconds` });
@@ -25185,7 +25238,7 @@ var StartService = async (configurations) => {
     scheduleInterval = 15;
   }
   Bootstrap.Job = new E(`*/${scheduleInterval} * * * * *`, async () => {
-    await SetCronSchedule();
+    await EmitThread();
   });
   Bootstrap.Job = new E(`* * * * * *`, async () => {
     await UpdateNode();
@@ -25193,7 +25246,7 @@ var StartService = async (configurations) => {
   });
 };
 
-// src/core/StopService.ts
+// src/exports/StopService.ts
 var StopService = async () => {
   if (Bootstrap.Ready) {
     Bootstrap.Ready = false;
@@ -25209,7 +25262,7 @@ var StopService = async () => {
   }
 };
 
-// src/core/GetVersion.ts
+// src/exports/GetVersion.ts
 var GetVersion = () => {
   return Bootstrap.Version;
 };

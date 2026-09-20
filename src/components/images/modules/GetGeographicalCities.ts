@@ -47,7 +47,7 @@ export const GetGeographicalCities = ({ Regions }: GetGeographicalCitiesOptions)
     for (const region of Regions) {
         const match = region.match(/^([A-Z]{2})[CZ](\d{3})$/i) ?? null
         if (!match) { 
-              const parent = CreateQuery({ 
+            const parent = CreateQuery({ 
                 Query: `SELECT * FROM cities WHERE state = ?`, 
                 Parameters: [region] 
             })

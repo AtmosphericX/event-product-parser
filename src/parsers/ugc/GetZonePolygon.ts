@@ -18,7 +18,7 @@
 */
 
 import { CreateQuery } from "@Database/CreateQuery"
-import { GetUnionPolygon } from "@Utilities/GetUnionPolygon"
+import { GetUnionPolygon } from "@Geometry/GetUnionPolygon"
 import { createHash } from "crypto";
 
 interface CoordinatesOptions {

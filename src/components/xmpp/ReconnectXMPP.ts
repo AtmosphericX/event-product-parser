@@ -17,7 +17,7 @@
 
 */
 
-import { TypeSettings } from "Types/Settings"
+import { TypeSettings } from "TypesStandard/Settings"
 import { Bootstrap } from "@Bootstrap"
 import { SetEventEmit } from "@Utilities/SetEventEmit"
 import { SetWarning } from "@Utilities/SetWarning"

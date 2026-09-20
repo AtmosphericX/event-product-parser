@@ -17,15 +17,15 @@
 
 */
 
-import { TypeAttributes } from "StaticTypes/Attributes"
-import { TypeStanzaCompiled } from "Types/StanzaCompiled"
+import { TypeAttributes } from "TypesEvent/Attributes"
+import { TypeStanzaCompiled } from "TypesStandard/StanzaCompiled"
 import { EnumMatches } from "@Enums/Matches"
 import { Bootstrap } from "@Bootstrap"
 import { UGCExtract } from "@ParsingUGC/UGCExtract"
-import { GetEventProperties } from "@Building/GetEventProperties"
-import { GetEventHeader } from "@Building/GetEventHeader"
-import { GetEventTracking } from "@Building/GetEventTracking"
-import { GetEventTheme } from "@Building/GetEventTheme"
+import { GetEventProperties } from "@BuilderComponents/GetEventProperties"
+import { GetEventHeader } from "@BuilderComponents/GetEventHeader"
+import { GetEventTracking } from "@BuilderComponents/GetEventTracking"
+import { GetEventTheme } from "@BuilderComponents/GetEventTheme"
 import { SetDebug } from "@Utilities/SetDebug"
 
 export const ParseUGC = async (Stanza: TypeStanzaCompiled): Promise<void> => {

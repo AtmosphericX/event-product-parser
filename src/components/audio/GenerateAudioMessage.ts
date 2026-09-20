@@ -17,7 +17,7 @@
 
 */
 
-import { TypeSettings } from "Types/Settings"
+import { TypeSettings } from "TypesStandard/Settings"
 import { Bootstrap } from "@Bootstrap"
 import { GetWavPCM16 } from "@AudioComponents/GetWavPCM16"
 import { GetSampledPCM16 } from "@AudioComponents/GetSampledPCM16"

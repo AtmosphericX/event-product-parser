@@ -17,25 +17,25 @@
 
 */
 
-import { TypeSettings } from "Types/Settings"
+import { TypeSettings } from "TypesStandard/Settings"
 import { Bootstrap } from "@Bootstrap"
-import { GetEventGeometry } from "@Building/GetEventGeometry"
-import { GetCleanedEvent } from "@Building/GetCleanedEvent"
+import { GetEventGeometry } from "@BuilderComponents/GetEventGeometry"
+import { GetCleanedEvent } from "@BuilderComponents/GetCleanedEvent"
 import { SetSettings } from "@Utilities/SetSettings"
 import { SetEventEmit } from "@Utilities/SetEventEmit"
 import { SetWarning } from "@Utilities/SetWarning"
 import { GenerateAudioMessage } from "@Audio/GenerateAudioMessage"
 import { GenerateGraphic } from "@Image/GenerateGraphic"
-import { SetNode } from "@Core/SetNode"
-import { GetEvents } from "@Core/GetEvents"
-import { GetNodes } from "@Core/GetNodes"
-import { ManualEvent } from "@Core/ManualEvent"
-import { GetRandomEvent } from "@Core/GetRandomEvent"
-import { QueryStanza } from "@Core/QueryStanza"
-import { ClearEvents } from "@Core/ClearEvents"
-import { StartService } from "@Core/StartService"
-import { StopService } from "@Core/StopService"
-import { GetVersion } from "@Core/GetVersion"
+import { SetNode } from "@Exports/SetNode"
+import { GetEvents } from "@Exports/GetEvents"
+import { GetNodes } from "@Exports/GetNodes"
+import { ManualEvent } from "@Exports/ManualEvent"
+import { GetRandomEvent } from "@Exports/GetRandomEvent"
+import { QueryStanza } from "@Exports/QueryStanza"
+import { ClearEvents } from "@Exports/ClearEvents"
+import { StartService } from "@Exports/StartService"
+import { StopService } from "@Exports/StopService"
+import { GetVersion } from "@Exports/GetVersion"
 
 
 export class Manager { 
@@ -82,7 +82,7 @@ export class Manager {
 }
 
 export default Manager;
-export type { TypeEvent } from "StaticTypes/Event"
+export type { TypeEvent } from "TypesEvent/Event"
 export { 
     SetSettings, GetEventGeometry, ManualEvent,
     GetCleanedEvent, StopService, ClearEvents,

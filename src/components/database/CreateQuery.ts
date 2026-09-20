@@ -28,10 +28,10 @@ interface CreateQueryOptions {
 export const CreateQuery = function({ Query, Parameters }: CreateQueryOptions): any {
     try {
         const parameters = Array.isArray(Parameters) ? Parameters : [];
-        const statement = Bootstrap.Database.prepare(Query);
+        const statement = Bootstrap?.Database?.prepare(Query);
         return /^\s*select/i.test(Query)
-            ? statement.all(...parameters)
-            : statement.run(...parameters);
+            ? statement?.all(...parameters)
+            : statement?.run(...parameters);
     } catch (error) {
         SetWarning({Message: `Database Query Error: ${error instanceof Error ? error.stack ?? error.message : String(error)}`})
         throw error;

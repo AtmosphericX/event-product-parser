@@ -17,8 +17,8 @@
 
 */
 
-import { TypeStanza } from "StaticTypes/Stanza"
-import { TypeStanzaCompiled } from "Types/StanzaCompiled"
+import { TypeStanza } from "TypesEvent/Stanza"
+import { TypeStanzaCompiled } from "TypesStandard/StanzaCompiled"
 import { EnumExpressions } from "@Enums/Expressions"
 import { GetAwipsType } from "@Stanza/GetAwipsType"
 

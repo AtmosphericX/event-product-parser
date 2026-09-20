@@ -17,15 +17,15 @@
 
 */
 
-import { TypeStanzaCompiled } from "Types/StanzaCompiled"
-import { TypeVTEC } from "Types/VTEC"
+import { TypeStanzaCompiled } from "TypesStandard/StanzaCompiled"
+import { TypeVTEC } from "TypesEvent/VTEC"
 import { EnumICAO } from "@Enums/ICAO"
 import { Bootstrap } from "@Bootstrap"
-import { GetEventTracking } from "@Building/GetEventTracking"
+import { GetEventTracking } from "@BuilderComponents/GetEventTracking"
 import { VTECExtract } from "@ParsingVTEC/VTECExtract"
-import { GetEventTags } from "@Building/GetEventTags"
-import { GetEventTheme } from "@Building/GetEventTheme"
-import { GetEventDirection } from "@Building/GetEventDirection"
+import { GetEventTags } from "@BuilderComponents/GetEventTags"
+import { GetEventTheme } from "@BuilderComponents/GetEventTheme"
+import { GetEventDirection } from "@BuilderComponents/GetEventDirection"
 import { GetTextFromProduct } from "@ParsingText/GetTextFromProduct"
 import { SetDebug } from "@Utilities/SetDebug"
 
@@ -61,8 +61,8 @@ export const ParseAPI = async (Stanza: TypeStanzaCompiled): Promise<void> => {
                 theme: GetEventTheme(feature?.properties?.event),
                 geocode: {
                     office: {
-                        office: VTEC ? VTEC?.[0]?.Tracking.split(`.`)[0] : null,
-                        name: EnumICAO[VTEC ? VTEC?.[0]?.Tracking.split(`.`)[0] : null] ?? null,
+                        office: VTEC ? VTEC?.[0]?.tracking.split(`.`)[0] : null,
+                        name: EnumICAO[VTEC ? VTEC?.[0]?.tracking.split(`.`)[0] : null] ?? null,
                     },
                     organization:  feature?.properties?.parameters?.WMOidentifier?.[0],
                     ugc: feature?.properties?.geocode?.UGC ?? [], 
@@ -97,7 +97,7 @@ export const ParseAPI = async (Stanza: TypeStanzaCompiled): Promise<void> => {
                     discussion_watch_issuance: GetTextFromProduct({ Message: feature?.properties?.description, Find: [`Probability of Watch Issuance...`], Removal: [`percent`]}) ?? null,
                 },
                 watch_parameters: {
-                    watch_number: (VTEC?.[0]?.Watch) && (GetTextFromProduct({ Message: feature?.properties?.description, Find: [`ITIES FOR`, `UPDATE FOR`, `Watch Number `], Removal: [`%`, `<`, `:`] })?.replace(/(WT|WS|)/g, '')?.trim()?.toString()?.padStart(4, "0") ?? VTEC?.[0]?.Tracking?.slice(-4)?.toString()?.padStart(4, "0") ?? null),
+                    watch_number: (VTEC?.[0]?.watch) && (GetTextFromProduct({ Message: feature?.properties?.description, Find: [`ITIES FOR`, `UPDATE FOR`, `Watch Number `], Removal: [`%`, `<`, `:`] })?.replace(/(WT|WS|)/g, '')?.trim()?.toString()?.padStart(4, "0") ?? VTEC?.[0]?.tracking?.slice(-4)?.toString()?.padStart(4, "0") ?? null),
                     watch_type: feature?.properties?.description.includes(`TORNADO WATCH`) ? `Tornado` : feature?.properties?.description.includes(`SEVERE`) ? `Severe` : null,
                     additional_tornadoes_probability: GetTextFromProduct({ Message: feature?.properties?.description, Find: [`PROB OF 2 OR MORE TORNADOES`], Removal: [`%`, `<`, `:`] }) ?? null,
                     strong_tornadoes_probability: GetTextFromProduct({ Message: feature?.properties?.description, Find: [`PROB OF 1 OR MORE STRONG /EF2-EF5/ TORNADOES`], Removal: [`%`, `<`, `:`] }) ?? null,

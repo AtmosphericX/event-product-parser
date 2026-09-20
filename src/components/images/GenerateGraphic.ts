@@ -18,12 +18,12 @@
 */
 
 import { EnumStates, EnumZones } from "@Enums/States"
-import { TypeEvent } from "StaticTypes/Event"
+import { TypeEvent } from "TypesEvent/Event"
 import { Bootstrap } from "@Bootstrap"
-import { GetStringText } from "@Utilities/GetStringText"
-import { GetEventGeometry } from "@Building/GetEventGeometry"
+import { GetStringText } from "@Formatting/GetStringText"
+import { GetEventGeometry } from "@BuilderComponents/GetEventGeometry"
 import { GetGeographicalEvents } from "@ImageModules/GetGeographicalEvents"
-import { GetUnionPolygon } from "@Utilities/GetUnionPolygon"
+import { GetUnionPolygon } from "@Geometry/GetUnionPolygon"
 import { GetGeographicalBoundaries } from "@ImageModules/GetGeographicalBoundaries"
 import { GetGeographicalCities } from "@ImageModules/GetGeographicalCities"
 import { GetParsedBoundary } from "@ImageModules/GetParsedBoundary"
@@ -90,7 +90,7 @@ export const GenerateGraphic = async ({ File, Regions, Event, MaxMiles = 350, Wi
     }
 
     if (Event) { 
-        polygons = (coordinates.length > 0) ? Event.geometry : await GetEventGeometry({ Event });
+        polygons = (coordinates?.length > 0) ? Event?.geometry : await GetEventGeometry({ Event });
         if (polygons.coordinates.length == 0) { return null; }
         if (inConus) {
             const eBounds = GetGeometryBounds({ Geometry: polygons, Padding: MaxMiles });

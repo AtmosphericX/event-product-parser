@@ -17,7 +17,7 @@
 
 */
 
-import { TypeUGC } from "Types/UGC"
+import { TypeUGC } from "TypesStandard/UGC"
 import { GetHeader } from "@ParsingUGC/GetHeader"
 import { GetZones } from "@ParsingUGC/GetZones"
 import { GetExpiry } from "@ParsingUGC/GetExpiry"

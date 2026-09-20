@@ -17,11 +17,11 @@
 
 */
 
-import { TypeStanza } from "StaticTypes/Stanza"
+import { TypeStanza } from "TypesEvent/Stanza"
 import { Bootstrap } from "@Bootstrap"
 import { ValidateStanza } from "@Stanza/ValidateStanza"
-import { CreateEvent } from "@Building/CreateEvent"
-import { ImportStanza } from "@Database/ImportStanza"
+import { ProcessStanza } from "@Builder/ProcessStanza"
+import { ImportStanza } from "@Database/imports/Stanza"
 import { SetEventEmit } from "@Utilities/SetEventEmit"
 
 export const StanzaXMPP = () => {
@@ -43,7 +43,7 @@ export const StanzaXMPP = () => {
                 (result.CapEvent) ||
                 (result.CapEvent && !result.CapAreaDescription)
             if (isSkippable) { return; }
-            await CreateEvent(result);
+            await ProcessStanza(result);
             await ImportStanza(result);
         }
         if (stanza.is(`presence`) && msgFrom.startsWith('nwws@conference.nwws-oi.weather.gov/')) {

@@ -17,10 +17,10 @@
 
 */
 
-import { TypeEvent } from "StaticTypes/Event"
-import { TypeHash } from "Types/Hash"
-import { TypeActions } from "Types/Actions"
-import { TypeNode } from "Types/Nodes"
+import { TypeEvent } from "TypesEvent/Event"
+import { TypeHash } from "TypesStandard/Hash"
+import { TypeActions } from "TypesStandard/Actions"
+import { TypeNode } from "TypesStandard/Nodes"
 import { EnumThemes } from "@Enums/Themes"
 import { EventEmitter } from "node:events"
 import { client } from "@xmpp/client"
@@ -28,7 +28,7 @@ import { Database } from "better-sqlite3"
 import { join } from "path"
 
 export const Bootstrap = {
-    Version: `3.0.75`,
+    Version: `3.0.8`,
     Ready: true,
     Ratelimits: {} as Record<string, number[]>,
     Session: null as ReturnType<typeof client>,
@@ -110,10 +110,8 @@ export const Bootstrap = {
         },
         ActionSettings: [] as TypeActions[],
         GlobalSettings: {
-            EventManagement: true,
             DisableGeometryParsing: false,
             UseShapefileCoordinates: true,
-            SPCWatchesOnly: true,
             CensusPopulationData: true,
             NodeTTL: 60,
             NodeMaxDistance: 120,

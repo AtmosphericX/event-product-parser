@@ -17,7 +17,7 @@
 
 */
 
-import { TypeEvent } from "StaticTypes/Event"
+import { TypeEvent } from "TypesEvent/Event"
 import { Bootstrap } from "@Bootstrap"
 
 interface GetGeographicalEventsOptions {

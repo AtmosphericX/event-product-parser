@@ -17,7 +17,7 @@
 
 */
 
-import { TypeSettings } from "Types/Settings"
+import { TypeSettings } from "TypesStandard/Settings"
 import { Bootstrap } from "@Bootstrap"
 import { OnlineXMPP } from "@XMPP/OnlineXMPP"
 import { OfflineXMPP } from "@XMPP/OfflineXMPP"

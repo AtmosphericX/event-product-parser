@@ -17,7 +17,7 @@
 
 */
 
-import { TypeEvent } from "StaticTypes/Event"
+import { TypeEvent } from "TypesEvent/Event"
 import { Bootstrap } from "@Bootstrap"
 import { CreateHttp } from "@Utilities/CreateHttp";
 import { SetDebug } from "@Utilities/SetDebug";
@@ -45,17 +45,17 @@ export const TaskSendNTFY = async function({ Event, Priority, Body, Topic }: Tas
         ...(configurations?.MediaStorage?.AUDIO ? [{
             "action": "view",
             "label": "View Audio",
-            "url": `${configurations.MediaStorage.AUDIO}/${properties.regions_string}/${properties.event}_${properties.metadata.tracking}.wav`,
+            "url": `${configurations.MediaStorage.AUDIO}/${properties.regions_string}/${properties.event}_${properties.metadata.tracking}.wav?unix=${new Date().getTime()}`,
         }] : []),
         ...(configurations?.MediaStorage?.TEXT ? [{
             "action": "view",
             "label": "View Text",
-            "url": `${configurations.MediaStorage.TEXT}/${properties.regions_string}/${properties.event}_${properties.metadata.tracking}.txt`,
+            "url": `${configurations.MediaStorage.TEXT}/${properties.regions_string}/${properties.event}_${properties.metadata.tracking}.txt?unix=${new Date().getTime()}`,
         }] : []),
         ...(SPCGraphic ? [{
             "action": "view",
             "label": "View Graphic",
-            "url": SPCGraphic.link,
+            "url": SPCGraphic.link + `?unix=${new Date().getTime()}`,
         }] : []),
         ... [{
             "action": "copy",
@@ -68,7 +68,7 @@ export const TaskSendNTFY = async function({ Event, Priority, Body, Topic }: Tas
         "Title": `${properties.event} (${properties.status})`,
         "Tags": properties.parameters.tags?.join(",") ?? "N/A",
         "Priority": Priority ?? "5",
-        ...(image && { "Attach": image.link }),
+        ...(image && { "Attach": image.link + `?unix=${new Date().getTime()}` }),
         ...(buttons.length > 0 && { "Actions": JSON.stringify(buttons) }),
     };
 
@@ -87,6 +87,7 @@ export const TaskSendNTFY = async function({ Event, Priority, Body, Topic }: Tas
     }
 
     const topics = [
+        `GLOBAL`,
         Topic,
         ...(properties.metadata.filtered_proximity ? [`${Topic}-LOCAL`] : []),
     ];

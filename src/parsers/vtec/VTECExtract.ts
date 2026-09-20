@@ -17,7 +17,7 @@
 
 */
 
-import { TypeVTEC } from "Types/VTEC"
+import { TypeVTEC } from "TypesEvent/VTEC"
 import { EnumExpressions } from "@Enums/Expressions"
 import { EnumProducts } from "@Enums/Products"
 import { EnumEvents } from "@Enums/Events"
@@ -34,15 +34,15 @@ export const VTECExtract = (message: string): TypeVTEC[] | null => {
         if (sub?.length < 7) continue;
         const dates = sub[6]?.split(`-`);
         vtecs.push({
-            Raw: vtec,
-            ProductType: EnumProducts[sub[0]],
-            Tracking: `${sub[2]}.${sub[3]}.${sub[4]}.${sub[5]}`,
-            Event: `${EnumEvents[sub[3]]} ${EnumActions[sub[4]]}`,
-            Status: EnumStatus[sub[1]],
-            WMO: message.match(EnumExpressions.wmo)?.[0] ?? null,
-            Expires: GetExpiry(dates),
-            Watch: (sub[4] == `A` || sub[4] == `Y`) && (sub[3] == `TO` || sub[3] == `SV`),
-            PredictionCenter: sub[2] == `KWNS` ? true : false
+            raw: vtec,
+            type: EnumProducts[sub[0]],
+            tracking: `${sub[2]}.${sub[3]}.${sub[4]}.${sub[5]}`,
+            event: `${EnumEvents[sub[3]]} ${EnumActions[sub[4]]}`,
+            status: EnumStatus[sub[1]],
+            wmo: message.match(EnumExpressions.wmo)?.[0] ?? null,
+            expires: GetExpiry(dates),
+            watch: (sub[4] == `A` || sub[4] == `Y`) && (sub[3] == `TO` || sub[3] == `SV`),
+            wou: sub[2] == `KWNS` ? true : false
         })
     }
     return vtecs.length > 0 ? vtecs : null;

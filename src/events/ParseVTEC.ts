@@ -17,18 +17,18 @@
 
 */
 
-import { TypeAttributes } from "StaticTypes/Attributes"
-import { TypeStanzaCompiled } from "Types/StanzaCompiled"
-import { TypeVTEC } from "Types/VTEC"
-import { TypeHVTEC } from "Types/HVTEC"
+import { TypeAttributes } from "TypesEvent/Attributes"
+import { TypeStanzaCompiled } from "TypesStandard/StanzaCompiled"
+import { TypeVTEC } from "TypesEvent/VTEC"
+import { TypeHVTEC } from "TypesEvent/HVTEC"
 import { Bootstrap } from "@Bootstrap"
 import { VTECExtract } from "@ParsingVTEC/VTECExtract"
 import { HVExtract } from "@ParsingHVTEC/HVExtract"
 import { UGCExtract } from "@ParsingUGC/UGCExtract"
-import { GetEventProperties } from "@Building/GetEventProperties"
-import { GetEventHeader } from "@Building/GetEventHeader"
-import { GetEventTracking } from "@Building/GetEventTracking"
-import { GetEventTheme } from "@Building/GetEventTheme"
+import { GetEventProperties } from "@BuilderComponents/GetEventProperties"
+import { GetEventHeader } from "@BuilderComponents/GetEventHeader"
+import { GetEventTracking } from "@BuilderComponents/GetEventTracking"
+import { GetEventTheme } from "@BuilderComponents/GetEventTheme"
 import { SetDebug } from "@Utilities/SetDebug"
 
 export const ParseVTEC = async (Stanza: TypeStanzaCompiled): Promise<void> => {
@@ -48,7 +48,7 @@ export const ParseVTEC = async (Stanza: TypeStanzaCompiled): Promise<void> => {
                 const props = GetEventProperties({ Message: message, Attributes: attributes, UGC: ugc, VTEC: vtec })
                 const header = GetEventHeader({ Properties: props, VTEC: vtec, Type: Stanza.Type })
                 const issued = new Date(attributes.issue)?? new Date()
-                const expires = new Date(vtec.Expires)
+                const expires = new Date(vtec.expires)
                 Bootstrap.Cache.Parsed.push({
                     type: `Feature`,
                     geometry: {
@@ -56,12 +56,12 @@ export const ParseVTEC = async (Stanza: TypeStanzaCompiled): Promise<void> => {
                         coordinates: []
                     },
                     properties: { 
-                        event: vtec.Event,
-                        parent: vtec.Event,
-                        status: vtec.Status,
+                        event: vtec.event,
+                        parent: vtec.event,
+                        status: vtec.status,
                         issued: (!isNaN(issued.getTime())) ? issued.toISOString() : new Date().toISOString(),
                         expires: (!isNaN(expires.getTime())) ? expires.toISOString() : ugc.Expires ??  new Date(issued.getTime() + 60 * 60 * 1000).toISOString(),
-                        theme: GetEventTheme(vtec.Event),
+                        theme: GetEventTheme(vtec.event),
                         ...props,
                         metadata: {
                             ms: performance.now() - tick,
@@ -75,7 +75,7 @@ export const ParseVTEC = async (Stanza: TypeStanzaCompiled): Promise<void> => {
                                 {
                                     description: props.description,
                                     issued: (!isNaN(issued.getTime())) ? issued.toISOString() : new Date().toISOString(),
-                                    status: vtec.Status
+                                    status: vtec.status
                                 }
                             ]
                         }

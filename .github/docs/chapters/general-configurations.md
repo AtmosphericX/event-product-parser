@@ -44,7 +44,7 @@ new Manager({
 })
 ```
 
-> [!DANGER] Database Integrity
+> [!DANGER]
 > It is imperative that you wait for **ALL** database operations to complete before forcing your application to close. Failure to do so may prevent important data from being fully processed, resulting in missing or incomplete records. If the application is restarted before the database has finished building, you must delete the existing database and allow the parser to rebuild it from scratch. A message will be logged to the console if the database is fully built and ready for use. All event processing is haulted until the database is fully built and ready for use.
 
 
@@ -62,7 +62,7 @@ new Manager({
 })
 ```
 
-> [!IMPORTANT] Broadcastify Feed Availability
+> [!IMPORTANT]
 > The availability of Broadcastify feeds are sourced from `scriptkitty.cafe` and are updated once per month. If you have any questions regarding the availability of Broadcastify feeds, please feel free to contact me directly.
 
 ## 3.1.4 - Boundary & Population Data Management
@@ -98,11 +98,11 @@ new Manager({
     },
 })
 ```
-> [!WARNING] NTFY Mobile Push Notifications (Self-Hosted NTFY Server)
+> [!WARNING]
 > If you plan on self hosting your own ntfy server, please ensure that you set the **upstream-base-url** to **https://ntfy.sh** in your **server.yml** file. This is required for proper delivery of push notifications.
 
 
-> [!TIP] Message Retention (Self-Hosted NTFY Server)
+> [!TIP]
 > It's best to set your message retention to a maximum of **12 hours**. This ensures that messages are not retained for too long, which could lead to unnecessary storage usage and potential delays in message delivery.
 
 

@@ -25,7 +25,7 @@
 
 **@atmosx/event-product-parser** supports multiple source attributes that allow you to customize how event products are ingested and processed. These configurations define the external services, connection methods, and parsing used by the parser to receive weather products. The available source configurations provide flexibility for different data ingestion requirements, allowing you to choose the appropriate source based on your application's needs while maintaining a consistent parsing experience.
 
-> [!IMPORTANT] Source Selection
+> [!IMPORTANT]
 > You can only use one source at any given time. Attempting to use multiple sources simultaneously will result in event conflicts and parsing issues.
 # 2.1 - NOAA Weather Wire Service
 [NOAA Weather Wire Service](https://www.weather.gov/nwws) is a real-time dissemination service that delivers official weather information, alerts, forecasts, products, and warnings in text format from NWS Weather Forecast Offices and National Centers. This service is designed for television and radio broadcasters, emergency managers, commercial alerting providers, private weather services, and other organizations that require rapid access to weather products.
@@ -47,7 +47,7 @@ NWS processing of your request may take as long as 10 days or more depending on 
 
 
 
-> [!IMPORTANT] NOAAPort / SBN (Satellite Broadcast Network) Support
+> [!IMPORTANT]
 > The National Weather Service (NWS) has officially proposed the retirement of the Satellite Broadcast Network (SBN), commonly known as NOAAPort, which could take effect as early as August 31, 2027. This means that this project will no longer look into supporting NOAAPort/SBN as a source for ingesting weather products. The NOAA Weather Wire Service (NWWS) will remain the primary source for ingesting weather products in real-time, and the NWS RESTful API will continue to provide on-demand access to weather data and products.
 
 ## 2.1.1 - Basic Settings
@@ -111,7 +111,7 @@ NOAAWeatherWireServiceSettings: {
 ```
 
 
-> [!IMPORTANT] CAP v1.2 Processing Functionality
+> [!IMPORTANT]
 > Please keep in mind that CAP v1.2 products are not currently supported by this package and will be ignored during processing. Support for CAP v1.2 is planned for a future release.
 
 

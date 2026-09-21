@@ -13,7 +13,7 @@
 		"build": "node ./tools/build.js && cd ./test && node index.js",
 		"watch": "node ./tools/build.js --watch",
 		"publish": "node ./tools/build.js && npm publish --access public",
-		"publish-beta-branch": "node ./tools/build.js && npm publish --tag b3.1 --access public"
+		"publish-b3.1": "node ./tools/build.js && npm publish --tag b3.1 --access public"
 	},
 	"keywords": [
 		"NWWS",

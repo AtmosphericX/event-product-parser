@@ -15400,11 +15400,11 @@ var Bootstrap = {
   Settings: {
     Timezone: "UTC",
     Database: (0, import_path.join)(process.cwd(), "shapefiles.db"),
-    DebugDisableAllEvents: false,
+    DeveloperDisableEvents: false,
     EnableWireService: false,
-    EnableDebugging: false,
+    DeveloperMode: false,
     EnableJournal: true,
-    EnhancedEventJournaling: false,
+    DeveloperEventLogging: false,
     NOAAWeatherWireServiceSettings: {
       ReconnectionSettings: {
         Enabled: true,
@@ -15458,7 +15458,7 @@ var Bootstrap = {
       DisableGeometryParsing: false,
       UseShapefileCoordinates: true,
       CensusPopulationData: true,
-      NodeTTL: 60,
+      NodePolygonTTL: 60,
       NodeMaxDistance: 120,
       EventFiltering: {
         ListeningEvents: [],
@@ -16034,7 +16034,7 @@ var SetDebug = ({ Title, Message }) => {
     message: Message,
     function: Title ?? `debug`
   });
-  if (settings.EnableDebugging) {
+  if (settings.DeveloperMode) {
     console.log(`[${Bootstrap.Colors.Blue}${Title ?? `debug`}${Bootstrap.Colors.Reset}] ${Message}`);
   }
 };
@@ -20810,7 +20810,7 @@ var GetEventNodes = async (event) => {
 // src/components/events/utilities/UpdateNode.ts
 var UpdateNode = async (selected) => {
   const events = Bootstrap.Cache.Events.features;
-  const ttl = Bootstrap.Settings.GlobalSettings.NodeTTL * 1e3;
+  const ttl = Bootstrap.Settings.GlobalSettings.NodePolygonTTL * 1e3;
   let total = 0;
   const TTLEvents = selected ? [selected] : events.filter((evt) => {
     const lastUpdate = evt?.properties?.metadata?.updated ?? null;
@@ -20901,7 +20901,7 @@ var CreateEvents = async (events) => {
           Type: getFeature ? `Updated` : `New`,
           Event: event
         },
-        Tree: Bootstrap.Settings.EnhancedEventJournaling ? GetStringText(event).split("\n").filter((line) => line.trim() !== "") : [],
+        Tree: Bootstrap.Settings.DeveloperEventLogging ? GetStringText(event).split("\n").filter((line) => line.trim() !== "") : [],
         Message: `${isLocal}[${getFeature ? "Updated" : "New"}] ${event.properties.event} (${event.properties.status}) (${event.properties.metadata.tracking})`
       });
     }
@@ -25221,8 +25221,8 @@ var StartService = async (configurations) => {
   const settings = SetSettings(configurations);
   Bootstrap.Ready = true;
   await InitializeDatabase();
-  if (settings.DebugDisableAllEvents) {
-    return SetWarning({ Message: `DebugDisableAllEvents is enabled, no events will be processed!` });
+  if (settings.DeveloperDisableEvents) {
+    return SetWarning({ Message: `DeveloperDisableEvents is enabled, no events will be processed!` });
   }
   if (settings.EnableWireService) {
     (async () => {

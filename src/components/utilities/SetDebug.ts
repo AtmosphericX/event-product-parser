@@ -31,7 +31,7 @@ export const SetDebug = ({ Title, Message }: SetDebugOptions): void => {
         message: Message,
         function: Title ?? `debug`,
     })
-    if (settings.EnableDebugging) { 
+    if (settings.DeveloperMode) { 
         console.log(`[${Bootstrap.Colors.Blue}${Title ?? `debug`}${Bootstrap.Colors.Reset}] ${Message}`)
     }
 }

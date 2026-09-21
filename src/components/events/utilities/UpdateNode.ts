@@ -24,7 +24,7 @@ import { SetEventEmit } from "@Utilities/SetEventEmit"
 
 export const UpdateNode = async (selected?: TypeEvent): Promise<void> => {
     const events = Bootstrap.Cache.Events.features;
-    const ttl = Bootstrap.Settings.GlobalSettings.NodeTTL * 1e3;
+    const ttl = Bootstrap.Settings.GlobalSettings.NodePolygonTTL * 1e3;
     let total = 0;
 
     const TTLEvents = selected ? [selected] : events.filter((evt) => {

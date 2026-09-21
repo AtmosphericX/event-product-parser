@@ -24,10 +24,10 @@ type TypeTimezones = string | "CST" | "CDT" | "MDT" | "MST" | "EST" | "EDT" | "H
 export type TypeSettings = {
     Timezone?: TypeTimezones
     Database: string
-    DebugDisableAllEvents: boolean
+    DeveloperDisableEvents: boolean
     EnableWireService: boolean
     EnableJournal: boolean
-    EnableDebugging: boolean
+    DeveloperMode: boolean
     NOAAWeatherWireServiceSettings: {
         ReconnectionSettings: {
             Enabled: boolean
@@ -81,7 +81,7 @@ export type TypeSettings = {
         DisableGeometryParsing: boolean
         UseShapefileCoordinates: boolean
         CensusPopulationData: boolean
-        NodeTTL: number
+        NodePolygonTTL: number
         NodeMaxDistance: number
         EventFiltering: {
             ListeningEvents: string[]

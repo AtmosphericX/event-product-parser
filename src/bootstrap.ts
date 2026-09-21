@@ -55,11 +55,11 @@ export const Bootstrap = {
     Settings: {
         Timezone: "UTC",
         Database: join(process.cwd(), 'shapefiles.db'),
-        DebugDisableAllEvents: false,
+        DeveloperDisableEvents: false,
         EnableWireService: false,
-        EnableDebugging: false,
+        DeveloperMode: false,
         EnableJournal: true,
-        EnhancedEventJournaling: false,
+        DeveloperEventLogging: false,
         NOAAWeatherWireServiceSettings: {
             ReconnectionSettings: {
                 Enabled: true,
@@ -113,7 +113,7 @@ export const Bootstrap = {
             DisableGeometryParsing: false,
             UseShapefileCoordinates: true,
             CensusPopulationData: true,
-            NodeTTL: 60,
+            NodePolygonTTL: 60,
             NodeMaxDistance: 120,
             EventFiltering: {
                 ListeningEvents: [] as string[],

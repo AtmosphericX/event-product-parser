@@ -38,7 +38,7 @@ export const StartService = async (configurations: TypeSettings): Promise<void> 
     const settings = SetSettings(configurations);
     Bootstrap.Ready = true;
     await InitializeDatabase();
-    if (settings.DebugDisableAllEvents) { return SetWarning({ Message: `DebugDisableAllEvents is enabled, no events will be processed!` }) }
+    if (settings.DeveloperDisableEvents) { return SetWarning({ Message: `DeveloperDisableEvents is enabled, no events will be processed!` }) }
     if (settings.EnableWireService) {
         (async () => {
             await GetCachedEvents();

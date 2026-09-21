@@ -65,7 +65,7 @@ export const CreateEvents = async (events: TypeEvent[]): Promise<void> => {
                     Type: getFeature ? `Updated` : `New`,
                     Event: event
                 },
-                Tree: Bootstrap.Settings.EnhancedEventJournaling ? GetStringText(event).split('\n').filter(line => line.trim() !== '') : [],
+                Tree: Bootstrap.Settings.DeveloperEventLogging ? GetStringText(event).split('\n').filter(line => line.trim() !== '') : [],
                 Message: `${isLocal}[${getFeature ? 'Updated' : 'New'}] ${event.properties.event} (${event.properties.status}) (${event.properties.metadata.tracking})`
             })
         }

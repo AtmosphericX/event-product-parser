@@ -28,7 +28,7 @@ import { Database } from "better-sqlite3"
 import { join } from "path"
 
 export const Bootstrap = {
-    Version: `3.0.8`,
+    Version: `b3.1`,
     Ready: true,
     Ratelimits: {} as Record<string, number[]>,
     Session: null as ReturnType<typeof client>,

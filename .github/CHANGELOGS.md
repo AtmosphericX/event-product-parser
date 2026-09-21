@@ -23,7 +23,7 @@
 
 ## Changelogs
 
-### September 21st, 2026 - b3.0.8
+### September 21st, 2026 - b3.1
 
 **Features**
 - add(theme): Ability to overwrite the default themes using `Manager.GlobalSettings.Themes`

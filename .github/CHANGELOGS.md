@@ -34,6 +34,7 @@
 - feat(github): Added `CODE_OF_CONDUCT.md` and `CONTRIBUTING.md` files to the repository for better community engagement and contribution guidelines.
 - feat(github): Added `SECURITY.md` file to the repository to outline security policies and procedures for reporting vulnerabilities.
 - feat(github): Improved the documentation pathing.
+- feat(docuimentation): Added `FUNDING.yaml` file to the repository to provide information on how to support the project financially.
 
 
 

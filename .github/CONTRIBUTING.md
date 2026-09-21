@@ -20,6 +20,7 @@
         <a href="https://atmosphericx-discord.scriptkitty.cafe"><b>Community Discord</b></a>
     </p>
 </div>
+
 ## How to Contribute
 
 At this time, contributions are limited to:

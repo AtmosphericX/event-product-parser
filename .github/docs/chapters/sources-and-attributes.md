@@ -30,7 +30,7 @@
 # 2.1 - NOAA Weather Wire Service
 [NOAA Weather Wire Service](https://www.weather.gov/nwws) is a real-time dissemination service that delivers official weather information, alerts, forecasts, products, and warnings in text format from NWS Weather Forecast Offices and National Centers. This service is designed for television and radio broadcasters, emergency managers, commercial alerting providers, private weather services, and other organizations that require rapid access to weather products.
 
-Each alert, forecast, and observation is delivered over [XMPP](https://xmpp.org/) using the standardized [WMO Header Format](#24---geojson--wmo-formatting). This provides a consistent structure for automated processing. 
+Each alert, forecast, and observation is delivered over [XMPP](https://xmpp.org/) using the standardized [WMO Header Format](#242---world-meteorological-organization-wmo-format). This provides a consistent structure for automated processing. 
 
 Accessing the NOAA Weather Wire Service requires credentials, which can be obtained by sending an email to [NWWS.Issue@noaa.gov](mailto:NWWS.Issue@noaa.gov).
 

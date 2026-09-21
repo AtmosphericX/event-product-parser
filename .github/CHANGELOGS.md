@@ -31,10 +31,10 @@
 
 **Documentation**
 - feat(github): Added `CHANGELOGS.md` file to the repository for better version tracking and release notes for future releases. See [Changelogs](https://raw.githubusercontent.com/AtmosphericX/AtmosphericX/refs/heads/main/.github/CHANGELOG.md) for prior updates and release notes.
-
 - feat(github): Added `CODE_OF_CONDUCT.md` and `CONTRIBUTING.md` files to the repository for better community engagement and contribution guidelines.
-
 - feat(github): Added `SECURITY.md` file to the repository to outline security policies and procedures for reporting vulnerabilities.
+- feat(github): Improved the documentation pathing.
+
 
 
 **Updates**

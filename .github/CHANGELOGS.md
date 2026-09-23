@@ -27,6 +27,7 @@
 
 **Documentation**
 - feat(github): Added additional documentation event settings, tasks, and filtering
+- feat(github): Remove `!DANGER` and replace with `!WARNING` due to github markdown rendering issues.
 
 ------------------------------------------------------------------------------------------------------------------------
 

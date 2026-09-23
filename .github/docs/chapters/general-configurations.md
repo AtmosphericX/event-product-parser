@@ -45,7 +45,7 @@ new Manager({
 })
 ```
 
-> [!DANGER]
+> [!WARNING]
 > It is imperative that you wait for **ALL** database operations to complete before forcing your application to close. Failure to do so may prevent important data from being fully processed, resulting in missing or incomplete records. If the application is restarted before the database has finished building, you must delete the existing database and allow the parser to rebuild it from scratch. A message will be logged to the console if the database is fully built and ready for use. All event processing is haulted until the database is fully built and ready for use.
 
 
@@ -156,7 +156,7 @@ If you choose to use the `Uploads` task in your action settings, you can configu
 > [!TIP]
 > You can use wildcards to match multiple events with a single action configuration. For example, using `*Warning*` will match all events that contain the word "Warning" in their title, allowing you to apply the same action settings to multiple event types without needing to configure each one individually. Additionally, you can leave the `Events` array empty to apply the action settings to all events, regardless of their type or title. This provides maximum flexibility in defining how the parser should respond to different events.
 
-> [!DANGER]
+> [!WARNING]
 > If you choose to do all events, please be aware that this will result in a large number of files being created and will result in CPU and memory usage being high. Please ensure that your system has the resources to handle this before enabling this option. If you are unsure, it is recommended to only configure specific events for action settings to avoid potential performance issues.
 
 # 3.2 - Global Settings & Filters

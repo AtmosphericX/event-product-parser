@@ -23,6 +23,13 @@
 
 ## Changelogs
 
+### September 23rd, 2026 - b3.1-01
+
+**Documentation**
+- feat(github): Added additional documentation event settings, tasks, and filtering
+
+------------------------------------------------------------------------------------------------------------------------
+
 ### September 21st, 2026 - b3.1
 
 **Features**

@@ -15370,7 +15370,7 @@ var EnumThemes = [
 var import_node_events = require("node:events");
 var import_path = require("path");
 var Bootstrap = {
-  Version: `b3.1`,
+  Version: `b3.1-03`,
   Ready: true,
   Ratelimits: {},
   Session: null,
@@ -19575,17 +19575,19 @@ var ParseText = async (Stanza) => {
     const props = GetEventProperties({ Message: message, Attributes: attributes });
     const header = GetEventHeader({ Properties: props, VTEC: null, Type: Stanza.Type });
     const issued = new Date(attributes.issue);
-    const expires = GetExpiryFromProduct(message) ?? null;
+    const expires = new Date(Date.now() + 60 * 60 * 1e3);
     const matches = EnumMatches[Stanza.Type.Prefix]?.find((match) => match.match.test(message.toUpperCase()));
+    let expiration = GetExpiryFromProduct(message);
     let event = matches?.label;
     let isStatement = matches?.statement ?? false;
     if (!event) {
       event = Stanza.Type.Type;
       if (!Stanza.Type.Discovered) {
-        event += ` (AWIPSID)`;
+        event += ` (Unknown AWIPS)`;
       }
-      if (!expires) {
+      if (!expiration) {
         isStatement = true;
+        expiration = new Date(issued.getTime() + 120 * 1e3);
       }
     }
     Bootstrap.Cache.Parsed.push({
@@ -19599,7 +19601,7 @@ var ParseText = async (Stanza) => {
         parent: event,
         status: isStatement ? `Statement` : `Issued`,
         issued: !isNaN(issued.getTime()) ? issued.toISOString() : (/* @__PURE__ */ new Date()).toISOString(),
-        expires: isStatement ? expires ? expires.toISOString() : new Date(issued.getTime() + 120 * 1e3).toISOString() : !isNaN(expires.getTime()) ? expires.toISOString() : new Date(Date.now() + 60 * 60 * 1e3).toISOString(),
+        expires: expiration && !isNaN(expiration.getTime()) ? expiration.toISOString() : expires.toISOString(),
         theme: GetEventTheme(event),
         ...props,
         metadata: {

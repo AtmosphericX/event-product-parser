@@ -23,6 +23,13 @@
 
 ## Changelogs
 
+### October 6th, 2026 - b3.1-03
+
+**Bug Fixes**
+- fix(expiration): Fixed issue with expiration being set to `undefined` for certain products. This was due to a missing check for `expiration` in the `ParseText` function. Now, if `expiration` is not set, it will default to 2 minutes after the issued time.
+
+------------------------------------------------------------------------------------------------------------------------
+
 ### October 5th, 2026 - b3.1-02
 
 **Bug Fixes**

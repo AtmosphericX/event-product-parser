@@ -40,8 +40,9 @@ export const ParseText = async (Stanza: TypeStanzaCompiled): Promise<void> => {
         const props = GetEventProperties({ Message: message, Attributes: attributes })
         const header = GetEventHeader({ Properties: props, VTEC: null, Type: Stanza.Type })   
         const issued = new Date(attributes.issue)
-        const expires = GetExpiryFromProduct(message) ?? null;
+        const expires = new Date(Date.now() + 60 * 60 * 1000)
         const matches = EnumMatches[Stanza.Type.Prefix]?.find(match => match.match.test(message.toUpperCase()));
+        let expiration = GetExpiryFromProduct(message);
         
         let event = matches?.label;
         let isStatement = matches?.statement ?? false;
@@ -49,13 +50,14 @@ export const ParseText = async (Stanza: TypeStanzaCompiled): Promise<void> => {
         if (!event) { 
             event = Stanza.Type.Type;
             if (!Stanza.Type.Discovered) {
-                event += ` (AWIPSID)`
+                event += ` (Unknown AWIPS)`
             }
-            if (!expires) {
-                isStatement = true;
+            if (!expiration) { 
+                isStatement = true; 
+                expiration = new Date(issued.getTime() + 120 * 1000);
             }
         }
-        
+
         Bootstrap.Cache.Parsed.push({
             type: `Feature`,
             geometry: {
@@ -67,7 +69,7 @@ export const ParseText = async (Stanza: TypeStanzaCompiled): Promise<void> => {
                 parent: event,
                 status: isStatement ? `Statement` : `Issued`,
                 issued: (!isNaN(issued.getTime())) ? issued.toISOString() : new Date().toISOString(),
-                expires: isStatement ? (expires ? expires.toISOString() : new Date(issued.getTime() + 120 * 1000).toISOString()) : (!isNaN(expires.getTime())) ? expires.toISOString() : new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+                expires: expiration && !isNaN(expiration.getTime()) ? expiration.toISOString() : expires.toISOString(),
                 theme: GetEventTheme(event),
                 ...props,
                 metadata: {

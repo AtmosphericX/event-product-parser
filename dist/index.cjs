@@ -15354,6 +15354,7 @@ var EnumThemes = [
   { Event: `Special Marine Warning`, RGB: `rgb(0, 204, 204)` },
   { Event: `Special Weather Statement`, RGB: `rgb(70, 130, 180)` },
   { Event: `Mesoscale Discussion`, RGB: `rgb(255, 0, 0)` },
+  { Event: `Mesoscale Precipitation Discussion`, RGB: `rgb(0, 255, 0)` },
   { Event: `*PDS Tornado Watch*`, RGB: `rgb(255, 0, 0)` },
   { Event: `*Tornado Watch*`, RGB: `rgb(151, 23, 23)` },
   { Event: `*PDS Severe Thunderstorm Watch*`, RGB: `rgb(255, 81, 0)` },
@@ -15361,6 +15362,7 @@ var EnumThemes = [
   { Event: `*Excessive Heat Warning*`, RGB: `rgb(255, 255, 255)` },
   { Event: `*Flood*`, RGB: `rgb(0, 255, 128)` },
   { Event: `*Heat*`, RGB: `rgb(240, 197, 119)` },
+  { Event: `*Special Weather Statement*`, RGB: `rgb(211, 191, 125)` },
   { Event: `Default`, RGB: `rgb(86, 125, 165)` }
 ];
 
@@ -18289,8 +18291,6 @@ var GenerateGraphic = async ({ File, Regions, Event, MaxMiles = 350, Width = 120
   const jCollection = { type: `FeatureCollection`, features: jFeatures };
   const events = (await Promise.all(
     E2.map(async (event2) => {
-      const zones = event2.properties?.geocode?.ugc ?? [];
-      if (zones?.length === 0) return null;
       return { event: event2, polygon: await GetUnionPolygon({
         Polygons: polygons ? [polygons.coordinates] : [await GetEventGeometry({ Event: event2 }).coordinates]
       }) };
@@ -18600,7 +18600,7 @@ var EnumAWIPS = {
   FD9: `Winds Aloft Forecast (12-Hour High Altitude)`,
   FDI: `Fire Danger Indices`,
   FFA: `Flash Flood Watch`,
-  FFG: `Flash Flood Guidance`,
+  FFG: `Mesoscale Precipitation Discussion`,
   FFH: `Headwater Guidance`,
   FFS: `Flash Flood Statement`,
   FFW: `Flash Flood Warning`,
@@ -18949,9 +18949,7 @@ var GetDescriptionFromProduct = ({ Message, Handle }) => {
 // src/parsers/text/GetPolygonFromProduct.ts
 var GetPolygonFromProduct = (message) => {
   const coordinates = [];
-  const match = message.match(
-    /LAT\.\.\.LON\s+([\s\S]*?)(?=\n\s*(?:TIME\.\.\.MOT\.\.\.LOC|\$\$|[A-Za-z]|$))/i
-  );
+  const match = message.match(/LAT\.\.\.LON\s+([\s\S]*?)(?:\r?\n\s*\r?\n|\s*\/\*|$)/i);
   if (!match) return coordinates;
   const text = match[1].split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !/[A-Za-z]/.test(l)).join(" ").trim();
   if (!text) return coordinates;
@@ -19494,6 +19492,21 @@ var GetEventProperties = ({ Message, Attributes, UGC, VTEC }) => {
   return properties;
 };
 
+// src/parsers/text/GetExpiryFromProduct.ts
+var GetExpiryFromProduct = (message) => {
+  const match = message.match(/\b\d{6}Z\s*-\s*(\d{6})Z\b/);
+  if (!match) {
+    return null;
+  }
+  const [, expiry] = match;
+  const day = parseInt(expiry.slice(0, 2), 10);
+  const hour = parseInt(expiry.slice(2, 4), 10);
+  const minute = parseInt(expiry.slice(4, 6), 10);
+  const now = /* @__PURE__ */ new Date();
+  const expires = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), day, hour, minute));
+  return expires;
+};
+
 // src/components/events/components/GetEventHeader.ts
 var GetEventHeader = ({ Properties, VTEC, Type }) => {
   const properties = Properties;
@@ -19562,7 +19575,7 @@ var ParseText = async (Stanza) => {
     const props = GetEventProperties({ Message: message, Attributes: attributes });
     const header = GetEventHeader({ Properties: props, VTEC: null, Type: Stanza.Type });
     const issued = new Date(attributes.issue);
-    const expires = new Date(issued.getTime() + 12 * 60 * 60 * 1e3);
+    const expires = GetExpiryFromProduct(message) ?? null;
     const matches = EnumMatches[Stanza.Type.Prefix]?.find((match) => match.match.test(message.toUpperCase()));
     let event = matches?.label;
     let isStatement = matches?.statement ?? false;
@@ -19571,7 +19584,9 @@ var ParseText = async (Stanza) => {
       if (!Stanza.Type.Discovered) {
         event += ` (AWIPSID)`;
       }
-      isStatement = true;
+      if (!expires) {
+        isStatement = true;
+      }
     }
     Bootstrap.Cache.Parsed.push({
       type: `Feature`,
@@ -19584,7 +19599,7 @@ var ParseText = async (Stanza) => {
         parent: event,
         status: isStatement ? `Statement` : `Issued`,
         issued: !isNaN(issued.getTime()) ? issued.toISOString() : (/* @__PURE__ */ new Date()).toISOString(),
-        expires: isStatement ? new Date(issued.getTime() + 120 * 1e3).toISOString() : !isNaN(expires.getTime()) ? expires.toISOString() : new Date(Date.now() + 60 * 60 * 1e3).toISOString(),
+        expires: isStatement ? expires ? expires.toISOString() : new Date(issued.getTime() + 120 * 1e3).toISOString() : !isNaN(expires.getTime()) ? expires.toISOString() : new Date(Date.now() + 60 * 60 * 1e3).toISOString(),
         theme: GetEventTheme(event),
         ...props,
         metadata: {
@@ -19659,10 +19674,10 @@ var GetExpiry = (message) => {
   if (!match) {
     return null;
   }
-  const date = match?.[1];
-  const day = parseInt(date?.slice(0, 2), 10);
-  const hour = parseInt(date?.slice(2, 4), 10);
-  const minute = parseInt(date?.slice(4, 6), 10);
+  const [, expiry] = match;
+  const day = parseInt(expiry.slice(0, 2), 10);
+  const hour = parseInt(expiry.slice(2, 4), 10);
+  const minute = parseInt(expiry.slice(4, 6), 10);
   const now = /* @__PURE__ */ new Date();
   const expires = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), day, hour, minute));
   return expires.toISOString();
@@ -21200,17 +21215,17 @@ var ProcessStanza = async (Stanza) => {
 };
 
 // src/exports/ManualEvent.ts
-var ManualEvent = async ({ Message, Awipsid }) => {
+var ManualEvent = async ({ Message, Awipsid, Tracking }) => {
   const isCapEvent = Message.includes(`<?xml`);
   const isCapAreaDescription = Message.includes(`<areaDesc>`);
   const isVTEC = Message.match(EnumExpressions.vtec) != null;
   const isUGC = Message.match(EnumExpressions.ugc1) != null;
   const attributes = {
     "xmlns": "@atmosx/event-product-parser",
-    "id": "manual_processor.0000",
+    "id": `manual_processor.${Tracking ?? Math.floor(Math.random() * 1e4).toString().padStart(4, `0`)}`,
     "issue": (/* @__PURE__ */ new Date()).toISOString(),
-    "ttaaii": "XXXXX",
-    "cccc": "XXX",
+    "ttaaii": Awipsid ?? `XXXXXX`,
+    "cccc": `MANL`,
     "awipsid": Awipsid ?? "XXXXXX"
   };
   const getType = GetAwipsType({ Attributes: attributes });

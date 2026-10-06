@@ -23,6 +23,23 @@
 
 ## Changelogs
 
+### October 5th, 2026 - b3.1-02
+
+**Bug Fixes**
+- fix(polygons): Polygon parsing through text has been updated to handle edge cases with non `MOT`/`LOC` text. This should resolve issues with certain products not being parsed correctly.
+- fix(graphics): Fixed non zoned based images from being skipped.
+- fix(manual): Fixed tracking ids from being the same for every manual event. Will be unique for each event now.
+
+**Features**
+- feat(manual): Added ability to pass a tracking id to the manual event processor. This will allow for better tracking of events in the system.
+- feat(themes): Added Mesoscale Persipitation Discussion (FFG) themes.
+- feat(awips): Updated Flash Flood Guidance -> Mesoscale Precipitation Discussion.
+- feat(expires): Added `GetExpiryFromProduct` function to get `VALID X-X` expiry from text products.
+- feat(themes): Updated `*Special Weather Statement*` theme to a more accurate color.
+- feat(ParseText): Updated expires to use `GetExpiryFromProduct` function to get `VALID X-X` expiry from text products.
+
+------------------------------------------------------------------------------------------------------------------------
+
 ### September 23rd, 2026 - b3.1-01
 
 **Documentation**
@@ -43,8 +60,6 @@
 - feat(github): Added `SECURITY.md` file to the repository to outline security policies and procedures for reporting vulnerabilities.
 - feat(github): Improved the documentation pathing.
 - feat(docuimentation): Added `FUNDING.yaml` file to the repository to provide information on how to support the project financially.
-
-
 
 **Updates**
 - update(settings): `DebugDisableAllEvents` -> DeveloperDisableEvents.

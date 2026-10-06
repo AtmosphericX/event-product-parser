@@ -114,8 +114,6 @@ export const GenerateGraphic = async ({ File, Regions, Event, MaxMiles = 350, Wi
     const jCollection: GeoJSON.FeatureCollection = { type: `FeatureCollection`, features: jFeatures };
     const events = (await Promise.all(
         E.map(async (event: TypeEvent) => {
-            const zones = event.properties?.geocode?.ugc ?? [];
-            if (zones?.length === 0) return null;
             return {event, polygon: await GetUnionPolygon({ 
                 Polygons: polygons ? [polygons.coordinates] : [await GetEventGeometry({ Event: event }).coordinates],
             })};

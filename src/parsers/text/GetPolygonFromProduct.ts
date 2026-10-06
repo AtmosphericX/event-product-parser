@@ -19,9 +19,7 @@
 
 export const GetPolygonFromProduct = (message: string): number[][] => {
     const coordinates: number[][] = [];
-    const match = message.match(
-        /LAT\.\.\.LON\s+([\s\S]*?)(?=\n\s*(?:TIME\.\.\.MOT\.\.\.LOC|\$\$|[A-Za-z]|$))/i
-    );
+    const match = message.match(/LAT\.\.\.LON\s+([\s\S]*?)(?:\r?\n\s*\r?\n|\s*\/\*|$)/i);
     if (!match) return coordinates;
     const text = match[1]
         .split(/\r?\n/).map(l => l.trim())

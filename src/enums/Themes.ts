@@ -59,6 +59,7 @@ export const EnumThemes: Themes[] = [
     { Event: `Special Marine Warning`, RGB: `rgb(0, 204, 204)` },
     { Event: `Special Weather Statement`, RGB: `rgb(70, 130, 180)` },
     { Event: `Mesoscale Discussion`, RGB: `rgb(255, 0, 0)` },
+    { Event: `Mesoscale Precipitation Discussion`, RGB: `rgb(0, 255, 0)` },
     { Event: `*PDS Tornado Watch*`, RGB: `rgb(255, 0, 0)` },
     { Event: `*Tornado Watch*`, RGB: `rgb(151, 23, 23)` },
     { Event: `*PDS Severe Thunderstorm Watch*`, RGB: `rgb(255, 81, 0)` },
@@ -66,5 +67,6 @@ export const EnumThemes: Themes[] = [
     { Event: `*Excessive Heat Warning*`, RGB: `rgb(255, 255, 255)` },
     { Event: `*Flood*`, RGB: `rgb(0, 255, 128)` },
     { Event: `*Heat*`, RGB: `rgb(240, 197, 119)` },
+    { Event: `*Special Weather Statement*`, RGB: `rgb(211, 191, 125)` },
     { Event: `Default`, RGB: `rgb(86, 125, 165)` },
 ];

@@ -106,7 +106,7 @@ export const EnumAWIPS: Record<string, string> = {
     FD9: `Winds Aloft Forecast (12-Hour High Altitude)`,
     FDI: `Fire Danger Indices`,
     FFA: `Flash Flood Watch`,
-    FFG: `Flash Flood Guidance`,
+    FFG: `Mesoscale Precipitation Discussion`,
     FFH: `Headwater Guidance`,
     FFS: `Flash Flood Statement`,
     FFW: `Flash Flood Warning`,

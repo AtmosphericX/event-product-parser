@@ -22,6 +22,7 @@ import { TypeStanzaCompiled } from "TypesStandard/StanzaCompiled"
 import { EnumMatches } from "@Enums/Matches"
 import { Bootstrap } from "@Bootstrap"
 import { GetEventProperties } from "@BuilderComponents/GetEventProperties"
+import { GetExpiryFromProduct } from "@ParsingText/GetExpiryFromProduct"
 import { GetEventHeader } from "@BuilderComponents/GetEventHeader"
 import { GetEventTracking } from "@BuilderComponents/GetEventTracking"
 import { GetEventTheme } from "@BuilderComponents/GetEventTheme"
@@ -39,7 +40,7 @@ export const ParseText = async (Stanza: TypeStanzaCompiled): Promise<void> => {
         const props = GetEventProperties({ Message: message, Attributes: attributes })
         const header = GetEventHeader({ Properties: props, VTEC: null, Type: Stanza.Type })   
         const issued = new Date(attributes.issue)
-        const expires = new Date(issued.getTime() + 12 * 60 * 60 * 1000)
+        const expires = GetExpiryFromProduct(message) ?? null;
         const matches = EnumMatches[Stanza.Type.Prefix]?.find(match => match.match.test(message.toUpperCase()));
         
         let event = matches?.label;
@@ -50,7 +51,9 @@ export const ParseText = async (Stanza: TypeStanzaCompiled): Promise<void> => {
             if (!Stanza.Type.Discovered) {
                 event += ` (AWIPSID)`
             }
-            isStatement = true;
+            if (!expires) {
+                isStatement = true;
+            }
         }
         
         Bootstrap.Cache.Parsed.push({
@@ -64,7 +67,7 @@ export const ParseText = async (Stanza: TypeStanzaCompiled): Promise<void> => {
                 parent: event,
                 status: isStatement ? `Statement` : `Issued`,
                 issued: (!isNaN(issued.getTime())) ? issued.toISOString() : new Date().toISOString(),
-                expires: isStatement ? new Date(issued.getTime() + 120 * 1000).toISOString() : (!isNaN(expires.getTime())) ? expires.toISOString() : new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+                expires: isStatement ? (expires ? expires.toISOString() : new Date(issued.getTime() + 120 * 1000).toISOString()) : (!isNaN(expires.getTime())) ? expires.toISOString() : new Date(Date.now() + 60 * 60 * 1000).toISOString(),
                 theme: GetEventTheme(event),
                 ...props,
                 metadata: {

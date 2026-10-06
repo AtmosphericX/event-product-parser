@@ -17,9 +17,9 @@
 
 */
 
-export const GetExpiry = (message: string): string | null => {
-    const match = message.match(/\b(\d{6})-/);
-    if (!match) { 
+export const GetExpiryFromProduct = (message: string): Date | null => {
+    const match = message.match(/\b\d{6}Z\s*-\s*(\d{6})Z\b/);
+    if (!match) {
         return null;
     }
     const [, expiry] = match;
@@ -28,5 +28,5 @@ export const GetExpiry = (message: string): string | null => {
     const minute = parseInt(expiry.slice(4, 6), 10);
     const now = new Date();
     const expires = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), day, hour, minute));
-    return expires.toISOString();
-}
+    return expires;
+};

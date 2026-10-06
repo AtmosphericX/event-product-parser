@@ -24,19 +24,20 @@ import { ProcessStanza } from "@Builder/ProcessStanza"
 interface CreateEventOptions {
     Message: string
     Awipsid?: string
+    Tracking?: string
 }
 
-export const ManualEvent = async ({ Message, Awipsid }: CreateEventOptions): Promise<void> => {
+export const ManualEvent = async ({ Message, Awipsid, Tracking }: CreateEventOptions): Promise<void> => {
     const isCapEvent = Message.includes(`<?xml`);
     const isCapAreaDescription = Message.includes(`<areaDesc>`)
     const isVTEC = Message.match(EnumExpressions.vtec) != null;
     const isUGC = Message.match(EnumExpressions.ugc1) != null;
     const attributes = {
         "xmlns": "@atmosx/event-product-parser",
-        "id": "manual_processor.0000",
+        "id": `manual_processor.${Tracking ?? Math.floor(Math.random() * 10000).toString().padStart(4, `0`)}`,
         "issue": new Date().toISOString(),
-        "ttaaii": "XXXXX",
-        "cccc": "XXX",
+        "ttaaii": Awipsid ?? `XXXXXX`,
+        "cccc": `MANL`,
         "awipsid": Awipsid ?? "XXXXXX",
     }
     const getType = GetAwipsType({ Attributes: attributes})

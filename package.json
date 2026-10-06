@@ -1,6 +1,6 @@
 {
 	"name": "@atmosx/event-product-parser",
-	"version": "3.1.0",
+	"version": "3.1.02",
 	"description": "NOAA Weather Wire & NWS API Parser - Built for standalone and Project AtmosphericX Integration.",
 	"main": "dist/index.cjs",
 	"repository": {

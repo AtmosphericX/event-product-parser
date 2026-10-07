@@ -25,36 +25,43 @@ type EnumMatchesType = {
 
 export const EnumMatches: Record<string, EnumMatchesType[]> = {
     SPS: [
-        { match: /STRONG THUNDERSTORM/i, label: "Convective Special Weather Statement", statement: false },
-        { match: /SPECIAL WEATHER STATEMENT/i, label: "Special Weather Statement", statement: false }
+        { match: /STRONG\s+THUNDERSTORM/i, label: "Convective Special Weather Statement", statement: false },
+        { match: /SPECIAL\s+WEATHER\s+STATEMENT/i, label: "Special Weather Statement", statement: false }
     ],
     TSU: [
-        { match: /TSUNAMI WARNING/i, label: "Tsunami Warning", statement: false },
-        { match: /TSUNAMI WATCH/i, label: "Tsunami Watch", statement: false },
-        { match: /TSUNAMI ADVISORY/i, label: "Tsunami Advisory", statement: false },
-        { match: /TSUNAMI INFORMATION STATEMENT/i, label: "Tsunami Information Statement", statement: false },
-        { match: /TSUNAMI WARNING CANCELLATION/i, label: "Tsunami Cancellation", statement: false }
+        { match: /TSUNAMI\s+WARNING/i, label: "Tsunami Warning", statement: false },
+        { match: /TSUNAMI\s+WATCH/i, label: "Tsunami Watch", statement: false },
+        { match: /TSUNAMI\s+ADVISORY/i, label: "Tsunami Advisory", statement: false },
+        { match: /TSUNAMI\s+INFORMATION\s+STATEMENT/i, label: "Tsunami Information Statement", statement: false },
+        { match: /TSUNAMI\s+WARNING\s+CANCELLATION/i, label: "Tsunami Cancellation", statement: false }
     ],
-    //TCP: [
-    //    { match: /HURRICANE WARNING /i, label: "Hurricane Warning", statement: false },
-    //    { match: /HURRICANE WATCH/i, label: "Hurricane Watch", statement: false },
-    //    { match: /TROPICAL STORM WARNING/i, label: "Tropical Storm Warning", statement: false },
-    //    { match: /TROPICAL STORM WATCH/i, label: "Tropical Storm Watch", statement: false },
-    //    { match: /STORM SURGE WARNING/i, label: "Storm Surge Warning", statement: false },
-    //    { match: /STORM SURGE WATCH/i, label: "Storm Surge Watch", statement: false }
-    //],
+    TCP: [
+        { match: /A\s+HURRICANE\s+WARNING\s+IS\s+IN\s+EFFECT/i, label: "Hurricane Warning", statement: false },
+        { match: /A\s+HURRICANE\s+WATCH\s+IS\s+IN\s+EFFECT/i, label: "Hurricane Watch", statement: false },
+        { match: /A\s+TROPICAL\s+STORM\s+WARNING\s+IS\s+IN\s+EFFECT/i, label: "Tropical Storm Warning", statement: false },
+        { match: /A\s+TROPICAL\s+STORM\s+WATCH\s+IS\s+IN\s+EFFECT/i, label: "Tropical Storm Watch", statement: false },
+        { match: /A\s+STORM\s+SURGE\s+WARNING\s+IS\s+IN\s+EFFECT/i, label: "Storm Surge Warning", statement: false },
+        { match: /A\s+STORM\s+SURGE\s+WATCH\s+IS\s+IN\s+EFFECT/i, label: "Storm Surge Watch", statement: false }
+    ],
     MWW: [
-        { match: /SMALL CRAFT ADVISORY/i, label: "Small Craft Advisory", statement: false },
-        { match: /GALE WARNING/i, label: "Gale Warning", statement: false },
-        { match: /STORM WARNING/i, label: "Storm Warning", statement: false },
-        { match: /HURRICANE FORCE WIND WARNING/i, label: "Hurricane Force Wind Warning", statement: false },
-        { match: /HAZARDOUS SEAS WARNING/i, label: "Hazardous Seas Warning", statement: false },
-        { match: /DENSE FOG ADVISORY/i, label: "Dense Fog Advisory", statement: false },
+        { match: /\.\.\.HURRICANE\s+FORCE\s+WIND\s+WARNING/i, label: "Hurricane Force Wind Warning", statement: false },
+        { match: /\.\.\.HURRICANE\s+WARNING/i, label: "Hurricane Warning", statement: false },
+        { match: /\.\.\.STORM\s+WARNING/i, label: "Storm Warning", statement: false },
+        { match: /\.\.\.GALE\s+WARNING/i, label: "Gale Warning", statement: false },
+        { match: /\.\.\.SMALL\s+CRAFT\s+ADVISORY/i, label: "Small Craft Advisory", statement: false },
+        { match: /\.\.\.HAZARDOUS\s+SEAS\s+WARNING/i, label: "Hazardous Seas Warning", statement: false },
+        { match: /\.\.\.DENSE\s+FOG\s+ADVISORY/i, label: "Dense Fog Advisory", statement: false },
         { match: /THUNDERSTORMS/i, label: "Convective Marine Weather Statement", statement: false },
-        { match: /MARINE WEATHER STATEMENT/i, label: "Marine Weather Statement", statement: false },
+        { match: /MARINE\s+WEATHER\s+STATEMENT/i, label: "Marine Weather Statement", statement: false },
     ],
     PNS: [
-        { match: /NOAA WEATHER WIRE SERVICE/i, label: "NOAA Weather Wire Service Report", statement: true },
-        { match: /Public Information Statement/i, label: "Public Information Statement", statement: true },
+        { match: /NOAA\s+WEATHER\s+WIRE\s+SERVICE/i, label: "NOAA Weather Wire Service Report", statement: true },
+        { match: /Public\s+Information\s+Statement/i, label: "Public Information Statement", statement: true },
+    ],
+    OFF: [
+        { match: /\.\.\.HURRICANE\s+FORCE\s+WIND\s+WARNING/i, label: "Hurricane Force Wind Warning", statement: false },
+        { match: /\.\.\.HURRICANE\s+WARNING/i, label: "Hurricane Warning", statement: false },
+        { match: /\.\.\.STORM\s+WARNING/i, label: "Storm Warning", statement: false },
+        { match: /\.\.\.GALE\s+WARNING/i, label: "Gale Warning", statement: false }
     ]
 };

@@ -38,19 +38,19 @@ export const TaskSendNTFY = async function({ Event, Priority, Body, Topic }: Tas
         Password: configurations.Credentials.Password 
     } : undefined;
 
-    const image = configurations?.MediaStorage?.IMAGE ? { link: `${configurations?.MediaStorage?.IMAGE}/${properties.regions_string}//${properties?.event}_${properties?.metadata?.tracking}.png` } : undefined;
+    const image = configurations?.MediaStorage?.IMAGE ? { link: `${configurations?.MediaStorage?.IMAGE}/${properties?.regions_string ?? `MC`}//${properties?.event}_${properties?.metadata?.tracking}.png` } : undefined;
     const SPCGraphic = properties?.metadata?.attachments?.find(a => a.name === "Image: SPC Graphic") 
         
     const buttons = [
         ...(configurations?.MediaStorage?.AUDIO ? [{
             "action": "view",
             "label": "View Audio",
-            "url": `${configurations.MediaStorage.AUDIO}/${properties.regions_string}/${properties.event}_${properties.metadata.tracking}.wav?unix=${new Date().getTime()}`,
+            "url": `${configurations.MediaStorage.AUDIO}/${properties?.regions_string ?? `MC`}/${properties.event}_${properties.metadata.tracking}.wav?unix=${new Date().getTime()}`,
         }] : []),
         ...(configurations?.MediaStorage?.TEXT ? [{
             "action": "view",
             "label": "View Text",
-            "url": `${configurations.MediaStorage.TEXT}/${properties.regions_string}/${properties.event}_${properties.metadata.tracking}.txt?unix=${new Date().getTime()}`,
+            "url": `${configurations.MediaStorage.TEXT}/${properties?.regions_string ?? `MC`}/${properties.event}_${properties.metadata.tracking}.txt?unix=${new Date().getTime()}`,
         }] : []),
         ...(SPCGraphic ? [{
             "action": "view",

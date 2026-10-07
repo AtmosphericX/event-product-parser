@@ -15370,7 +15370,7 @@ var EnumThemes = [
 var import_node_events = require("node:events");
 var import_path = require("path");
 var Bootstrap = {
-  Version: `b3.1-03`,
+  Version: `b3.1-031`,
   Ready: true,
   Ratelimits: {},
   Session: null,
@@ -15995,7 +15995,7 @@ var GetCleanDescription = (message) => {
     { regex: /\bhourly\b(?!\w)/g, replacement: "per hour" },
     { regex: /\bkg\b(?!\w)/g, replacement: "kilograms" },
     { regex: /\bg\/kg\b(?!\w)/g, replacement: "grams per kilogram" },
-    { regex: /\bmb\b(?!\w)/g, replacement: "millibars" },
+    { regex: /\bMB\b(?!\w)/g, replacement: "millibars" },
     { regex: /\bhPa\b(?!\w)/g, replacement: "hectopascals" },
     { regex: /\bPa\b(?!\w)/g, replacement: "pascals" },
     { regex: /\bKPa\b(?!\w)/g, replacement: "kilopascals" },
@@ -18804,7 +18804,7 @@ var EnumAWIPS = {
   TCD: `Tropical Cyclone Discussion`,
   TCE: `Tropical Cyclone Position Estimate`,
   TCM: `Tropical Cyclone Marine Aviation Advisory`,
-  TCP: `Public Tropical Cyclone Advisory`,
+  TCP: `Tropical Cyclone Advisory`,
   TCS: `Satellite Tropical Cyclone Summary`,
   TCU: `Tropical Cyclone Update`,
   TCV: `Tropical Cyclone Break Points`,
@@ -18893,14 +18893,14 @@ var EnumMatches = {
     { match: /TSUNAMI INFORMATION STATEMENT/i, label: "Tsunami Information Statement", statement: false },
     { match: /TSUNAMI WARNING CANCELLATION/i, label: "Tsunami Cancellation", statement: false }
   ],
-  TCP: [
-    { match: /HURRICANE WARNING/i, label: "Hurricane Warning", statement: false },
-    { match: /HURRICANE WATCH/i, label: "Hurricane Watch", statement: false },
-    { match: /TROPICAL STORM WARNING/i, label: "Tropical Storm Warning", statement: false },
-    { match: /TROPICAL STORM WATCH/i, label: "Tropical Storm Watch", statement: false },
-    { match: /STORM SURGE WARNING/i, label: "Storm Surge Warning", statement: false },
-    { match: /STORM SURGE WATCH/i, label: "Storm Surge Watch", statement: false }
-  ],
+  //TCP: [
+  //    { match: /HURRICANE WARNING /i, label: "Hurricane Warning", statement: false },
+  //    { match: /HURRICANE WATCH/i, label: "Hurricane Watch", statement: false },
+  //    { match: /TROPICAL STORM WARNING/i, label: "Tropical Storm Warning", statement: false },
+  //    { match: /TROPICAL STORM WATCH/i, label: "Tropical Storm Watch", statement: false },
+  //    { match: /STORM SURGE WARNING/i, label: "Storm Surge Warning", statement: false },
+  //    { match: /STORM SURGE WATCH/i, label: "Storm Surge Watch", statement: false }
+  //],
   MWW: [
     { match: /SMALL CRAFT ADVISORY/i, label: "Small Craft Advisory", statement: false },
     { match: /GALE WARNING/i, label: "Gale Warning", statement: false },
@@ -18946,6 +18946,9 @@ var GetDescriptionFromProduct = ({ Message, Handle }) => {
       const latEnd = getEndIndex(afterHandle);
       Message = latEnd !== -1 ? afterHandle.substring(0, latEnd).trim() : afterHandle.trim();
     }
+  }
+  if (Message == "" || Message == null) {
+    return "This product did not contain a valid description. Please check the product for more information.";
   }
   return Message.trim();
 };
@@ -20072,7 +20075,7 @@ var ParseAPI = async (Stanza) => {
           const abbrs = [...new Set(feature2?.properties?.geocode?.UGC?.map((l) => l.match(/^([A-Z]{2})[CZ](\d{3})$/)?.[1]).filter(Boolean) ?? [])];
           return abbrs.length ? abbrs.join(`-`) : null;
         })(),
-        description: feature2?.properties?.description ?? null,
+        description: feature2?.properties?.description ?? `This product did not contain a valid description. Please check the product for more information`,
         attributes: feature2?.properties?.attributes ?? {},
         theme: GetEventTheme(feature2?.properties?.event),
         geocode: {
@@ -20394,18 +20397,18 @@ var TaskSendNTFY = async function({ Event, Priority, Body, Topic }) {
     Username: configurations.Credentials.Username,
     Password: configurations.Credentials.Password
   } : void 0;
-  const image = configurations?.MediaStorage?.IMAGE ? { link: `${configurations?.MediaStorage?.IMAGE}/${properties.regions_string}//${properties?.event}_${properties?.metadata?.tracking}.png` } : void 0;
+  const image = configurations?.MediaStorage?.IMAGE ? { link: `${configurations?.MediaStorage?.IMAGE}/${properties?.regions_string ?? `MC`}//${properties?.event}_${properties?.metadata?.tracking}.png` } : void 0;
   const SPCGraphic = properties?.metadata?.attachments?.find((a) => a.name === "Image: SPC Graphic");
   const buttons = [
     ...configurations?.MediaStorage?.AUDIO ? [{
       "action": "view",
       "label": "View Audio",
-      "url": `${configurations.MediaStorage.AUDIO}/${properties.regions_string}/${properties.event}_${properties.metadata.tracking}.wav?unix=${(/* @__PURE__ */ new Date()).getTime()}`
+      "url": `${configurations.MediaStorage.AUDIO}/${properties?.regions_string ?? `MC`}/${properties.event}_${properties.metadata.tracking}.wav?unix=${(/* @__PURE__ */ new Date()).getTime()}`
     }] : [],
     ...configurations?.MediaStorage?.TEXT ? [{
       "action": "view",
       "label": "View Text",
-      "url": `${configurations.MediaStorage.TEXT}/${properties.regions_string}/${properties.event}_${properties.metadata.tracking}.txt?unix=${(/* @__PURE__ */ new Date()).getTime()}`
+      "url": `${configurations.MediaStorage.TEXT}/${properties?.regions_string ?? `MC`}/${properties.event}_${properties.metadata.tracking}.txt?unix=${(/* @__PURE__ */ new Date()).getTime()}`
     }] : [],
     ...SPCGraphic ? [{
       "action": "view",
@@ -21057,12 +21060,16 @@ var GetEventPopulation = (geometry) => {
   }
   const normalized = NormalizePolygon(geometry);
   const points = normalized.type === `Polygon` ? normalized.coordinates[0] : normalized.coordinates.flatMap((polygon) => polygon[0]);
-  const latitudes = points.map(([lon, lat]) => lat);
-  const longitudes = points.map(([lon, lat]) => lon);
-  const minLat = Math.min(...latitudes);
-  const maxLat = Math.max(...latitudes);
-  const minLon = Math.min(...longitudes);
-  const maxLon = Math.max(...longitudes);
+  let minLat = Infinity;
+  let maxLat = -Infinity;
+  let minLon = Infinity;
+  let maxLon = -Infinity;
+  for (const [lon, lat] of points) {
+    minLat = Math.min(minLat, lat);
+    maxLat = Math.max(maxLat, lat);
+    minLon = Math.min(minLon, lon);
+    maxLon = Math.max(maxLon, lon);
+  }
   const A2 = CreateQuery({
     Query: `SELECT * FROM cities WHERE LAT BETWEEN ? AND ? AND LON BETWEEN ? AND ?`,
     Parameters: [minLat, maxLat, minLon, maxLon]

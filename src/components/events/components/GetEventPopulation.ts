@@ -34,12 +34,16 @@ export const GetEventPopulation = (geometry: GeoJSON.Polygon | GeoJSON.MultiPoly
     }
     const normalized = NormalizePolygon(geometry) as GeoJSON.Polygon | GeoJSON.MultiPolygon;
     const points = normalized.type === `Polygon` ? normalized.coordinates[0] : normalized.coordinates.flatMap(polygon => polygon[0]);
-    const latitudes = points.map(([lon, lat]) => lat);
-    const longitudes = points.map(([lon, lat]) => lon);
-    const minLat = Math.min(...latitudes);
-    const maxLat = Math.max(...latitudes);
-    const minLon = Math.min(...longitudes);
-    const maxLon = Math.max(...longitudes);
+    let minLat = Infinity;
+    let maxLat = -Infinity;
+    let minLon = Infinity;
+    let maxLon = -Infinity;
+    for (const [lon, lat] of points) {
+        minLat = Math.min(minLat, lat);
+        maxLat = Math.max(maxLat, lat);
+        minLon = Math.min(minLon, lon);
+        maxLon = Math.max(maxLon, lon);
+    }
     const A = CreateQuery({
         Query: `SELECT * FROM cities WHERE LAT BETWEEN ? AND ? AND LON BETWEEN ? AND ?`,
         Parameters: [ minLat, maxLat, minLon, maxLon ]

@@ -35,14 +35,14 @@ export const EnumMatches: Record<string, EnumMatchesType[]> = {
         { match: /TSUNAMI INFORMATION STATEMENT/i, label: "Tsunami Information Statement", statement: false },
         { match: /TSUNAMI WARNING CANCELLATION/i, label: "Tsunami Cancellation", statement: false }
     ],
-    TCP: [
-        { match: /HURRICANE WARNING/i, label: "Hurricane Warning", statement: false },
-        { match: /HURRICANE WATCH/i, label: "Hurricane Watch", statement: false },
-        { match: /TROPICAL STORM WARNING/i, label: "Tropical Storm Warning", statement: false },
-        { match: /TROPICAL STORM WATCH/i, label: "Tropical Storm Watch", statement: false },
-        { match: /STORM SURGE WARNING/i, label: "Storm Surge Warning", statement: false },
-        { match: /STORM SURGE WATCH/i, label: "Storm Surge Watch", statement: false }
-    ],
+    //TCP: [
+    //    { match: /HURRICANE WARNING /i, label: "Hurricane Warning", statement: false },
+    //    { match: /HURRICANE WATCH/i, label: "Hurricane Watch", statement: false },
+    //    { match: /TROPICAL STORM WARNING/i, label: "Tropical Storm Warning", statement: false },
+    //    { match: /TROPICAL STORM WATCH/i, label: "Tropical Storm Watch", statement: false },
+    //    { match: /STORM SURGE WARNING/i, label: "Storm Surge Warning", statement: false },
+    //    { match: /STORM SURGE WATCH/i, label: "Storm Surge Watch", statement: false }
+    //],
     MWW: [
         { match: /SMALL CRAFT ADVISORY/i, label: "Small Craft Advisory", statement: false },
         { match: /GALE WARNING/i, label: "Gale Warning", statement: false },

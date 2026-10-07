@@ -55,5 +55,8 @@ export const GetDescriptionFromProduct = ({ Message, Handle }: GetDescriptionFro
             Message = latEnd !== -1 ? afterHandle.substring(0, latEnd).trim() : afterHandle.trim();
         }
     }
+    if (Message == "" || Message == null) {
+        return "This product did not contain a valid description. Please check the product for more information.";
+    }
     return Message.trim();
 }

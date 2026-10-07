@@ -55,7 +55,7 @@ export const GetCleanDescription = (message: string): string => {
         { regex: /\bhourly\b(?!\w)/g, replacement: 'per hour' },
         { regex: /\bkg\b(?!\w)/g, replacement: 'kilograms' },
         { regex: /\bg\/kg\b(?!\w)/g, replacement: 'grams per kilogram' },
-        { regex: /\bmb\b(?!\w)/g, replacement: 'millibars' },
+        { regex: /\bMB\b(?!\w)/g, replacement: 'millibars' },
         { regex: /\bhPa\b(?!\w)/g, replacement: 'hectopascals' },
         { regex: /\bPa\b(?!\w)/g, replacement: 'pascals' },
         { regex: /\bKPa\b(?!\w)/g, replacement: 'kilopascals' },

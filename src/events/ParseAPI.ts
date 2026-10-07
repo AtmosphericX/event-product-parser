@@ -56,7 +56,7 @@ export const ParseAPI = async (Stanza: TypeStanzaCompiled): Promise<void> => {
                     const abbrs = [...new Set(feature?.properties?.geocode?.UGC?.map((l: string) => l.match(/^([A-Z]{2})[CZ](\d{3})$/)?.[1]).filter(Boolean) ?? [])];
                     return abbrs.length ? abbrs.join(`-`) : null;
                 })(),
-                description: feature?.properties?.description ?? null,
+                description: feature?.properties?.description ?? `This product did not contain a valid description. Please check the product for more information`,
                 attributes: feature?.properties?.attributes ?? {},
                 theme: GetEventTheme(feature?.properties?.event),
                 geocode: {

@@ -310,7 +310,7 @@ export const EnumAWIPS: Record<string, string> = {
     TCD: `Tropical Cyclone Discussion`,
     TCE: `Tropical Cyclone Position Estimate`,
     TCM: `Tropical Cyclone Marine Aviation Advisory`,
-    TCP: `Public Tropical Cyclone Advisory`,
+    TCP: `Tropical Cyclone Advisory`,
     TCS: `Satellite Tropical Cyclone Summary`,
     TCU: `Tropical Cyclone Update`,
     TCV: `Tropical Cyclone Break Points`,

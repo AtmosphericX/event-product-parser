@@ -23,6 +23,16 @@
 
 ## Changelogs
 
+### October 7th, 2026 - b3.1-031
+
+**Bug Fixes**
+- fix(audio): Prevented the TTS Engine from saying Megabytes instead of Millibars when reading out the description. lmao
+- fix(tropical): Fixed an issue with tropical products being incorrectly parsed.
+- fix(population): Fixed an issue with population getting was recieving `max calls exceeded` error when trying to get population data. This was due to a missing check for `population` in the `GetPopulationFromUGC` function. Now, if `population` is not set, it will default to 0.
+- fix(descriptions): Fixed an issue with descriptions being set to `undefined` for certain products. This was due to not having a valid description. Any and all descriptions should be defined with a default message if the description is not set.
+
+------------------------------------------------------------------------------------------------------------------------
+
 ### October 6th, 2026 - b3.1-03
 
 **Bug Fixes**

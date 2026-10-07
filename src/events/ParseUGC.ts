@@ -68,7 +68,7 @@ export const ParseUGC = async (Stanza: TypeStanzaCompiled): Promise<void> => {
                     parent: event,
                     status: isStatement ? `Statement` : `Issued`,
                     issued: (!isNaN(issued.getTime())) ? issued.toISOString() : new Date().toISOString(),
-                    expires: isStatement ? new Date(issued.getTime() + 120 * 1000).toISOString() : (!isNaN(expires.getTime())) ? expires.toISOString() : new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+                    expires: isStatement ? new Date(issued.getTime() + 120 * 1000).toISOString() : (!isNaN(expires.getTime())) ? expires.toISOString() : new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(),
                     theme: GetEventTheme(event),
                     ...props,
                     metadata: {

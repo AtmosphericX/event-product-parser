@@ -40,7 +40,7 @@ export const ParseText = async (Stanza: TypeStanzaCompiled): Promise<void> => {
         const props = GetEventProperties({ Message: message, Attributes: attributes })
         const header = GetEventHeader({ Properties: props, VTEC: null, Type: Stanza.Type })   
         const issued = new Date(attributes.issue)
-        const expires = new Date(Date.now() + 60 * 60 * 1000)
+        const expires = new Date(Date.now() + 12 * 60 * 60 * 1000)
         const matches = EnumMatches[Stanza.Type.Prefix]?.find(match => match.match.test(message.toUpperCase()));
         let expiration = GetExpiryFromProduct(message);
         

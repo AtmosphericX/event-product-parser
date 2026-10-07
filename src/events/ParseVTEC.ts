@@ -60,7 +60,7 @@ export const ParseVTEC = async (Stanza: TypeStanzaCompiled): Promise<void> => {
                         parent: vtec.event,
                         status: vtec.status,
                         issued: (!isNaN(issued.getTime())) ? issued.toISOString() : new Date().toISOString(),
-                        expires: (!isNaN(expires.getTime())) ? expires.toISOString() : ugc.Expires ??  new Date(issued.getTime() + 60 * 60 * 1000).toISOString(),
+                        expires: (!isNaN(expires.getTime())) ? expires.toISOString() : ugc.Expires ??  new Date(issued.getTime() + 12 * 60 * 60 * 1000).toISOString(),
                         theme: GetEventTheme(vtec.event),
                         ...props,
                         metadata: {

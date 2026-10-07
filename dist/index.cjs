@@ -19589,7 +19589,7 @@ var ParseText = async (Stanza) => {
     const props = GetEventProperties({ Message: message, Attributes: attributes });
     const header = GetEventHeader({ Properties: props, VTEC: null, Type: Stanza.Type });
     const issued = new Date(attributes.issue);
-    const expires = new Date(Date.now() + 60 * 60 * 1e3);
+    const expires = new Date(Date.now() + 12 * 60 * 60 * 1e3);
     const matches = EnumMatches[Stanza.Type.Prefix]?.find((match) => match.match.test(message.toUpperCase()));
     let expiration = GetExpiryFromProduct(message);
     let event = matches?.label;
@@ -19790,7 +19790,7 @@ var ParseUGC = async (Stanza) => {
           parent: event,
           status: isStatement ? `Statement` : `Issued`,
           issued: !isNaN(issued.getTime()) ? issued.toISOString() : (/* @__PURE__ */ new Date()).toISOString(),
-          expires: isStatement ? new Date(issued.getTime() + 120 * 1e3).toISOString() : !isNaN(expires.getTime()) ? expires.toISOString() : new Date(Date.now() + 60 * 60 * 1e3).toISOString(),
+          expires: isStatement ? new Date(issued.getTime() + 120 * 1e3).toISOString() : !isNaN(expires.getTime()) ? expires.toISOString() : new Date(Date.now() + 12 * 60 * 60 * 1e3).toISOString(),
           theme: GetEventTheme(event),
           ...props,
           metadata: {
@@ -20028,7 +20028,7 @@ var ParseVTEC = async (Stanza) => {
             parent: vtec.event,
             status: vtec.status,
             issued: !isNaN(issued.getTime()) ? issued.toISOString() : (/* @__PURE__ */ new Date()).toISOString(),
-            expires: !isNaN(expires.getTime()) ? expires.toISOString() : ugc.Expires ?? new Date(issued.getTime() + 60 * 60 * 1e3).toISOString(),
+            expires: !isNaN(expires.getTime()) ? expires.toISOString() : ugc.Expires ?? new Date(issued.getTime() + 12 * 60 * 60 * 1e3).toISOString(),
             theme: GetEventTheme(vtec.event),
             ...props,
             metadata: {

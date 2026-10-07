@@ -28,6 +28,12 @@
 **Bug Fixes**
 - fix(expiration): Fixed issue with expiration being set to `undefined` for certain products. This was due to a missing check for `expiration` in the `ParseText` function. Now, if `expiration` is not set, it will default to 2 minutes after the issued time.
 
+**Features**
+- feat(awips): Added FHMSUM -> `Meteorological Observations`
+- feat(awips): Added 3HRCON -> `3-Hour Convective Outlook`
+- feat(awips): Added FOPNW -> `National Flood Outlook`
+- feat(awips): Added TSTHEB -> `Redundant Test Message`
+
 ------------------------------------------------------------------------------------------------------------------------
 
 ### October 5th, 2026 - b3.1-02

@@ -363,4 +363,8 @@ export const EnumAWIPS: Record<string, string> = {
     WWA: `Watch Status Report`,
     WWP: `Watch Probabilities`,
     ZFP: `Zone Forecast Product`,
+    FHMSUM: `Meteorological Observations`,
+    FOPNW: `National Flood Outlook`,
+    TSTHEB: `Redundant Test Message`,
+    "3HRCON": `3-Hour Convective Outlook`,
 };

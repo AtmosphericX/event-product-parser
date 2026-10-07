@@ -18856,7 +18856,11 @@ var EnumAWIPS = {
   WSW: `Winter Weather Warning`,
   WWA: `Watch Status Report`,
   WWP: `Watch Probabilities`,
-  ZFP: `Zone Forecast Product`
+  ZFP: `Zone Forecast Product`,
+  FHMSUM: `Meteorological Observations`,
+  FOPNW: `National Flood Outlook`,
+  TSTHEB: `Redundant Test Message`,
+  "3HRCON": `3-Hour Convective Outlook`
 };
 
 // src/components/stanza/GetAwipsType.ts

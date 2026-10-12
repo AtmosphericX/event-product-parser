@@ -17,18 +17,11 @@
 
 */
 
-import { mkdir, appendFile } from "fs/promises"
-
-interface TaskGenerateTextOptions {
-    String: string;
-    Directory: string;
-    Filename: string;
-}
-
-export const TaskGenerateText = async function({ String, Directory, Filename }: TaskGenerateTextOptions): Promise<string> { 
-    if (Directory) { 
-        await mkdir(Directory, { recursive: true });
-        await appendFile(Directory + "/" + Filename, `${String}${"\n".repeat(5)}`);
-    }
-    return String;
+export type TypeWatches = {
+    tracking: string
+    zones: {
+        id: string
+        expires: string
+        polygon: any
+    }[]
 }

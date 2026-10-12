@@ -17,6 +17,7 @@
 
 */
 
+import { EnumStrings } from "@Enums/Strings"
 import { Bootstrap } from "@Bootstrap"
 import { SetWarning } from "@Utilities/SetWarning"
 import { SetEventEmit } from "@Utilities/SetEventEmit"
@@ -29,6 +30,10 @@ interface GetNodeOptions {
 }
 
 export const SetNode = ({ Identifier, Delete, Coordinates }: GetNodeOptions) => {
+    if (!Bootstrap.Ready) { 
+        SetWarning({ Message: EnumStrings.nostart})
+        return
+    }
     const nodes = Bootstrap.Cache.Nodes.features;
     const exists = nodes.find((node) => node.properties.identifier === Identifier);
     const nearest = GetNearestCity({ Coordinates, Radius: 25 });

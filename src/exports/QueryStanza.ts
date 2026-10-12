@@ -17,8 +17,11 @@
 
 */
 
+import { EnumStrings } from "@Enums/Strings"
 import { TypeStanza } from "TypesEvent/Stanza"
+import { Bootstrap } from "@Bootstrap"
 import { CreateQuery } from "@Database/CreateQuery"
+import { SetWarning } from "@Utilities/SetWarning"
 
 interface QueryStanzaOptions {
     Search: string
@@ -31,6 +34,10 @@ type QueryStanza = {
 }
 
 export const QueryStanza = async ({ Search, Max }: QueryStanzaOptions): Promise<TypeStanza[]> => {
+    if (!Bootstrap.Ready) { 
+        SetWarning({ Message: EnumStrings.nostart})
+        return
+    }
     const query = CreateQuery({ 
         Query: `SELECT * FROM stanzas WHERE stanza LIKE ? LIMIT ?`, 
         Parameters: [`%${Search}%`, Max ?? 100] 

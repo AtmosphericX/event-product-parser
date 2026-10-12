@@ -22,7 +22,7 @@ import { Bootstrap } from "@Bootstrap"
 import { GetEventNodes } from "@BuilderComponents/GetEventNodes"
 import { SetEventEmit } from "@Utilities/SetEventEmit"
 
-export const UpdateNode = async (selected?: TypeEvent): Promise<void> => {
+export const SetEventPolygonNodes = async (selected?: TypeEvent): Promise<void> => {
     const events = Bootstrap.Cache.Events.features;
     const ttl = Bootstrap.Settings.GlobalSettings.NodePolygonTTL * 1e3;
     let total = 0;

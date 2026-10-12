@@ -17,18 +17,18 @@
 
 */
 
-import { mkdir, writeFile } from "fs/promises"
+import { mkdir, appendFile } from "fs/promises"
 
-interface TaskGenerateJSONOptions {
+interface TaskGenerateFileOptions {
     String: string;
     Directory: string;
     Filename: string;
 }
 
-export const TaskGenerateJSON = async function({ String, Directory, Filename }: TaskGenerateJSONOptions): Promise<string> { 
+export const TaskGenerateFile = async function({ String, Directory, Filename }: TaskGenerateFileOptions): Promise<string> { 
     if (Directory) { 
         await mkdir(Directory, { recursive: true });
-        await writeFile(Directory + "/" + Filename, `${String}${"\n".repeat(5)}`);
+        await appendFile(Directory + "/" + Filename, `${String}${"\n".repeat(5)}`);
     }
     return String;
 }

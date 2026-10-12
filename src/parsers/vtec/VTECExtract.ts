@@ -41,8 +41,11 @@ export const VTECExtract = (message: string): TypeVTEC[] | null => {
             status: EnumStatus[sub[1]],
             wmo: message.match(EnumExpressions.wmo)?.[0] ?? null,
             expires: GetExpiry(dates),
-            watch: (sub[4] == `A` || sub[4] == `Y`) && (sub[3] == `TO` || sub[3] == `SV`),
-            wou: sub[2] == `KWNS` ? true : false
+            watch: {
+                severe: (sub[4] == `A` || sub[4] == `Y`) && (sub[3] == `TO` || sub[3] == `SV`),
+                tropical: (sub[4] == `A` || sub[4] == `Y`) && (sub[3] == `TR` || sub[3] == `HU`),
+                national: [`KWNS`, `KNHC`].includes(sub[2])
+            }
         })
     }
     return vtecs.length > 0 ? vtecs : null;

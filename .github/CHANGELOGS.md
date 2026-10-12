@@ -25,6 +25,8 @@
 
 ### October 7th, 2026 - b3.1-031
 
+-- Rewriting project for b3.1-04 --
+
 **Bug Fixes**
 - fix(audio): Prevented the TTS Engine from saying Megabytes instead of Millibars when reading out the description. lmao
 - fix(tropical): Fixed an issue with tropical products being incorrectly parsed.

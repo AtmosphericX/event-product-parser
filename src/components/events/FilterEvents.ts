@@ -57,19 +57,20 @@ export const FilterEvents = async (events: TypeEvent[]): Promise<void> => {
             SetEventEmit({ Event: `onTestProduct`, Metadata: define })
             if (bools?.IgnoreTestProducts) return true; 
         }
-        
+
         if (properties.status_metadata.is_expired) { 
             SetEventEmit({ Event: `onExpiredProduct`, Metadata: define })
             RemoveEvents({ Event: define, IsTimeBasedExpiration: false })
             return true; 
         }
         
-        if (properties.metadata?.vtec?.watch && properties.metadata.source != `events.api`) {
-            const isWOU = properties.metadata?.vtec?.wou;
-            if (!isWOU) { 
-                properties.metadata.tracking = properties.metadata.tracking.replace(properties.metadata.tracking.split(`.`)[0], `KWNS`)
+        if ((properties.metadata?.vtec?.watch?.severe || properties.metadata?.vtec?.watch?.tropical) && properties.metadata.source != `events.api`) {
+            const isNational = properties.metadata?.vtec?.watch?.national
+            const center = properties.metadata?.vtec?.watch?.severe ? `KWNS` : properties.metadata?.vtec?.watch?.tropical ? `KNHC` : `KWNS`
+            if (!isNational) { 
+                properties.metadata.tracking = properties.metadata.tracking.replace(properties.metadata.tracking.split(`.`)[0], center)
             }
-            SetEventEmit({ Event: isWOU ? `onWatchOutlineUpdate` : `onWatchCountyNotification`, Metadata: define })
+            SetEventEmit({ Event: isNational ? `onCenterWatchNotirication` : `onCountyWatchNotification`, Metadata: define })
         }
 
         for (const key in sets) {

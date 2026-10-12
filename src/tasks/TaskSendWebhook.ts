@@ -41,67 +41,78 @@ interface TaskSendWebhookOptions {
 }
 
 export const TaskSendWebhook = async function({ Event, Webhook, Attachments }: TaskSendWebhookOptions): Promise<void> { 
+    const { Image, Text, Audio, Json } = Attachments;
+    const { Title, Message, Destination, Ratelimit } = Webhook;
+    
     const { properties } = Event;
-    const isRatelimited = SetTimeoutAction({
-        Identifier: Webhook.Destination,
-        Interval: (Webhook.Ratelimit ?? 2) * 2,
-        Max: (Webhook.Ratelimit ?? 2), 
+    const { event, status, description, metadata, status_metadata } = properties;
+    const { is_expired } = status_metadata;
+    const { tracking, attachments } = metadata;
+
+    const { Limited } = SetTimeoutAction({
+        Identifier: Destination,
+        Interval: (Ratelimit ?? 2) * 2,
+        Max: (Ratelimit ?? 2), 
         AddTime: true 
     })
-    if (isRatelimited.Limited) { return }
-    const newForm = new FormData();
-    const newEmbed = {
-        title: `${properties.event} (${properties.status})`,
+
+    if (Limited) { return }
+
+    const form = new FormData();
+    const embed = {
+        title: `${event} (${status})`,
         description: GetEmbededText(Event),
         fields: [] as { name: string, value: string }[],
         color: 16711680,
-        thumbnail: Attachments?.Image ? { url: `attachment://${properties.event}_${properties.status}_${properties.metadata.tracking}.png` } : undefined,
+        thumbnail: Image ? { url: `attachment://${event}_${status}_${tracking}.png` } : undefined,
         timestamp: new Date().toISOString(),
-        footer: { text: Webhook.Title ?? `AtmosphericX` }
+        footer: { text: Title ?? `AtmosphericX` }
     };
-    if (properties.description && !properties.status_metadata.is_expired) {
-        const description = properties.description.length > 900
-            ? properties.description.substring(0, 900) + "\n\n[Message truncated due to length]"
-            : properties.description;
-        newEmbed.fields.push({
+
+    if (description && !is_expired) {
+        const body = description.length > 900
+            ? description.substring(0, 900) + "\n\n[Message truncated due to length]"
+            : description;
+        embed.fields.push({
             name: "Description", 
-            value: description ? '```' + '\n' + description.split('\n').map(l => l.trim()).filter(Boolean).join('\n') + '\n' + '```' : ""
+            value: body ? '```' + '\n' + body.split('\n').map(l => l.trim()).filter(Boolean).join('\n') + '\n' + '```' : ""
         });
     }
-    if (properties.metadata.attachments?.length > 0) {
-        const attachments = properties.metadata.attachments.slice(0, 5);
-        newEmbed.fields.push({
+
+    if (attachments?.length > 0) {
+        const attach = attachments.slice(0, 5);
+        embed.fields.push({
             name: "Attachments", 
-            value: attachments.map(attachment => `- [${attachment.name.length > 45 ? attachment.name.substring(0, 45) + '...' : attachment.name}](${attachment.link})`).join('\n')
+            value: attach.map(attachment => `- [${attachment.name.length > 45 ? attachment.name.substring(0, 45) + '...' : attachment.name}](${attachment.link})`).join('\n')
         });
     }
 
-    if (Attachments?.Image) {
-        const file = await readFile(Attachments.Image);
-        newForm.append("attachmentImage", new Blob([Buffer.from(file)], {type: "image/png"}), `${properties.event}_${properties.status}_${properties.metadata.tracking}.png`)
+    if (Image) {
+        const file = await readFile(Image);
+        form.append("attachmentImage", new Blob([Buffer.from(file)], {type: "image/png"}), `${properties.event}_${properties.status}_${properties.metadata.tracking}.png`)
     }
 
-    if (Attachments?.Text) {
-        newForm.append("attachmentText", new Blob([Buffer.from(Attachments.Text)], {type: "application/text"}), `${properties.event}_${properties.status}_${properties.metadata.tracking}.txt`)
+    if (Text) {
+        form.append("attachmentText", new Blob([Buffer.from(Text)], {type: "application/text"}), `${properties.event}_${properties.status}_${properties.metadata.tracking}.txt`)
     }
-    if (Attachments?.Json) {
-        newForm.append("attachmentJson", new Blob([Buffer.from(Attachments.Json)], {type: "application/json"}), `${properties.event}_${properties.status}_${properties.metadata.tracking}.json`)
+    if (Json) {
+        form.append("attachmentJson", new Blob([Buffer.from(Json)], {type: "application/json"}), `${properties.event}_${properties.status}_${properties.metadata.tracking}.json`)
     }
-    if (Attachments?.Audio) {
-        const file = await readFile(Attachments.Audio);
-        newForm.append("attachmentAudio", new Blob([Buffer.from(file)], {type: "application/wav"}), `${properties.event}_${properties.status}_${properties.metadata.tracking}.wav`)
+    if (Audio) {
+        const file = await readFile(Audio);
+        form.append("attachmentAudio", new Blob([Buffer.from(file)], {type: "application/wav"}), `${properties.event}_${properties.status}_${properties.metadata.tracking}.wav`)
     }
 
-    newForm.append("payload_json", JSON.stringify({ 
-        username: Webhook.Title ?? `AtmosphericX`,
-        content: Webhook.Message ?? "",
-        embeds: [newEmbed]
+    form.append("payload_json", JSON.stringify({ 
+        username: Title ?? `AtmosphericX`,
+        content: Message ?? "",
+        embeds: [embed]
     }));
 
     await CreateHttp({
-        URL: Webhook.Destination,
+        URL: Destination,
         Timeout: 15e3,
         Method: `POST`,
-        Body: newForm
+        Body: form
     })
 }

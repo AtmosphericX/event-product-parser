@@ -50,7 +50,6 @@ export type TypeSettings = {
         }
     }
     NationalWeatherServiceSettings: {
-        CallbackInterval: number
         EventsEndpoint: string
     }
     BroadcastifySettings: {

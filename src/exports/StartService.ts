@@ -20,43 +20,37 @@
 import { TypeSettings } from "TypesStandard/Settings"
 import { Bootstrap } from "@Bootstrap"
 import { SetWarning } from "@Utilities/SetWarning"
-import { SetSettings } from "@Utilities/SetSettings"
+import { ClearEvents } from "@Exports/ClearEvents"
 import { EmitThread } from "@Utilities/EmitThread"
 import { DeployXMPP } from "@XMPP/DeployXMPP"
 import { InitializeDatabase } from "@Database/InitializeDatabase"
 import { GetCachedEvents } from "@BuilderUtilities/GetCachedEvents"
-import { UpdateNode } from "@BuilderUtilities/UpdateNode"
+import { SetEventPolygonNodes } from "@Builder/utilities/SetEventPolygonNodes"
 import { UpdateEvents } from "@BuilderUtilities/UpdateEvents"
 import { Cron } from "croner"
 
-export const StartService = async (configurations: TypeSettings): Promise<void> => {
-    if (!Bootstrap.Ready) { 
-        return SetWarning({ 
-            Message: `You can not create another instance without shutting down the current one first, please make sure to call the stop() method first!` 
+export const StartService = async (): Promise<void> => {
+    const { DeveloperDisableEvents, EnableWireService } = Bootstrap.Settings;
+
+    if (Bootstrap.Ready) { 
+        return SetWarning({ Message: `Service is already running!` }) 
+    }
+
+    await Promise.all([
+        Bootstrap.Ready = true,
+        await InitializeDatabase(),
+        !DeveloperDisableEvents && EnableWireService ? await DeployXMPP() : null,
+        !DeveloperDisableEvents && EnableWireService ? await GetCachedEvents() : null,   
+        await EmitThread(),
+        Bootstrap.Job = new Cron(`*/15 * * * * *`, async () => {
+            await EmitThread();
+        }),
+        Bootstrap.Job = new Cron(`* * * * * *`, async () => { 
+            await SetEventPolygonNodes();
+            await UpdateEvents();
         })
+    ])
+    if (DeveloperDisableEvents) { 
+        SetWarning({ Message: `DeveloperDisableEvents is enabled, no events will be processed!` }) 
     }
-    const settings = SetSettings(configurations);
-    Bootstrap.Ready = true;
-    await InitializeDatabase();
-    if (settings.DeveloperDisableEvents) { return SetWarning({ Message: `DeveloperDisableEvents is enabled, no events will be processed!` }) }
-    if (settings.EnableWireService) {
-        (async () => {
-            await GetCachedEvents();
-            await DeployXMPP()
-        })();
-    }
-    await EmitThread()
-    let scheduleInterval = !settings.EnableWireService ? settings.NationalWeatherServiceSettings.CallbackInterval : 1;
-    if (!settings.EnableWireService && scheduleInterval < 15) {
-        SetWarning({ Message: `Schedule interval of ${scheduleInterval} seconds is too low, setting to 15 seconds` })
-        Bootstrap.Settings.NationalWeatherServiceSettings.CallbackInterval = 15;
-        scheduleInterval = 15;
-    }
-    Bootstrap.Job = new Cron(`*/${scheduleInterval} * * * * *`, async () => {
-        await EmitThread();
-    })
-    Bootstrap.Job = new Cron(`* * * * * *`, async () => { 
-        await UpdateNode();
-        await UpdateEvents();
-    })
 }

@@ -17,8 +17,24 @@
 
 */
 
+import { EnumStrings } from "@Enums/Strings"
 import { Bootstrap } from "@Bootstrap"
+import { SetWarning } from "@Utilities/SetWarning"
+import { CreateQuery } from "@Database/CreateQuery"
 
 export const GetRandomEvent = (): any => {
-    return Bootstrap.Cache.Events.features[Math.floor(Math.random() * Bootstrap.Cache.Events.features.length)]
+    if (!Bootstrap.Ready) { 
+        SetWarning({ Message: EnumStrings.nostart})
+        return
+    }
+    return CreateQuery({
+        Query: `SELECT * FROM events ORDER BY RANDOM() LIMIT 1`,
+        Parameters: []
+    }).then((A: any) => {
+        if (A.length > 0) {
+            return JSON.parse(A[0].json)
+        } else {
+            return null
+        }
+    })
 }

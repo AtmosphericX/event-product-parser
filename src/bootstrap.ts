@@ -18,6 +18,7 @@
 */
 
 import { TypeEvent } from "TypesEvent/Event"
+import { TypeWatches } from "TypesEvent/Watches"
 import { TypeHash } from "TypesStandard/Hash"
 import { TypeActions } from "TypesStandard/Actions"
 import { TypeNode } from "TypesStandard/Nodes"
@@ -29,7 +30,7 @@ import { join } from "path"
 
 export const Bootstrap = {
     Version: `b3.1-031`,
-    Ready: true,
+    Ready: false,
     Ratelimits: {} as Record<string, number[]>,
     Session: null as ReturnType<typeof client>,
     Database: null as Database,
@@ -47,6 +48,7 @@ export const Bootstrap = {
         TotalReconnects: 0,
         Hault: false,
         Events: {type: "FeatureCollection", features: [] as TypeEvent[]},
+        Watches: [] as TypeWatches[],
         Nodes: {type: "FeatureCollection", features: [] as TypeNode[]},
         Hashes: [] as TypeHash[],
         Parsed: [] as TypeEvent[],
@@ -82,7 +84,6 @@ export const Bootstrap = {
             }
         },
         NationalWeatherServiceSettings: {
-            CallbackInterval: 15,
             EventsEndpoint: `https://api.weather.gov/alerts/active`,
         },
         BroadcastifySettings: {

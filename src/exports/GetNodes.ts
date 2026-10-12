@@ -17,8 +17,14 @@
 
 */
 
+import { EnumStrings } from "@Enums/Strings"
 import { Bootstrap } from "@Bootstrap"
+import { SetWarning } from "@Utilities/SetWarning"
 
 export const GetNodes = (): any => {
+    if (!Bootstrap.Ready) { 
+        SetWarning({ Message: EnumStrings.nostart})
+        return
+    }
     return Bootstrap.Cache.Nodes
 }

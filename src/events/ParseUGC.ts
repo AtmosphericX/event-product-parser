@@ -32,17 +32,17 @@ export const ParseUGC = async (Stanza: TypeStanzaCompiled): Promise<void> => {
     const getMessages = Stanza?.Message
         ?.split(/(?=\$\$)/g)
         ?.map(message => message.trim())
-        ?.filter(message => message && message !== "$$");
+        ?.filter(message => message && message !== "$$")
+        ?.filter(message => message.length > 25)
     if (!getMessages || getMessages?.length == 0 ) return;
     for (const message of getMessages) {
         const tick = performance.now();
         const attributes = Stanza?.Attributes as TypeAttributes
-        const ugc = await UGCExtract(message)
-
-        if (ugc != null ) {
-            const props = GetEventProperties({ Message: message, Attributes: attributes, UGC: ugc })
+        const A = await UGCExtract(message)
+        if (A != null ) {
+            const props = GetEventProperties({ Message: message, Attributes: attributes, UGC: A })
             const issued = new Date(attributes.issue)
-            const expires = new Date(ugc.Expires)
+            const expires = new Date(A.Expires)
             const header = GetEventHeader({ Properties: props, VTEC: null, Type: Stanza.Type })
             const matches = EnumMatches[Stanza.Type.Prefix]?.find(match => match.match.test(message.toUpperCase()));
             

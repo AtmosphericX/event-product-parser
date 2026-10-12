@@ -25,6 +25,9 @@ export type TypeVTEC = {
     status: string
     wmo: string
     expires: string
-    watch: boolean
-    wou: boolean
+    watch: {
+        severe: boolean
+        tropical: boolean
+        national: boolean
+    }
 }

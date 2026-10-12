@@ -17,9 +17,14 @@
 
 */
 
+
 import { EnumExpressions } from "@Enums/Expressions"
+import { EnumStrings } from "@Enums/Strings"
 import { GetAwipsType } from "@Stanza/GetAwipsType"
+import { Bootstrap } from "@Bootstrap"
 import { ProcessStanza } from "@Builder/ProcessStanza"
+import { SetWarning } from "@Utilities/SetWarning"
+
 
 interface CreateEventOptions {
     Message: string
@@ -28,14 +33,18 @@ interface CreateEventOptions {
 }
 
 export const ManualEvent = async ({ Message, Awipsid, Tracking }: CreateEventOptions): Promise<void> => {
+    if (!Bootstrap.Ready) { 
+        SetWarning({ Message: EnumStrings.nostart})
+        return
+    }
     const isCapEvent = Message.includes(`<?xml`);
     const isCapAreaDescription = Message.includes(`<areaDesc>`)
     const isVTEC = Message.match(EnumExpressions.vtec) != null;
     const isUGC = Message.match(EnumExpressions.ugc1) != null;
     const attributes = {
         "xmlns": "@atmosx/event-product-parser",
-        "id": `manual_processor.${Tracking ?? Math.floor(Math.random() * 10000).toString().padStart(4, `0`)}`,
-        "issue": new Date().toISOString(),
+        "id": `manual_processor.0000`,
+        "issue": new Date(Math.floor(Date.now() / 60000) * 60000).toISOString(),
         "ttaaii": Awipsid ?? `XXXXXX`,
         "cccc": `MANL`,
         "awipsid": Awipsid ?? "XXXXXX",

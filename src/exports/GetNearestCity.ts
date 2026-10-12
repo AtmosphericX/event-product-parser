@@ -17,6 +17,9 @@
 
 */
 
+import { EnumStrings } from "@Enums/Strings"
+import { Bootstrap } from "@Bootstrap"
+import { SetWarning } from "@Utilities/SetWarning"
 import { CreateQuery } from "@Database/CreateQuery"
 
 interface GetNearestCityOptions { 
@@ -28,6 +31,10 @@ interface GetNearestCityOptions {
 }
 
 export const GetNearestCity = ({ Radius = 15, Coordinates }: GetNearestCityOptions): any => {
+    if (!Bootstrap.Ready) { 
+        SetWarning({ Message: EnumStrings.nostart})
+        return
+    }
    const A = CreateQuery({
         Query: `SELECT * FROM cities WHERE lat BETWEEN ? AND ? AND lon BETWEEN ? AND ? AND population > 0 ORDER BY ((lat - ?) * (lat - ?) + (lon - ?) * (lon - ?)) ASC LIMIT 1`,
         Parameters: [

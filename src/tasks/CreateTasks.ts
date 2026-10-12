@@ -16,74 +16,80 @@
     Independent Package: @atmosx/event-product-parser
 */
 
-import { TypeSettings } from "TypesStandard/Settings"
-import { TypeEvent } from "TypesEvent/Event"
 import { TypeActions } from "TypesStandard/Actions"
+import { TypeEvent } from "TypesEvent/Event"
 import { Bootstrap } from "@Bootstrap"
 import { SetDebug } from "@Utilities/SetDebug"
 import { GetMatched } from "@Utilities/GetMatched"
+import { QueueManager } from "@Utilities/QueueManager"
 import { GetStringText } from "@Formatting/GetStringText"
 import { GetCleanedEvent } from "@BuilderComponents/GetCleanedEvent"
 import { GenerateAudioMessage } from "@Audio/GenerateAudioMessage"
-import { TaskGenerateText } from "@Tasks/TaskGenerateText"
-import { TaskGenerateJSON } from "@Tasks/TaskGenerateJSON"
+import { TaskGenerateFile } from "@Tasks/TaskGenerateFile"
 import { TaskSendNTFY } from "@Tasks/TaskSendNTFY"
 import { TaskSendWebhook } from "@Tasks/TaskSendWebhook"
 import { GenerateGraphic } from "@Image/GenerateGraphic"
-import { QueueManager } from "@Utilities/QueueManager"
 
 const Webhooks = new QueueManager({ Concurrency: 1 });
 const NTFY = new QueueManager({ Concurrency: 5 });
+const taskChains = new Map<string, Promise<void>>();
 
 export const CreateTasks = async (events: TypeEvent[]): Promise<void> => {
-    
-    const settings = Bootstrap.Settings as TypeSettings;
-    const { ActionSettings, GlobalSettings, NotifyServer } = settings;
+    const { ActionSettings, GlobalSettings, NotifyServer } = Bootstrap.Settings;
     const actions = ActionSettings as TypeActions[];
-    for (const event of events) {
+
+    const run = async (event: TypeEvent): Promise<void> => {
         const tick = performance.now()
         const { properties } = event;
         const isActioning = Array.isArray(actions) && actions.length > 0;
-        if (!isActioning) { continue }
-        for (const action of actions) {
-            const { Events, Webhook, NotificationServer, Uploads } = action;
-            const isValidAction = GetMatched({ Strings: Events, String: properties.event });
-       
-            if ((Events.length == 0 || isValidAction)) {
-                const a = performance.now();
-                const [audio, text, json, image] = await Promise.all([
-                    Uploads?.AUDIO && GlobalSettings?.ArchiveSettings?.AudioDirectory ? GenerateAudioMessage({
-                        Directory: GlobalSettings?.ArchiveSettings?.AudioDirectory + `/${properties?.regions_string ?? `MC`}`,
-                        Title: (`${properties.event}_${properties.metadata.tracking}`).replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim(),
-                        Message: properties.description,
-                        Header: properties.metadata.header
-                    }).then((result) => { return result; }) : Promise.resolve(null),
 
-                    Uploads?.TEXT && GlobalSettings?.ArchiveSettings?.TextDirectory ? TaskGenerateText({
-                        String: properties.metadata.raw,
-                        Directory: GlobalSettings?.ArchiveSettings?.TextDirectory + `/${properties?.regions_string ?? `MC`}`,
-                        Filename: (`${properties.event}_${properties.metadata.tracking}.txt`).replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim()
-                    }).then((result) => { return result; }) : Promise.resolve(null),
+        if (!isActioning) { return }
+        
+        const matchingActions = actions.filter(action => {
+            const { Events } = action;
+            return Events.length === 0 || GetMatched({ Strings: Events, String: properties.event });
+        });
 
-                    Uploads?.JSON && GlobalSettings?.ArchiveSettings?.JSONDirectory ? TaskGenerateJSON({
-                        String: JSON.stringify(GetCleanedEvent(event), null, 2),
-                        Directory: GlobalSettings?.ArchiveSettings?.JSONDirectory + `/${properties?.regions_string ?? `MC`}`,
-                        Filename: (`${properties.event}_${properties.metadata.tracking}.json`).replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim()
-                    }).then((result) => { return result; }) : Promise.resolve(null),
+        if (matchingActions.length === 0) { return }
 
-                    Uploads?.IMAGE && GlobalSettings?.ArchiveSettings?.ImageDirectory ? GenerateGraphic({
-                        Event: event,
-                        File: {
-                            Directory: GlobalSettings?.ArchiveSettings?.ImageDirectory + `/${properties?.regions_string ?? `MC`}`,
-                            Name: (`${properties.event}_${properties.metadata.tracking}.png`).replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim()
-                        }
-                    }).then((result) => { return result; }) : Promise.resolve(null)
-                ]);
-           
+        const uploads = matchingActions.reduce((required, action) => ({
+            AUDIO: required.AUDIO || Boolean(action.Uploads?.AUDIO),
+            TEXT: required.TEXT || Boolean(action.Uploads?.TEXT),
+            JSON: required.JSON || Boolean(action.Uploads?.JSON),
+            IMAGE: required.IMAGE || Boolean(action.Uploads?.IMAGE)
+        }), { AUDIO: false, TEXT: false, JSON: false, IMAGE: false });
 
-                SetDebug({ Title: `Tasks/Generative`, Message: `${Math.round(performance.now() - a)}ms` })
+        const [audio, text, json, image] = await Promise.all([
+            uploads.AUDIO && GlobalSettings?.ArchiveSettings?.AudioDirectory ? GenerateAudioMessage({
+                Directory: GlobalSettings.ArchiveSettings.AudioDirectory,
+                Title: (`${properties.event}_${properties.metadata.tracking}`).replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim(),
+                Message: properties.description,
+                Header: properties.metadata.header
+            }) : Promise.resolve(null),
+            uploads.TEXT && GlobalSettings?.ArchiveSettings?.TextDirectory ? TaskGenerateFile({
+                String: properties.metadata.raw,
+                Directory: GlobalSettings.ArchiveSettings.TextDirectory,
+                Filename: (`${properties.event}_${properties.metadata.tracking}.txt`).replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim()
+            }) : Promise.resolve(null),
+            uploads.JSON && GlobalSettings?.ArchiveSettings?.JSONDirectory ? TaskGenerateFile({
+                String: JSON.stringify(GetCleanedEvent(event), null, 2),
+                Directory: GlobalSettings.ArchiveSettings.JSONDirectory,
+                Filename: (`${properties.event}_${properties.metadata.tracking}.json`).replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim()
+            }) : Promise.resolve(null),
+            uploads.IMAGE && GlobalSettings?.ArchiveSettings?.ImageDirectory ? GenerateGraphic({
+                Event: event,
+                File: {
+                    Directory: GlobalSettings.ArchiveSettings.ImageDirectory,
+                    Name: (`${properties.event}_${properties.metadata.tracking}.png`).replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim()
+                }
+            }) : Promise.resolve(null)
+        ]);
 
-                const b = performance.now();
+        SetDebug({ Title: `Tasks/Generative`, Message: `${Math.round(performance.now() - tick)}ms` });
+
+        await Promise.all(matchingActions.map(async action => {
+            const { Webhook, NotificationServer, Uploads } = action;
+            const b = performance.now();
                 await Promise.all([
                     NotificationServer?.Enabled && NotifyServer?.Enabled && NotificationServer?.Topic ? NTFY.enqueue(() => TaskSendNTFY({
                         Event: event,
@@ -101,16 +107,31 @@ export const CreateTasks = async (events: TypeEvent[]): Promise<void> => {
                             Ratelimit: Webhook?.Ratelimit
                         },
                         Attachments: {
-                            Image: image,
-                            Text: text,
-                            Audio: audio,
-                            Json: json
+                            Image: Uploads?.IMAGE ? image : null,
+                            Text: Uploads?.TEXT ? text : null,
+                            Audio: Uploads?.AUDIO ? audio : null,
+                            Json: Uploads?.JSON ? json : null
                         }
                     })) : Promise.resolve(null)
                 ]);
                 SetDebug({ Title: `Tasks/Send`, Message: `${Math.round(performance.now() - b)}ms` })
+        }))
+        SetDebug({ Title: `Tasks/Completed`, Message: `${Math.round(performance.now() - tick)}ms` })
+    };
+
+    await Promise.all(events.map(async event => {
+        const tracking = event.properties.metadata.tracking;
+        const previous = taskChains.get(tracking) ?? Promise.resolve();
+        const current = previous
+            .catch((): undefined => undefined)
+            .then(() => run(event));
+        taskChains.set(tracking, current);
+        try {
+            await current;
+        } finally {
+            if (taskChains.get(tracking) === current) {
+                taskChains.delete(tracking);
             }
         }
-        SetDebug({ Title: `Tasks/CompletedEventTask`, Message: `${Math.round(performance.now() - tick)}ms` })
-    }
+    }));
 }

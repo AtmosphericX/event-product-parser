@@ -15371,7 +15371,7 @@ var import_node_events = require("node:events");
 var import_path = require("path");
 var Bootstrap = {
   Version: `b3.1-031`,
-  Ready: true,
+  Ready: false,
   Ratelimits: {},
   Session: null,
   Database: null,
@@ -15394,6 +15394,7 @@ var Bootstrap = {
     TotalReconnects: 0,
     Hault: false,
     Events: { type: "FeatureCollection", features: [] },
+    Watches: [],
     Nodes: { type: "FeatureCollection", features: [] },
     Hashes: [],
     Parsed: [],
@@ -15429,7 +15430,6 @@ var Bootstrap = {
       }
     },
     NationalWeatherServiceSettings: {
-      CallbackInterval: 15,
       EventsEndpoint: `https://api.weather.gov/alerts/active`
     },
     BroadcastifySettings: {
@@ -15674,6 +15674,38 @@ var SetEventEmit = ({ Event, Metadata, Message, Limited, Tree }) => {
   if (Message) {
     SetWarning({ Message, Tree });
   }
+};
+
+// src/components/utilities/CreateErrorHandler.ts
+var CreateErrorHandler = () => {
+  process.on("uncaughtException", (error) => {
+    const A2 = [
+      "ETIMEDOUT",
+      "ECONNRESET",
+      "EHOSTUNREACH",
+      "ENOTFOUND",
+      "ECONNREFUSED",
+      "EPIPE",
+      "EADDRINUSE",
+      "EALREADY",
+      "EACCES",
+      "EAGAIN",
+      "EHOSTDOWN",
+      "STARTTLS_FAILURE"
+    ];
+    if (A2.includes(error?.code)) {
+      SetEventEmit({
+        Event: `onServiceStatus`,
+        Metadata: {
+          Message: `Ignored Critical Error: ${error?.code ?? "Unknown error code"}. This may indicate a connection issue. Attempting to continue...`,
+          Type: `error`,
+          Error: true
+        }
+      });
+    }
+    console.log(`Uncaught Exception: ${error instanceof Error ? error.stack ?? error.message : String(error)}`);
+    SetWarning({ Message: `Uncaught Exception: ${error instanceof Error ? error.stack ?? error.message : String(error)}` });
+  });
 };
 
 // src/components/audio/components/GetWavPCM16.ts
@@ -18290,7 +18322,7 @@ var GenerateGraphic = async ({ File, Regions, Event, MaxMiles = 350, Width = 120
   const jFeatures = [...renders?.states ?? [], ...renders?.counties ?? []];
   const jCollection = { type: `FeatureCollection`, features: jFeatures };
   const events = (await Promise.all(
-    E2.map(async (event2) => {
+    (await E2).map(async (event2) => {
       return { event: event2, polygon: await GetUnionPolygon({
         Polygons: polygons ? [polygons.coordinates] : [await GetEventGeometry({ Event: event2 }).coordinates]
       }) };
@@ -18398,8 +18430,18 @@ var GenerateGraphic = async ({ File, Regions, Event, MaxMiles = 350, Width = 120
   return dir + `/${name}${name.includes(`.png`) ? `` : `.png`}`;
 };
 
+// src/enums/Strings.ts
+var EnumStrings = {
+  nostart: `You have attempted to call an export without starting the service. Please run \`StartService()\` before calling any exports.`,
+  cancellation: `{EVENT} has been allowed to expire. This event is no longer in effect.`
+};
+
 // src/exports/GetNearestCity.ts
 var GetNearestCity = ({ Radius = 15, Coordinates }) => {
+  if (!Bootstrap.Ready) {
+    SetWarning({ Message: EnumStrings.nostart });
+    return;
+  }
   const A2 = CreateQuery({
     Query: `SELECT * FROM cities WHERE lat BETWEEN ? AND ? AND lon BETWEEN ? AND ? AND population > 0 ORDER BY ((lat - ?) * (lat - ?) + (lon - ?) * (lon - ?)) ASC LIMIT 1`,
     Parameters: [
@@ -18418,6 +18460,10 @@ var GetNearestCity = ({ Radius = 15, Coordinates }) => {
 
 // src/exports/SetNode.ts
 var SetNode = ({ Identifier, Delete, Coordinates }) => {
+  if (!Bootstrap.Ready) {
+    SetWarning({ Message: EnumStrings.nostart });
+    return;
+  }
   const nodes = Bootstrap.Cache.Nodes.features;
   const exists = nodes.find((node) => node.properties.identifier === Identifier);
   const nearest = GetNearestCity({ Coordinates, Radius: 25 });
@@ -18490,11 +18536,19 @@ var SetNode = ({ Identifier, Delete, Coordinates }) => {
 
 // src/exports/GetEvents.ts
 var GetEvents = () => {
+  if (!Bootstrap.Ready) {
+    SetWarning({ Message: EnumStrings.nostart });
+    return;
+  }
   return Bootstrap.Cache.Events;
 };
 
 // src/exports/GetNodes.ts
 var GetNodes = () => {
+  if (!Bootstrap.Ready) {
+    SetWarning({ Message: EnumStrings.nostart });
+    return;
+  }
   return Bootstrap.Cache.Nodes;
 };
 
@@ -18926,7 +18980,14 @@ var EnumMatches = {
 
 // src/parsers/text/GetDescriptionFromProduct.ts
 var GetDescriptionFromProduct = ({ Message, Handle }) => {
+  const originalMessage = Message;
   const predefinedEndMarkers = ["&&", "LAT..."];
+  const getFallbackDescription = (text, endIndex) => {
+    const headlineIndex = text.search(/(?:^|\r?\n)\.[A-Z][A-Z .-]*(?:\r?\n|$)/);
+    const ugcIndex = text.search(/\r?\n[A-Z]{2}[CZ]\d{3}(?:>|-|$)/);
+    const descriptionEnd = ugcIndex >= 0 && ugcIndex < endIndex ? ugcIndex : endIndex;
+    return text.substring(headlineIndex >= 0 ? headlineIndex : 0, descriptionEnd).trim();
+  };
   const getEndIndex = (text, fromIndex = 0) => {
     const indices = predefinedEndMarkers.map((marker) => text.indexOf(marker, fromIndex)).filter((idx) => idx !== -1);
     return indices.length ? Math.min(...indices) : -1;
@@ -18955,7 +19016,13 @@ var GetDescriptionFromProduct = ({ Message, Handle }) => {
     }
   }
   if (Message == "" || Message == null) {
-    return "This product did not contain a valid description. Please check the product for more information.";
+    const handleIndex = Handle ? originalMessage.indexOf(Handle) : -1;
+    if (handleIndex !== -1) {
+      Message = getFallbackDescription(originalMessage, handleIndex);
+      if (Message == "$$") {
+        Message = `This product did not contain a valid description. Please check the product for more information`;
+      }
+    }
   }
   return Message.trim();
 };
@@ -18963,7 +19030,9 @@ var GetDescriptionFromProduct = ({ Message, Handle }) => {
 // src/parsers/text/GetPolygonFromProduct.ts
 var GetPolygonFromProduct = (message) => {
   const coordinates = [];
-  const match = message.match(/LAT\.\.\.LON\s+([\s\S]*?)(?:\r?\n\s*\r?\n|\s*\/\*|$)/i);
+  const match = message.match(
+    /LAT\.\.\.LON\s+([\s\S]*?)(?=\r?\n\s*\r?\n\s*[A-Z]|\r?\n\s*\/\*|$)/i
+  );
   if (!match) return coordinates;
   const text = match[1].split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !/[A-Za-z]/.test(l)).join(" ").trim();
   if (!text) return coordinates;
@@ -19039,6 +19108,7 @@ var EnumICAO = {
   "KCYS": "Cheyenne, WY",
   "KJKL": "Jackson, KY",
   "KWNS": "Storm Prediction Center",
+  "KNHC": "National Hurricane Center",
   "KPAH": "Paducah, KY",
   "KEMX": "Tucson, AZ",
   "KMHX": "Morehead City, NC",
@@ -19486,7 +19556,7 @@ var GetEventProperties = ({ Message, Attributes, UGC, VTEC }) => {
       discussion_watch_issuance: GetTextFromProduct({ Message, Find: [`Probability of Watch Issuance...`], Removal: [`percent`] }) ?? null
     },
     watch_parameters: {
-      watch_number: VTEC?.watch ? GetTextFromProduct({ Message, Find: [`ITIES FOR`, `UPDATE FOR`, `Watch Number `], Removal: [`%`, `<`, `:`] })?.replace(/(WT|WS|)/g, "")?.trim()?.toString()?.padStart(4, "0") ?? VTEC?.tracking?.slice(-4)?.toString()?.padStart(4, "0") ?? null : null,
+      watch_number: VTEC?.watch?.national || VTEC?.watch?.tropical ? GetTextFromProduct({ Message, Find: [`ITIES FOR`, `UPDATE FOR`, `Watch Number `], Removal: [`%`, `<`, `:`] })?.replace(/(WT|WS|)/g, "")?.trim()?.toString()?.padStart(4, "0") ?? VTEC?.tracking?.slice(-4)?.toString()?.padStart(4, "0") ?? null : null,
       watch_type: Message.includes(`TORNADO WATCH`) ? `Tornado` : Message.includes(`SEVERE`) ? `Severe` : null,
       additional_tornadoes_probability: GetTextFromProduct({ Message, Find: [`PROB OF 2 OR MORE TORNADOES`], Removal: [`%`, `<`, `:`] }) ?? null,
       strong_tornadoes_probability: GetTextFromProduct({ Message, Find: [`PROB OF 1 OR MORE STRONG /EF2-EF5/ TORNADOES`], Removal: [`%`, `<`, `:`] }) ?? null,
@@ -19581,7 +19651,7 @@ var GetEventTheme = (Event) => {
 
 // src/events/ParseText.ts
 var ParseText = async (Stanza) => {
-  const getMessages = Stanza?.Message?.split(/(?=\$\$)/g)?.map((message) => message.trim())?.filter((message) => message && message !== "$$");
+  const getMessages = Stanza?.Message?.split(/(?=\$\$)/g)?.map((message) => message.trim())?.filter((message) => message && message !== "$$")?.filter((message) => message.length > 25);
   if (!getMessages || getMessages?.length == 0) return;
   for (const message of getMessages) {
     const tick = performance.now();
@@ -19758,16 +19828,16 @@ var UGCExtract = async (message) => {
 
 // src/events/ParseUGC.ts
 var ParseUGC = async (Stanza) => {
-  const getMessages = Stanza?.Message?.split(/(?=\$\$)/g)?.map((message) => message.trim())?.filter((message) => message && message !== "$$");
+  const getMessages = Stanza?.Message?.split(/(?=\$\$)/g)?.map((message) => message.trim())?.filter((message) => message && message !== "$$")?.filter((message) => message.length > 25);
   if (!getMessages || getMessages?.length == 0) return;
   for (const message of getMessages) {
     const tick = performance.now();
     const attributes = Stanza?.Attributes;
-    const ugc = await UGCExtract(message);
-    if (ugc != null) {
-      const props = GetEventProperties({ Message: message, Attributes: attributes, UGC: ugc });
+    const A2 = await UGCExtract(message);
+    if (A2 != null) {
+      const props = GetEventProperties({ Message: message, Attributes: attributes, UGC: A2 });
       const issued = new Date(attributes.issue);
-      const expires = new Date(ugc.Expires);
+      const expires = new Date(A2.Expires);
       const header = GetEventHeader({ Properties: props, VTEC: null, Type: Stanza.Type });
       const matches = EnumMatches[Stanza.Type.Prefix]?.find((match) => match.match.test(message.toUpperCase()));
       let event = matches?.label;
@@ -19940,8 +20010,11 @@ var VTECExtract = (message) => {
       status: EnumStatus[sub[1]],
       wmo: message.match(EnumExpressions.wmo)?.[0] ?? null,
       expires: GetExpiry2(dates),
-      watch: (sub[4] == `A` || sub[4] == `Y`) && (sub[3] == `TO` || sub[3] == `SV`),
-      wou: sub[2] == `KWNS` ? true : false
+      watch: {
+        severe: (sub[4] == `A` || sub[4] == `Y`) && (sub[3] == `TO` || sub[3] == `SV`),
+        tropical: (sub[4] == `A` || sub[4] == `Y`) && (sub[3] == `TR` || sub[3] == `HU`),
+        national: [`KWNS`, `KNHC`].includes(sub[2])
+      }
     });
   }
   return vtecs.length > 0 ? vtecs : null;
@@ -20003,17 +20076,17 @@ var HVExtract = (message) => {
 
 // src/events/ParseVTEC.ts
 var ParseVTEC = async (Stanza) => {
-  const getMessages = Stanza?.Message?.split(/(?=\$\$)/g)?.map((message) => message.trim())?.filter((message) => message && message !== "$$");
+  const getMessages = Stanza?.Message?.split(/(?=\$\$)/g)?.map((message) => message.trim())?.filter((message) => message && message !== "$$")?.filter((message) => message.length > 25);
   if (!getMessages || getMessages?.length == 0) return;
   for (const message of getMessages) {
     const tick = performance.now();
     const attributes = Stanza?.Attributes;
-    const VTEC = VTECExtract(message);
-    const hVTEC = HVExtract(message);
-    const ugc = await UGCExtract(message);
-    if (VTEC != null && ugc != null) {
-      for (const vtec of VTEC) {
-        const props = GetEventProperties({ Message: message, Attributes: attributes, UGC: ugc, VTEC: vtec });
+    const A2 = VTECExtract(message);
+    const B = HVExtract(message);
+    const C2 = await UGCExtract(message);
+    if (A2 != null && C2 != null) {
+      for (const vtec of A2) {
+        const props = GetEventProperties({ Message: message, Attributes: attributes, UGC: C2, VTEC: vtec });
         const header = GetEventHeader({ Properties: props, VTEC: vtec, Type: Stanza.Type });
         const issued = new Date(attributes.issue) ?? /* @__PURE__ */ new Date();
         const expires = new Date(vtec.expires);
@@ -20028,7 +20101,7 @@ var ParseVTEC = async (Stanza) => {
             parent: vtec.event,
             status: vtec.status,
             issued: !isNaN(issued.getTime()) ? issued.toISOString() : (/* @__PURE__ */ new Date()).toISOString(),
-            expires: !isNaN(expires.getTime()) ? expires.toISOString() : ugc.Expires ?? new Date(issued.getTime() + 12 * 60 * 60 * 1e3).toISOString(),
+            expires: !isNaN(expires.getTime()) ? expires.toISOString() : C2.Expires ?? new Date(issued.getTime() + 12 * 60 * 60 * 1e3).toISOString(),
             theme: GetEventTheme(vtec.event),
             ...props,
             metadata: {
@@ -20037,7 +20110,7 @@ var ParseVTEC = async (Stanza) => {
               tracking: GetEventTracking({ Type: `VTEC`, Stanza, Attributes: attributes, Properties: props, VTEC: vtec }),
               header,
               vtec,
-              hvtec: hVTEC,
+              hvtec: B,
               raw: message,
               history: [
                 {
@@ -20333,382 +20406,6 @@ var EnumGlobalFilter = [
   "storm prediction center day 3 outlook"
 ];
 
-// src/tasks/TaskGenerateText.ts
-var import_promises2 = require("fs/promises");
-var TaskGenerateText = async function({ String: String2, Directory, Filename }) {
-  if (Directory) {
-    await (0, import_promises2.mkdir)(Directory, { recursive: true });
-    await (0, import_promises2.appendFile)(Directory + "/" + Filename, `${String2}${"\n".repeat(5)}`);
-  }
-  return String2;
-};
-
-// src/tasks/TaskGenerateJSON.ts
-var import_promises3 = require("fs/promises");
-var TaskGenerateJSON = async function({ String: String2, Directory, Filename }) {
-  if (Directory) {
-    await (0, import_promises3.mkdir)(Directory, { recursive: true });
-    await (0, import_promises3.writeFile)(Directory + "/" + Filename, `${String2}${"\n".repeat(5)}`);
-  }
-  return String2;
-};
-
-// src/components/utilities/CreateHttp.ts
-var CreateHttp = async ({ URL: URL2, Headers, Timeout, Auth, Method, Body, Form }) => {
-  const requestOptions = {
-    method: Method ?? "GET",
-    headers: Headers ?? {
-      "User-Agent": "AtmosphericX",
-      "Accept": "application/geo+json, text/plain, */*; q=0.9",
-      "Accept-Language": "en-US,en;q=0.9"
-    },
-    signal: AbortSignal.timeout(Timeout ?? 1e4),
-    redirect: "follow"
-  };
-  const returnHttp = function(error, status, message) {
-    return { error, options: requestOptions, status, message };
-  };
-  if (Auth) {
-    const authString = `${Auth.Username}:${Auth.Password}`;
-    const encodedAuth = Buffer.from(authString).toString("base64");
-    requestOptions.headers = {
-      ...requestOptions.headers,
-      "Authorization": `Basic ${encodedAuth}`
-    };
-  }
-  if (Form) {
-    requestOptions.body = Form;
-  } else if (Body != void 0) {
-    requestOptions.body = Body instanceof FormData ? Body : typeof Body === "string" ? Body : JSON.stringify(Body);
-  }
-  try {
-    const response2 = await fetch(
-      URL2 ?? `https://api.weather.gov/alerts/active`,
-      requestOptions
-    );
-    const body = await response2.text();
-    if (!response2.ok) {
-      return returnHttp(true, response2.status, `HTTP Status Code ${response2.status} (${response2.statusText})`);
-    }
-    return returnHttp(false, response2.status, body);
-  } catch (error) {
-    return returnHttp(true, 500, `Internal Server Error: ${error}`);
-  }
-};
-
-// src/tasks/TaskSendNTFY.ts
-var TaskSendNTFY = async function({ Event, Priority, Body, Topic }) {
-  const { properties } = Event;
-  const configurations = Bootstrap.Settings.NotifyServer;
-  const authentication = configurations?.Credentials?.Username && configurations?.Credentials?.Password ? {
-    Username: configurations.Credentials.Username,
-    Password: configurations.Credentials.Password
-  } : void 0;
-  const image = configurations?.MediaStorage?.IMAGE ? { link: `${configurations?.MediaStorage?.IMAGE}/${properties?.regions_string ?? `MC`}//${properties?.event}_${properties?.metadata?.tracking}.png` } : void 0;
-  const SPCGraphic = properties?.metadata?.attachments?.find((a) => a.name === "Image: SPC Graphic");
-  const buttons = [
-    ...configurations?.MediaStorage?.AUDIO ? [{
-      "action": "view",
-      "label": "View Audio",
-      "url": `${configurations.MediaStorage.AUDIO}/${properties?.regions_string ?? `MC`}/${properties.event}_${properties.metadata.tracking}.wav?unix=${(/* @__PURE__ */ new Date()).getTime()}`
-    }] : [],
-    ...configurations?.MediaStorage?.TEXT ? [{
-      "action": "view",
-      "label": "View Text",
-      "url": `${configurations.MediaStorage.TEXT}/${properties?.regions_string ?? `MC`}/${properties.event}_${properties.metadata.tracking}.txt?unix=${(/* @__PURE__ */ new Date()).getTime()}`
-    }] : [],
-    ...SPCGraphic ? [{
-      "action": "view",
-      "label": "View Graphic",
-      "url": SPCGraphic.link + `?unix=${(/* @__PURE__ */ new Date()).getTime()}`
-    }] : [],
-    ...[{
-      "action": "copy",
-      "label": "Copy Card",
-      "value": `${properties.event} (${properties.status})
-${Body}
-Tags: ${properties.parameters.tags?.join(",") ?? "N/A"}`
-    }]
-  ];
-  const headers = {
-    "Title": `${properties.event} (${properties.status})`,
-    "Tags": properties.parameters.tags?.join(",") ?? "N/A",
-    "Priority": Priority ?? "5",
-    ...image && { "Attach": image.link + `?unix=${(/* @__PURE__ */ new Date()).getTime()}` },
-    ...buttons.length > 0 && { "Actions": JSON.stringify(buttons) }
-  };
-  const post = async (topic) => {
-    const response2 = await CreateHttp({
-      URL: `${configurations?.Server?.replace(/\/$/, "")}/${topic}`,
-      Timeout: 15e3,
-      Method: "PUT",
-      ...authentication && { Auth: authentication },
-      Headers: headers,
-      Body
-    });
-    if (response2.error) {
-      SetDebug({ Title: `Tasks/NTFY`, Message: `Failed to send notification to topic "${topic}": ${response2.message}` });
-    }
-  };
-  const topics = [
-    `GLOBAL`,
-    Topic,
-    ...properties.metadata.filtered_proximity ? [`${Topic}-LOCAL`] : []
-  ];
-  await Promise.all([...new Set(topics)].map(post));
-};
-
-// src/components/formatting/GetEmbededText.ts
-var GetEmbededText = (event) => {
-  const line = (label, value, condition = true) => condition && value ? `${label} ${value}` : null;
-  const isStatement = event.properties.status_metadata.is_statement;
-  const isExpired = event.properties.status_metadata.is_expired;
-  const isIssued = event.properties.status_metadata.is_issued;
-  const isUpdated = event.properties.status_metadata.is_updated;
-  return [
-    line(`**Locations:**`, event?.properties?.locations?.slice(0, 100)),
-    line(`**Issued:**`, `<t:${Math.floor(new Date(event.properties.issued).getTime() / 1e3)}:R>`, isIssued),
-    line(`**Updated:**`, `<t:${Math.floor(new Date(event.properties.issued).getTime() / 1e3)}:R>`, isUpdated && !isExpired),
-    line(`**Expires:**`, `<t:${Math.floor(new Date(event.properties.expires).getTime() / 1e3)}:R>`, !isStatement && !isExpired),
-    line(`**Expired:**`, `<t:${Math.floor(new Date(event.properties.expires).getTime() / 1e3)}:R>`, isExpired),
-    line(`**Damage Threat:**`, event?.properties?.parameters?.damage_threat, !isExpired),
-    line(`**Flood Threat:**`, event?.properties?.parameters?.flood_threat, !isExpired),
-    line(`**Tornado Threat:**`, event?.properties?.parameters?.tornado_threat, !isExpired),
-    line(`**Wind Gusts:**`, `${event?.properties?.parameters?.estimated_wind_gusts} ${event?.properties?.parameters?.wind_threat ? ` (${event?.properties?.parameters?.wind_threat})` : ""}`, !isExpired && event?.properties?.parameters?.estimated_wind_gusts != null),
-    line(`**Hail Size:**`, `${event?.properties?.parameters?.estimated_hail_size} ${event?.properties?.parameters?.hail_threat ? ` (${event?.properties?.parameters?.hail_threat})` : ""}`, !isExpired && event?.properties?.parameters?.estimated_hail_size != null),
-    line(`**Direction:**`, event?.properties?.parameters?.direction, !isExpired && event?.properties?.parameters?.direction != null),
-    line(`**Discussion:**`, event?.properties?.discussion_parameters?.discussion_number, !isExpired),
-    line(`**Concern:**`, event?.properties?.discussion_parameters?.discussion_concerning, !isExpired),
-    line(`**SPC Max Tornado Threat:**`, event?.properties?.discussion_parameters?.discussion_max_tornado, !isExpired),
-    line(`**SPC Max Hail Threat:**`, event?.properties?.discussion_parameters?.discussion_max_hail, !isExpired),
-    line(`**SPC Max Wind Threat:**`, event?.properties?.discussion_parameters?.discussion_max_wind, !isExpired),
-    line(`**SPC Watch Issuance Probability:**`, event?.properties?.discussion_parameters?.discussion_watch_issuance ? `${event?.properties?.discussion_parameters?.discussion_watch_issuance}%` : null, !isExpired),
-    line(`**Watch Number:**`, event?.properties?.watch_parameters?.watch_number, !isExpired),
-    line(`**Strong Tornadoes Probability:**`, event?.properties?.watch_parameters?.strong_tornadoes_probability ? `${event?.properties?.watch_parameters?.strong_tornadoes_probability}%` : null, !isExpired),
-    line(`**Additional Tornadoes Probability:**`, event?.properties?.watch_parameters?.additional_tornadoes_probability ? `${event?.properties?.watch_parameters?.additional_tornadoes_probability}%` : null, !isExpired),
-    line(`**Combined Hail/Wind Probability:**`, event?.properties?.watch_parameters?.combined_hail_wind_probability ? `${event?.properties?.watch_parameters?.combined_hail_wind_probability}%` : null, !isExpired),
-    line(`**Severe Hail Probability:**`, event?.properties?.watch_parameters?.severe_hail_probability ? `${event?.properties?.watch_parameters?.severe_hail_probability}%` : null, !isExpired),
-    line(`**Hail >2in Probability:**`, event?.properties?.watch_parameters?.hail_2in_probability ? `${event?.properties?.watch_parameters?.hail_2in_probability}%` : null, !isExpired),
-    line(`**Max Hail Inches:**`, event?.properties?.watch_parameters?.max_hail_in, !isExpired),
-    line(`**Severe Wind Probability:**`, event?.properties?.watch_parameters?.severe_wind_probability ? `${event?.properties?.watch_parameters?.severe_wind_probability}%` : null, !isExpired),
-    line(`**Max Surface Wind:**`, event?.properties?.watch_parameters?.max_wind_surface, !isExpired),
-    line(`**Max Tops (x100 feet):**`, event?.properties?.watch_parameters?.max_tops_x100feet, !isExpired),
-    line(`**Tags:**`, event?.properties?.parameters?.tags?.length > 0 ? event?.properties?.parameters?.tags.join(", ") : null, !isExpired),
-    line(`**Sender:**`, event?.properties?.geocode?.office?.name ? `${event?.properties?.geocode?.office?.name} (${event?.properties?.geocode?.office?.office})` : event?.properties?.geocode?.office?.office),
-    line(`**Population:**`, event?.properties?.geocode?.census?.population, !isExpired),
-    line(`**Tracking:**`, event?.properties?.metadata?.tracking),
-    line(`**Logs:**`, event?.properties?.metadata?.history?.length > 0 ? event?.properties?.metadata?.history.length : null)
-  ].filter(Boolean).join("\n");
-};
-
-// src/tasks/TaskSendWebhook.ts
-var import_promises4 = require("fs/promises");
-var TaskSendWebhook = async function({ Event, Webhook, Attachments }) {
-  const { properties } = Event;
-  const isRatelimited = SetTimeoutAction({
-    Identifier: Webhook.Destination,
-    Interval: (Webhook.Ratelimit ?? 2) * 2,
-    Max: Webhook.Ratelimit ?? 2,
-    AddTime: true
-  });
-  if (isRatelimited.Limited) {
-    return;
-  }
-  const newForm = new FormData();
-  const newEmbed = {
-    title: `${properties.event} (${properties.status})`,
-    description: GetEmbededText(Event),
-    fields: [],
-    color: 16711680,
-    thumbnail: Attachments?.Image ? { url: `attachment://${properties.event}_${properties.status}_${properties.metadata.tracking}.png` } : void 0,
-    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-    footer: { text: Webhook.Title ?? `AtmosphericX` }
-  };
-  if (properties.description && !properties.status_metadata.is_expired) {
-    const description = properties.description.length > 900 ? properties.description.substring(0, 900) + "\n\n[Message truncated due to length]" : properties.description;
-    newEmbed.fields.push({
-      name: "Description",
-      value: description ? "```\n" + description.split("\n").map((l) => l.trim()).filter(Boolean).join("\n") + "\n```" : ""
-    });
-  }
-  if (properties.metadata.attachments?.length > 0) {
-    const attachments = properties.metadata.attachments.slice(0, 5);
-    newEmbed.fields.push({
-      name: "Attachments",
-      value: attachments.map((attachment) => `- [${attachment.name.length > 45 ? attachment.name.substring(0, 45) + "..." : attachment.name}](${attachment.link})`).join("\n")
-    });
-  }
-  if (Attachments?.Image) {
-    const file = await (0, import_promises4.readFile)(Attachments.Image);
-    newForm.append("attachmentImage", new Blob([Buffer.from(file)], { type: "image/png" }), `${properties.event}_${properties.status}_${properties.metadata.tracking}.png`);
-  }
-  if (Attachments?.Text) {
-    newForm.append("attachmentText", new Blob([Buffer.from(Attachments.Text)], { type: "application/text" }), `${properties.event}_${properties.status}_${properties.metadata.tracking}.txt`);
-  }
-  if (Attachments?.Json) {
-    newForm.append("attachmentJson", new Blob([Buffer.from(Attachments.Json)], { type: "application/json" }), `${properties.event}_${properties.status}_${properties.metadata.tracking}.json`);
-  }
-  if (Attachments?.Audio) {
-    const file = await (0, import_promises4.readFile)(Attachments.Audio);
-    newForm.append("attachmentAudio", new Blob([Buffer.from(file)], { type: "application/wav" }), `${properties.event}_${properties.status}_${properties.metadata.tracking}.wav`);
-  }
-  newForm.append("payload_json", JSON.stringify({
-    username: Webhook.Title ?? `AtmosphericX`,
-    content: Webhook.Message ?? "",
-    embeds: [newEmbed]
-  }));
-  await CreateHttp({
-    URL: Webhook.Destination,
-    Timeout: 15e3,
-    Method: `POST`,
-    Body: newForm
-  });
-};
-
-// src/components/utilities/QueueManager.ts
-var QueueManager = class {
-  constructor({ Concurrency, Error: Error2 } = {}) {
-    this.queue = [];
-    this.running = 0;
-    this.draining = false;
-    this.concurrency = Concurrency ?? 1;
-    this.onError = Error2 ?? ((error) => {
-      console.error("[QueueManager] Task failed:", error);
-    });
-  }
-  enqueue(task) {
-    this.queue.push(task);
-    this.drain();
-  }
-  drain() {
-    if (this.draining) {
-      return;
-    }
-    this.draining = true;
-    while (this.running < this.concurrency && this.queue.length > 0) {
-      const task = this.queue.shift();
-      if (!task) {
-        continue;
-      }
-      this.running++;
-      void this.execute(task);
-    }
-    this.draining = false;
-  }
-  async execute(task) {
-    try {
-      await task();
-    } catch (error) {
-      try {
-        this.onError(error);
-      } catch (handlerError) {
-      }
-    } finally {
-      this.running--;
-      this.drain();
-    }
-  }
-};
-
-// src/tasks/CreateTasks.ts
-var Webhooks = new QueueManager({ Concurrency: 1 });
-var NTFY = new QueueManager({ Concurrency: 5 });
-var CreateTasks = async (events) => {
-  const settings = Bootstrap.Settings;
-  const { ActionSettings, GlobalSettings, NotifyServer } = settings;
-  const actions = ActionSettings;
-  for (const event of events) {
-    const tick = performance.now();
-    const { properties } = event;
-    const isActioning = Array.isArray(actions) && actions.length > 0;
-    if (!isActioning) {
-      continue;
-    }
-    for (const action of actions) {
-      const { Events, Webhook, NotificationServer, Uploads } = action;
-      const isValidAction = GetMatched({ Strings: Events, String: properties.event });
-      if (Events.length == 0 || isValidAction) {
-        const a = performance.now();
-        const [audio, text, json, image] = await Promise.all([
-          Uploads?.AUDIO && GlobalSettings?.ArchiveSettings?.AudioDirectory ? GenerateAudioMessage({
-            Directory: GlobalSettings?.ArchiveSettings?.AudioDirectory + `/${properties?.regions_string ?? `MC`}`,
-            Title: `${properties.event}_${properties.metadata.tracking}`.replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim(),
-            Message: properties.description,
-            Header: properties.metadata.header
-          }).then((result) => {
-            return result;
-          }) : Promise.resolve(null),
-          Uploads?.TEXT && GlobalSettings?.ArchiveSettings?.TextDirectory ? TaskGenerateText({
-            String: properties.metadata.raw,
-            Directory: GlobalSettings?.ArchiveSettings?.TextDirectory + `/${properties?.regions_string ?? `MC`}`,
-            Filename: `${properties.event}_${properties.metadata.tracking}.txt`.replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim()
-          }).then((result) => {
-            return result;
-          }) : Promise.resolve(null),
-          Uploads?.JSON && GlobalSettings?.ArchiveSettings?.JSONDirectory ? TaskGenerateJSON({
-            String: JSON.stringify(GetCleanedEvent(event), null, 2),
-            Directory: GlobalSettings?.ArchiveSettings?.JSONDirectory + `/${properties?.regions_string ?? `MC`}`,
-            Filename: `${properties.event}_${properties.metadata.tracking}.json`.replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim()
-          }).then((result) => {
-            return result;
-          }) : Promise.resolve(null),
-          Uploads?.IMAGE && GlobalSettings?.ArchiveSettings?.ImageDirectory ? GenerateGraphic({
-            Event: event,
-            File: {
-              Directory: GlobalSettings?.ArchiveSettings?.ImageDirectory + `/${properties?.regions_string ?? `MC`}`,
-              Name: `${properties.event}_${properties.metadata.tracking}.png`.replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim()
-            }
-          }).then((result) => {
-            return result;
-          }) : Promise.resolve(null)
-        ]);
-        SetDebug({ Title: `Tasks/Generative`, Message: `${Math.round(performance.now() - a)}ms` });
-        const b2 = performance.now();
-        await Promise.all([
-          NotificationServer?.Enabled && NotifyServer?.Enabled && NotificationServer?.Topic ? NTFY.enqueue(() => TaskSendNTFY({
-            Event: event,
-            Priority: NotificationServer?.Priority ?? 5,
-            Body: GetStringText(event),
-            Topic: NotificationServer?.Topic
-          })) : Promise.resolve(null),
-          Webhook?.Enabled && Webhook?.Destination ? Webhooks.enqueue(() => TaskSendWebhook({
-            Event: event,
-            Webhook: {
-              Enabled: Webhook?.Enabled,
-              Destination: Webhook?.Destination,
-              Message: Webhook?.Message,
-              Title: Webhook?.Title,
-              Ratelimit: Webhook?.Ratelimit
-            },
-            Attachments: {
-              Image: image,
-              Text: text,
-              Audio: audio,
-              Json: json
-            }
-          })) : Promise.resolve(null)
-        ]);
-        SetDebug({ Title: `Tasks/Send`, Message: `${Math.round(performance.now() - b2)}ms` });
-      }
-    }
-    SetDebug({ Title: `Tasks/CompletedEventTask`, Message: `${Math.round(performance.now() - tick)}ms` });
-  }
-};
-
-// src/components/events/utilities/SetHash.ts
-var SetHash = ({ Event, Entry }) => {
-  if (!Entry) {
-    Bootstrap.Cache.Hashes.push({
-      Tracking: Event.properties.metadata.tracking,
-      Hashes: [Event.properties.metadata.hash],
-      Expires: Event.properties.expires
-    });
-    return;
-  }
-  Entry.Hashes.push(Event.properties.metadata.hash);
-  Entry.Expires = Event.properties.expires;
-};
-
 // src/components/geometry/GetShapeNearestPoint.ts
 var GetShapeNearestPoint = ({ Coordinates, Point }) => {
   if (!Coordinates || !Point) {
@@ -20838,8 +20535,8 @@ var GetEventNodes = async (event) => {
   };
 };
 
-// src/components/events/utilities/UpdateNode.ts
-var UpdateNode = async (selected) => {
+// src/components/events/utilities/SetEventPolygonNodes.ts
+var SetEventPolygonNodes = async (selected) => {
   const events = Bootstrap.Cache.Events.features;
   const ttl = Bootstrap.Settings.GlobalSettings.NodePolygonTTL * 1e3;
   let total = 0;
@@ -20873,6 +20570,20 @@ var UpdateNode = async (selected) => {
   }
 };
 
+// src/components/events/utilities/SetHash.ts
+var SetHash = ({ Event, Entry }) => {
+  if (!Entry) {
+    Bootstrap.Cache.Hashes.push({
+      Tracking: Event.properties.metadata.tracking,
+      Hashes: [Event.properties.metadata.hash],
+      Expires: Event.properties.expires
+    });
+    return;
+  }
+  Entry.Hashes.push(Event.properties.metadata.hash);
+  Entry.Expires = Event.properties.expires;
+};
+
 // src/components/events/components/GetEventMerged.ts
 var uniqueBy = (items, getKey) => {
   const seen = /* @__PURE__ */ new Set();
@@ -20885,110 +20596,559 @@ var uniqueBy = (items, getKey) => {
     return true;
   });
 };
-var GetEventMerged = ({ Event1, Event2 }) => {
-  const history = uniqueBy([...Event1.properties.metadata?.history ?? [], ...Event2.properties.metadata?.history ?? []], (item) => `${item.description}|${item.issued}`);
+var GetEventMerged = ({ Cached, New }) => {
+  const history = uniqueBy(
+    [...Cached.properties.metadata?.history ?? [], ...New.properties.metadata?.history ?? []],
+    (item) => `${item.description}|${item.issued}`
+  );
   return {
-    ...Event2,
+    ...New,
     properties: {
-      ...Event2.properties,
-      metadata: {
-        ...Event2.properties?.metadata,
-        history
+      ...New.properties,
+      metadata: { ...New.properties?.metadata, history }
+    }
+  };
+};
+
+// src/components/events/utilities/SetEventLocationMetadata.ts
+var SetEventLocationMetadata = async ({ Zones, Event }) => {
+  const locations = await GetLocations(Zones);
+  return {
+    Locations: locations?.join(`; `) ?? null,
+    LocationsArray: locations ?? [],
+    UGC: Zones,
+    Regions: [...new Set(
+      Zones?.map((location) => location.match(/^([A-Z]{2})[CZ](\d{3})$/)?.[1]).filter(Boolean) ?? []
+    )],
+    RegionsString: (() => {
+      const abbrs = [...new Set(Zones?.map((l) => l.match(/^([A-Z]{2})[CZ](\d{3})$/)?.[1]).filter(Boolean) ?? [])];
+      return abbrs.length ? abbrs.join(`-`) : null;
+    })()
+  };
+};
+
+// src/components/events/components/GetUpdatedWatch.ts
+var getWatch = (Tracking) => {
+  return Bootstrap.Cache.Watches.find((A2) => A2.tracking === Tracking);
+};
+var GetUpdatedWatch = async ({ Event }) => {
+  const tick = performance.now();
+  const { properties } = Event;
+  const { geocode, metadata, status_metadata } = properties;
+  const UGCs = geocode?.ugc ?? [];
+  const expires = properties?.expires;
+  const isExpired = status_metadata?.is_expired ?? false;
+  let watch = getWatch(metadata.tracking);
+  if (!watch) {
+    watch = { tracking: metadata.tracking, zones: [] };
+    Bootstrap.Cache.Watches.push(watch);
+  }
+  if (!isExpired) {
+    for (const UGC of UGCs) {
+      if (watch.zones.some((z) => z.id === UGC)) continue;
+      const zone = GetZonePolygon({ Zones: [UGC], Union: false });
+      watch.zones.push({
+        id: UGC,
+        expires,
+        polygon: zone
+      });
+    }
+  } else {
+    const expiredUGCs = new Set(UGCs);
+    watch.zones = watch.zones.filter((z) => !expiredUGCs.has(z.id));
+  }
+  const A2 = await SetEventLocationMetadata({ Event, Zones: watch.zones.map((z) => z.id) });
+  SetDebug({ Title: `GetUpdatedWatch`, Message: `${Math.round(performance.now() - tick)}ms` });
+  return {
+    ...Event,
+    properties: {
+      ...Event.properties,
+      locations: A2.Locations,
+      locations_array: A2.LocationsArray,
+      regions: A2.Regions,
+      regions_string: A2.RegionsString,
+      geocode: {
+        ...Event.properties.geocode,
+        ugc: A2.UGC
       }
     }
   };
 };
 
-// src/components/events/CreateEvents.ts
-var CreateEvents = async (events) => {
-  let tasked = [];
-  const settings = Bootstrap.Settings;
-  if (events.length === 0) return;
-  await Promise.all(events.map(async (event) => {
-    const features = Bootstrap.Cache.Events.features;
-    const getHash = event.properties.metadata.hash;
-    const getTracking = event.properties.metadata.tracking;
-    const isEntry = Bootstrap.Cache.Hashes?.find((hash) => hash.Tracking === getTracking);
-    const isHashed = isEntry?.Hashes?.includes(getHash) ?? false;
-    const isNodeFiltering = settings.GlobalSettings.EventFiltering.NodeLocationFiltering;
-    const getNodes = Bootstrap.Cache.Nodes.features;
-    if (isHashed || event.properties.status_metadata.is_expired) return;
-    SetHash({ Event: event, Entry: isEntry });
-    await UpdateNode(event);
-    if (isNodeFiltering && getNodes.length > 0) {
-      if (!event.properties.metadata.filtered_proximity && !EnumGlobalFilter.includes(event.properties.event.toLowerCase())) {
-        return;
+// src/components/utilities/QueueManager.ts
+var QueueManager = class {
+  constructor({ Concurrency, Error: Error2 } = {}) {
+    this.queue = [];
+    this.running = 0;
+    this.draining = false;
+    this.concurrency = Concurrency ?? 1;
+    this.onError = Error2 ?? ((error) => {
+      console.error("[QueueManager] Task failed:", error);
+    });
+  }
+  enqueue(task) {
+    this.queue.push(task);
+    this.drain();
+  }
+  drain() {
+    if (this.draining) {
+      return;
+    }
+    this.draining = true;
+    while (this.running < this.concurrency && this.queue.length > 0) {
+      const task = this.queue.shift();
+      if (!task) {
+        continue;
       }
+      this.running++;
+      void this.execute(task);
     }
-    const isRatelimited = SetTimeoutAction({ Identifier: getTracking, Interval: 1, Max: 1, AddTime: true });
-    const isLocal = event?.properties?.metadata?.filtered_proximity ? `[LOCAL] ` : ``;
-    const getFeature = features.find((feature2) => feature2.properties.metadata.tracking === getTracking);
-    const isWatch = event?.properties?.metadata?.vtec?.watch;
-    const isWOU = event?.properties?.metadata?.vtec?.wou;
-    if (!isRatelimited.Limited) {
-      SetEventEmit({
-        Event: `onEventStatus`,
-        Metadata: {
-          Type: getFeature ? `Updated` : `New`,
-          Event: event
-        },
-        Tree: Bootstrap.Settings.DeveloperEventLogging ? GetStringText(event).split("\n").filter((line) => line.trim() !== "") : [],
-        Message: `${isLocal}[${getFeature ? "Updated" : "New"}] ${event.properties.event} (${event.properties.status}) (${event.properties.metadata.tracking})`
-      });
+    this.draining = false;
+  }
+  async execute(task) {
+    try {
+      await task();
+    } catch (error) {
+      try {
+        this.onError(error);
+      } catch (handlerError) {
+      }
+    } finally {
+      this.running--;
+      this.drain();
     }
-    if (event.properties.status_metadata.is_issued || event.properties.status_metadata.is_updated) {
-      if (getFeature) {
-        const getIndex = features.indexOf(getFeature);
-        if (isWatch && isWOU) {
-          return;
+  }
+};
+
+// src/tasks/TaskGenerateFile.ts
+var import_promises2 = require("fs/promises");
+var TaskGenerateFile = async function({ String: String2, Directory, Filename }) {
+  if (Directory) {
+    await (0, import_promises2.mkdir)(Directory, { recursive: true });
+    await (0, import_promises2.appendFile)(Directory + "/" + Filename, `${String2}${"\n".repeat(5)}`);
+  }
+  return String2;
+};
+
+// src/components/utilities/CreateHttp.ts
+var CreateHttp = async ({ URL: URL2, Headers, Timeout, Auth, Method, Body, Form }) => {
+  const requestOptions = {
+    method: Method ?? "GET",
+    headers: Headers ?? {
+      "User-Agent": "AtmosphericX",
+      "Accept": "application/geo+json, text/plain, */*; q=0.9",
+      "Accept-Language": "en-US,en;q=0.9"
+    },
+    signal: AbortSignal.timeout(Timeout ?? 1e4),
+    redirect: "follow"
+  };
+  const returnHttp = function(error, status, message) {
+    return { error, options: requestOptions, status, message };
+  };
+  if (Auth) {
+    const authString = `${Auth.Username}:${Auth.Password}`;
+    const encodedAuth = Buffer.from(authString).toString("base64");
+    requestOptions.headers = {
+      ...requestOptions.headers,
+      "Authorization": `Basic ${encodedAuth}`
+    };
+  }
+  if (Form) {
+    requestOptions.body = Form;
+  } else if (Body != void 0) {
+    requestOptions.body = Body instanceof FormData ? Body : typeof Body === "string" ? Body : JSON.stringify(Body);
+  }
+  try {
+    const response2 = await fetch(
+      URL2 ?? `https://api.weather.gov/alerts/active`,
+      requestOptions
+    );
+    const body = await response2.text();
+    if (!response2.ok) {
+      return returnHttp(true, response2.status, `HTTP Status Code ${response2.status} (${response2.statusText})`);
+    }
+    return returnHttp(false, response2.status, body);
+  } catch (error) {
+    return returnHttp(true, 500, `Internal Server Error: ${error}`);
+  }
+};
+
+// src/tasks/TaskSendNTFY.ts
+var TaskSendNTFY = async function({ Event, Priority, Body, Topic }) {
+  const { properties, geometry } = Event;
+  const { event, status, metadata, parameters } = properties;
+  const { tags } = parameters;
+  const { tracking, filtered_proximity, attachments } = metadata;
+  const { NotifyServer } = Bootstrap.Settings;
+  const { MediaStorage } = NotifyServer ?? {};
+  const { Username, Password } = NotifyServer?.Credentials ?? {};
+  const image = MediaStorage?.IMAGE ? { link: `${MediaStorage.IMAGE}/${event}_${tracking}.png` } : void 0;
+  const graphic = attachments?.find((a) => a.name === "Image: SPC Graphic");
+  const topics = [`GLOBAL`, Topic, ...filtered_proximity ? [`${Topic}-LOCAL`] : []];
+  const actions = [
+    ...MediaStorage?.AUDIO ? [{ "action": "view", "label": "View Audio", "url": `${MediaStorage.AUDIO}/${event}_${tracking}.wav?unix=${(/* @__PURE__ */ new Date()).getTime()}` }] : [],
+    ...MediaStorage?.TEXT ? [{ "action": "view", "label": "View Text", "url": `${MediaStorage.TEXT}/${event}_${tracking}.txt?unix=${(/* @__PURE__ */ new Date()).getTime()}` }] : [],
+    ...graphic ? [{ "action": "view", "label": "View Graphic", "url": graphic.link + `?unix=${(/* @__PURE__ */ new Date()).getTime()}` }] : [],
+    ...[{ "action": "copy", "label": "Copy Card", "value": `${event} (${status})
+${Body}
+Tags: ${tags?.join(",") ?? "N/A"}` }]
+  ];
+  const headers = {
+    "Title": `${properties.event} (${properties.status})`,
+    "Tags": properties.parameters.tags?.join(",") ?? "N/A",
+    "Priority": Priority ?? "5",
+    ...image && geometry.coordinates.length > 0 && { "Attach": image.link + `?unix=${(/* @__PURE__ */ new Date()).getTime()}` },
+    ...actions.length > 0 && { "Actions": JSON.stringify(actions) }
+  };
+  const authentication = Username && Password ? { Username, Password } : void 0;
+  const push = async (topic) => {
+    const { error, message } = await CreateHttp({
+      URL: `${NotifyServer?.Server?.replace(/\/$/, "")}/${topic}`,
+      Timeout: 15e3,
+      Method: "PUT",
+      ...authentication && { Auth: authentication },
+      Headers: headers,
+      Body
+    });
+    if (error) {
+      SetDebug({ Title: `Tasks/NTFY`, Message: `Failed to send notification to topic "${topic}": ${message}` });
+    }
+  };
+  await Promise.all([...new Set(topics)].map(push));
+};
+
+// src/components/formatting/GetEmbededText.ts
+var GetEmbededText = (event) => {
+  const line = (label, value, condition = true) => condition && value ? `${label} ${value}` : null;
+  const isStatement = event.properties.status_metadata.is_statement;
+  const isExpired = event.properties.status_metadata.is_expired;
+  const isIssued = event.properties.status_metadata.is_issued;
+  const isUpdated = event.properties.status_metadata.is_updated;
+  return [
+    line(`**Locations:**`, event?.properties?.locations?.slice(0, 100)),
+    line(`**Issued:**`, `<t:${Math.floor(new Date(event.properties.issued).getTime() / 1e3)}:R>`, isIssued),
+    line(`**Updated:**`, `<t:${Math.floor(new Date(event.properties.issued).getTime() / 1e3)}:R>`, isUpdated && !isExpired),
+    line(`**Expires:**`, `<t:${Math.floor(new Date(event.properties.expires).getTime() / 1e3)}:R>`, !isStatement && !isExpired),
+    line(`**Expired:**`, `<t:${Math.floor(new Date(event.properties.expires).getTime() / 1e3)}:R>`, isExpired),
+    line(`**Damage Threat:**`, event?.properties?.parameters?.damage_threat, !isExpired),
+    line(`**Flood Threat:**`, event?.properties?.parameters?.flood_threat, !isExpired),
+    line(`**Tornado Threat:**`, event?.properties?.parameters?.tornado_threat, !isExpired),
+    line(`**Wind Gusts:**`, `${event?.properties?.parameters?.estimated_wind_gusts} ${event?.properties?.parameters?.wind_threat ? ` (${event?.properties?.parameters?.wind_threat})` : ""}`, !isExpired && event?.properties?.parameters?.estimated_wind_gusts != null),
+    line(`**Hail Size:**`, `${event?.properties?.parameters?.estimated_hail_size} ${event?.properties?.parameters?.hail_threat ? ` (${event?.properties?.parameters?.hail_threat})` : ""}`, !isExpired && event?.properties?.parameters?.estimated_hail_size != null),
+    line(`**Direction:**`, event?.properties?.parameters?.direction, !isExpired && event?.properties?.parameters?.direction != null),
+    line(`**Discussion:**`, event?.properties?.discussion_parameters?.discussion_number, !isExpired),
+    line(`**Concern:**`, event?.properties?.discussion_parameters?.discussion_concerning, !isExpired),
+    line(`**SPC Max Tornado Threat:**`, event?.properties?.discussion_parameters?.discussion_max_tornado, !isExpired),
+    line(`**SPC Max Hail Threat:**`, event?.properties?.discussion_parameters?.discussion_max_hail, !isExpired),
+    line(`**SPC Max Wind Threat:**`, event?.properties?.discussion_parameters?.discussion_max_wind, !isExpired),
+    line(`**SPC Watch Issuance Probability:**`, event?.properties?.discussion_parameters?.discussion_watch_issuance ? `${event?.properties?.discussion_parameters?.discussion_watch_issuance}%` : null, !isExpired),
+    line(`**Watch Number:**`, event?.properties?.watch_parameters?.watch_number, !isExpired),
+    line(`**Strong Tornadoes Probability:**`, event?.properties?.watch_parameters?.strong_tornadoes_probability ? `${event?.properties?.watch_parameters?.strong_tornadoes_probability}%` : null, !isExpired),
+    line(`**Additional Tornadoes Probability:**`, event?.properties?.watch_parameters?.additional_tornadoes_probability ? `${event?.properties?.watch_parameters?.additional_tornadoes_probability}%` : null, !isExpired),
+    line(`**Combined Hail/Wind Probability:**`, event?.properties?.watch_parameters?.combined_hail_wind_probability ? `${event?.properties?.watch_parameters?.combined_hail_wind_probability}%` : null, !isExpired),
+    line(`**Severe Hail Probability:**`, event?.properties?.watch_parameters?.severe_hail_probability ? `${event?.properties?.watch_parameters?.severe_hail_probability}%` : null, !isExpired),
+    line(`**Hail >2in Probability:**`, event?.properties?.watch_parameters?.hail_2in_probability ? `${event?.properties?.watch_parameters?.hail_2in_probability}%` : null, !isExpired),
+    line(`**Max Hail Inches:**`, event?.properties?.watch_parameters?.max_hail_in, !isExpired),
+    line(`**Severe Wind Probability:**`, event?.properties?.watch_parameters?.severe_wind_probability ? `${event?.properties?.watch_parameters?.severe_wind_probability}%` : null, !isExpired),
+    line(`**Max Surface Wind:**`, event?.properties?.watch_parameters?.max_wind_surface, !isExpired),
+    line(`**Max Tops (x100 feet):**`, event?.properties?.watch_parameters?.max_tops_x100feet, !isExpired),
+    line(`**Tags:**`, event?.properties?.parameters?.tags?.length > 0 ? event?.properties?.parameters?.tags.join(", ") : null, !isExpired),
+    line(`**Sender:**`, event?.properties?.geocode?.office?.name ? `${event?.properties?.geocode?.office?.name} (${event?.properties?.geocode?.office?.office})` : event?.properties?.geocode?.office?.office),
+    line(`**Population:**`, event?.properties?.geocode?.census?.population, !isExpired),
+    line(`**Tracking:**`, event?.properties?.metadata?.tracking),
+    line(`**Logs:**`, event?.properties?.metadata?.history?.length > 0 ? event?.properties?.metadata?.history.length : null)
+  ].filter(Boolean).join("\n");
+};
+
+// src/tasks/TaskSendWebhook.ts
+var import_promises3 = require("fs/promises");
+var TaskSendWebhook = async function({ Event, Webhook, Attachments }) {
+  const { Image, Text, Audio, Json } = Attachments;
+  const { Title, Message, Destination, Ratelimit } = Webhook;
+  const { properties } = Event;
+  const { event, status, description, metadata, status_metadata } = properties;
+  const { is_expired } = status_metadata;
+  const { tracking, attachments } = metadata;
+  const { Limited } = SetTimeoutAction({
+    Identifier: Destination,
+    Interval: (Ratelimit ?? 2) * 2,
+    Max: Ratelimit ?? 2,
+    AddTime: true
+  });
+  if (Limited) {
+    return;
+  }
+  const form = new FormData();
+  const embed = {
+    title: `${event} (${status})`,
+    description: GetEmbededText(Event),
+    fields: [],
+    color: 16711680,
+    thumbnail: Image ? { url: `attachment://${event}_${status}_${tracking}.png` } : void 0,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    footer: { text: Title ?? `AtmosphericX` }
+  };
+  if (description && !is_expired) {
+    const body = description.length > 900 ? description.substring(0, 900) + "\n\n[Message truncated due to length]" : description;
+    embed.fields.push({
+      name: "Description",
+      value: body ? "```\n" + body.split("\n").map((l) => l.trim()).filter(Boolean).join("\n") + "\n```" : ""
+    });
+  }
+  if (attachments?.length > 0) {
+    const attach = attachments.slice(0, 5);
+    embed.fields.push({
+      name: "Attachments",
+      value: attach.map((attachment) => `- [${attachment.name.length > 45 ? attachment.name.substring(0, 45) + "..." : attachment.name}](${attachment.link})`).join("\n")
+    });
+  }
+  if (Image) {
+    const file = await (0, import_promises3.readFile)(Image);
+    form.append("attachmentImage", new Blob([Buffer.from(file)], { type: "image/png" }), `${properties.event}_${properties.status}_${properties.metadata.tracking}.png`);
+  }
+  if (Text) {
+    form.append("attachmentText", new Blob([Buffer.from(Text)], { type: "application/text" }), `${properties.event}_${properties.status}_${properties.metadata.tracking}.txt`);
+  }
+  if (Json) {
+    form.append("attachmentJson", new Blob([Buffer.from(Json)], { type: "application/json" }), `${properties.event}_${properties.status}_${properties.metadata.tracking}.json`);
+  }
+  if (Audio) {
+    const file = await (0, import_promises3.readFile)(Audio);
+    form.append("attachmentAudio", new Blob([Buffer.from(file)], { type: "application/wav" }), `${properties.event}_${properties.status}_${properties.metadata.tracking}.wav`);
+  }
+  form.append("payload_json", JSON.stringify({
+    username: Title ?? `AtmosphericX`,
+    content: Message ?? "",
+    embeds: [embed]
+  }));
+  await CreateHttp({
+    URL: Destination,
+    Timeout: 15e3,
+    Method: `POST`,
+    Body: form
+  });
+};
+
+// src/tasks/CreateTasks.ts
+var Webhooks = new QueueManager({ Concurrency: 1 });
+var NTFY = new QueueManager({ Concurrency: 5 });
+var taskChains = /* @__PURE__ */ new Map();
+var CreateTasks = async (events) => {
+  const { ActionSettings, GlobalSettings, NotifyServer } = Bootstrap.Settings;
+  const actions = ActionSettings;
+  const run = async (event) => {
+    const tick = performance.now();
+    const { properties } = event;
+    const isActioning = Array.isArray(actions) && actions.length > 0;
+    if (!isActioning) {
+      return;
+    }
+    const matchingActions = actions.filter((action) => {
+      const { Events } = action;
+      return Events.length === 0 || GetMatched({ Strings: Events, String: properties.event });
+    });
+    if (matchingActions.length === 0) {
+      return;
+    }
+    const uploads = matchingActions.reduce((required, action) => ({
+      AUDIO: required.AUDIO || Boolean(action.Uploads?.AUDIO),
+      TEXT: required.TEXT || Boolean(action.Uploads?.TEXT),
+      JSON: required.JSON || Boolean(action.Uploads?.JSON),
+      IMAGE: required.IMAGE || Boolean(action.Uploads?.IMAGE)
+    }), { AUDIO: false, TEXT: false, JSON: false, IMAGE: false });
+    const [audio, text, json, image] = await Promise.all([
+      uploads.AUDIO && GlobalSettings?.ArchiveSettings?.AudioDirectory ? GenerateAudioMessage({
+        Directory: GlobalSettings.ArchiveSettings.AudioDirectory,
+        Title: `${properties.event}_${properties.metadata.tracking}`.replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim(),
+        Message: properties.description,
+        Header: properties.metadata.header
+      }) : Promise.resolve(null),
+      uploads.TEXT && GlobalSettings?.ArchiveSettings?.TextDirectory ? TaskGenerateFile({
+        String: properties.metadata.raw,
+        Directory: GlobalSettings.ArchiveSettings.TextDirectory,
+        Filename: `${properties.event}_${properties.metadata.tracking}.txt`.replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim()
+      }) : Promise.resolve(null),
+      uploads.JSON && GlobalSettings?.ArchiveSettings?.JSONDirectory ? TaskGenerateFile({
+        String: JSON.stringify(GetCleanedEvent(event), null, 2),
+        Directory: GlobalSettings.ArchiveSettings.JSONDirectory,
+        Filename: `${properties.event}_${properties.metadata.tracking}.json`.replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim()
+      }) : Promise.resolve(null),
+      uploads.IMAGE && GlobalSettings?.ArchiveSettings?.ImageDirectory ? GenerateGraphic({
+        Event: event,
+        File: {
+          Directory: GlobalSettings.ArchiveSettings.ImageDirectory,
+          Name: `${properties.event}_${properties.metadata.tracking}.png`.replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim()
         }
-        Bootstrap.Cache.Events.features[getIndex] = GetEventMerged({ Event1: getFeature, Event2: event });
-        tasked.push(Bootstrap.Cache.Events.features[getIndex]);
-      } else {
-        features.push(event);
-        tasked.push(event);
+      }) : Promise.resolve(null)
+    ]);
+    SetDebug({ Title: `Tasks/Generative`, Message: `${Math.round(performance.now() - tick)}ms` });
+    await Promise.all(matchingActions.map(async (action) => {
+      const { Webhook, NotificationServer, Uploads } = action;
+      const b2 = performance.now();
+      await Promise.all([
+        NotificationServer?.Enabled && NotifyServer?.Enabled && NotificationServer?.Topic ? NTFY.enqueue(() => TaskSendNTFY({
+          Event: event,
+          Priority: NotificationServer?.Priority ?? 5,
+          Body: GetStringText(event),
+          Topic: NotificationServer?.Topic
+        })) : Promise.resolve(null),
+        Webhook?.Enabled && Webhook?.Destination ? Webhooks.enqueue(() => TaskSendWebhook({
+          Event: event,
+          Webhook: {
+            Enabled: Webhook?.Enabled,
+            Destination: Webhook?.Destination,
+            Message: Webhook?.Message,
+            Title: Webhook?.Title,
+            Ratelimit: Webhook?.Ratelimit
+          },
+          Attachments: {
+            Image: Uploads?.IMAGE ? image : null,
+            Text: Uploads?.TEXT ? text : null,
+            Audio: Uploads?.AUDIO ? audio : null,
+            Json: Uploads?.JSON ? json : null
+          }
+        })) : Promise.resolve(null)
+      ]);
+      SetDebug({ Title: `Tasks/Send`, Message: `${Math.round(performance.now() - b2)}ms` });
+    }));
+    SetDebug({ Title: `Tasks/Completed`, Message: `${Math.round(performance.now() - tick)}ms` });
+  };
+  await Promise.all(events.map(async (event) => {
+    const tracking = event.properties.metadata.tracking;
+    const previous = taskChains.get(tracking) ?? Promise.resolve();
+    const current = previous.catch(() => void 0).then(() => run(event));
+    taskChains.set(tracking, current);
+    try {
+      await current;
+    } finally {
+      if (taskChains.get(tracking) === current) {
+        taskChains.delete(tracking);
       }
     }
   }));
-  tasked = tasked.filter((v2, i, a) => a.reduce((last, t, index) => t.properties.metadata.tracking === v2.properties.metadata.tracking ? index : last, -1) === i);
-  SetEventEmit({ Event: `onEventCache`, Metadata: Bootstrap.Cache.Events, Limited: true });
-  return await CreateTasks(tasked);
 };
 
-// src/enums/Strings.ts
-var EnumStrings = {
-  cancellation: `{EVENT} has been allowed to expire. This event is no longer in effect.`
+// src/components/events/CreateEvents.ts
+var CreateEvents = async (events) => {
+  let tasks = [];
+  const settings = Bootstrap.Settings;
+  if (events.length === 0) return;
+  const eventGroups = /* @__PURE__ */ new Map();
+  for (const event of events) {
+    const tracking = event.properties.metadata.tracking;
+    const group = eventGroups.get(tracking) ?? [];
+    group.push(event);
+    eventGroups.set(tracking, group);
+  }
+  await Promise.all([...eventGroups.values()].map(async (group) => {
+    for (const event of group) {
+      const active = Bootstrap.Cache.Events;
+      const hashes = Bootstrap.Cache.Hashes;
+      const nodes = Bootstrap.Cache.Nodes;
+      const { EventFiltering } = settings.GlobalSettings;
+      const { properties } = event;
+      const { metadata, status_metadata } = properties;
+      const { hash, tracking, filtered_proximity, vtec } = metadata;
+      const isEntry = hashes?.find((hash2) => hash2.Tracking === tracking);
+      const isHashed = isEntry?.Hashes?.includes(hash) ?? false;
+      const isNodeFiltering = EventFiltering.NodeLocationFiltering;
+      if (isHashed || status_metadata.is_expired) {
+        continue;
+      }
+      SetHash({ Event: event, Entry: isEntry });
+      await SetEventPolygonNodes(event);
+      if (isNodeFiltering && nodes.features.length > 0 && !filtered_proximity && !EnumGlobalFilter.includes(properties.event.toLowerCase())) {
+        continue;
+      }
+      const isRatelimited = SetTimeoutAction({ Identifier: tracking, Interval: 1, Max: 1, AddTime: true });
+      const isLocalProximity = filtered_proximity ? `[LOCAL] ` : ``;
+      const isCachedAlert = active.features.find((alert) => alert?.properties?.metadata?.tracking === tracking);
+      if (!isRatelimited.Limited) {
+        SetEventEmit({
+          Event: `onEventStatus`,
+          Metadata: {
+            Type: isCachedAlert ? `Updated` : `New`,
+            Event: event
+          },
+          Tree: Bootstrap.Settings.DeveloperEventLogging ? GetStringText(event).split("\n").filter((line) => line.trim() !== "") : [],
+          Message: `${isLocalProximity}[${isCachedAlert ? "Updated" : "New"}] ${event.properties.event} (${event.properties.status}) (${event.properties.metadata.tracking})`
+        });
+      }
+      if (status_metadata.is_issued || status_metadata.is_updated) {
+        const isWatch = vtec?.watch?.severe ?? vtec?.watch?.tropical ?? false;
+        const isNational = vtec?.watch?.national ?? false;
+        if (isWatch && isNational) {
+          const A2 = await GetUpdatedWatch({ Event: event });
+          if (isCachedAlert) {
+            const B = active.features.indexOf(isCachedAlert);
+            const C2 = await GetEventGeometry({ Event: A2 });
+            Bootstrap.Cache.Events.features[B] = GetEventMerged({ Cached: isCachedAlert, New: { ...A2, geometry: C2 } });
+            tasks.push(Bootstrap.Cache.Events.features[B]);
+          } else {
+            const C2 = await GetEventGeometry({ Event: A2 });
+            const D2 = { ...A2, geometry: C2 };
+            active.features.push(D2);
+            tasks.push(D2);
+          }
+        } else {
+          if (isCachedAlert) {
+            const B = active.features.indexOf(isCachedAlert);
+            Bootstrap.Cache.Events.features[B] = GetEventMerged({ Cached: isCachedAlert, New: event });
+            tasks.push(Bootstrap.Cache.Events.features[B]);
+          } else {
+            active.features.push(event);
+            tasks.push(event);
+          }
+        }
+      }
+    }
+  }));
+  tasks = tasks.filter((v2, i, a) => a.reduce((last, t, index) => t.properties.metadata.tracking === v2.properties.metadata.tracking ? index : last, -1) === i);
+  SetEventEmit({
+    Event: `onEventCache`,
+    Metadata: Bootstrap.Cache.Events,
+    Limited: true
+  });
+  return await CreateTasks(tasks);
 };
 
 // src/components/events/RemoveEvents.ts
 var RemoveEvents = async ({ Event, IsTimeBasedExpiration }) => {
   const gTracking = Event.properties.metadata.tracking;
-  const isTrackingEventLogged = Bootstrap.Cache.Events.features.find((f2) => f2?.properties?.metadata?.tracking === gTracking);
-  const isStatement = Event.properties.status_metadata.is_statement;
-  if (isTrackingEventLogged) {
-    Event.properties.expires = (/* @__PURE__ */ new Date()).toISOString();
-    Event.properties.status = `Expired`;
-    Event.properties.status_metadata.is_expired = true;
-    const description = IsTimeBasedExpiration ? EnumStrings.cancellation.replace(`{SENDER}`, Event.properties.geocode.office.name).replace(`{EVENT}`, Event.properties.event) : Event.properties.description;
-    Event.properties.description = description;
-    Event.properties.metadata.raw = IsTimeBasedExpiration ? description : Event.properties.metadata.raw;
-    Event.properties.metadata.history.push({
-      description: IsTimeBasedExpiration ? description : Event.properties.description,
-      issued: Event.properties.expires,
-      status: Event.properties.status
-    });
-    Bootstrap.Cache.Events.features.splice(Bootstrap.Cache.Events.features.indexOf(isTrackingEventLogged), 1);
-    Bootstrap.Cache.Hashes = Bootstrap.Cache.Hashes.filter((hash) => hash.Tracking !== gTracking);
-    if (!isStatement) {
-      SetEventEmit({
-        Event: `onEventStatus`,
-        Metadata: { type: `Removed`, event: Event },
-        Message: `[Removed] ${Event.properties.event} (${Event.properties.status}) (${gTracking})`
-      });
-      CreateTasks([Event]);
-    }
-    SetTimeoutAction({ Identifier: gTracking, Expire: true });
+  const cachedIndex = Bootstrap.Cache.Events.features.findIndex((f2) => f2?.properties?.metadata?.tracking === gTracking);
+  if (cachedIndex === -1) {
+    return;
   }
+  const isStatement = Event.properties.status_metadata.is_statement;
+  Bootstrap.Cache.Events.features.splice(cachedIndex, 1);
+  Bootstrap.Cache.Hashes = Bootstrap.Cache.Hashes.filter((hash) => hash.Tracking !== gTracking);
+  Event.properties.expires = (/* @__PURE__ */ new Date()).toISOString();
+  Event.properties.status = `Expired`;
+  Event.properties.status_metadata.is_expired = true;
+  const isWatch = Event?.properties?.metadata?.vtec?.watch?.severe ?? Event?.properties?.metadata?.vtec?.watch?.tropical ?? false;
+  const isNational = Event?.properties?.metadata?.vtec?.watch?.national;
+  const description = IsTimeBasedExpiration ? EnumStrings.cancellation.replace(`{SENDER}`, Event.properties.geocode.office.name).replace(`{EVENT}`, Event.properties.event) : Event.properties.description;
+  Event.properties.description = description;
+  Event.properties.metadata.raw = IsTimeBasedExpiration ? description : Event.properties.metadata.raw;
+  Event.properties.metadata.history.push({
+    description: IsTimeBasedExpiration ? description : Event.properties.description,
+    issued: Event.properties.expires,
+    status: Event.properties.status
+  });
+  if (isWatch && isNational) {
+    const A2 = await GetUpdatedWatch({ Event });
+    const B = await GetEventGeometry({ Event: A2 });
+    Event = { ...A2, geometry: B };
+  }
+  if (!isStatement) {
+    SetEventEmit({
+      Event: `onEventStatus`,
+      Metadata: { type: `Removed`, event: Event },
+      Message: `[Removed] ${Event.properties.event} (${Event.properties.status}) (${gTracking})`
+    });
+    await CreateTasks([Event]);
+  }
+  SetTimeoutAction({ Identifier: gTracking, Expire: true });
   SetEventEmit({
     Event: `onEventCache`,
     Metadata: Bootstrap.Cache.Events,
@@ -21125,12 +21285,13 @@ var FilterEvents = async (events) => {
       RemoveEvents({ Event: define2, IsTimeBasedExpiration: false });
       return true;
     }
-    if (properties.metadata?.vtec?.watch && properties.metadata.source != `events.api`) {
-      const isWOU = properties.metadata?.vtec?.wou;
-      if (!isWOU) {
-        properties.metadata.tracking = properties.metadata.tracking.replace(properties.metadata.tracking.split(`.`)[0], `KWNS`);
+    if ((properties.metadata?.vtec?.watch?.severe || properties.metadata?.vtec?.watch?.tropical) && properties.metadata.source != `events.api`) {
+      const isNational = properties.metadata?.vtec?.watch?.national;
+      const center = properties.metadata?.vtec?.watch?.severe ? `KWNS` : properties.metadata?.vtec?.watch?.tropical ? `KNHC` : `KWNS`;
+      if (!isNational) {
+        properties.metadata.tracking = properties.metadata.tracking.replace(properties.metadata.tracking.split(`.`)[0], center);
       }
-      SetEventEmit({ Event: isWOU ? `onWatchOutlineUpdate` : `onWatchCountyNotification`, Metadata: define2 });
+      SetEventEmit({ Event: isNational ? `onCenterWatchNotirication` : `onCountyWatchNotification`, Metadata: define2 });
     }
     for (const key in sets) {
       const setting = sets[key];
@@ -21236,14 +21397,18 @@ var ProcessStanza = async (Stanza) => {
 
 // src/exports/ManualEvent.ts
 var ManualEvent = async ({ Message, Awipsid, Tracking }) => {
+  if (!Bootstrap.Ready) {
+    SetWarning({ Message: EnumStrings.nostart });
+    return;
+  }
   const isCapEvent = Message.includes(`<?xml`);
   const isCapAreaDescription = Message.includes(`<areaDesc>`);
   const isVTEC = Message.match(EnumExpressions.vtec) != null;
   const isUGC = Message.match(EnumExpressions.ugc1) != null;
   const attributes = {
     "xmlns": "@atmosx/event-product-parser",
-    "id": `manual_processor.${Tracking ?? Math.floor(Math.random() * 1e4).toString().padStart(4, `0`)}`,
-    "issue": (/* @__PURE__ */ new Date()).toISOString(),
+    "id": `manual_processor.0000`,
+    "issue": new Date(Math.floor(Date.now() / 6e4) * 6e4).toISOString(),
     "ttaaii": Awipsid ?? `XXXXXX`,
     "cccc": `MANL`,
     "awipsid": Awipsid ?? "XXXXXX"
@@ -21265,11 +21430,28 @@ var ManualEvent = async ({ Message, Awipsid, Tracking }) => {
 
 // src/exports/GetRandomEvent.ts
 var GetRandomEvent = () => {
-  return Bootstrap.Cache.Events.features[Math.floor(Math.random() * Bootstrap.Cache.Events.features.length)];
+  if (!Bootstrap.Ready) {
+    SetWarning({ Message: EnumStrings.nostart });
+    return;
+  }
+  return CreateQuery({
+    Query: `SELECT * FROM events ORDER BY RANDOM() LIMIT 1`,
+    Parameters: []
+  }).then((A2) => {
+    if (A2.length > 0) {
+      return JSON.parse(A2[0].json);
+    } else {
+      return null;
+    }
+  });
 };
 
 // src/exports/QueryStanza.ts
 var QueryStanza = async ({ Search, Max }) => {
+  if (!Bootstrap.Ready) {
+    SetWarning({ Message: EnumStrings.nostart });
+    return;
+  }
   const query = CreateQuery({
     Query: `SELECT * FROM stanzas WHERE stanza LIKE ? LIMIT ?`,
     Parameters: [`%${Search}%`, Max ?? 100]
@@ -21280,6 +21462,10 @@ var QueryStanza = async ({ Search, Max }) => {
 
 // src/exports/ClearEvents.ts
 var ClearEvents = () => {
+  if (!Bootstrap.Ready) {
+    SetWarning({ Message: EnumStrings.nostart });
+    return;
+  }
   Bootstrap.Cache.Events.features = [];
   Bootstrap.Cache.Hashes = [];
   SetEventEmit({
@@ -25247,38 +25433,28 @@ var E = class {
 };
 
 // src/exports/StartService.ts
-var StartService = async (configurations) => {
-  if (!Bootstrap.Ready) {
-    return SetWarning({
-      Message: `You can not create another instance without shutting down the current one first, please make sure to call the stop() method first!`
-    });
+var StartService = async () => {
+  const { DeveloperDisableEvents, EnableWireService } = Bootstrap.Settings;
+  if (Bootstrap.Ready) {
+    return SetWarning({ Message: `Service is already running!` });
   }
-  const settings = SetSettings(configurations);
-  Bootstrap.Ready = true;
-  await InitializeDatabase();
-  if (settings.DeveloperDisableEvents) {
-    return SetWarning({ Message: `DeveloperDisableEvents is enabled, no events will be processed!` });
+  await Promise.all([
+    Bootstrap.Ready = true,
+    await InitializeDatabase(),
+    !DeveloperDisableEvents && EnableWireService ? await DeployXMPP() : null,
+    !DeveloperDisableEvents && EnableWireService ? await GetCachedEvents() : null,
+    await EmitThread(),
+    Bootstrap.Job = new E(`*/15 * * * * *`, async () => {
+      await EmitThread();
+    }),
+    Bootstrap.Job = new E(`* * * * * *`, async () => {
+      await SetEventPolygonNodes();
+      await UpdateEvents();
+    })
+  ]);
+  if (DeveloperDisableEvents) {
+    SetWarning({ Message: `DeveloperDisableEvents is enabled, no events will be processed!` });
   }
-  if (settings.EnableWireService) {
-    (async () => {
-      await GetCachedEvents();
-      await DeployXMPP();
-    })();
-  }
-  await EmitThread();
-  let scheduleInterval = !settings.EnableWireService ? settings.NationalWeatherServiceSettings.CallbackInterval : 1;
-  if (!settings.EnableWireService && scheduleInterval < 15) {
-    SetWarning({ Message: `Schedule interval of ${scheduleInterval} seconds is too low, setting to 15 seconds` });
-    Bootstrap.Settings.NationalWeatherServiceSettings.CallbackInterval = 15;
-    scheduleInterval = 15;
-  }
-  Bootstrap.Job = new E(`*/${scheduleInterval} * * * * *`, async () => {
-    await EmitThread();
-  });
-  Bootstrap.Job = new E(`* * * * * *`, async () => {
-    await UpdateNode();
-    await UpdateEvents();
-  });
 };
 
 // src/exports/StopService.ts
@@ -25305,45 +25481,15 @@ var GetVersion = () => {
 // src/index.ts
 var Manager = class {
   constructor(settings) {
-    this.ErrorHandler();
-    StartService(settings);
+    CreateErrorHandler();
+    SetSettings(settings);
+    StartService();
   }
   on(event, callback) {
     Bootstrap.Listener.on(event, callback);
     return () => {
       void Bootstrap.Listener.off(event, callback);
     };
-  }
-  ErrorHandler() {
-    process.on("uncaughtException", (error) => {
-      const _IGNORED = [
-        "ETIMEDOUT",
-        "ECONNRESET",
-        "EHOSTUNREACH",
-        "ENOTFOUND",
-        "ECONNREFUSED",
-        "EPIPE",
-        "EADDRINUSE",
-        "EALREADY",
-        "EACCES",
-        "EAGAIN",
-        "EHOSTDOWN",
-        "STARTTLS_FAILURE"
-      ];
-      if (_IGNORED.includes(error?.code)) {
-        SetEventEmit({
-          Event: `onServiceStatus`,
-          Metadata: {
-            Message: `Ignored Critical Error: ${error?.code ?? "Unknown error code"}. This may indicate a connection issue. Attempting to continue...`,
-            Data: {},
-            Type: `error`,
-            Error: true
-          }
-        });
-      }
-      console.log(`Uncaught Exception: ${error instanceof Error ? error.stack ?? error.message : String(error)}`);
-      SetWarning({ Message: `Uncaught Exception: ${error instanceof Error ? error.stack ?? error.message : String(error)}` });
-    });
   }
 };
 var index_default = Manager;

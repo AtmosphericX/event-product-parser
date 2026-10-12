@@ -20,8 +20,8 @@
 import { TypeEvent } from "TypesEvent/Event"
 
 interface GetMergedEventOptions { 
-    Event1: TypeEvent
-    Event2: TypeEvent
+    Cached: TypeEvent
+    New: TypeEvent
 }
 
 const uniqueBy = <T>(items: T[], getKey: (item: T) => string ): T[] => {
@@ -36,16 +36,15 @@ const uniqueBy = <T>(items: T[], getKey: (item: T) => string ): T[] => {
     });
 };
 
-export const GetEventMerged = ({ Event1, Event2 }: GetMergedEventOptions): TypeEvent => {
-    const history = uniqueBy([ ...(Event1.properties.metadata?.history ?? []), ...(Event2.properties.metadata?.history ?? []) ],(item) => `${item.description}|${item.issued}`);
+export const GetEventMerged = ({ Cached, New }: GetMergedEventOptions): TypeEvent => {
+    const history = uniqueBy(
+        [ ...(Cached.properties.metadata?.history ?? []), ...(New.properties.metadata?.history ?? []) ], (item) => `${item.description}|${item.issued}`
+    );
     return {
-        ...Event2,
+        ...New,
         properties: {
-            ...Event2.properties,
-            metadata: {
-                ...Event2.properties?.metadata,
-                history
-            }
+            ...New.properties,
+            metadata: { ...New.properties?.metadata, history }
         }
     };
 };

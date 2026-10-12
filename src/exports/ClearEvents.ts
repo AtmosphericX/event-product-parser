@@ -17,10 +17,16 @@
 
 */
 
+import { EnumStrings } from "@Enums/Strings"
 import { Bootstrap } from "@Bootstrap"
 import { SetEventEmit } from "@Utilities/SetEventEmit"
+import { SetWarning } from "@Utilities/SetWarning"
 
 export const ClearEvents = (): void => {
+    if (!Bootstrap.Ready) { 
+        SetWarning({ Message: EnumStrings.nostart})
+        return
+    }
     Bootstrap.Cache.Events.features = [];
     Bootstrap.Cache.Hashes = [];
     SetEventEmit({

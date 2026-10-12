@@ -27,6 +27,7 @@ export const EnumICAO: Record<string, string> = {
     "KCYS": "Cheyenne, WY", 
     "KJKL": "Jackson, KY", 
     "KWNS": "Storm Prediction Center",
+    "KNHC": "National Hurricane Center",
     "KPAH": "Paducah, KY", 
     "KEMX": "Tucson, AZ",
     "KMHX": "Morehead City, NC",

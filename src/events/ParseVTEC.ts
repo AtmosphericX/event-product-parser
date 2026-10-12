@@ -35,17 +35,18 @@ export const ParseVTEC = async (Stanza: TypeStanzaCompiled): Promise<void> => {
     const getMessages = Stanza?.Message
         ?.split(/(?=\$\$)/g)
         ?.map(message => message.trim())
-        ?.filter(message => message && message !== "$$");
+        ?.filter(message => message && message !== "$$")
+        ?.filter(message => message.length > 25)
     if (!getMessages || getMessages?.length == 0 ) return;
     for (const message of getMessages) {
         const tick = performance.now();
         const attributes = Stanza?.Attributes as TypeAttributes
-        const VTEC = VTECExtract(message) as TypeVTEC[];
-        const hVTEC = HVExtract(message) as TypeHVTEC[];
-        const ugc = await UGCExtract(message)
-        if (VTEC != null && ugc != null ) {
-            for (const vtec of VTEC) {
-                const props = GetEventProperties({ Message: message, Attributes: attributes, UGC: ugc, VTEC: vtec })
+        const A = VTECExtract(message) as TypeVTEC[];
+        const B = HVExtract(message) as TypeHVTEC[];
+        const C = await UGCExtract(message)
+        if (A != null && C != null ) {
+            for (const vtec of A) {
+                const props = GetEventProperties({ Message: message, Attributes: attributes, UGC: C, VTEC: vtec })
                 const header = GetEventHeader({ Properties: props, VTEC: vtec, Type: Stanza.Type })
                 const issued = new Date(attributes.issue)?? new Date()
                 const expires = new Date(vtec.expires)
@@ -60,7 +61,7 @@ export const ParseVTEC = async (Stanza: TypeStanzaCompiled): Promise<void> => {
                         parent: vtec.event,
                         status: vtec.status,
                         issued: (!isNaN(issued.getTime())) ? issued.toISOString() : new Date().toISOString(),
-                        expires: (!isNaN(expires.getTime())) ? expires.toISOString() : ugc.Expires ??  new Date(issued.getTime() + 12 * 60 * 60 * 1000).toISOString(),
+                        expires: (!isNaN(expires.getTime())) ? expires.toISOString() : C.Expires ??  new Date(issued.getTime() + 12 * 60 * 60 * 1000).toISOString(),
                         theme: GetEventTheme(vtec.event),
                         ...props,
                         metadata: {
@@ -69,7 +70,7 @@ export const ParseVTEC = async (Stanza: TypeStanzaCompiled): Promise<void> => {
                             tracking: GetEventTracking({ Type: `VTEC`, Stanza, Attributes: attributes, Properties: props, VTEC: vtec }),
                             header: header,
                             vtec: vtec,
-                            hvtec: hVTEC,
+                            hvtec: B,
                             raw: message,
                             history: [
                                 {

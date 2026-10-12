@@ -32,7 +32,8 @@ export const ParseText = async (Stanza: TypeStanzaCompiled): Promise<void> => {
     const getMessages = Stanza?.Message
         ?.split(/(?=\$\$)/g)
         ?.map(message => message.trim())
-        ?.filter(message => message && message !== "$$");
+        ?.filter(message => message && message !== "$$")
+        ?.filter(message => message.length > 25)
     if (!getMessages || getMessages?.length == 0 ) return;
     for (const message of getMessages) {
         const tick = performance.now();
@@ -42,8 +43,8 @@ export const ParseText = async (Stanza: TypeStanzaCompiled): Promise<void> => {
         const issued = new Date(attributes.issue)
         const expires = new Date(Date.now() + 12 * 60 * 60 * 1000)
         const matches = EnumMatches[Stanza.Type.Prefix]?.find(match => match.match.test(message.toUpperCase()));
-        let expiration = GetExpiryFromProduct(message);
         
+        let expiration = GetExpiryFromProduct(message);
         let event = matches?.label;
         let isStatement = matches?.statement ?? false;
 

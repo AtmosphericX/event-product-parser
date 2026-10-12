@@ -18,5 +18,6 @@
 */
 
 export const EnumStrings: Record<string, string> = {
+    nostart: `You have attempted to call an export without starting the service. Please run \`StartService()\` before calling any exports.`,
     cancellation: `{EVENT} has been allowed to expire. This event is no longer in effect.`,
 }

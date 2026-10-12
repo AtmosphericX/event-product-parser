@@ -30,67 +30,43 @@ interface TaskSendNTFYOptions {
 }
 
 export const TaskSendNTFY = async function({ Event, Priority, Body, Topic }: TaskSendNTFYOptions): Promise<void> { 
-    const { properties } = Event;
+    const { properties, geometry } = Event;
+    const { event, status, metadata, parameters } = properties;
+    const { tags } = parameters;
+    const { tracking, filtered_proximity, attachments } = metadata;
 
-    const configurations = Bootstrap.Settings.NotifyServer;
-    const authentication = configurations?.Credentials?.Username && configurations?.Credentials?.Password ? { 
-        Username: configurations.Credentials.Username, 
-        Password: configurations.Credentials.Password 
-    } : undefined;
+    const { NotifyServer} = Bootstrap.Settings
+    const { MediaStorage } = NotifyServer ?? {};
+    const { Username, Password } = NotifyServer?.Credentials ?? {};
 
-    const image = configurations?.MediaStorage?.IMAGE ? { link: `${configurations?.MediaStorage?.IMAGE}/${properties?.regions_string ?? `MC`}//${properties?.event}_${properties?.metadata?.tracking}.png` } : undefined;
-    const SPCGraphic = properties?.metadata?.attachments?.find(a => a.name === "Image: SPC Graphic") 
-        
-    const buttons = [
-        ...(configurations?.MediaStorage?.AUDIO ? [{
-            "action": "view",
-            "label": "View Audio",
-            "url": `${configurations.MediaStorage.AUDIO}/${properties?.regions_string ?? `MC`}/${properties.event}_${properties.metadata.tracking}.wav?unix=${new Date().getTime()}`,
-        }] : []),
-        ...(configurations?.MediaStorage?.TEXT ? [{
-            "action": "view",
-            "label": "View Text",
-            "url": `${configurations.MediaStorage.TEXT}/${properties?.regions_string ?? `MC`}/${properties.event}_${properties.metadata.tracking}.txt?unix=${new Date().getTime()}`,
-        }] : []),
-        ...(SPCGraphic ? [{
-            "action": "view",
-            "label": "View Graphic",
-            "url": SPCGraphic.link + `?unix=${new Date().getTime()}`,
-        }] : []),
-        ... [{
-            "action": "copy",
-            "label": "Copy Card",
-            "value": `${properties.event} (${properties.status})\n${Body}\nTags: ${properties.parameters.tags?.join(",") ?? "N/A"}`
-        }]
+    const image = MediaStorage?.IMAGE ? { link: `${MediaStorage.IMAGE}/${event}_${tracking}.png` } : undefined;
+    const graphic = attachments?.find(a => a.name === "Image: SPC Graphic") 
+    const topics = [`GLOBAL`, Topic, ...(filtered_proximity ? [`${Topic}-LOCAL`] : [])];
+    const actions = [
+        ...(MediaStorage?.AUDIO ? [{ "action": "view", "label": "View Audio", "url": `${MediaStorage.AUDIO}/${event}_${tracking}.wav?unix=${new Date().getTime()}` }] : []),
+        ...(MediaStorage?.TEXT ? [{ "action": "view", "label": "View Text", "url": `${MediaStorage.TEXT}/${event}_${tracking}.txt?unix=${new Date().getTime()}` }] : []),
+        ...(graphic ? [{ "action": "view", "label": "View Graphic", "url": graphic.link + `?unix=${new Date().getTime()}` }] : []),
+        ... [{ "action": "copy", "label": "Copy Card", "value": `${event} (${status})\n${Body}\nTags: ${tags?.join(",") ?? "N/A"}` }]
     ];
-
     const headers = {
         "Title": `${properties.event} (${properties.status})`,
         "Tags": properties.parameters.tags?.join(",") ?? "N/A",
         "Priority": Priority ?? "5",
-        ...(image && { "Attach": image.link + `?unix=${new Date().getTime()}` }),
-        ...(buttons.length > 0 && { "Actions": JSON.stringify(buttons) }),
+        ...(image && geometry.coordinates.length > 0 && { "Attach": image.link + `?unix=${new Date().getTime()}` }),
+        ...(actions.length > 0 && { "Actions": JSON.stringify(actions) }),
     };
+    const authentication = Username && Password ? { Username: Username, Password: Password } : undefined;
 
-    const post = async (topic: string) => {
-        const response = await CreateHttp({
-            URL: `${configurations?.Server?.replace(/\/$/, "")}/${topic}`,
-            Timeout: 15_000,
-            Method: "PUT",
+    const push = async (topic: string) => {
+        const { error, message} = await CreateHttp({
+            URL: `${NotifyServer?.Server?.replace(/\/$/, "")}/${topic}`,
+            Timeout: 15_000, Method: "PUT",
             ...(authentication && { Auth: authentication }),
-            Headers: headers,
-            Body: Body
+            Headers: headers, Body: Body
         })
-        if (response.error) { 
-            SetDebug({ Title: `Tasks/NTFY`, Message: `Failed to send notification to topic "${topic}": ${response.message}` })
+        if (error) { 
+            SetDebug({ Title: `Tasks/NTFY`, Message: `Failed to send notification to topic "${topic}": ${message}` })
         }
     }
-
-    const topics = [
-        `GLOBAL`,
-        Topic,
-        ...(properties.metadata.filtered_proximity ? [`${Topic}-LOCAL`] : []),
-    ];
-
-    await Promise.all([...new Set(topics)].map(post));
+    await Promise.all([...new Set(topics)].map(push));
 }

@@ -25,7 +25,14 @@ interface GetDescriptionFromProductOptions {
 }
 
 export const GetDescriptionFromProduct = ({ Message, Handle }: GetDescriptionFromProductOptions): string => {
+    const originalMessage = Message;
     const predefinedEndMarkers = ['&&', 'LAT...'];
+    const getFallbackDescription = (text: string, endIndex: number): string => {
+        const headlineIndex = text.search(/(?:^|\r?\n)\.[A-Z][A-Z .-]*(?:\r?\n|$)/);
+        const ugcIndex = text.search(/\r?\n[A-Z]{2}[CZ]\d{3}(?:>|-|$)/);
+        const descriptionEnd = ugcIndex >= 0 && ugcIndex < endIndex ? ugcIndex : endIndex;
+        return text.substring(headlineIndex >= 0 ? headlineIndex : 0, descriptionEnd).trim();
+    };
     const getEndIndex = (text: string, fromIndex = 0): number => {
         const indices = predefinedEndMarkers
             .map((marker) => text.indexOf(marker, fromIndex))
@@ -56,7 +63,13 @@ export const GetDescriptionFromProduct = ({ Message, Handle }: GetDescriptionFro
         }
     }
     if (Message == "" || Message == null) {
-        return "This product did not contain a valid description. Please check the product for more information.";
+        const handleIndex = Handle ? originalMessage.indexOf(Handle) : -1;
+        if (handleIndex !== -1) {
+            Message = getFallbackDescription(originalMessage, handleIndex);
+            if (Message == "$$") {
+                Message = `This product did not contain a valid description. Please check the product for more information`
+            } 
+        }
     }
     return Message.trim();
 }

@@ -6,88 +6,78 @@
       / ____ \ |_| | | | | | (_) \__ \ |_) | | | |  __/ |  | | (__ / . \ 
      /_/    \_\__|_| |_| |_|\___/|___/ .__/|_| |_|\___|_|  |_|\___/_/ \_\
                                      | |                            
-                                     |_|                                                                                                                
-
-    Created with ♥ by the AtmosphericX Team (KiyoWx, StarflightWx, & CJ Ziegler)
-    Discord: https://atmosphericx-discord.scriptkitty.cafe
+                                     |_|    
+                                                        
+    Created with ❤️ by the Project AtmosphericX Team (KiyoWx, CJZiegler, StarflightWx)
     Ko-Fi: https://ko-fi.com/k3yomi
-    Documentation: https://atmosphericx.scriptkitty.cafe/documentation
-
-    Independent Package: @atmosx/event-product-parser
 
 */
 
-import { TypeAttributes } from "TypesEvent/Attributes"
-
-export type TypeCities = { 
+export type TYPE_CITIES = { 
     name: string
     state: string
     county: string
     population: number
 }
-    
-export type TypeEventProperties = {
-    locations: string
-    locations_array: string[]
-    regions: string[]
-    regions_string: string
-    description: string
-    attributes?: TypeAttributes
-    geocode: {
-        office: {
-            name: string 
-            office: string
+
+export type TYPE_PROPERTIES = {
+    locations?: string[]
+    states?: string[]
+    description?: string
+    geography?: {
+        office?: {
+            abbreviation?: string
+            name?: string
         }
-        organization: string
-        ugc: string[]
-        census?: {
+        wmo?: string
+        zones?: string[]
+        population?: {
             population?: number
-            cities?: TypeCities[]
+            cities?: TYPE_CITIES[]
         }
-        polygon: string
-        polygon_generated: boolean
+        polygon?: string | null
     }
     parameters?: {
-        tags: string[]
-        instructions: string
-        source: string
-        hazards: string
-        impacts: string
-        estimated_hail_size: string
-        estimated_wind_gusts: string
-        direction: string
-        damage_threat: string
-        tornado_threat: string
-        snowsquall_threat: string
-        flood_threat: string
-        wind_threat: string
-        hail_threat: string
-        max_hail_inches?: string
-        max_wind_gusts_surface_knots?: string
-        max_tops_x100feet?: string
-        mean_storm_motion_vector?: string
-        particularly_dangerous_situation?: string
+        tags?: string[]
+        instructions?: string
+        source?: string
+        hazards?: string
+        impacts?: string
+        hail_size?: string
+        wind_gusts?: string
+        damage_indicator?: string
+        snow_squall_indicator?: string
+        tornado_indicator?: string
+        flood_indicator?: string
+        wind_indicator?: string
+        hail_indicator?: string
+        storm_motion?: string
+    }
+    flood_parameters?: {
+        severity?: string
+        cause?: string
+        record?: string
+    },
+    discussion_parameters?: {
+        number?: string
+        issuance?: string
+        concerning?: string
+        max_tornado?: string
+        max_hail?: string
+        max_gust?: string
     }
     watch_parameters?: {
-        watch_number: string
-        watch_type: string
-        additional_tornadoes_probability: string
-        strong_tornadoes_probability: string
-        severe_wind_probability: string
-        severe_hail_probability: string
-        hail_2in_probability: string
-        combined_hail_wind_probability: string
-        max_hail_in: string
-        max_wind_surface: string
-        max_tops_x100feet: string
-        pds_watch: boolean
-    }
-    discussion_parameters?: {
-        discussion_number: string
-        discussion_concerning: string
-        discussion_max_tornado: string
-        discussion_max_hail: string
-        discussion_max_wind: string
-        discussion_watch_issuance: string
+        number?: string
+        type?: string
+        tornado_probability?: string
+        strong_tornado_probability?: string
+        severe_wind_probability?: string
+        severe_hail_probability?: string
+        hail_2in_probability?: string
+        combined_hail_wind_probability?: string
+        max_hail_inches?: string
+        max_wind_surface?: string
+        max_tops_x100feet?: string
+        pds?: boolean
     }
 }

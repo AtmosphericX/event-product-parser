@@ -6,37 +6,40 @@
       / ____ \ |_| | | | | | (_) \__ \ |_) | | | |  __/ |  | | (__ / . \ 
      /_/    \_\__|_| |_| |_|\___/|___/ .__/|_| |_|\___|_|  |_|\___/_/ \_\
                                      | |                            
-                                     |_|                                                                                                                
-
-    Created with ♥ by the AtmosphericX Team (KiyoWx, StarflightWx, & CJ Ziegler)
-    Discord: https://atmosphericx-discord.scriptkitty.cafe
+                                     |_|    
+                                                        
+    Created with ❤️ by the Project AtmosphericX Team (KiyoWx, CJZiegler, StarflightWx)
     Ko-Fi: https://ko-fi.com/k3yomi
-    Documentation: https://atmosphericx.scriptkitty.cafe/documentation
-
-    Independent Package: @atmosx/event-product-parser
 
 */
 
-import { TypeSettings } from "TypesStandard/Settings"
+import { TYPE_SETTINGS } from "Types/components/Settings"
+import { ENUM_STRINGS } from "@Enums/Strings"
 import { Bootstrap } from "@Bootstrap"
+import { SetLog } from "@Components.Utilities/SetLog";
 
-export const SetSettings = (imported: TypeSettings): TypeSettings => {
-    const settings = Bootstrap.Settings as Record<string, unknown>;
-    const merge = (target: Record<string, unknown>, source: Record<string, unknown>) => {
-        for (const key in source) {
-            if (!Object.prototype.hasOwnProperty.call(source, key)) continue;
-            const srcVal = source[key];
-            const tgtVal = target[key];
-            if (srcVal && typeof srcVal === 'object' && !Array.isArray(srcVal)) {
-                if (!tgtVal || typeof tgtVal !== 'object' || Array.isArray(tgtVal)) {
-                    target[key] = {};
-                }
-                merge(target[key] as Record<string, unknown>, srcVal as Record<string, unknown>);
+export const SetSettings = (settings: TYPE_SETTINGS): TYPE_SETTINGS => {
+    const callAssign = (TargetConfiguration: Record<string, unknown>, SourceConfiguration: Record<string, unknown>): void => {
+        for (const cKey in SourceConfiguration) {
+            const cSetting = cKey as keyof typeof TargetConfiguration;
+            if (!Object.prototype.hasOwnProperty.call(TargetConfiguration, cSetting)) {
+                SetLog({ Type: `ERROR`, Message: `${ENUM_STRINGS.CALLBACKS.SETTINGS_INVALID_KEY.replace(/%s/g, cSetting)}` });
+                continue;
+            }
+            const cNewValue = SourceConfiguration[cKey];
+            const cCurrentValue = TargetConfiguration[cSetting];
+            if (cNewValue !== null && typeof cNewValue === "object" && !Array.isArray(cNewValue)) {
+                const nextTarget = cCurrentValue && typeof cCurrentValue === "object" && !Array.isArray(cCurrentValue)
+                    ? (cCurrentValue as Record<string, unknown>)
+                    : {};
+                TargetConfiguration[cSetting] = nextTarget as never;
+                callAssign(nextTarget, cNewValue as Record<string, unknown>);
             } else {
-                target[key] = srcVal;
+                TargetConfiguration[cSetting] = cNewValue as never;
             }
         }
     };
-    merge(settings, imported as Record<string, unknown>);
-    return settings as TypeSettings;
+    callAssign(Bootstrap.Settings as Record<string, unknown>, settings as Record<string, unknown>);
+    return Bootstrap.Settings;
 }
+

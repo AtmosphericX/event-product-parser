@@ -6,138 +6,133 @@
       / ____ \ |_| | | | | | (_) \__ \ |_) | | | |  __/ |  | | (__ / . \ 
      /_/    \_\__|_| |_| |_|\___/|___/ .__/|_| |_|\___|_|  |_|\___/_/ \_\
                                      | |                            
-                                     |_|                                                                                                                
-
-    Created with ♥ by the AtmosphericX Team (KiyoWx, StarflightWx, & CJ Ziegler)
-    Discord: https://atmosphericx-discord.scriptkitty.cafe
+                                     |_|    
+                                                        
+    Created with ❤️ by the Project AtmosphericX Team (KiyoWx, CJZiegler, StarflightWx)
     Ko-Fi: https://ko-fi.com/k3yomi
-    Documentation: https://atmosphericx.scriptkitty.cafe/documentation
-
-    Independent Package: @atmosx/event-product-parser
 
 */
 
-import { TypeEvent } from "TypesEvent/Event"
-import { TypeWatches } from "TypesEvent/Watches"
-import { TypeHash } from "TypesStandard/Hash"
-import { TypeActions } from "TypesStandard/Actions"
-import { TypeNode } from "TypesStandard/Nodes"
-import { EnumThemes } from "@Enums/Themes"
-import { EventEmitter } from "node:events"
+import { TYPE_SETTINGS } from "Types/components/Settings"
+import { TYPE_EVENT } from "Types/event/Event"
+import { ENUM_THEMES } from "@Enums/properties/Themes"
 import { client } from "@xmpp/client"
 import { Database } from "better-sqlite3"
-import { join } from "path"
+import { EventEmitter } from "node:events"
+import { join } from "node:path"
 
 export const Bootstrap = {
-    Version: `b3.1-031`,
-    Ready: false,
-    Ratelimits: {} as Record<string, number[]>,
-    Session: null as ReturnType<typeof client>,
-    Database: null as Database,
-    Job: null as unknown,
+    Version: `b3.1-04`,
+    ServiceReady: false,
     Listener: new EventEmitter(),
+    Scheduler: null as unknown,
+    Session: null as ReturnType<typeof client> | null,
+    Database: null as Database | null,
     Colors: {
         Red: `\x1b[31m`, Green: `\x1b[32m`, Yellow: `\x1b[33m`,
         Blue: `\x1b[34m`, Magenta: `\x1b[35m`, Cyan: `\x1b[36m`,
         White: `\x1b[37m`, Reset: `\x1b[0m`
     },
-    Cache: {
-        LastStanzaTime: null as number,
-        Connected: false,
-        Reconnecting: false,
-        TotalReconnects: 0,
-        Hault: false,
-        Events: {type: "FeatureCollection", features: [] as TypeEvent[]},
-        Watches: [] as TypeWatches[],
-        Nodes: {type: "FeatureCollection", features: [] as TypeNode[]},
-        Hashes: [] as TypeHash[],
-        Parsed: [] as TypeEvent[],
-        UGC: new Map<string, string[]>()
-    },
-    Settings: {
-        Timezone: "UTC",
-        Database: join(process.cwd(), 'shapefiles.db'),
-        DeveloperDisableEvents: false,
-        EnableWireService: false,
-        DeveloperMode: false,
-        EnableJournal: true,
-        DeveloperEventLogging: false,
-        NOAAWeatherWireServiceSettings: {
-            ReconnectionSettings: {
-                Enabled: true,
-                ReconnectionInterval: 60,
-            },
-            CredentialSettings: {
-                Username: null as string,
-                Password: null as string,
-                Nickname: "@atmosx/event-product-parser/3.0",
-            },   
-            CacheSettings: {
-                Enabled: true,
-                MaxDatabaseHistory: 5000,
-                MaxRetentionHistory: 1000,
-            },
-            StanzaSettings: {
-                DisableUGC: false,
-                DisableVTEC: false,
-                DisableText: false,
-            }
+    CacheControl: {
+        Limits: {} as Record<string, number[]>,
+        Session: {
+            Connected: false as boolean,
+            HaultConnection: false as boolean,
+            LastStanzaReported: Date.now() as number,
+            Reconnecting: false as boolean,
+            ReconnectAttempts: 0 as number,
         },
-        NationalWeatherServiceSettings: {
-            EventsEndpoint: `https://api.weather.gov/alerts/active`,
-        },
-        BroadcastifySettings: {
-            BroadcastifyAttachments: true,
-            BroadcastifyDatabase: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/broadcastify.json`,
-            BroadcastifyTags: [`Ham`, `Air`, `Fire`, `Public Safety`, `Weather`, `EMS`, `Police`, `Rail`]
-        },
-        BoundarySettings: {
-            BoundaryDatabase: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/counties-10m.json`,
-            CityDatabase: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/cities500.json`
-        },
-        NotifyServer: {
-            Enabled: false,
-            Server: `https://ntfy.sh`,
-            MediaStorage: {
-                AUDIO: null as string,
-                TEXT: null as string,
-                JSON: null as string,
-                IMAGE: null as string
-            },
-            Credentials: {
-                Username: null as string,
-                Password: null as string
-            }
-        },
-        ActionSettings: [] as TypeActions[],
-        GlobalSettings: {
-            DisableGeometryParsing: false,
-            UseShapefileCoordinates: true,
-            CensusPopulationData: true,
-            NodePolygonTTL: 60,
-            NodeMaxDistance: 120,
-            EventFiltering: {
-                ListeningEvents: [] as string[],
-                ListeningICAO: [] as string[],
-                ListeningUGC: [] as string[],
-                ListeningStates: [] as string[],
-                IgnoredICAO: [] as string[],
-                IgnoredEvents: [`Test Message`],
-                NodeLocationFiltering: false,
-                IgnoreTestProducts: true,
-            },
-            Themes: EnumThemes,
-            ArchiveSettings: {
-                TTL: 60,
-                ImageDirectory: `Archive/Images` as string,
-                JSONDirectory: `Archive/Products` as string,
-                TextDirectory: `Archive/Text` as string,
-                AudioDirectory: `Archive/Audio` as string,
-                Logo: null as string,
-                AudioToneout: null as string
-            }
+        Manager: {
+            Cache: [] as TYPE_EVENT[],
+            Zones: new Map<string, string[]>()
         }
     },
+    Settings: {
+        Timezone: `UTC`,
+        Database: join(process.cwd(), `event-product-parser.db`),
+        DeveloperSettings: {
+            ConsoleMessages: true,
+            DebugMessages: false,
+            DisableEvents: false,
+            DebugMinimumTime: 10.0,
+        },
+        WeatherWireService: false,
+        WeatherWireServiceSettings: {
+            Credentials: {
+                Username: null,
+                Password: null,
+                Nickname: null,
+            },
+            CacheControl: {
+                Enabled: false,
+                MaxStanzas: 5000,
+                MaxStartupStanzas: 125,
+            },
+            ReconnectionPeriod: 60,
+        },
+        Integrations: {
+            Broadcastify: {
+                Attachments: true,
+                FilteredTags: [`Ham`, `Air`, `Fire`, `Public Safety`, `Weather`, `EMS`, `Police`, `Rail`],
+                Download: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/broadcastify.json`,
+            },
+            GIS: {
+                ConusDownload: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/counties-10m.json`,
+                PopulationDownload: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/cities500.json`
+            },
+            NTFY: {
+                Enabled: false,
+                DefaultServer: `https://ntfy.sh`,
+                MediaDirectories: {
+                    Audio: null,
+                    Products: null,
+                    GeoJSON: null,
+                    Graphics: null,
+                },
+                Credentials: {
+                    Username: null,
+                    Password: null
+                }
+            }
+        },
+        Tasks: [],
+        GlobalSettings: {
+            ProductGeometryParsing: true,
+            GeometryShapefileFallback: true,
+            CityPopulationAttachments: true,
+            Nodes: {
+                AlertNodeTTL: 60,
+                NodeMaxDistance: 100,
+                DefinedNodes: [],
+            },
+            AlertFiltering: {
+                ListeningEvents: [],
+                ListeningOffice: [],
+                ListeningFIPS: [],
+                ListeningStates: [],
+                IgnoredOffice: [],
+                IgnoredFIPS: [],
+                TestProducts: false,
+                Nodes: false
+            },
+            Themes: ENUM_THEMES,
+            Generation: {
+                FileTTL: 60,
+                Graphics: `bucket/graphics`,
+                GeoJSON: `bucket/geojson`,
+                Audio: `bucket/audio`,
+                Products: `bucket/products`,
+                GraphicGeneration: {
+                    Logo: null,
+                    MaxWidth: 1920,
+                    MaxHeight: 1080,
+                },
+                AudioGeneration: {
+                    Toneout: null
+                }
+            }
+        }
+    } as TYPE_SETTINGS
 }
 
 

@@ -6,28 +6,19 @@
       / ____ \ |_| | | | | | (_) \__ \ |_) | | | |  __/ |  | | (__ / . \ 
      /_/    \_\__|_| |_| |_|\___/|___/ .__/|_| |_|\___|_|  |_|\___/_/ \_\
                                      | |                            
-                                     |_|                                                                                                                
-
-    Created with ♥ by the AtmosphericX Team (KiyoWx, StarflightWx, & CJ Ziegler)
-    Discord: https://atmosphericx-discord.scriptkitty.cafe
+                                     |_|    
+                                                        
+    Created with ❤️ by the Project AtmosphericX Team (KiyoWx, CJZiegler, StarflightWx)
     Ko-Fi: https://ko-fi.com/k3yomi
-    Documentation: https://atmosphericx.scriptkitty.cafe/documentation
 
-    Independent Package: @atmosx/event-product-parser
-
-    
 */
 
-interface SetSleepOptions { 
+interface SET_SLEEP_OPTIONS {
     Timeout: number
 }
 
-export const SetSleep = async ({ Timeout }: SetSleepOptions): Promise<void> => {
+export const SetSleep = async ({ Timeout }: SET_SLEEP_OPTIONS): Promise<void> => {
     return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve();
-        }, Timeout);
+        setTimeout(resolve, Timeout );
     });
 }
-
-

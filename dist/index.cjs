@@ -34,2730 +34,6 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// node_modules/.pnpm/splaytree@3.2.3/node_modules/splaytree/dist/splaytree.umd.cjs
-var require_splaytree_umd = __commonJS({
-  "node_modules/.pnpm/splaytree@3.2.3/node_modules/splaytree/dist/splaytree.umd.cjs"(exports2, module2) {
-    (function(h, c) {
-      typeof exports2 == "object" && typeof module2 < "u" ? module2.exports = c() : typeof define == "function" && define.amd ? define(c) : (h = typeof globalThis < "u" ? globalThis : h || self, h.SplayTree = c());
-    })(exports2, (function() {
-      "use strict";
-      class h {
-        constructor(t, e) {
-          this.next = null, this.key = t, this.data = e, this.left = null, this.right = null;
-        }
-      }
-      function c(n, t) {
-        return n > t ? 1 : n < t ? -1 : 0;
-      }
-      function u(n, t, e) {
-        const r = new h(null, null);
-        let i = r, l = r;
-        for (; ; ) {
-          const o = e(n, t.key);
-          if (o < 0) {
-            if (t.left === null) break;
-            if (e(n, t.left.key) < 0) {
-              const s2 = t.left;
-              if (t.left = s2.right, s2.right = t, t = s2, t.left === null) break;
-            }
-            l.left = t, l = t, t = t.left;
-          } else if (o > 0) {
-            if (t.right === null) break;
-            if (e(n, t.right.key) > 0) {
-              const s2 = t.right;
-              if (t.right = s2.left, s2.left = t, t = s2, t.right === null) break;
-            }
-            i.right = t, i = t, t = t.right;
-          } else break;
-        }
-        return i.right = t.left, l.left = t.right, t.left = r.right, t.right = r.left, t;
-      }
-      function _2(n, t, e, r) {
-        const i = new h(n, t);
-        if (e === null) return i.left = i.right = null, i;
-        e = u(n, e, r);
-        const l = r(n, e.key);
-        return l < 0 ? (i.left = e.left, i.right = e, e.left = null) : l >= 0 && (i.right = e.right, i.left = e, e.right = null), i;
-      }
-      function d(n, t, e) {
-        let r = null, i = null;
-        if (t) {
-          t = u(n, t, e);
-          const l = e(t.key, n);
-          l === 0 ? (r = t.left, i = t.right) : l < 0 ? (i = t.right, t.right = null, r = t) : (r = t.left, t.left = null, i = t);
-        }
-        return { left: r, right: i };
-      }
-      function w2(n, t, e) {
-        return t === null ? n : (n === null || (t = u(n.key, t, e), t.left = n), t);
-      }
-      function a(n, t, e, r, i) {
-        if (n) {
-          r(`${t}${e ? "\u2514\u2500\u2500 " : "\u251C\u2500\u2500 "}${i(n)}
-`);
-          const l = t + (e ? "    " : "\u2502   ");
-          n.left && a(n.left, l, false, r, i), n.right && a(n.right, l, true, r, i);
-        }
-      }
-      class x2 {
-        constructor(t = c) {
-          this._root = null, this._size = 0, this._comparator = t;
-        }
-        insert(t, e) {
-          return this._size++, this._root = _2(t, e, this._root, this._comparator);
-        }
-        add(t, e) {
-          const r = new h(t, e);
-          this._root === null && (r.left = r.right = null, this._size++, this._root = r);
-          const i = this._comparator, l = u(t, this._root, i), o = i(t, l.key);
-          return o === 0 ? this._root = l : (o < 0 ? (r.left = l.left, r.right = l, l.left = null) : o > 0 && (r.right = l.right, r.left = l, l.right = null), this._size++, this._root = r), this._root;
-        }
-        remove(t) {
-          this._root = this._remove(t, this._root, this._comparator);
-        }
-        _remove(t, e, r) {
-          let i;
-          return e === null ? null : (e = u(t, e, r), r(t, e.key) === 0 ? (e.left === null ? i = e.right : (i = u(t, e.left, r), i.right = e.right), this._size--, i) : e);
-        }
-        pop() {
-          let t = this._root;
-          if (t) {
-            for (; t.left; ) t = t.left;
-            return this._root = u(t.key, this._root, this._comparator), this._root = this._remove(t.key, this._root, this._comparator), { key: t.key, data: t.data };
-          }
-          return null;
-        }
-        findStatic(t) {
-          let e = this._root;
-          const r = this._comparator;
-          for (; e; ) {
-            const i = r(t, e.key);
-            if (i === 0) return e;
-            i < 0 ? e = e.left : e = e.right;
-          }
-          return null;
-        }
-        find(t) {
-          return this._root && (this._root = u(t, this._root, this._comparator), this._comparator(t, this._root.key) !== 0) ? null : this._root;
-        }
-        contains(t) {
-          let e = this._root;
-          const r = this._comparator;
-          for (; e; ) {
-            const i = r(t, e.key);
-            if (i === 0) return true;
-            i < 0 ? e = e.left : e = e.right;
-          }
-          return false;
-        }
-        forEach(t, e) {
-          let r = this._root;
-          const i = [];
-          let l = false;
-          for (; !l; ) r !== null ? (i.push(r), r = r.left) : i.length !== 0 ? (r = i.pop(), t.call(e, r), r = r.right) : l = true;
-          return this;
-        }
-        range(t, e, r, i) {
-          const l = [], o = this._comparator;
-          let s2 = this._root, f2;
-          for (; l.length !== 0 || s2; ) if (s2) l.push(s2), s2 = s2.left;
-          else {
-            if (s2 = l.pop(), f2 = o(s2.key, e), f2 > 0) break;
-            if (o(s2.key, t) >= 0 && r.call(i, s2)) return this;
-            s2 = s2.right;
-          }
-          return this;
-        }
-        keys() {
-          const t = [];
-          return this.forEach(({ key: e }) => {
-            t.push(e);
-          }), t;
-        }
-        values() {
-          const t = [];
-          return this.forEach(({ data: e }) => {
-            t.push(e);
-          }), t;
-        }
-        min() {
-          return this._root ? this.minNode(this._root).key : null;
-        }
-        max() {
-          return this._root ? this.maxNode(this._root).key : null;
-        }
-        minNode(t = this._root) {
-          if (t) for (; t.left; ) t = t.left;
-          return t;
-        }
-        maxNode(t = this._root) {
-          if (t) for (; t.right; ) t = t.right;
-          return t;
-        }
-        at(t) {
-          let e = this._root, r = false, i = 0;
-          const l = [];
-          for (; !r; ) if (e) l.push(e), e = e.left;
-          else if (l.length > 0) {
-            if (e = l.pop(), i === t) return e;
-            i++, e = e.right;
-          } else r = true;
-          return null;
-        }
-        next(t) {
-          let e = this._root, r = null;
-          if (t.right) {
-            for (r = t.right; r.left; ) r = r.left;
-            return r;
-          }
-          const i = this._comparator;
-          for (; e; ) {
-            const l = i(t.key, e.key);
-            if (l === 0) break;
-            l < 0 ? (r = e, e = e.left) : e = e.right;
-          }
-          return r;
-        }
-        prev(t) {
-          let e = this._root, r = null;
-          if (t.left !== null) {
-            for (r = t.left; r.right; ) r = r.right;
-            return r;
-          }
-          const i = this._comparator;
-          for (; e; ) {
-            const l = i(t.key, e.key);
-            if (l === 0) break;
-            l < 0 ? e = e.left : (r = e, e = e.right);
-          }
-          return r;
-        }
-        clear() {
-          return this._root = null, this._size = 0, this;
-        }
-        toList() {
-          return y(this._root);
-        }
-        load(t, e = [], r = false) {
-          let i = t.length;
-          const l = this._comparator;
-          if (r && m2(t, e, 0, i - 1, l), this._root === null) this._root = p2(t, e, 0, i), this._size = i;
-          else {
-            const o = z(this.toList(), k2(t, e), l);
-            i = this._size + i, this._root = g2({ head: o }, 0, i);
-          }
-          return this;
-        }
-        isEmpty() {
-          return this._root === null;
-        }
-        get size() {
-          return this._size;
-        }
-        get root() {
-          return this._root;
-        }
-        toString(t = (e) => String(e.key)) {
-          const e = [];
-          return a(this._root, "", true, (r) => e.push(r), t), e.join("");
-        }
-        update(t, e, r) {
-          const i = this._comparator;
-          let { left: l, right: o } = d(t, this._root, i);
-          i(t, e) < 0 ? o = _2(e, r, o, i) : l = _2(e, r, l, i), this._root = w2(l, o, i);
-        }
-        split(t) {
-          return d(t, this._root, this._comparator);
-        }
-        *[Symbol.iterator]() {
-          let t = this._root;
-          const e = [];
-          let r = false;
-          for (; !r; ) t !== null ? (e.push(t), t = t.left) : e.length !== 0 ? (t = e.pop(), yield t, t = t.right) : r = true;
-        }
-      }
-      function p2(n, t, e, r) {
-        const i = r - e;
-        if (i > 0) {
-          const l = e + Math.floor(i / 2), o = n[l], s2 = t[l], f2 = new h(o, s2);
-          return f2.left = p2(n, t, e, l), f2.right = p2(n, t, l + 1, r), f2;
-        }
-        return null;
-      }
-      function k2(n, t) {
-        const e = new h(null, null);
-        let r = e;
-        for (let i = 0; i < n.length; i++) r = r.next = new h(n[i], t[i]);
-        return r.next = null, e.next;
-      }
-      function y(n) {
-        let t = n;
-        const e = [];
-        let r = false;
-        const i = new h(null, null);
-        let l = i;
-        for (; !r; ) t ? (e.push(t), t = t.left) : e.length > 0 ? (t = l = l.next = e.pop(), t = t.right) : r = true;
-        return l.next = null, i.next;
-      }
-      function g2(n, t, e) {
-        const r = e - t;
-        if (r > 0) {
-          const i = t + Math.floor(r / 2), l = g2(n, t, i), o = n.head;
-          return o.left = l, n.head = n.head.next, o.right = g2(n, i + 1, e), o;
-        }
-        return null;
-      }
-      function z(n, t, e) {
-        const r = new h(null, null);
-        let i = r, l = n, o = t;
-        for (; l !== null && o !== null; ) e(l.key, o.key) < 0 ? (i.next = l, l = l.next) : (i.next = o, o = o.next), i = i.next;
-        return l !== null ? i.next = l : o !== null && (i.next = o), r.next;
-      }
-      function m2(n, t, e, r, i) {
-        if (e >= r) return;
-        const l = n[e + r >> 1];
-        let o = e - 1, s2 = r + 1;
-        for (; ; ) {
-          do
-            o++;
-          while (i(n[o], l) < 0);
-          do
-            s2--;
-          while (i(n[s2], l) > 0);
-          if (o >= s2) break;
-          let f2 = n[o];
-          n[o] = n[s2], n[s2] = f2, f2 = t[o], t[o] = t[s2], t[s2] = f2;
-        }
-        m2(n, t, e, s2, i), m2(n, t, s2 + 1, r, i);
-      }
-      return x2;
-    }));
-  }
-});
-
-// node_modules/.pnpm/polygon-clipping@0.15.7/node_modules/polygon-clipping/dist/polygon-clipping.cjs.js
-var require_polygon_clipping_cjs = __commonJS({
-  "node_modules/.pnpm/polygon-clipping@0.15.7/node_modules/polygon-clipping/dist/polygon-clipping.cjs.js"(exports2, module2) {
-    "use strict";
-    var SplayTree = require_splaytree_umd();
-    function _interopDefaultLegacy(e) {
-      return e && typeof e === "object" && "default" in e ? e : { "default": e };
-    }
-    var SplayTree__default = /* @__PURE__ */ _interopDefaultLegacy(SplayTree);
-    var isInBbox = (bbox, point) => {
-      return bbox.ll.x <= point.x && point.x <= bbox.ur.x && bbox.ll.y <= point.y && point.y <= bbox.ur.y;
-    };
-    var getBboxOverlap = (b1, b2) => {
-      if (b2.ur.x < b1.ll.x || b1.ur.x < b2.ll.x || b2.ur.y < b1.ll.y || b1.ur.y < b2.ll.y) return null;
-      const lowerX = b1.ll.x < b2.ll.x ? b2.ll.x : b1.ll.x;
-      const upperX = b1.ur.x < b2.ur.x ? b1.ur.x : b2.ur.x;
-      const lowerY = b1.ll.y < b2.ll.y ? b2.ll.y : b1.ll.y;
-      const upperY = b1.ur.y < b2.ur.y ? b1.ur.y : b2.ur.y;
-      return {
-        ll: {
-          x: lowerX,
-          y: lowerY
-        },
-        ur: {
-          x: upperX,
-          y: upperY
-        }
-      };
-    };
-    var epsilon$1 = Number.EPSILON;
-    if (epsilon$1 === void 0) epsilon$1 = Math.pow(2, -52);
-    var EPSILON_SQ = epsilon$1 * epsilon$1;
-    var cmp = (a, b2) => {
-      if (-epsilon$1 < a && a < epsilon$1) {
-        if (-epsilon$1 < b2 && b2 < epsilon$1) {
-          return 0;
-        }
-      }
-      const ab = a - b2;
-      if (ab * ab < EPSILON_SQ * a * b2) {
-        return 0;
-      }
-      return a < b2 ? -1 : 1;
-    };
-    var PtRounder = class {
-      constructor() {
-        this.reset();
-      }
-      reset() {
-        this.xRounder = new CoordRounder();
-        this.yRounder = new CoordRounder();
-      }
-      round(x2, y) {
-        return {
-          x: this.xRounder.round(x2),
-          y: this.yRounder.round(y)
-        };
-      }
-    };
-    var CoordRounder = class {
-      constructor() {
-        this.tree = new SplayTree__default["default"]();
-        this.round(0);
-      }
-      // Note: this can rounds input values backwards or forwards.
-      //       You might ask, why not restrict this to just rounding
-      //       forwards? Wouldn't that allow left endpoints to always
-      //       remain left endpoints during splitting (never change to
-      //       right). No - it wouldn't, because we snap intersections
-      //       to endpoints (to establish independence from the segment
-      //       angle for t-intersections).
-      round(coord) {
-        const node = this.tree.add(coord);
-        const prevNode = this.tree.prev(node);
-        if (prevNode !== null && cmp(node.key, prevNode.key) === 0) {
-          this.tree.remove(coord);
-          return prevNode.key;
-        }
-        const nextNode = this.tree.next(node);
-        if (nextNode !== null && cmp(node.key, nextNode.key) === 0) {
-          this.tree.remove(coord);
-          return nextNode.key;
-        }
-        return coord;
-      }
-    };
-    var rounder = new PtRounder();
-    var epsilon3 = 11102230246251565e-32;
-    var splitter = 134217729;
-    var resulterrbound = (3 + 8 * epsilon3) * epsilon3;
-    function sum(elen, e, flen, f2, h) {
-      let Q, Qnew, hh, bvirt;
-      let enow = e[0];
-      let fnow = f2[0];
-      let eindex = 0;
-      let findex = 0;
-      if (fnow > enow === fnow > -enow) {
-        Q = enow;
-        enow = e[++eindex];
-      } else {
-        Q = fnow;
-        fnow = f2[++findex];
-      }
-      let hindex = 0;
-      if (eindex < elen && findex < flen) {
-        if (fnow > enow === fnow > -enow) {
-          Qnew = enow + Q;
-          hh = Q - (Qnew - enow);
-          enow = e[++eindex];
-        } else {
-          Qnew = fnow + Q;
-          hh = Q - (Qnew - fnow);
-          fnow = f2[++findex];
-        }
-        Q = Qnew;
-        if (hh !== 0) {
-          h[hindex++] = hh;
-        }
-        while (eindex < elen && findex < flen) {
-          if (fnow > enow === fnow > -enow) {
-            Qnew = Q + enow;
-            bvirt = Qnew - Q;
-            hh = Q - (Qnew - bvirt) + (enow - bvirt);
-            enow = e[++eindex];
-          } else {
-            Qnew = Q + fnow;
-            bvirt = Qnew - Q;
-            hh = Q - (Qnew - bvirt) + (fnow - bvirt);
-            fnow = f2[++findex];
-          }
-          Q = Qnew;
-          if (hh !== 0) {
-            h[hindex++] = hh;
-          }
-        }
-      }
-      while (eindex < elen) {
-        Qnew = Q + enow;
-        bvirt = Qnew - Q;
-        hh = Q - (Qnew - bvirt) + (enow - bvirt);
-        enow = e[++eindex];
-        Q = Qnew;
-        if (hh !== 0) {
-          h[hindex++] = hh;
-        }
-      }
-      while (findex < flen) {
-        Qnew = Q + fnow;
-        bvirt = Qnew - Q;
-        hh = Q - (Qnew - bvirt) + (fnow - bvirt);
-        fnow = f2[++findex];
-        Q = Qnew;
-        if (hh !== 0) {
-          h[hindex++] = hh;
-        }
-      }
-      if (Q !== 0 || hindex === 0) {
-        h[hindex++] = Q;
-      }
-      return hindex;
-    }
-    function estimate(elen, e) {
-      let Q = e[0];
-      for (let i = 1; i < elen; i++) Q += e[i];
-      return Q;
-    }
-    function vec(n) {
-      return new Float64Array(n);
-    }
-    var ccwerrboundA = (3 + 16 * epsilon3) * epsilon3;
-    var ccwerrboundB = (2 + 12 * epsilon3) * epsilon3;
-    var ccwerrboundC = (9 + 64 * epsilon3) * epsilon3 * epsilon3;
-    var B = vec(4);
-    var C1 = vec(8);
-    var C2 = vec(12);
-    var D2 = vec(16);
-    var u = vec(4);
-    function orient2dadapt(ax, ay, bx, by, cx, cy, detsum) {
-      let acxtail, acytail, bcxtail, bcytail;
-      let bvirt, c, ahi, alo, bhi, blo, _i, _j, _0, s1, s0, t1, t0, u3;
-      const acx = ax - cx;
-      const bcx = bx - cx;
-      const acy = ay - cy;
-      const bcy = by - cy;
-      s1 = acx * bcy;
-      c = splitter * acx;
-      ahi = c - (c - acx);
-      alo = acx - ahi;
-      c = splitter * bcy;
-      bhi = c - (c - bcy);
-      blo = bcy - bhi;
-      s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
-      t1 = acy * bcx;
-      c = splitter * acy;
-      ahi = c - (c - acy);
-      alo = acy - ahi;
-      c = splitter * bcx;
-      bhi = c - (c - bcx);
-      blo = bcx - bhi;
-      t0 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
-      _i = s0 - t0;
-      bvirt = s0 - _i;
-      B[0] = s0 - (_i + bvirt) + (bvirt - t0);
-      _j = s1 + _i;
-      bvirt = _j - s1;
-      _0 = s1 - (_j - bvirt) + (_i - bvirt);
-      _i = _0 - t1;
-      bvirt = _0 - _i;
-      B[1] = _0 - (_i + bvirt) + (bvirt - t1);
-      u3 = _j + _i;
-      bvirt = u3 - _j;
-      B[2] = _j - (u3 - bvirt) + (_i - bvirt);
-      B[3] = u3;
-      let det = estimate(4, B);
-      let errbound = ccwerrboundB * detsum;
-      if (det >= errbound || -det >= errbound) {
-        return det;
-      }
-      bvirt = ax - acx;
-      acxtail = ax - (acx + bvirt) + (bvirt - cx);
-      bvirt = bx - bcx;
-      bcxtail = bx - (bcx + bvirt) + (bvirt - cx);
-      bvirt = ay - acy;
-      acytail = ay - (acy + bvirt) + (bvirt - cy);
-      bvirt = by - bcy;
-      bcytail = by - (bcy + bvirt) + (bvirt - cy);
-      if (acxtail === 0 && acytail === 0 && bcxtail === 0 && bcytail === 0) {
-        return det;
-      }
-      errbound = ccwerrboundC * detsum + resulterrbound * Math.abs(det);
-      det += acx * bcytail + bcy * acxtail - (acy * bcxtail + bcx * acytail);
-      if (det >= errbound || -det >= errbound) return det;
-      s1 = acxtail * bcy;
-      c = splitter * acxtail;
-      ahi = c - (c - acxtail);
-      alo = acxtail - ahi;
-      c = splitter * bcy;
-      bhi = c - (c - bcy);
-      blo = bcy - bhi;
-      s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
-      t1 = acytail * bcx;
-      c = splitter * acytail;
-      ahi = c - (c - acytail);
-      alo = acytail - ahi;
-      c = splitter * bcx;
-      bhi = c - (c - bcx);
-      blo = bcx - bhi;
-      t0 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
-      _i = s0 - t0;
-      bvirt = s0 - _i;
-      u[0] = s0 - (_i + bvirt) + (bvirt - t0);
-      _j = s1 + _i;
-      bvirt = _j - s1;
-      _0 = s1 - (_j - bvirt) + (_i - bvirt);
-      _i = _0 - t1;
-      bvirt = _0 - _i;
-      u[1] = _0 - (_i + bvirt) + (bvirt - t1);
-      u3 = _j + _i;
-      bvirt = u3 - _j;
-      u[2] = _j - (u3 - bvirt) + (_i - bvirt);
-      u[3] = u3;
-      const C1len = sum(4, B, 4, u, C1);
-      s1 = acx * bcytail;
-      c = splitter * acx;
-      ahi = c - (c - acx);
-      alo = acx - ahi;
-      c = splitter * bcytail;
-      bhi = c - (c - bcytail);
-      blo = bcytail - bhi;
-      s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
-      t1 = acy * bcxtail;
-      c = splitter * acy;
-      ahi = c - (c - acy);
-      alo = acy - ahi;
-      c = splitter * bcxtail;
-      bhi = c - (c - bcxtail);
-      blo = bcxtail - bhi;
-      t0 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
-      _i = s0 - t0;
-      bvirt = s0 - _i;
-      u[0] = s0 - (_i + bvirt) + (bvirt - t0);
-      _j = s1 + _i;
-      bvirt = _j - s1;
-      _0 = s1 - (_j - bvirt) + (_i - bvirt);
-      _i = _0 - t1;
-      bvirt = _0 - _i;
-      u[1] = _0 - (_i + bvirt) + (bvirt - t1);
-      u3 = _j + _i;
-      bvirt = u3 - _j;
-      u[2] = _j - (u3 - bvirt) + (_i - bvirt);
-      u[3] = u3;
-      const C2len = sum(C1len, C1, 4, u, C2);
-      s1 = acxtail * bcytail;
-      c = splitter * acxtail;
-      ahi = c - (c - acxtail);
-      alo = acxtail - ahi;
-      c = splitter * bcytail;
-      bhi = c - (c - bcytail);
-      blo = bcytail - bhi;
-      s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
-      t1 = acytail * bcxtail;
-      c = splitter * acytail;
-      ahi = c - (c - acytail);
-      alo = acytail - ahi;
-      c = splitter * bcxtail;
-      bhi = c - (c - bcxtail);
-      blo = bcxtail - bhi;
-      t0 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
-      _i = s0 - t0;
-      bvirt = s0 - _i;
-      u[0] = s0 - (_i + bvirt) + (bvirt - t0);
-      _j = s1 + _i;
-      bvirt = _j - s1;
-      _0 = s1 - (_j - bvirt) + (_i - bvirt);
-      _i = _0 - t1;
-      bvirt = _0 - _i;
-      u[1] = _0 - (_i + bvirt) + (bvirt - t1);
-      u3 = _j + _i;
-      bvirt = u3 - _j;
-      u[2] = _j - (u3 - bvirt) + (_i - bvirt);
-      u[3] = u3;
-      const Dlen = sum(C2len, C2, 4, u, D2);
-      return D2[Dlen - 1];
-    }
-    function orient2d(ax, ay, bx, by, cx, cy) {
-      const detleft = (ay - cy) * (bx - cx);
-      const detright = (ax - cx) * (by - cy);
-      const det = detleft - detright;
-      const detsum = Math.abs(detleft + detright);
-      if (Math.abs(det) >= ccwerrboundA * detsum) return det;
-      return -orient2dadapt(ax, ay, bx, by, cx, cy, detsum);
-    }
-    var crossProduct = (a, b2) => a.x * b2.y - a.y * b2.x;
-    var dotProduct = (a, b2) => a.x * b2.x + a.y * b2.y;
-    var compareVectorAngles = (basePt, endPt1, endPt2) => {
-      const res = orient2d(basePt.x, basePt.y, endPt1.x, endPt1.y, endPt2.x, endPt2.y);
-      if (res > 0) return -1;
-      if (res < 0) return 1;
-      return 0;
-    };
-    var length = (v2) => Math.sqrt(dotProduct(v2, v2));
-    var sineOfAngle = (pShared, pBase, pAngle) => {
-      const vBase = {
-        x: pBase.x - pShared.x,
-        y: pBase.y - pShared.y
-      };
-      const vAngle = {
-        x: pAngle.x - pShared.x,
-        y: pAngle.y - pShared.y
-      };
-      return crossProduct(vAngle, vBase) / length(vAngle) / length(vBase);
-    };
-    var cosineOfAngle = (pShared, pBase, pAngle) => {
-      const vBase = {
-        x: pBase.x - pShared.x,
-        y: pBase.y - pShared.y
-      };
-      const vAngle = {
-        x: pAngle.x - pShared.x,
-        y: pAngle.y - pShared.y
-      };
-      return dotProduct(vAngle, vBase) / length(vAngle) / length(vBase);
-    };
-    var horizontalIntersection = (pt, v2, y) => {
-      if (v2.y === 0) return null;
-      return {
-        x: pt.x + v2.x / v2.y * (y - pt.y),
-        y
-      };
-    };
-    var verticalIntersection = (pt, v2, x2) => {
-      if (v2.x === 0) return null;
-      return {
-        x: x2,
-        y: pt.y + v2.y / v2.x * (x2 - pt.x)
-      };
-    };
-    var intersection$1 = (pt1, v1, pt2, v2) => {
-      if (v1.x === 0) return verticalIntersection(pt2, v2, pt1.x);
-      if (v2.x === 0) return verticalIntersection(pt1, v1, pt2.x);
-      if (v1.y === 0) return horizontalIntersection(pt2, v2, pt1.y);
-      if (v2.y === 0) return horizontalIntersection(pt1, v1, pt2.y);
-      const kross = crossProduct(v1, v2);
-      if (kross == 0) return null;
-      const ve = {
-        x: pt2.x - pt1.x,
-        y: pt2.y - pt1.y
-      };
-      const d1 = crossProduct(ve, v1) / kross;
-      const d2 = crossProduct(ve, v2) / kross;
-      const x12 = pt1.x + d2 * v1.x, x2 = pt2.x + d1 * v2.x;
-      const y12 = pt1.y + d2 * v1.y, y2 = pt2.y + d1 * v2.y;
-      const x3 = (x12 + x2) / 2;
-      const y = (y12 + y2) / 2;
-      return {
-        x: x3,
-        y
-      };
-    };
-    var SweepEvent = class _SweepEvent {
-      // for ordering sweep events in the sweep event queue
-      static compare(a, b2) {
-        const ptCmp = _SweepEvent.comparePoints(a.point, b2.point);
-        if (ptCmp !== 0) return ptCmp;
-        if (a.point !== b2.point) a.link(b2);
-        if (a.isLeft !== b2.isLeft) return a.isLeft ? 1 : -1;
-        return Segment.compare(a.segment, b2.segment);
-      }
-      // for ordering points in sweep line order
-      static comparePoints(aPt, bPt) {
-        if (aPt.x < bPt.x) return -1;
-        if (aPt.x > bPt.x) return 1;
-        if (aPt.y < bPt.y) return -1;
-        if (aPt.y > bPt.y) return 1;
-        return 0;
-      }
-      // Warning: 'point' input will be modified and re-used (for performance)
-      constructor(point, isLeft) {
-        if (point.events === void 0) point.events = [this];
-        else point.events.push(this);
-        this.point = point;
-        this.isLeft = isLeft;
-      }
-      link(other) {
-        if (other.point === this.point) {
-          throw new Error("Tried to link already linked events");
-        }
-        const otherEvents = other.point.events;
-        for (let i = 0, iMax = otherEvents.length; i < iMax; i++) {
-          const evt = otherEvents[i];
-          this.point.events.push(evt);
-          evt.point = this.point;
-        }
-        this.checkForConsuming();
-      }
-      /* Do a pass over our linked events and check to see if any pair
-       * of segments match, and should be consumed. */
-      checkForConsuming() {
-        const numEvents = this.point.events.length;
-        for (let i = 0; i < numEvents; i++) {
-          const evt1 = this.point.events[i];
-          if (evt1.segment.consumedBy !== void 0) continue;
-          for (let j2 = i + 1; j2 < numEvents; j2++) {
-            const evt2 = this.point.events[j2];
-            if (evt2.consumedBy !== void 0) continue;
-            if (evt1.otherSE.point.events !== evt2.otherSE.point.events) continue;
-            evt1.segment.consume(evt2.segment);
-          }
-        }
-      }
-      getAvailableLinkedEvents() {
-        const events = [];
-        for (let i = 0, iMax = this.point.events.length; i < iMax; i++) {
-          const evt = this.point.events[i];
-          if (evt !== this && !evt.segment.ringOut && evt.segment.isInResult()) {
-            events.push(evt);
-          }
-        }
-        return events;
-      }
-      /**
-       * Returns a comparator function for sorting linked events that will
-       * favor the event that will give us the smallest left-side angle.
-       * All ring construction starts as low as possible heading to the right,
-       * so by always turning left as sharp as possible we'll get polygons
-       * without uncessary loops & holes.
-       *
-       * The comparator function has a compute cache such that it avoids
-       * re-computing already-computed values.
-       */
-      getLeftmostComparator(baseEvent) {
-        const cache = /* @__PURE__ */ new Map();
-        const fillCache = (linkedEvent) => {
-          const nextEvent = linkedEvent.otherSE;
-          cache.set(linkedEvent, {
-            sine: sineOfAngle(this.point, baseEvent.point, nextEvent.point),
-            cosine: cosineOfAngle(this.point, baseEvent.point, nextEvent.point)
-          });
-        };
-        return (a, b2) => {
-          if (!cache.has(a)) fillCache(a);
-          if (!cache.has(b2)) fillCache(b2);
-          const {
-            sine: asine,
-            cosine: acosine
-          } = cache.get(a);
-          const {
-            sine: bsine,
-            cosine: bcosine
-          } = cache.get(b2);
-          if (asine >= 0 && bsine >= 0) {
-            if (acosine < bcosine) return 1;
-            if (acosine > bcosine) return -1;
-            return 0;
-          }
-          if (asine < 0 && bsine < 0) {
-            if (acosine < bcosine) return -1;
-            if (acosine > bcosine) return 1;
-            return 0;
-          }
-          if (bsine < asine) return -1;
-          if (bsine > asine) return 1;
-          return 0;
-        };
-      }
-    };
-    var segmentId = 0;
-    var Segment = class _Segment {
-      /* This compare() function is for ordering segments in the sweep
-       * line tree, and does so according to the following criteria:
-       *
-       * Consider the vertical line that lies an infinestimal step to the
-       * right of the right-more of the two left endpoints of the input
-       * segments. Imagine slowly moving a point up from negative infinity
-       * in the increasing y direction. Which of the two segments will that
-       * point intersect first? That segment comes 'before' the other one.
-       *
-       * If neither segment would be intersected by such a line, (if one
-       * or more of the segments are vertical) then the line to be considered
-       * is directly on the right-more of the two left inputs.
-       */
-      static compare(a, b2) {
-        const alx = a.leftSE.point.x;
-        const blx = b2.leftSE.point.x;
-        const arx = a.rightSE.point.x;
-        const brx = b2.rightSE.point.x;
-        if (brx < alx) return 1;
-        if (arx < blx) return -1;
-        const aly = a.leftSE.point.y;
-        const bly = b2.leftSE.point.y;
-        const ary = a.rightSE.point.y;
-        const bry = b2.rightSE.point.y;
-        if (alx < blx) {
-          if (bly < aly && bly < ary) return 1;
-          if (bly > aly && bly > ary) return -1;
-          const aCmpBLeft = a.comparePoint(b2.leftSE.point);
-          if (aCmpBLeft < 0) return 1;
-          if (aCmpBLeft > 0) return -1;
-          const bCmpARight = b2.comparePoint(a.rightSE.point);
-          if (bCmpARight !== 0) return bCmpARight;
-          return -1;
-        }
-        if (alx > blx) {
-          if (aly < bly && aly < bry) return -1;
-          if (aly > bly && aly > bry) return 1;
-          const bCmpALeft = b2.comparePoint(a.leftSE.point);
-          if (bCmpALeft !== 0) return bCmpALeft;
-          const aCmpBRight = a.comparePoint(b2.rightSE.point);
-          if (aCmpBRight < 0) return 1;
-          if (aCmpBRight > 0) return -1;
-          return 1;
-        }
-        if (aly < bly) return -1;
-        if (aly > bly) return 1;
-        if (arx < brx) {
-          const bCmpARight = b2.comparePoint(a.rightSE.point);
-          if (bCmpARight !== 0) return bCmpARight;
-        }
-        if (arx > brx) {
-          const aCmpBRight = a.comparePoint(b2.rightSE.point);
-          if (aCmpBRight < 0) return 1;
-          if (aCmpBRight > 0) return -1;
-        }
-        if (arx !== brx) {
-          const ay = ary - aly;
-          const ax = arx - alx;
-          const by = bry - bly;
-          const bx = brx - blx;
-          if (ay > ax && by < bx) return 1;
-          if (ay < ax && by > bx) return -1;
-        }
-        if (arx > brx) return 1;
-        if (arx < brx) return -1;
-        if (ary < bry) return -1;
-        if (ary > bry) return 1;
-        if (a.id < b2.id) return -1;
-        if (a.id > b2.id) return 1;
-        return 0;
-      }
-      /* Warning: a reference to ringWindings input will be stored,
-       *  and possibly will be later modified */
-      constructor(leftSE, rightSE, rings, windings) {
-        this.id = ++segmentId;
-        this.leftSE = leftSE;
-        leftSE.segment = this;
-        leftSE.otherSE = rightSE;
-        this.rightSE = rightSE;
-        rightSE.segment = this;
-        rightSE.otherSE = leftSE;
-        this.rings = rings;
-        this.windings = windings;
-      }
-      static fromRing(pt1, pt2, ring) {
-        let leftPt, rightPt, winding;
-        const cmpPts = SweepEvent.comparePoints(pt1, pt2);
-        if (cmpPts < 0) {
-          leftPt = pt1;
-          rightPt = pt2;
-          winding = 1;
-        } else if (cmpPts > 0) {
-          leftPt = pt2;
-          rightPt = pt1;
-          winding = -1;
-        } else throw new Error(`Tried to create degenerate segment at [${pt1.x}, ${pt1.y}]`);
-        const leftSE = new SweepEvent(leftPt, true);
-        const rightSE = new SweepEvent(rightPt, false);
-        return new _Segment(leftSE, rightSE, [ring], [winding]);
-      }
-      /* When a segment is split, the rightSE is replaced with a new sweep event */
-      replaceRightSE(newRightSE) {
-        this.rightSE = newRightSE;
-        this.rightSE.segment = this;
-        this.rightSE.otherSE = this.leftSE;
-        this.leftSE.otherSE = this.rightSE;
-      }
-      bbox() {
-        const y12 = this.leftSE.point.y;
-        const y2 = this.rightSE.point.y;
-        return {
-          ll: {
-            x: this.leftSE.point.x,
-            y: y12 < y2 ? y12 : y2
-          },
-          ur: {
-            x: this.rightSE.point.x,
-            y: y12 > y2 ? y12 : y2
-          }
-        };
-      }
-      /* A vector from the left point to the right */
-      vector() {
-        return {
-          x: this.rightSE.point.x - this.leftSE.point.x,
-          y: this.rightSE.point.y - this.leftSE.point.y
-        };
-      }
-      isAnEndpoint(pt) {
-        return pt.x === this.leftSE.point.x && pt.y === this.leftSE.point.y || pt.x === this.rightSE.point.x && pt.y === this.rightSE.point.y;
-      }
-      /* Compare this segment with a point.
-       *
-       * A point P is considered to be colinear to a segment if there
-       * exists a distance D such that if we travel along the segment
-       * from one * endpoint towards the other a distance D, we find
-       * ourselves at point P.
-       *
-       * Return value indicates:
-       *
-       *   1: point lies above the segment (to the left of vertical)
-       *   0: point is colinear to segment
-       *  -1: point lies below the segment (to the right of vertical)
-       */
-      comparePoint(point) {
-        if (this.isAnEndpoint(point)) return 0;
-        const lPt = this.leftSE.point;
-        const rPt = this.rightSE.point;
-        const v2 = this.vector();
-        if (lPt.x === rPt.x) {
-          if (point.x === lPt.x) return 0;
-          return point.x < lPt.x ? 1 : -1;
-        }
-        const yDist = (point.y - lPt.y) / v2.y;
-        const xFromYDist = lPt.x + yDist * v2.x;
-        if (point.x === xFromYDist) return 0;
-        const xDist = (point.x - lPt.x) / v2.x;
-        const yFromXDist = lPt.y + xDist * v2.y;
-        if (point.y === yFromXDist) return 0;
-        return point.y < yFromXDist ? -1 : 1;
-      }
-      /**
-       * Given another segment, returns the first non-trivial intersection
-       * between the two segments (in terms of sweep line ordering), if it exists.
-       *
-       * A 'non-trivial' intersection is one that will cause one or both of the
-       * segments to be split(). As such, 'trivial' vs. 'non-trivial' intersection:
-       *
-       *   * endpoint of segA with endpoint of segB --> trivial
-       *   * endpoint of segA with point along segB --> non-trivial
-       *   * endpoint of segB with point along segA --> non-trivial
-       *   * point along segA with point along segB --> non-trivial
-       *
-       * If no non-trivial intersection exists, return null
-       * Else, return null.
-       */
-      getIntersection(other) {
-        const tBbox = this.bbox();
-        const oBbox = other.bbox();
-        const bboxOverlap = getBboxOverlap(tBbox, oBbox);
-        if (bboxOverlap === null) return null;
-        const tlp = this.leftSE.point;
-        const trp = this.rightSE.point;
-        const olp = other.leftSE.point;
-        const orp = other.rightSE.point;
-        const touchesOtherLSE = isInBbox(tBbox, olp) && this.comparePoint(olp) === 0;
-        const touchesThisLSE = isInBbox(oBbox, tlp) && other.comparePoint(tlp) === 0;
-        const touchesOtherRSE = isInBbox(tBbox, orp) && this.comparePoint(orp) === 0;
-        const touchesThisRSE = isInBbox(oBbox, trp) && other.comparePoint(trp) === 0;
-        if (touchesThisLSE && touchesOtherLSE) {
-          if (touchesThisRSE && !touchesOtherRSE) return trp;
-          if (!touchesThisRSE && touchesOtherRSE) return orp;
-          return null;
-        }
-        if (touchesThisLSE) {
-          if (touchesOtherRSE) {
-            if (tlp.x === orp.x && tlp.y === orp.y) return null;
-          }
-          return tlp;
-        }
-        if (touchesOtherLSE) {
-          if (touchesThisRSE) {
-            if (trp.x === olp.x && trp.y === olp.y) return null;
-          }
-          return olp;
-        }
-        if (touchesThisRSE && touchesOtherRSE) return null;
-        if (touchesThisRSE) return trp;
-        if (touchesOtherRSE) return orp;
-        const pt = intersection$1(tlp, this.vector(), olp, other.vector());
-        if (pt === null) return null;
-        if (!isInBbox(bboxOverlap, pt)) return null;
-        return rounder.round(pt.x, pt.y);
-      }
-      /**
-       * Split the given segment into multiple segments on the given points.
-       *  * Each existing segment will retain its leftSE and a new rightSE will be
-       *    generated for it.
-       *  * A new segment will be generated which will adopt the original segment's
-       *    rightSE, and a new leftSE will be generated for it.
-       *  * If there are more than two points given to split on, new segments
-       *    in the middle will be generated with new leftSE and rightSE's.
-       *  * An array of the newly generated SweepEvents will be returned.
-       *
-       * Warning: input array of points is modified
-       */
-      split(point) {
-        const newEvents = [];
-        const alreadyLinked = point.events !== void 0;
-        const newLeftSE = new SweepEvent(point, true);
-        const newRightSE = new SweepEvent(point, false);
-        const oldRightSE = this.rightSE;
-        this.replaceRightSE(newRightSE);
-        newEvents.push(newRightSE);
-        newEvents.push(newLeftSE);
-        const newSeg = new _Segment(newLeftSE, oldRightSE, this.rings.slice(), this.windings.slice());
-        if (SweepEvent.comparePoints(newSeg.leftSE.point, newSeg.rightSE.point) > 0) {
-          newSeg.swapEvents();
-        }
-        if (SweepEvent.comparePoints(this.leftSE.point, this.rightSE.point) > 0) {
-          this.swapEvents();
-        }
-        if (alreadyLinked) {
-          newLeftSE.checkForConsuming();
-          newRightSE.checkForConsuming();
-        }
-        return newEvents;
-      }
-      /* Swap which event is left and right */
-      swapEvents() {
-        const tmpEvt = this.rightSE;
-        this.rightSE = this.leftSE;
-        this.leftSE = tmpEvt;
-        this.leftSE.isLeft = true;
-        this.rightSE.isLeft = false;
-        for (let i = 0, iMax = this.windings.length; i < iMax; i++) {
-          this.windings[i] *= -1;
-        }
-      }
-      /* Consume another segment. We take their rings under our wing
-       * and mark them as consumed. Use for perfectly overlapping segments */
-      consume(other) {
-        let consumer = this;
-        let consumee = other;
-        while (consumer.consumedBy) consumer = consumer.consumedBy;
-        while (consumee.consumedBy) consumee = consumee.consumedBy;
-        const cmp2 = _Segment.compare(consumer, consumee);
-        if (cmp2 === 0) return;
-        if (cmp2 > 0) {
-          const tmp = consumer;
-          consumer = consumee;
-          consumee = tmp;
-        }
-        if (consumer.prev === consumee) {
-          const tmp = consumer;
-          consumer = consumee;
-          consumee = tmp;
-        }
-        for (let i = 0, iMax = consumee.rings.length; i < iMax; i++) {
-          const ring = consumee.rings[i];
-          const winding = consumee.windings[i];
-          const index2 = consumer.rings.indexOf(ring);
-          if (index2 === -1) {
-            consumer.rings.push(ring);
-            consumer.windings.push(winding);
-          } else consumer.windings[index2] += winding;
-        }
-        consumee.rings = null;
-        consumee.windings = null;
-        consumee.consumedBy = consumer;
-        consumee.leftSE.consumedBy = consumer.leftSE;
-        consumee.rightSE.consumedBy = consumer.rightSE;
-      }
-      /* The first segment previous segment chain that is in the result */
-      prevInResult() {
-        if (this._prevInResult !== void 0) return this._prevInResult;
-        if (!this.prev) this._prevInResult = null;
-        else if (this.prev.isInResult()) this._prevInResult = this.prev;
-        else this._prevInResult = this.prev.prevInResult();
-        return this._prevInResult;
-      }
-      beforeState() {
-        if (this._beforeState !== void 0) return this._beforeState;
-        if (!this.prev) this._beforeState = {
-          rings: [],
-          windings: [],
-          multiPolys: []
-        };
-        else {
-          const seg = this.prev.consumedBy || this.prev;
-          this._beforeState = seg.afterState();
-        }
-        return this._beforeState;
-      }
-      afterState() {
-        if (this._afterState !== void 0) return this._afterState;
-        const beforeState = this.beforeState();
-        this._afterState = {
-          rings: beforeState.rings.slice(0),
-          windings: beforeState.windings.slice(0),
-          multiPolys: []
-        };
-        const ringsAfter = this._afterState.rings;
-        const windingsAfter = this._afterState.windings;
-        const mpsAfter = this._afterState.multiPolys;
-        for (let i = 0, iMax = this.rings.length; i < iMax; i++) {
-          const ring = this.rings[i];
-          const winding = this.windings[i];
-          const index2 = ringsAfter.indexOf(ring);
-          if (index2 === -1) {
-            ringsAfter.push(ring);
-            windingsAfter.push(winding);
-          } else windingsAfter[index2] += winding;
-        }
-        const polysAfter = [];
-        const polysExclude = [];
-        for (let i = 0, iMax = ringsAfter.length; i < iMax; i++) {
-          if (windingsAfter[i] === 0) continue;
-          const ring = ringsAfter[i];
-          const poly = ring.poly;
-          if (polysExclude.indexOf(poly) !== -1) continue;
-          if (ring.isExterior) polysAfter.push(poly);
-          else {
-            if (polysExclude.indexOf(poly) === -1) polysExclude.push(poly);
-            const index2 = polysAfter.indexOf(ring.poly);
-            if (index2 !== -1) polysAfter.splice(index2, 1);
-          }
-        }
-        for (let i = 0, iMax = polysAfter.length; i < iMax; i++) {
-          const mp = polysAfter[i].multiPoly;
-          if (mpsAfter.indexOf(mp) === -1) mpsAfter.push(mp);
-        }
-        return this._afterState;
-      }
-      /* Is this segment part of the final result? */
-      isInResult() {
-        if (this.consumedBy) return false;
-        if (this._isInResult !== void 0) return this._isInResult;
-        const mpsBefore = this.beforeState().multiPolys;
-        const mpsAfter = this.afterState().multiPolys;
-        switch (operation.type) {
-          case "union": {
-            const noBefores = mpsBefore.length === 0;
-            const noAfters = mpsAfter.length === 0;
-            this._isInResult = noBefores !== noAfters;
-            break;
-          }
-          case "intersection": {
-            let least;
-            let most;
-            if (mpsBefore.length < mpsAfter.length) {
-              least = mpsBefore.length;
-              most = mpsAfter.length;
-            } else {
-              least = mpsAfter.length;
-              most = mpsBefore.length;
-            }
-            this._isInResult = most === operation.numMultiPolys && least < most;
-            break;
-          }
-          case "xor": {
-            const diff = Math.abs(mpsBefore.length - mpsAfter.length);
-            this._isInResult = diff % 2 === 1;
-            break;
-          }
-          case "difference": {
-            const isJustSubject = (mps) => mps.length === 1 && mps[0].isSubject;
-            this._isInResult = isJustSubject(mpsBefore) !== isJustSubject(mpsAfter);
-            break;
-          }
-          default:
-            throw new Error(`Unrecognized operation type found ${operation.type}`);
-        }
-        return this._isInResult;
-      }
-    };
-    var RingIn = class {
-      constructor(geomRing, poly, isExterior) {
-        if (!Array.isArray(geomRing) || geomRing.length === 0) {
-          throw new Error("Input geometry is not a valid Polygon or MultiPolygon");
-        }
-        this.poly = poly;
-        this.isExterior = isExterior;
-        this.segments = [];
-        if (typeof geomRing[0][0] !== "number" || typeof geomRing[0][1] !== "number") {
-          throw new Error("Input geometry is not a valid Polygon or MultiPolygon");
-        }
-        const firstPoint = rounder.round(geomRing[0][0], geomRing[0][1]);
-        this.bbox = {
-          ll: {
-            x: firstPoint.x,
-            y: firstPoint.y
-          },
-          ur: {
-            x: firstPoint.x,
-            y: firstPoint.y
-          }
-        };
-        let prevPoint = firstPoint;
-        for (let i = 1, iMax = geomRing.length; i < iMax; i++) {
-          if (typeof geomRing[i][0] !== "number" || typeof geomRing[i][1] !== "number") {
-            throw new Error("Input geometry is not a valid Polygon or MultiPolygon");
-          }
-          let point = rounder.round(geomRing[i][0], geomRing[i][1]);
-          if (point.x === prevPoint.x && point.y === prevPoint.y) continue;
-          this.segments.push(Segment.fromRing(prevPoint, point, this));
-          if (point.x < this.bbox.ll.x) this.bbox.ll.x = point.x;
-          if (point.y < this.bbox.ll.y) this.bbox.ll.y = point.y;
-          if (point.x > this.bbox.ur.x) this.bbox.ur.x = point.x;
-          if (point.y > this.bbox.ur.y) this.bbox.ur.y = point.y;
-          prevPoint = point;
-        }
-        if (firstPoint.x !== prevPoint.x || firstPoint.y !== prevPoint.y) {
-          this.segments.push(Segment.fromRing(prevPoint, firstPoint, this));
-        }
-      }
-      getSweepEvents() {
-        const sweepEvents = [];
-        for (let i = 0, iMax = this.segments.length; i < iMax; i++) {
-          const segment = this.segments[i];
-          sweepEvents.push(segment.leftSE);
-          sweepEvents.push(segment.rightSE);
-        }
-        return sweepEvents;
-      }
-    };
-    var PolyIn = class {
-      constructor(geomPoly, multiPoly) {
-        if (!Array.isArray(geomPoly)) {
-          throw new Error("Input geometry is not a valid Polygon or MultiPolygon");
-        }
-        this.exteriorRing = new RingIn(geomPoly[0], this, true);
-        this.bbox = {
-          ll: {
-            x: this.exteriorRing.bbox.ll.x,
-            y: this.exteriorRing.bbox.ll.y
-          },
-          ur: {
-            x: this.exteriorRing.bbox.ur.x,
-            y: this.exteriorRing.bbox.ur.y
-          }
-        };
-        this.interiorRings = [];
-        for (let i = 1, iMax = geomPoly.length; i < iMax; i++) {
-          const ring = new RingIn(geomPoly[i], this, false);
-          if (ring.bbox.ll.x < this.bbox.ll.x) this.bbox.ll.x = ring.bbox.ll.x;
-          if (ring.bbox.ll.y < this.bbox.ll.y) this.bbox.ll.y = ring.bbox.ll.y;
-          if (ring.bbox.ur.x > this.bbox.ur.x) this.bbox.ur.x = ring.bbox.ur.x;
-          if (ring.bbox.ur.y > this.bbox.ur.y) this.bbox.ur.y = ring.bbox.ur.y;
-          this.interiorRings.push(ring);
-        }
-        this.multiPoly = multiPoly;
-      }
-      getSweepEvents() {
-        const sweepEvents = this.exteriorRing.getSweepEvents();
-        for (let i = 0, iMax = this.interiorRings.length; i < iMax; i++) {
-          const ringSweepEvents = this.interiorRings[i].getSweepEvents();
-          for (let j2 = 0, jMax = ringSweepEvents.length; j2 < jMax; j2++) {
-            sweepEvents.push(ringSweepEvents[j2]);
-          }
-        }
-        return sweepEvents;
-      }
-    };
-    var MultiPolyIn = class {
-      constructor(geom, isSubject) {
-        if (!Array.isArray(geom)) {
-          throw new Error("Input geometry is not a valid Polygon or MultiPolygon");
-        }
-        try {
-          if (typeof geom[0][0][0] === "number") geom = [geom];
-        } catch (ex) {
-        }
-        this.polys = [];
-        this.bbox = {
-          ll: {
-            x: Number.POSITIVE_INFINITY,
-            y: Number.POSITIVE_INFINITY
-          },
-          ur: {
-            x: Number.NEGATIVE_INFINITY,
-            y: Number.NEGATIVE_INFINITY
-          }
-        };
-        for (let i = 0, iMax = geom.length; i < iMax; i++) {
-          const poly = new PolyIn(geom[i], this);
-          if (poly.bbox.ll.x < this.bbox.ll.x) this.bbox.ll.x = poly.bbox.ll.x;
-          if (poly.bbox.ll.y < this.bbox.ll.y) this.bbox.ll.y = poly.bbox.ll.y;
-          if (poly.bbox.ur.x > this.bbox.ur.x) this.bbox.ur.x = poly.bbox.ur.x;
-          if (poly.bbox.ur.y > this.bbox.ur.y) this.bbox.ur.y = poly.bbox.ur.y;
-          this.polys.push(poly);
-        }
-        this.isSubject = isSubject;
-      }
-      getSweepEvents() {
-        const sweepEvents = [];
-        for (let i = 0, iMax = this.polys.length; i < iMax; i++) {
-          const polySweepEvents = this.polys[i].getSweepEvents();
-          for (let j2 = 0, jMax = polySweepEvents.length; j2 < jMax; j2++) {
-            sweepEvents.push(polySweepEvents[j2]);
-          }
-        }
-        return sweepEvents;
-      }
-    };
-    var RingOut = class _RingOut {
-      /* Given the segments from the sweep line pass, compute & return a series
-       * of closed rings from all the segments marked to be part of the result */
-      static factory(allSegments) {
-        const ringsOut = [];
-        for (let i = 0, iMax = allSegments.length; i < iMax; i++) {
-          const segment = allSegments[i];
-          if (!segment.isInResult() || segment.ringOut) continue;
-          let prevEvent = null;
-          let event = segment.leftSE;
-          let nextEvent = segment.rightSE;
-          const events = [event];
-          const startingPoint = event.point;
-          const intersectionLEs = [];
-          while (true) {
-            prevEvent = event;
-            event = nextEvent;
-            events.push(event);
-            if (event.point === startingPoint) break;
-            while (true) {
-              const availableLEs = event.getAvailableLinkedEvents();
-              if (availableLEs.length === 0) {
-                const firstPt = events[0].point;
-                const lastPt = events[events.length - 1].point;
-                throw new Error(`Unable to complete output ring starting at [${firstPt.x}, ${firstPt.y}]. Last matching segment found ends at [${lastPt.x}, ${lastPt.y}].`);
-              }
-              if (availableLEs.length === 1) {
-                nextEvent = availableLEs[0].otherSE;
-                break;
-              }
-              let indexLE = null;
-              for (let j2 = 0, jMax = intersectionLEs.length; j2 < jMax; j2++) {
-                if (intersectionLEs[j2].point === event.point) {
-                  indexLE = j2;
-                  break;
-                }
-              }
-              if (indexLE !== null) {
-                const intersectionLE = intersectionLEs.splice(indexLE)[0];
-                const ringEvents = events.splice(intersectionLE.index);
-                ringEvents.unshift(ringEvents[0].otherSE);
-                ringsOut.push(new _RingOut(ringEvents.reverse()));
-                continue;
-              }
-              intersectionLEs.push({
-                index: events.length,
-                point: event.point
-              });
-              const comparator = event.getLeftmostComparator(prevEvent);
-              nextEvent = availableLEs.sort(comparator)[0].otherSE;
-              break;
-            }
-          }
-          ringsOut.push(new _RingOut(events));
-        }
-        return ringsOut;
-      }
-      constructor(events) {
-        this.events = events;
-        for (let i = 0, iMax = events.length; i < iMax; i++) {
-          events[i].segment.ringOut = this;
-        }
-        this.poly = null;
-      }
-      getGeom() {
-        let prevPt = this.events[0].point;
-        const points = [prevPt];
-        for (let i = 1, iMax = this.events.length - 1; i < iMax; i++) {
-          const pt2 = this.events[i].point;
-          const nextPt2 = this.events[i + 1].point;
-          if (compareVectorAngles(pt2, prevPt, nextPt2) === 0) continue;
-          points.push(pt2);
-          prevPt = pt2;
-        }
-        if (points.length === 1) return null;
-        const pt = points[0];
-        const nextPt = points[1];
-        if (compareVectorAngles(pt, prevPt, nextPt) === 0) points.shift();
-        points.push(points[0]);
-        const step = this.isExteriorRing() ? 1 : -1;
-        const iStart = this.isExteriorRing() ? 0 : points.length - 1;
-        const iEnd = this.isExteriorRing() ? points.length : -1;
-        const orderedPoints = [];
-        for (let i = iStart; i != iEnd; i += step) orderedPoints.push([points[i].x, points[i].y]);
-        return orderedPoints;
-      }
-      isExteriorRing() {
-        if (this._isExteriorRing === void 0) {
-          const enclosing = this.enclosingRing();
-          this._isExteriorRing = enclosing ? !enclosing.isExteriorRing() : true;
-        }
-        return this._isExteriorRing;
-      }
-      enclosingRing() {
-        if (this._enclosingRing === void 0) {
-          this._enclosingRing = this._calcEnclosingRing();
-        }
-        return this._enclosingRing;
-      }
-      /* Returns the ring that encloses this one, if any */
-      _calcEnclosingRing() {
-        let leftMostEvt = this.events[0];
-        for (let i = 1, iMax = this.events.length; i < iMax; i++) {
-          const evt = this.events[i];
-          if (SweepEvent.compare(leftMostEvt, evt) > 0) leftMostEvt = evt;
-        }
-        let prevSeg = leftMostEvt.segment.prevInResult();
-        let prevPrevSeg = prevSeg ? prevSeg.prevInResult() : null;
-        while (true) {
-          if (!prevSeg) return null;
-          if (!prevPrevSeg) return prevSeg.ringOut;
-          if (prevPrevSeg.ringOut !== prevSeg.ringOut) {
-            if (prevPrevSeg.ringOut.enclosingRing() !== prevSeg.ringOut) {
-              return prevSeg.ringOut;
-            } else return prevSeg.ringOut.enclosingRing();
-          }
-          prevSeg = prevPrevSeg.prevInResult();
-          prevPrevSeg = prevSeg ? prevSeg.prevInResult() : null;
-        }
-      }
-    };
-    var PolyOut = class {
-      constructor(exteriorRing) {
-        this.exteriorRing = exteriorRing;
-        exteriorRing.poly = this;
-        this.interiorRings = [];
-      }
-      addInterior(ring) {
-        this.interiorRings.push(ring);
-        ring.poly = this;
-      }
-      getGeom() {
-        const geom = [this.exteriorRing.getGeom()];
-        if (geom[0] === null) return null;
-        for (let i = 0, iMax = this.interiorRings.length; i < iMax; i++) {
-          const ringGeom = this.interiorRings[i].getGeom();
-          if (ringGeom === null) continue;
-          geom.push(ringGeom);
-        }
-        return geom;
-      }
-    };
-    var MultiPolyOut = class {
-      constructor(rings) {
-        this.rings = rings;
-        this.polys = this._composePolys(rings);
-      }
-      getGeom() {
-        const geom = [];
-        for (let i = 0, iMax = this.polys.length; i < iMax; i++) {
-          const polyGeom = this.polys[i].getGeom();
-          if (polyGeom === null) continue;
-          geom.push(polyGeom);
-        }
-        return geom;
-      }
-      _composePolys(rings) {
-        const polys = [];
-        for (let i = 0, iMax = rings.length; i < iMax; i++) {
-          const ring = rings[i];
-          if (ring.poly) continue;
-          if (ring.isExteriorRing()) polys.push(new PolyOut(ring));
-          else {
-            const enclosingRing = ring.enclosingRing();
-            if (!enclosingRing.poly) polys.push(new PolyOut(enclosingRing));
-            enclosingRing.poly.addInterior(ring);
-          }
-        }
-        return polys;
-      }
-    };
-    var SweepLine = class {
-      constructor(queue) {
-        let comparator = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : Segment.compare;
-        this.queue = queue;
-        this.tree = new SplayTree__default["default"](comparator);
-        this.segments = [];
-      }
-      process(event) {
-        const segment = event.segment;
-        const newEvents = [];
-        if (event.consumedBy) {
-          if (event.isLeft) this.queue.remove(event.otherSE);
-          else this.tree.remove(segment);
-          return newEvents;
-        }
-        const node = event.isLeft ? this.tree.add(segment) : this.tree.find(segment);
-        if (!node) throw new Error(`Unable to find segment #${segment.id} [${segment.leftSE.point.x}, ${segment.leftSE.point.y}] -> [${segment.rightSE.point.x}, ${segment.rightSE.point.y}] in SweepLine tree.`);
-        let prevNode = node;
-        let nextNode = node;
-        let prevSeg = void 0;
-        let nextSeg = void 0;
-        while (prevSeg === void 0) {
-          prevNode = this.tree.prev(prevNode);
-          if (prevNode === null) prevSeg = null;
-          else if (prevNode.key.consumedBy === void 0) prevSeg = prevNode.key;
-        }
-        while (nextSeg === void 0) {
-          nextNode = this.tree.next(nextNode);
-          if (nextNode === null) nextSeg = null;
-          else if (nextNode.key.consumedBy === void 0) nextSeg = nextNode.key;
-        }
-        if (event.isLeft) {
-          let prevMySplitter = null;
-          if (prevSeg) {
-            const prevInter = prevSeg.getIntersection(segment);
-            if (prevInter !== null) {
-              if (!segment.isAnEndpoint(prevInter)) prevMySplitter = prevInter;
-              if (!prevSeg.isAnEndpoint(prevInter)) {
-                const newEventsFromSplit = this._splitSafely(prevSeg, prevInter);
-                for (let i = 0, iMax = newEventsFromSplit.length; i < iMax; i++) {
-                  newEvents.push(newEventsFromSplit[i]);
-                }
-              }
-            }
-          }
-          let nextMySplitter = null;
-          if (nextSeg) {
-            const nextInter = nextSeg.getIntersection(segment);
-            if (nextInter !== null) {
-              if (!segment.isAnEndpoint(nextInter)) nextMySplitter = nextInter;
-              if (!nextSeg.isAnEndpoint(nextInter)) {
-                const newEventsFromSplit = this._splitSafely(nextSeg, nextInter);
-                for (let i = 0, iMax = newEventsFromSplit.length; i < iMax; i++) {
-                  newEvents.push(newEventsFromSplit[i]);
-                }
-              }
-            }
-          }
-          if (prevMySplitter !== null || nextMySplitter !== null) {
-            let mySplitter = null;
-            if (prevMySplitter === null) mySplitter = nextMySplitter;
-            else if (nextMySplitter === null) mySplitter = prevMySplitter;
-            else {
-              const cmpSplitters = SweepEvent.comparePoints(prevMySplitter, nextMySplitter);
-              mySplitter = cmpSplitters <= 0 ? prevMySplitter : nextMySplitter;
-            }
-            this.queue.remove(segment.rightSE);
-            newEvents.push(segment.rightSE);
-            const newEventsFromSplit = segment.split(mySplitter);
-            for (let i = 0, iMax = newEventsFromSplit.length; i < iMax; i++) {
-              newEvents.push(newEventsFromSplit[i]);
-            }
-          }
-          if (newEvents.length > 0) {
-            this.tree.remove(segment);
-            newEvents.push(event);
-          } else {
-            this.segments.push(segment);
-            segment.prev = prevSeg;
-          }
-        } else {
-          if (prevSeg && nextSeg) {
-            const inter = prevSeg.getIntersection(nextSeg);
-            if (inter !== null) {
-              if (!prevSeg.isAnEndpoint(inter)) {
-                const newEventsFromSplit = this._splitSafely(prevSeg, inter);
-                for (let i = 0, iMax = newEventsFromSplit.length; i < iMax; i++) {
-                  newEvents.push(newEventsFromSplit[i]);
-                }
-              }
-              if (!nextSeg.isAnEndpoint(inter)) {
-                const newEventsFromSplit = this._splitSafely(nextSeg, inter);
-                for (let i = 0, iMax = newEventsFromSplit.length; i < iMax; i++) {
-                  newEvents.push(newEventsFromSplit[i]);
-                }
-              }
-            }
-          }
-          this.tree.remove(segment);
-        }
-        return newEvents;
-      }
-      /* Safely split a segment that is currently in the datastructures
-       * IE - a segment other than the one that is currently being processed. */
-      _splitSafely(seg, pt) {
-        this.tree.remove(seg);
-        const rightSE = seg.rightSE;
-        this.queue.remove(rightSE);
-        const newEvents = seg.split(pt);
-        newEvents.push(rightSE);
-        if (seg.consumedBy === void 0) this.tree.add(seg);
-        return newEvents;
-      }
-    };
-    var POLYGON_CLIPPING_MAX_QUEUE_SIZE = typeof process !== "undefined" && process.env.POLYGON_CLIPPING_MAX_QUEUE_SIZE || 1e6;
-    var POLYGON_CLIPPING_MAX_SWEEPLINE_SEGMENTS = typeof process !== "undefined" && process.env.POLYGON_CLIPPING_MAX_SWEEPLINE_SEGMENTS || 1e6;
-    var Operation = class {
-      run(type, geom, moreGeoms) {
-        operation.type = type;
-        rounder.reset();
-        const multipolys = [new MultiPolyIn(geom, true)];
-        for (let i = 0, iMax = moreGeoms.length; i < iMax; i++) {
-          multipolys.push(new MultiPolyIn(moreGeoms[i], false));
-        }
-        operation.numMultiPolys = multipolys.length;
-        if (operation.type === "difference") {
-          const subject = multipolys[0];
-          let i = 1;
-          while (i < multipolys.length) {
-            if (getBboxOverlap(multipolys[i].bbox, subject.bbox) !== null) i++;
-            else multipolys.splice(i, 1);
-          }
-        }
-        if (operation.type === "intersection") {
-          for (let i = 0, iMax = multipolys.length; i < iMax; i++) {
-            const mpA = multipolys[i];
-            for (let j2 = i + 1, jMax = multipolys.length; j2 < jMax; j2++) {
-              if (getBboxOverlap(mpA.bbox, multipolys[j2].bbox) === null) return [];
-            }
-          }
-        }
-        const queue = new SplayTree__default["default"](SweepEvent.compare);
-        for (let i = 0, iMax = multipolys.length; i < iMax; i++) {
-          const sweepEvents = multipolys[i].getSweepEvents();
-          for (let j2 = 0, jMax = sweepEvents.length; j2 < jMax; j2++) {
-            queue.insert(sweepEvents[j2]);
-            if (queue.size > POLYGON_CLIPPING_MAX_QUEUE_SIZE) {
-              throw new Error("Infinite loop when putting segment endpoints in a priority queue (queue size too big).");
-            }
-          }
-        }
-        const sweepLine = new SweepLine(queue);
-        let prevQueueSize = queue.size;
-        let node = queue.pop();
-        while (node) {
-          const evt = node.key;
-          if (queue.size === prevQueueSize) {
-            const seg = evt.segment;
-            throw new Error(`Unable to pop() ${evt.isLeft ? "left" : "right"} SweepEvent [${evt.point.x}, ${evt.point.y}] from segment #${seg.id} [${seg.leftSE.point.x}, ${seg.leftSE.point.y}] -> [${seg.rightSE.point.x}, ${seg.rightSE.point.y}] from queue.`);
-          }
-          if (queue.size > POLYGON_CLIPPING_MAX_QUEUE_SIZE) {
-            throw new Error("Infinite loop when passing sweep line over endpoints (queue size too big).");
-          }
-          if (sweepLine.segments.length > POLYGON_CLIPPING_MAX_SWEEPLINE_SEGMENTS) {
-            throw new Error("Infinite loop when passing sweep line over endpoints (too many sweep line segments).");
-          }
-          const newEvents = sweepLine.process(evt);
-          for (let i = 0, iMax = newEvents.length; i < iMax; i++) {
-            const evt2 = newEvents[i];
-            if (evt2.consumedBy === void 0) queue.insert(evt2);
-          }
-          prevQueueSize = queue.size;
-          node = queue.pop();
-        }
-        rounder.reset();
-        const ringsOut = RingOut.factory(sweepLine.segments);
-        const result = new MultiPolyOut(ringsOut);
-        return result.getGeom();
-      }
-    };
-    var operation = new Operation();
-    var union2 = function(geom) {
-      for (var _len = arguments.length, moreGeoms = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        moreGeoms[_key - 1] = arguments[_key];
-      }
-      return operation.run("union", geom, moreGeoms);
-    };
-    var intersection = function(geom) {
-      for (var _len2 = arguments.length, moreGeoms = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-        moreGeoms[_key2 - 1] = arguments[_key2];
-      }
-      return operation.run("intersection", geom, moreGeoms);
-    };
-    var xor = function(geom) {
-      for (var _len3 = arguments.length, moreGeoms = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-        moreGeoms[_key3 - 1] = arguments[_key3];
-      }
-      return operation.run("xor", geom, moreGeoms);
-    };
-    var difference = function(subjectGeom) {
-      for (var _len4 = arguments.length, clippingGeoms = new Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
-        clippingGeoms[_key4 - 1] = arguments[_key4];
-      }
-      return operation.run("difference", subjectGeom, clippingGeoms);
-    };
-    var index = {
-      union: union2,
-      intersection,
-      xor,
-      difference
-    };
-    module2.exports = index;
-  }
-});
-
-// node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/escape.js
-var require_escape = __commonJS({
-  "node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/escape.js"(exports2) {
-    "use strict";
-    var escapeXMLTable = {
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&apos;"
-    };
-    function escapeXMLReplace(match) {
-      return escapeXMLTable[match];
-    }
-    var unescapeXMLTable = {
-      "&amp;": "&",
-      "&lt;": "<",
-      "&gt;": ">",
-      "&quot;": '"',
-      "&apos;": "'"
-    };
-    function unescapeXMLReplace(match) {
-      if (match[1] === "#") {
-        const num = match[2] === "x" ? parseInt(match.slice(3), 16) : parseInt(match.slice(2), 10);
-        if (num === 9 || num === 10 || num === 13 || num >= 32 && num <= 55295 || num >= 57344 && num <= 65533 || num >= 65536 && num <= 1114111) {
-          return String.fromCodePoint(num);
-        }
-        throw new Error("Illegal XML character 0x" + num.toString(16));
-      }
-      if (unescapeXMLTable[match]) {
-        return unescapeXMLTable[match] || match;
-      }
-      throw new Error("Illegal XML entity " + match);
-    }
-    function escapeXML2(s2) {
-      return s2.replace(/["&'<>]/g, escapeXMLReplace);
-    }
-    function unescapeXML2(s2) {
-      let result = "";
-      let start = -1;
-      let end = -1;
-      let previous = 0;
-      while ((start = s2.indexOf("&", previous)) !== -1 && (end = s2.indexOf(";", start + 1)) !== -1) {
-        result = result + s2.slice(previous, start) + unescapeXMLReplace(s2.slice(start, end + 1));
-        previous = end + 1;
-      }
-      if (previous === 0) return s2;
-      result = result + s2.substring(previous);
-      return result;
-    }
-    function escapeXMLText2(s2) {
-      return s2.replace(/[&<>]/g, escapeXMLReplace);
-    }
-    function unescapeXMLText2(s2) {
-      return s2.replace(/&(amp|#38|lt|#60|gt|#62);/g, unescapeXMLReplace);
-    }
-    exports2.escapeXML = escapeXML2;
-    exports2.escapeXMLText = escapeXMLText2;
-    exports2.unescapeXML = unescapeXML2;
-    exports2.unescapeXMLText = unescapeXMLText2;
-  }
-});
-
-// node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/Element.js
-var require_Element = __commonJS({
-  "node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/Element.js"(exports2, module2) {
-    "use strict";
-    var escape2 = require_escape();
-    var Element3 = class _Element {
-      constructor(name, attrs) {
-        this.name = name;
-        this.parent = null;
-        this.children = [];
-        this.attrs = {};
-        this.setAttrs(attrs);
-      }
-      /* Accessors */
-      /**
-       * if (element.is('message', 'jabber:client')) ...
-       **/
-      is(name, xmlns) {
-        return this.getName() === name && (!xmlns || this.getNS() === xmlns);
-      }
-      /* without prefix */
-      getName() {
-        const idx = this.name.indexOf(":");
-        return idx >= 0 ? this.name.slice(idx + 1) : this.name;
-      }
-      /**
-       * retrieves the namespace of the current element, upwards recursively
-       **/
-      getNS() {
-        const idx = this.name.indexOf(":");
-        if (idx >= 0) {
-          const prefix = this.name.slice(0, idx);
-          return this.findNS(prefix);
-        }
-        return this.findNS();
-      }
-      /**
-       * find the namespace to the given prefix, upwards recursively
-       **/
-      findNS(prefix) {
-        if (!prefix) {
-          if (this.attrs.xmlns) {
-            return this.attrs.xmlns;
-          } else if (this.parent) {
-            return this.parent.findNS();
-          }
-        } else {
-          const attr = "xmlns:" + prefix;
-          if (this.attrs[attr]) {
-            return this.attrs[attr];
-          } else if (this.parent) {
-            return this.parent.findNS(prefix);
-          }
-        }
-      }
-      /**
-       * Recursiverly gets all xmlns defined, in the form of {url:prefix}
-       **/
-      getXmlns() {
-        let namespaces = {};
-        if (this.parent) {
-          namespaces = this.parent.getXmlns();
-        }
-        for (const attr in this.attrs) {
-          const m2 = attr.match("xmlns:?(.*)");
-          if (this.attrs.hasOwnProperty(attr) && m2) {
-            namespaces[this.attrs[attr]] = m2[1];
-          }
-        }
-        return namespaces;
-      }
-      setAttrs(attrs) {
-        if (typeof attrs === "string") {
-          this.attrs.xmlns = attrs;
-        } else if (attrs) {
-          Object.assign(this.attrs, attrs);
-        }
-      }
-      /**
-       * xmlns can be null, returns the matching attribute.
-       **/
-      getAttr(name, xmlns) {
-        if (!xmlns) {
-          return this.attrs[name];
-        }
-        const namespaces = this.getXmlns();
-        if (!namespaces[xmlns]) {
-          return null;
-        }
-        return this.attrs[[namespaces[xmlns], name].join(":")];
-      }
-      /**
-       * xmlns can be null
-       **/
-      getChild(name, xmlns) {
-        return this.getChildren(name, xmlns)[0];
-      }
-      /**
-       * xmlns can be null
-       **/
-      getChildren(name, xmlns) {
-        const result = [];
-        for (const child of this.children) {
-          if (child.getName && child.getName() === name && (!xmlns || child.getNS() === xmlns)) {
-            result.push(child);
-          }
-        }
-        return result;
-      }
-      /**
-       * xmlns and recursive can be null
-       **/
-      getChildByAttr(attr, val, xmlns, recursive) {
-        return this.getChildrenByAttr(attr, val, xmlns, recursive)[0];
-      }
-      /**
-       * xmlns and recursive can be null
-       **/
-      getChildrenByAttr(attr, val, xmlns, recursive) {
-        let result = [];
-        for (const child of this.children) {
-          if (child.attrs && child.attrs[attr] === val && (!xmlns || child.getNS() === xmlns)) {
-            result.push(child);
-          }
-          if (recursive && child.getChildrenByAttr) {
-            result.push(child.getChildrenByAttr(attr, val, xmlns, true));
-          }
-        }
-        if (recursive) {
-          result = result.flat();
-        }
-        return result;
-      }
-      getChildrenByFilter(filter, recursive) {
-        let result = [];
-        for (const child of this.children) {
-          if (filter(child)) {
-            result.push(child);
-          }
-          if (recursive && child.getChildrenByFilter) {
-            result.push(child.getChildrenByFilter(filter, true));
-          }
-        }
-        if (recursive) {
-          result = result.flat();
-        }
-        return result;
-      }
-      getText() {
-        let text = "";
-        for (const child of this.children) {
-          if (typeof child === "string" || typeof child === "number") {
-            text += child;
-          }
-        }
-        return text;
-      }
-      getChildText(name, xmlns) {
-        const child = this.getChild(name, xmlns);
-        return child ? child.getText() : null;
-      }
-      /**
-       * Return all direct descendents that are Elements.
-       * This differs from `getChildren` in that it will exclude text nodes,
-       * processing instructions, etc.
-       */
-      getChildElements() {
-        return this.getChildrenByFilter((child) => {
-          return child instanceof _Element;
-        });
-      }
-      /* Builder */
-      /** returns uppermost parent */
-      root() {
-        if (this.parent) {
-          return this.parent.root();
-        }
-        return this;
-      }
-      /** just parent or itself */
-      up() {
-        if (this.parent) {
-          return this.parent;
-        }
-        return this;
-      }
-      /** create child node and return it */
-      c(name, attrs) {
-        return this.cnode(new _Element(name, attrs));
-      }
-      cnode(child) {
-        this.children.push(child);
-        if (typeof child === "object") {
-          child.parent = this;
-        }
-        return child;
-      }
-      append(...nodes) {
-        for (const node of nodes) {
-          this.children.push(node);
-          if (typeof node === "object") {
-            node.parent = this;
-          }
-        }
-      }
-      prepend(...nodes) {
-        for (const node of nodes) {
-          this.children.unshift(node);
-          if (typeof node === "object") {
-            node.parent = this;
-          }
-        }
-      }
-      /** add text node and return element */
-      t(text) {
-        this.children.push(text);
-        return this;
-      }
-      /* Manipulation */
-      /**
-       * Either:
-       *   el.remove(childEl)
-       *   el.remove('author', 'urn:...')
-       */
-      remove(el, xmlns) {
-        const filter = typeof el === "string" ? (child) => {
-          return !(child.is && child.is(el, xmlns));
-        } : (child) => {
-          return child !== el;
-        };
-        this.children = this.children.filter(filter);
-        return this;
-      }
-      text(val) {
-        if (val && this.children.length === 1) {
-          this.children[0] = val;
-          return this;
-        }
-        return this.getText();
-      }
-      attr(attr, val) {
-        if (typeof val !== "undefined" || val === null) {
-          if (!this.attrs) {
-            this.attrs = {};
-          }
-          this.attrs[attr] = val;
-          return this;
-        }
-        return this.attrs[attr];
-      }
-      /* Serialization */
-      toString() {
-        let s2 = "";
-        this.write((c) => {
-          s2 += c;
-        });
-        return s2;
-      }
-      _addChildren(writer) {
-        writer(">");
-        for (const child of this.children) {
-          if (child != null) {
-            if (child.write) {
-              child.write(writer);
-            } else if (typeof child === "string") {
-              writer(escape2.escapeXMLText(child));
-            } else if (child.toString) {
-              writer(escape2.escapeXMLText(child.toString(10)));
-            }
-          }
-        }
-        writer("</");
-        writer(this.name);
-        writer(">");
-      }
-      write(writer) {
-        writer("<");
-        writer(this.name);
-        for (const k2 in this.attrs) {
-          const v2 = this.attrs[k2];
-          if (v2 != null) {
-            writer(" ");
-            writer(k2);
-            writer('="');
-            writer(escape2.escapeXML(typeof v2 === "string" ? v2 : v2.toString(10)));
-            writer('"');
-          }
-        }
-        if (this.children.length === 0) {
-          writer("/>");
-        } else {
-          this._addChildren(writer);
-        }
-      }
-    };
-    Element3.prototype.tree = Element3.prototype.root;
-    module2.exports = Element3;
-  }
-});
-
-// node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/createElement.js
-var require_createElement = __commonJS({
-  "node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/createElement.js"(exports2, module2) {
-    "use strict";
-    var Element3 = require_Element();
-    function append2(el, child) {
-      if (Array.isArray(child)) {
-        for (const c of child) append2(el, c);
-        return;
-      }
-      if (child === "" || child == null || child === true || child === false) {
-        return;
-      }
-      el.cnode(child);
-    }
-    function createElement2(name, attrs, ...children) {
-      if (typeof attrs === "object" && attrs !== null) {
-        delete attrs.__source;
-        delete attrs.__self;
-        for (const [key, value] of Object.entries(attrs)) {
-          if (value == null) delete attrs[key];
-          else attrs[key] = value.toString(10);
-        }
-      }
-      const el = new Element3(name, attrs);
-      for (const child of children) {
-        append2(el, child);
-      }
-      return el;
-    }
-    module2.exports = createElement2;
-  }
-});
-
-// node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/parsers/ltx.js
-var require_ltx = __commonJS({
-  "node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/parsers/ltx.js"(exports2, module2) {
-    "use strict";
-    var events = require("events");
-    var escape2 = require_escape();
-    var STATE_TEXT = 0;
-    var STATE_IGNORE_COMMENT = 1;
-    var STATE_IGNORE_INSTRUCTION = 2;
-    var STATE_TAG_NAME = 3;
-    var STATE_TAG = 4;
-    var STATE_ATTR_NAME = 5;
-    var STATE_ATTR_EQ = 6;
-    var STATE_ATTR_QUOT = 7;
-    var STATE_ATTR_VALUE = 8;
-    var STATE_CDATA = 9;
-    var STATE_IGNORE_CDATA = 10;
-    var SaxLtx = class extends events.EventEmitter {
-      constructor() {
-        super();
-        let state = STATE_TEXT;
-        let remainder;
-        let parseRemainder;
-        let tagName;
-        let attrs;
-        let endTag;
-        let selfClosing;
-        let attrQuote;
-        let attrQuoteChar;
-        let recordStart = 0;
-        let attrName;
-        this._handleTagOpening = function _handleTagOpening(endTag2, tagName2, attrs2) {
-          if (!endTag2) {
-            this.emit("startElement", tagName2, attrs2);
-            if (selfClosing) {
-              this.emit("endElement", tagName2, true);
-            }
-          } else {
-            this.emit("endElement", tagName2, false);
-          }
-        };
-        this.write = function write(data) {
-          if (typeof data !== "string") {
-            data = data.toString();
-          }
-          let pos = 0;
-          if (remainder) {
-            data = remainder + data;
-            pos += !parseRemainder ? remainder.length : 0;
-            parseRemainder = false;
-            remainder = null;
-          }
-          function endRecording() {
-            if (typeof recordStart === "number") {
-              const recorded = data.slice(recordStart, pos);
-              recordStart = void 0;
-              return recorded;
-            }
-          }
-          for (; pos < data.length; pos++) {
-            switch (state) {
-              case STATE_TEXT: {
-                const lt = data.indexOf("<", pos);
-                if (lt !== -1 && pos !== lt) {
-                  pos = lt;
-                }
-                break;
-              }
-              case STATE_ATTR_VALUE: {
-                const quot = data.indexOf(attrQuoteChar, pos);
-                if (quot !== -1) {
-                  pos = quot;
-                }
-                break;
-              }
-              case STATE_IGNORE_COMMENT: {
-                const endcomment = data.indexOf("-->", pos);
-                if (endcomment !== -1) {
-                  pos = endcomment + 2;
-                }
-                break;
-              }
-              case STATE_IGNORE_CDATA: {
-                const endCDATA = data.indexOf("]]>", pos);
-                if (endCDATA !== -1) {
-                  pos = endCDATA + 2;
-                }
-                break;
-              }
-            }
-            const c = data.charCodeAt(pos);
-            switch (state) {
-              case STATE_TEXT:
-                if (c === 60) {
-                  const text = endRecording();
-                  if (text) {
-                    this.emit("text", escape2.unescapeXML(text));
-                  }
-                  state = STATE_TAG_NAME;
-                  recordStart = pos + 1;
-                  attrs = {};
-                }
-                break;
-              case STATE_CDATA:
-                if (c === 93) {
-                  if (data.substr(pos + 1, 2) === "]>") {
-                    const cData = endRecording();
-                    if (cData) {
-                      this.emit("text", cData);
-                    }
-                    state = STATE_TEXT;
-                  } else if (data.length < pos + 2) {
-                    parseRemainder = true;
-                    pos = data.length;
-                  }
-                }
-                break;
-              case STATE_TAG_NAME:
-                if (c === 47 && recordStart === pos) {
-                  recordStart = pos + 1;
-                  endTag = true;
-                } else if (c === 33) {
-                  if (data.substr(pos + 1, 7) === "[CDATA[") {
-                    recordStart = pos + 8;
-                    state = STATE_CDATA;
-                  } else if (data.length < pos + 8 && "[CDATA[".startsWith(data.slice(pos + 1))) {
-                    parseRemainder = true;
-                    pos = data.length;
-                  } else {
-                    recordStart = void 0;
-                    state = STATE_IGNORE_COMMENT;
-                  }
-                } else if (c === 63) {
-                  recordStart = void 0;
-                  state = STATE_IGNORE_INSTRUCTION;
-                } else if (c <= 32 || c === 47 || c === 62) {
-                  tagName = endRecording();
-                  pos--;
-                  state = STATE_TAG;
-                }
-                break;
-              case STATE_IGNORE_COMMENT:
-                if (c === 62) {
-                  const prevFirst = data.charCodeAt(pos - 1);
-                  const prevSecond = data.charCodeAt(pos - 2);
-                  if (prevFirst === 45 && prevSecond === 45 || prevFirst === 93 && prevSecond === 93) {
-                    state = STATE_TEXT;
-                  }
-                }
-                break;
-              case STATE_IGNORE_INSTRUCTION:
-                if (c === 62) {
-                  const prev = data.charCodeAt(pos - 1);
-                  if (prev === 63) {
-                    state = STATE_TEXT;
-                  }
-                }
-                break;
-              case STATE_TAG:
-                if (c === 62) {
-                  this._handleTagOpening(endTag, tagName, attrs);
-                  tagName = void 0;
-                  attrs = void 0;
-                  endTag = void 0;
-                  selfClosing = void 0;
-                  state = STATE_TEXT;
-                  recordStart = pos + 1;
-                } else if (c === 47) {
-                  selfClosing = true;
-                } else if (c > 32) {
-                  recordStart = pos;
-                  state = STATE_ATTR_NAME;
-                }
-                break;
-              case STATE_ATTR_NAME:
-                if (c <= 32 || c === 61) {
-                  attrName = endRecording();
-                  pos--;
-                  state = STATE_ATTR_EQ;
-                }
-                break;
-              case STATE_ATTR_EQ:
-                if (c === 61) {
-                  state = STATE_ATTR_QUOT;
-                }
-                break;
-              case STATE_ATTR_QUOT:
-                if (c === 34 || c === 39) {
-                  attrQuote = c;
-                  attrQuoteChar = c === 34 ? '"' : "'";
-                  state = STATE_ATTR_VALUE;
-                  recordStart = pos + 1;
-                }
-                break;
-              case STATE_ATTR_VALUE:
-                if (c === attrQuote) {
-                  const value = escape2.unescapeXML(endRecording());
-                  attrs[attrName] = value;
-                  attrName = void 0;
-                  state = STATE_TAG;
-                }
-                break;
-            }
-          }
-          if (typeof recordStart === "number" && recordStart <= data.length) {
-            remainder = data.slice(recordStart);
-            recordStart = 0;
-          }
-        };
-      }
-      end(data) {
-        if (data) {
-          this.write(data);
-        }
-        this.write = function write() {
-        };
-      }
-    };
-    module2.exports = SaxLtx;
-  }
-});
-
-// node_modules/.pnpm/koa-compose@4.1.0/node_modules/koa-compose/index.js
-var require_koa_compose = __commonJS({
-  "node_modules/.pnpm/koa-compose@4.1.0/node_modules/koa-compose/index.js"(exports2, module2) {
-    "use strict";
-    module2.exports = compose2;
-    function compose2(middleware2) {
-      if (!Array.isArray(middleware2)) throw new TypeError("Middleware stack must be an array!");
-      for (const fn of middleware2) {
-        if (typeof fn !== "function") throw new TypeError("Middleware must be composed of functions!");
-      }
-      return function(context, next) {
-        let index = -1;
-        return dispatch(0);
-        function dispatch(i) {
-          if (i <= index) return Promise.reject(new Error("next() called multiple times"));
-          index = i;
-          let fn = middleware2[i];
-          if (i === middleware2.length) fn = next;
-          if (!fn) return Promise.resolve();
-          try {
-            return Promise.resolve(fn(context, dispatch.bind(null, i + 1)));
-          } catch (err) {
-            return Promise.reject(err);
-          }
-        }
-      };
-    }
-  }
-});
-
-// node_modules/.pnpm/saslmechanisms@0.1.1/node_modules/saslmechanisms/lib/factory.js
-var require_factory = __commonJS({
-  "node_modules/.pnpm/saslmechanisms@0.1.1/node_modules/saslmechanisms/lib/factory.js"(exports2, module2) {
-    (function(root, factory) {
-      if (typeof exports2 === "object") {
-        factory(exports2, module2);
-      } else if (typeof define === "function" && define.amd) {
-        define(["exports", "module"], factory);
-      }
-    })(exports2, function(exports3, module3) {
-      function Factory() {
-        this._mechs = [];
-      }
-      Factory.prototype.use = function(name, mech4) {
-        if (!mech4) {
-          mech4 = name;
-          name = mech4.prototype.name;
-        }
-        this._mechs.push({ name, mech: mech4 });
-        return this;
-      };
-      Factory.prototype.create = function(mechs) {
-        for (var i = 0, len = this._mechs.length; i < len; i++) {
-          for (var j2 = 0, jlen = mechs.length; j2 < jlen; j2++) {
-            var entry = this._mechs[i];
-            if (entry.name == mechs[j2]) {
-              return new entry.mech();
-            }
-          }
-        }
-        return null;
-      };
-      exports3 = module3.exports = Factory;
-    });
-  }
-});
-
-// node_modules/.pnpm/saslmechanisms@0.1.1/node_modules/saslmechanisms/main.js
-var require_main = __commonJS({
-  "node_modules/.pnpm/saslmechanisms@0.1.1/node_modules/saslmechanisms/main.js"(exports2, module2) {
-    (function(root, factory) {
-      if (typeof exports2 === "object") {
-        factory(
-          exports2,
-          module2,
-          require_factory()
-        );
-      } else if (typeof define === "function" && define.amd) {
-        define([
-          "exports",
-          "module",
-          "./lib/factory"
-        ], factory);
-      }
-    })(exports2, function(exports3, module3, Factory) {
-      exports3 = module3.exports = Factory;
-      exports3.Factory = Factory;
-    });
-  }
-});
-
-// node_modules/.pnpm/sasl-scram-sha-1@1.4.0/node_modules/sasl-scram-sha-1/lib/bitops.js
-var require_bitops = __commonJS({
-  "node_modules/.pnpm/sasl-scram-sha-1@1.4.0/node_modules/sasl-scram-sha-1/lib/bitops.js"(exports2) {
-    exports2.XOR = function(a, b2) {
-      var res = [];
-      if (a.length > b2.length) {
-        for (var i = 0; i < b2.length; i++) {
-          res.push(a[i] ^ b2[i]);
-        }
-      } else {
-        for (var j2 = 0; j2 < a.length; j2++) {
-          res.push(a[j2] ^ b2[j2]);
-        }
-      }
-      return new Uint8Array(res);
-    };
-    exports2.H = async function(text) {
-      return new Uint8Array(
-        await crypto.subtle.digest("SHA-1", text)
-      );
-    };
-    exports2.HMAC = async function(key, msg) {
-      const hmac = await crypto.subtle.importKey(
-        "raw",
-        key,
-        // https://developer.mozilla.org/en-US/docs/Web/API/HmacImportParams
-        { name: "HMAC", hash: "SHA-1" },
-        false,
-        // extractable
-        ["sign"]
-      );
-      return new Uint8Array(await crypto.subtle.sign(
-        "HMAC",
-        hmac,
-        msg
-      ));
-    };
-    exports2.Hi = async function(text, salt, iterations) {
-      const key = new TextEncoder().encode(text);
-      var concat = new Uint8Array(salt.length + 4);
-      concat.set(salt);
-      concat.set(new Uint8Array([0, 0, 0, 1]), salt.length);
-      var ui1 = await exports2.HMAC(key, concat);
-      var ui = ui1;
-      for (var i = 0; i < iterations - 1; i++) {
-        ui1 = await exports2.HMAC(key, ui1);
-        ui = exports2.XOR(ui, ui1);
-      }
-      return ui;
-    };
-  }
-});
-
-// node_modules/.pnpm/sasl-scram-sha-1@1.4.0/node_modules/sasl-scram-sha-1/lib/utils.js
-var require_utils = __commonJS({
-  "node_modules/.pnpm/sasl-scram-sha-1@1.4.0/node_modules/sasl-scram-sha-1/lib/utils.js"(exports2) {
-    exports2.parse = function(chal) {
-      var dtives = {};
-      var tokens = chal.split(/,(?=(?:[^"]|"[^"]*")*$)/);
-      for (var i = 0, len = tokens.length; i < len; i++) {
-        var dtiv = /(\w+)=["]?([^"]+)["]?$/.exec(tokens[i]);
-        if (dtiv) {
-          dtives[dtiv[1]] = dtiv[2];
-        }
-      }
-      return dtives;
-    };
-    exports2.saslname = function(name) {
-      var escaped = [];
-      var curr = "";
-      for (var i = 0; i < name.length; i++) {
-        curr = name[i];
-        if (curr === ",") {
-          escaped.push("=2C");
-        } else if (curr === "=") {
-          escaped.push("=3D");
-        } else {
-          escaped.push(curr);
-        }
-      }
-      return escaped.join("");
-    };
-    exports2.genNonce = function(len) {
-      const bytes = new Uint8Array((len || 32) / 2);
-      crypto.getRandomValues(bytes);
-      return Array.from(bytes, (b2) => b2.toString(16).padStart(2, "0")).join("");
-    };
-  }
-});
-
-// node_modules/.pnpm/sasl-scram-sha-1@1.4.0/node_modules/sasl-scram-sha-1/index.js
-var require_sasl_scram_sha_1 = __commonJS({
-  "node_modules/.pnpm/sasl-scram-sha-1@1.4.0/node_modules/sasl-scram-sha-1/index.js"(exports2, module2) {
-    var bitops = require_bitops();
-    var utils = require_utils();
-    var RESP = {};
-    var CLIENT_KEY = new TextEncoder().encode("Client Key");
-    var SERVER_KEY = new TextEncoder().encode("Server Key");
-    function base64decode(s2) {
-      if (atob) {
-        return Uint8Array.from(atob(s2), function(c) {
-          return c.charCodeAt(0);
-        });
-      } else {
-        return Uint8Array.from(Buffer.from(s2, "base64"));
-      }
-    }
-    function base64encode(s2) {
-      if (btoa) {
-        return btoa(s2);
-      } else {
-        return Buffer.from(s2).toString("base64");
-      }
-    }
-    function Mechanism2(options) {
-      options = options || {};
-      this._genNonce = options.genNonce || utils.genNonce;
-      this._stage = "initial";
-    }
-    Mechanism2.Mechanism = Mechanism2;
-    Mechanism2.prototype.name = "SCRAM-SHA-1";
-    Mechanism2.prototype.clientFirst = true;
-    Mechanism2.prototype.response = function(cred) {
-      return RESP[this._stage](this, cred);
-    };
-    Mechanism2.prototype.challenge = function(chal) {
-      var values = utils.parse(chal);
-      this._salt = base64decode(values.s || "");
-      this._iterationCount = parseInt(values.i, 10);
-      this._nonce = values.r;
-      this._verifier = values.v;
-      this._error = values.e;
-      this._challenge = chal;
-      return this;
-    };
-    RESP.initial = function(mech4, cred) {
-      mech4._cnonce = mech4._genNonce();
-      var authzid = "";
-      if (cred.authzid) {
-        authzid = "a=" + utils.saslname(cred.authzid);
-      }
-      mech4._gs2Header = "n," + authzid + ",";
-      var nonce = "r=" + mech4._cnonce;
-      var username = "n=" + utils.saslname(cred.username || "");
-      mech4._clientFirstMessageBare = username + "," + nonce;
-      var result = mech4._gs2Header + mech4._clientFirstMessageBare;
-      mech4._stage = "challenge";
-      return result;
-    };
-    RESP.challenge = async function(mech4, cred) {
-      var gs2Header = base64encode(mech4._gs2Header);
-      mech4._clientFinalMessageWithoutProof = "c=" + gs2Header + ",r=" + mech4._nonce;
-      var saltedPassword, clientKey, serverKey;
-      if (cred.salt && cred.salt.every(function(value, index) {
-        return value === mech4._salt[index];
-      })) {
-        if (cred.clientKey && cred.serverKey) {
-          clientKey = cred.clientKey;
-          serverKey = cred.serverKey;
-        } else if (cred.saltedPassword) {
-          saltedPassword = cred.saltedPassword;
-          clientKey = await bitops.HMAC(saltedPassword, CLIENT_KEY);
-          serverKey = await bitops.HMAC(saltedPassword, SERVER_KEY);
-        }
-      } else {
-        saltedPassword = await bitops.Hi(cred.password || "", mech4._salt, mech4._iterationCount);
-        clientKey = await bitops.HMAC(saltedPassword, CLIENT_KEY);
-        serverKey = await bitops.HMAC(saltedPassword, SERVER_KEY);
-      }
-      var storedKey = await bitops.H(clientKey);
-      var authMessage = new TextEncoder().encode(mech4._clientFirstMessageBare + "," + mech4._challenge + "," + mech4._clientFinalMessageWithoutProof);
-      var clientSignature = await bitops.HMAC(storedKey, authMessage);
-      var clientProof = base64encode(String.fromCharCode.apply(null, bitops.XOR(clientKey, clientSignature)));
-      mech4._serverSignature = await bitops.HMAC(serverKey, authMessage);
-      var result = mech4._clientFinalMessageWithoutProof + ",p=" + clientProof;
-      mech4._stage = "final";
-      mech4.cache = {
-        salt: mech4._salt,
-        saltedPassword,
-        clientKey,
-        serverKey
-      };
-      return result;
-    };
-    RESP.final = function() {
-      return "";
-    };
-    module2.exports = Mechanism2;
-  }
-});
-
-// node_modules/.pnpm/sasl-plain@0.1.0/node_modules/sasl-plain/lib/mechanism.js
-var require_mechanism = __commonJS({
-  "node_modules/.pnpm/sasl-plain@0.1.0/node_modules/sasl-plain/lib/mechanism.js"(exports2, module2) {
-    (function(root, factory) {
-      if (typeof exports2 === "object") {
-        factory(exports2, module2);
-      } else if (typeof define === "function" && define.amd) {
-        define(["exports", "module"], factory);
-      }
-    })(exports2, function(exports3, module3) {
-      function Mechanism2() {
-      }
-      Mechanism2.prototype.name = "PLAIN";
-      Mechanism2.prototype.clientFirst = true;
-      Mechanism2.prototype.response = function(cred) {
-        var str = "";
-        str += cred.authzid || "";
-        str += "\0";
-        str += cred.username;
-        str += "\0";
-        str += cred.password;
-        return str;
-      };
-      Mechanism2.prototype.challenge = function(chal) {
-        return this;
-      };
-      exports3 = module3.exports = Mechanism2;
-    });
-  }
-});
-
-// node_modules/.pnpm/sasl-plain@0.1.0/node_modules/sasl-plain/main.js
-var require_main2 = __commonJS({
-  "node_modules/.pnpm/sasl-plain@0.1.0/node_modules/sasl-plain/main.js"(exports2, module2) {
-    (function(root, factory) {
-      if (typeof exports2 === "object") {
-        factory(
-          exports2,
-          module2,
-          require_mechanism()
-        );
-      } else if (typeof define === "function" && define.amd) {
-        define([
-          "exports",
-          "module",
-          "./lib/mechanism"
-        ], factory);
-      }
-    })(exports2, function(exports3, module3, Mechanism2) {
-      exports3 = module3.exports = Mechanism2;
-      exports3.Mechanism = Mechanism2;
-    });
-  }
-});
-
-// node_modules/.pnpm/sasl-anonymous@0.1.0/node_modules/sasl-anonymous/lib/mechanism.js
-var require_mechanism2 = __commonJS({
-  "node_modules/.pnpm/sasl-anonymous@0.1.0/node_modules/sasl-anonymous/lib/mechanism.js"(exports2, module2) {
-    (function(root, factory) {
-      if (typeof exports2 === "object") {
-        factory(exports2, module2);
-      } else if (typeof define === "function" && define.amd) {
-        define(["exports", "module"], factory);
-      }
-    })(exports2, function(exports3, module3) {
-      function Mechanism2() {
-      }
-      Mechanism2.prototype.name = "ANONYMOUS";
-      Mechanism2.prototype.clientFirst = true;
-      Mechanism2.prototype.response = function(cred) {
-        return cred.trace || "";
-      };
-      Mechanism2.prototype.challenge = function(chal) {
-      };
-      exports3 = module3.exports = Mechanism2;
-    });
-  }
-});
-
-// node_modules/.pnpm/sasl-anonymous@0.1.0/node_modules/sasl-anonymous/main.js
-var require_main3 = __commonJS({
-  "node_modules/.pnpm/sasl-anonymous@0.1.0/node_modules/sasl-anonymous/main.js"(exports2, module2) {
-    (function(root, factory) {
-      if (typeof exports2 === "object") {
-        factory(
-          exports2,
-          module2,
-          require_mechanism2()
-        );
-      } else if (typeof define === "function" && define.amd) {
-        define([
-          "exports",
-          "module",
-          "./lib/mechanism"
-        ], factory);
-      }
-    })(exports2, function(exports3, module3, Mechanism2) {
-      exports3 = module3.exports = Mechanism2;
-      exports3.Mechanism = Mechanism2;
-    });
-  }
-});
-
 // node_modules/.pnpm/process-nextick-args@2.0.1/node_modules/process-nextick-args/index.js
 var require_process_nextick_args = __commonJS({
   "node_modules/.pnpm/process-nextick-args@2.0.1/node_modules/process-nextick-args/index.js"(exports2, module2) {
@@ -3039,7 +315,7 @@ var require_BufferList = __commonJS({
         this.head = this.tail = null;
         this.length = 0;
       };
-      BufferList.prototype.join = function join5(s2) {
+      BufferList.prototype.join = function join2(s2) {
         if (this.length === 0) return "";
         var p2 = this.head;
         var ret = "" + p2.data;
@@ -4776,7 +2052,7 @@ var require_support = __commonJS({
 var require_base64 = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/base64.js"(exports2) {
     "use strict";
-    var utils = require_utils2();
+    var utils = require_utils();
     var support = require_support();
     var _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
     exports2.encode = function(input) {
@@ -5414,7 +2690,7 @@ var require_setImmediate = __commonJS({
 });
 
 // node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/utils.js
-var require_utils2 = __commonJS({
+var require_utils = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/utils.js"(exports2) {
     "use strict";
     var support = require_support();
@@ -5969,7 +3245,7 @@ var require_GenericWorker = __commonJS({
 var require_utf8 = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/utf8.js"(exports2) {
     "use strict";
-    var utils = require_utils2();
+    var utils = require_utils();
     var support = require_support();
     var nodejsUtils = require_nodejsUtils();
     var GenericWorker = require_GenericWorker();
@@ -6160,7 +3436,7 @@ var require_ConvertWorker = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/stream/ConvertWorker.js"(exports2, module2) {
     "use strict";
     var GenericWorker = require_GenericWorker();
-    var utils = require_utils2();
+    var utils = require_utils();
     function ConvertWorker(destType) {
       GenericWorker.call(this, "ConvertWorker to " + destType);
       this.destType = destType;
@@ -6181,7 +3457,7 @@ var require_NodejsStreamOutputAdapter = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/nodejs/NodejsStreamOutputAdapter.js"(exports2, module2) {
     "use strict";
     var Readable = require_readable().Readable;
-    var utils = require_utils2();
+    var utils = require_utils();
     utils.inherits(NodejsStreamOutputAdapter, Readable);
     function NodejsStreamOutputAdapter(helper, options, updateCb) {
       Readable.call(this, options);
@@ -6211,7 +3487,7 @@ var require_NodejsStreamOutputAdapter = __commonJS({
 var require_StreamHelper = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/stream/StreamHelper.js"(exports2, module2) {
     "use strict";
-    var utils = require_utils2();
+    var utils = require_utils();
     var ConvertWorker = require_ConvertWorker();
     var GenericWorker = require_GenericWorker();
     var base64 = require_base64();
@@ -6388,7 +3664,7 @@ var require_defaults = __commonJS({
 var require_DataWorker = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/stream/DataWorker.js"(exports2, module2) {
     "use strict";
-    var utils = require_utils2();
+    var utils = require_utils();
     var GenericWorker = require_GenericWorker();
     var DEFAULT_BLOCK_SIZE = 16 * 1024;
     function DataWorker(dataP) {
@@ -6476,7 +3752,7 @@ var require_DataWorker = __commonJS({
 var require_crc32 = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/crc32.js"(exports2, module2) {
     "use strict";
-    var utils = require_utils2();
+    var utils = require_utils();
     function makeTable() {
       var c, table = [];
       for (var n = 0; n < 256; n++) {
@@ -6525,7 +3801,7 @@ var require_Crc32Probe = __commonJS({
     "use strict";
     var GenericWorker = require_GenericWorker();
     var crc32 = require_crc32();
-    var utils = require_utils2();
+    var utils = require_utils();
     function Crc32Probe() {
       GenericWorker.call(this, "Crc32Probe");
       this.withStreamInfo("crc32", 0);
@@ -6543,7 +3819,7 @@ var require_Crc32Probe = __commonJS({
 var require_DataLengthProbe = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/stream/DataLengthProbe.js"(exports2, module2) {
     "use strict";
-    var utils = require_utils2();
+    var utils = require_utils();
     var GenericWorker = require_GenericWorker();
     function DataLengthProbe(propName) {
       GenericWorker.call(this, "DataLengthProbe for " + propName);
@@ -10953,7 +8229,7 @@ var require_flate = __commonJS({
     "use strict";
     var USE_TYPEDARRAY = typeof Uint8Array !== "undefined" && typeof Uint16Array !== "undefined" && typeof Uint32Array !== "undefined";
     var pako = require_pako();
-    var utils = require_utils2();
+    var utils = require_utils();
     var GenericWorker = require_GenericWorker();
     var ARRAY_TYPE = USE_TYPEDARRAY ? "uint8array" : "array";
     exports2.magic = "\b\0";
@@ -11041,7 +8317,7 @@ var require_signature = __commonJS({
 var require_ZipFileWorker = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/generate/ZipFileWorker.js"(exports2, module2) {
     "use strict";
-    var utils = require_utils2();
+    var utils = require_utils();
     var GenericWorker = require_GenericWorker();
     var utf8 = require_utf8();
     var crc32 = require_crc32();
@@ -11064,7 +8340,7 @@ var require_ZipFileWorker = __commonJS({
     var generateDosExternalFileAttr = function(dosPermissions) {
       return (dosPermissions || 0) & 63;
     };
-    var generateZipParts = function(streamInfo, streamedContent, streamingEnded, offset, platform3, encodeFileName) {
+    var generateZipParts = function(streamInfo, streamedContent, streamingEnded, offset, platform, encodeFileName) {
       var file = streamInfo["file"], compression = streamInfo["compression"], useCustomEncoding = encodeFileName !== utf8.utf8encode, encodedFileName = utils.transformTo("string", encodeFileName(file.name)), utfEncodedFileName = utils.transformTo("string", utf8.utf8encode(file.name)), comment = file.comment, encodedComment = utils.transformTo("string", encodeFileName(comment)), utfEncodedComment = utils.transformTo("string", utf8.utf8encode(comment)), useUTF8ForFileName = utfEncodedFileName.length !== file.name.length, useUTF8ForComment = utfEncodedComment.length !== comment.length, dosTime, dosDate, extraFields = "", unicodePathExtraField = "", unicodeCommentExtraField = "", dir = file.dir, date = file.date;
       var dataInfo = {
         crc32: 0,
@@ -11088,7 +8364,7 @@ var require_ZipFileWorker = __commonJS({
       if (dir) {
         extFileAttr |= 16;
       }
-      if (platform3 === "UNIX") {
+      if (platform === "UNIX") {
         versionMadeBy = 798;
         extFileAttr |= generateUnixExternalFileAttr(file.unixPermissions, dir);
       } else {
@@ -11173,11 +8449,11 @@ var require_ZipFileWorker = __commonJS({
       decToHex(streamInfo["uncompressedSize"], 4);
       return descriptor;
     };
-    function ZipFileWorker(streamFiles, comment, platform3, encodeFileName) {
+    function ZipFileWorker(streamFiles, comment, platform, encodeFileName) {
       GenericWorker.call(this, "ZipFileWorker");
       this.bytesWritten = 0;
       this.zipComment = comment;
-      this.zipPlatform = platform3;
+      this.zipPlatform = platform;
       this.encodeFileName = encodeFileName;
       this.streamFiles = streamFiles;
       this.accumulate = false;
@@ -11366,7 +8642,7 @@ var require_generate = __commonJS({
 var require_NodejsStreamInputAdapter = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/nodejs/NodejsStreamInputAdapter.js"(exports2, module2) {
     "use strict";
-    var utils = require_utils2();
+    var utils = require_utils();
     var GenericWorker = require_GenericWorker();
     function NodejsStreamInputAdapter(filename, stream) {
       GenericWorker.call(this, "Nodejs stream input adapter for " + filename);
@@ -11426,7 +8702,7 @@ var require_object = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/object.js"(exports2, module2) {
     "use strict";
     var utf8 = require_utf8();
-    var utils = require_utils2();
+    var utils = require_utils();
     var GenericWorker = require_GenericWorker();
     var StreamHelper = require_StreamHelper();
     var defaults = require_defaults();
@@ -11698,7 +8974,7 @@ var require_object = __commonJS({
 var require_DataReader = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/reader/DataReader.js"(exports2, module2) {
     "use strict";
-    var utils = require_utils2();
+    var utils = require_utils();
     function DataReader(data) {
       this.data = data;
       this.length = data.length;
@@ -11821,7 +9097,7 @@ var require_ArrayReader = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/reader/ArrayReader.js"(exports2, module2) {
     "use strict";
     var DataReader = require_DataReader();
-    var utils = require_utils2();
+    var utils = require_utils();
     function ArrayReader(data) {
       DataReader.call(this, data);
       for (var i = 0; i < this.data.length; i++) {
@@ -11863,7 +9139,7 @@ var require_StringReader = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/reader/StringReader.js"(exports2, module2) {
     "use strict";
     var DataReader = require_DataReader();
-    var utils = require_utils2();
+    var utils = require_utils();
     function StringReader(data) {
       DataReader.call(this, data);
     }
@@ -11893,7 +9169,7 @@ var require_Uint8ArrayReader = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/reader/Uint8ArrayReader.js"(exports2, module2) {
     "use strict";
     var ArrayReader = require_ArrayReader();
-    var utils = require_utils2();
+    var utils = require_utils();
     function Uint8ArrayReader(data) {
       ArrayReader.call(this, data);
     }
@@ -11916,7 +9192,7 @@ var require_NodeBufferReader = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/reader/NodeBufferReader.js"(exports2, module2) {
     "use strict";
     var Uint8ArrayReader = require_Uint8ArrayReader();
-    var utils = require_utils2();
+    var utils = require_utils();
     function NodeBufferReader(data) {
       Uint8ArrayReader.call(this, data);
     }
@@ -11935,7 +9211,7 @@ var require_NodeBufferReader = __commonJS({
 var require_readerFor = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/reader/readerFor.js"(exports2, module2) {
     "use strict";
-    var utils = require_utils2();
+    var utils = require_utils();
     var support = require_support();
     var ArrayReader = require_ArrayReader();
     var StringReader = require_StringReader();
@@ -11963,7 +9239,7 @@ var require_zipEntry = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/zipEntry.js"(exports2, module2) {
     "use strict";
     var readerFor = require_readerFor();
-    var utils = require_utils2();
+    var utils = require_utils();
     var CompressedObject = require_compressedObject();
     var crc32fn = require_crc32();
     var utf8 = require_utf8();
@@ -12181,7 +9457,7 @@ var require_zipEntries = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/zipEntries.js"(exports2, module2) {
     "use strict";
     var readerFor = require_readerFor();
-    var utils = require_utils2();
+    var utils = require_utils();
     var sig = require_signature();
     var ZipEntry = require_zipEntry();
     var support = require_support();
@@ -12378,7 +9654,7 @@ var require_zipEntries = __commonJS({
 var require_load = __commonJS({
   "node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/lib/load.js"(exports2, module2) {
     "use strict";
-    var utils = require_utils2();
+    var utils = require_utils();
     var external = require_external();
     var utf8 = require_utf8();
     var ZipEntries = require_zipEntries();
@@ -14354,20 +11630,20 @@ var require_index_node = __commonJS({
       function end() {
         var resolve6 = that._resolve;
         that._readable = Promise.resolve(true);
-        that._resolve = that._reject = noop2;
+        that._resolve = that._reject = noop;
         resolve6(true);
       }
       function error(error2) {
         var reject = that._reject;
         that._readable = Promise.reject(error2);
-        that._resolve = that._reject = noop2;
+        that._resolve = that._reject = noop;
         reject(error2);
       }
     }
     StreamSource.prototype.read = require_read();
     StreamSource.prototype.slice = require_slice();
     StreamSource.prototype.cancel = require_cancel();
-    function noop2() {
+    function noop() {
     }
     function promise2(source) {
       return new Promise(function(resolve6, reject) {
@@ -14629,8 +11905,8 @@ var require_shapefile_node = __commonJS({
     function ringContains(ring, point) {
       var x2 = point[0], y = point[1], contains = -1;
       for (var i = 0, n = ring.length, j2 = n - 1; i < n; j2 = i++) {
-        var pi2 = ring[i], xi = pi2[0], yi = pi2[1], pj = ring[j2], xj = pj[0], yj = pj[1];
-        if (segmentContains(pi2, pj, point)) {
+        var pi = ring[i], xi = pi[0], yi = pi[1], pj = ring[j2], xj = pj[0], yj = pj[1];
+        if (segmentContains(pi, pj, point)) {
           return 0;
         }
         if (yi > y !== yj > y && x2 < (xj - xi) * (y - yi) / (yj - yi) + xi) {
@@ -14639,10 +11915,10 @@ var require_shapefile_node = __commonJS({
       }
       return contains;
     }
-    function segmentContains(p02, p1, p2) {
-      var x20 = p2[0] - p02[0], y20 = p2[1] - p02[1];
+    function segmentContains(p0, p1, p2) {
+      var x20 = p2[0] - p0[0], y20 = p2[1] - p0[1];
       if (x20 === 0 && y20 === 0) return true;
-      var x10 = p1[0] - p02[0], y10 = p1[1] - p02[1];
+      var x10 = p1[0] - p0[0], y10 = p1[1] - p0[1];
       if (x10 === 0 && y10 === 0) return false;
       var t = (x20 * x10 + y20 * y10) / (x10 * x10 + y10 * y10);
       return t < 0 || t > 1 ? false : t === 0 || t === 1 ? true : t * x10 === x20 && t * y10 === y20;
@@ -14724,13 +12000,13 @@ var require_shapefile_node = __commonJS({
     var prototype$2 = Shp.prototype;
     prototype$2.read = shp_read;
     prototype$2.cancel = cancel;
-    function noop2() {
+    function noop() {
     }
     var shapefile_cancel = function() {
       return Promise.all([
         this._dbf && this._dbf.cancel(),
         this._shp.cancel()
-      ]).then(noop2);
+      ]).then(noop);
     };
     var shapefile_read = function() {
       var that = this;
@@ -14846,24 +12122,24 @@ var require_topojson_client = __commonJS({
       }
       function transform(transform2) {
         if (transform2 == null) return identity;
-        var x05, y05, kx = transform2.scale[0], ky = transform2.scale[1], dx = transform2.translate[0], dy = transform2.translate[1];
+        var x0, y0, kx = transform2.scale[0], ky = transform2.scale[1], dx = transform2.translate[0], dy = transform2.translate[1];
         return function(input, i) {
-          if (!i) x05 = y05 = 0;
+          if (!i) x0 = y0 = 0;
           var j2 = 2, n = input.length, output = new Array(n);
-          output[0] = (x05 += input[0]) * kx + dx;
-          output[1] = (y05 += input[1]) * ky + dy;
+          output[0] = (x0 += input[0]) * kx + dx;
+          output[1] = (y0 += input[1]) * ky + dy;
           while (j2 < n) output[j2] = input[j2], ++j2;
           return output;
         };
       }
       function bbox(topology) {
-        var t = transform(topology.transform), key, x05 = Infinity, y05 = x05, x12 = -x05, y12 = -x05;
+        var t = transform(topology.transform), key, x0 = Infinity, y0 = x0, x1 = -x0, y1 = -x0;
         function bboxPoint(p2) {
           p2 = t(p2);
-          if (p2[0] < x05) x05 = p2[0];
-          if (p2[0] > x12) x12 = p2[0];
-          if (p2[1] < y05) y05 = p2[1];
-          if (p2[1] > y12) y12 = p2[1];
+          if (p2[0] < x0) x0 = p2[0];
+          if (p2[0] > x1) x1 = p2[0];
+          if (p2[1] < y0) y0 = p2[1];
+          if (p2[1] > y1) y1 = p2[1];
         }
         function bboxGeometry(o) {
           switch (o.type) {
@@ -14882,16 +12158,16 @@ var require_topojson_client = __commonJS({
           var i = -1, n = arc.length, p2;
           while (++i < n) {
             p2 = t(arc[i], i);
-            if (p2[0] < x05) x05 = p2[0];
-            if (p2[0] > x12) x12 = p2[0];
-            if (p2[1] < y05) y05 = p2[1];
-            if (p2[1] > y12) y12 = p2[1];
+            if (p2[0] < x0) x0 = p2[0];
+            if (p2[0] > x1) x1 = p2[0];
+            if (p2[1] < y0) y0 = p2[1];
+            if (p2[1] > y1) y1 = p2[1];
           }
         });
         for (key in topology.objects) {
           bboxGeometry(topology.objects[key]);
         }
-        return [x05, y05, x12, y12];
+        return [x0, y0, x1, y1];
       }
       function reverse(array, n) {
         var t, j2 = array.length, i = j2 - n;
@@ -15001,12 +12277,12 @@ var require_topojson_client = __commonJS({
           }
         });
         function ends(i) {
-          var arc = topology.arcs[i < 0 ? ~i : i], p02 = arc[0], p1;
+          var arc = topology.arcs[i < 0 ? ~i : i], p0 = arc[0], p1;
           if (topology.transform) p1 = [0, 0], arc.forEach(function(dp) {
             p1[0] += dp[0], p1[1] += dp[1];
           });
           else p1 = arc[arc.length - 1];
-          return i < 0 ? [p1, p02] : [p02, p1];
+          return i < 0 ? [p1, p0] : [p0, p1];
         }
         function flush(fragmentByEnd2, fragmentByStart2) {
           for (var k2 in fragmentByEnd2) {
@@ -15081,7 +12357,7 @@ var require_topojson_client = __commonJS({
         while (++i < n) a = b2, b2 = ring[i], area += a[0] * b2[1] - a[1] * b2[0];
         return Math.abs(area);
       }
-      function merge2(topology) {
+      function merge(topology) {
         return object(topology, mergeArcs.apply(this, arguments));
       }
       function mergeArcs(topology, objects) {
@@ -15217,12 +12493,12 @@ var require_topojson_client = __commonJS({
       }
       function untransform(transform2) {
         if (transform2 == null) return identity;
-        var x05, y05, kx = transform2.scale[0], ky = transform2.scale[1], dx = transform2.translate[0], dy = transform2.translate[1];
+        var x0, y0, kx = transform2.scale[0], ky = transform2.scale[1], dx = transform2.translate[0], dy = transform2.translate[1];
         return function(input, i) {
-          if (!i) x05 = y05 = 0;
-          var j2 = 2, n = input.length, output = new Array(n), x12 = Math.round((input[0] - dx) / kx), y12 = Math.round((input[1] - dy) / ky);
-          output[0] = x12 - x05, x05 = x12;
-          output[1] = y12 - y05, y05 = y12;
+          if (!i) x0 = y0 = 0;
+          var j2 = 2, n = input.length, output = new Array(n), x1 = Math.round((input[0] - dx) / kx), y1 = Math.round((input[1] - dy) / ky);
+          output[0] = x1 - x0, x0 = x1;
+          output[1] = y1 - y0, y0 = y1;
           while (j2 < n) output[j2] = input[j2], ++j2;
           return output;
         };
@@ -15232,8 +12508,8 @@ var require_topojson_client = __commonJS({
         if (!transform2 || !transform2.scale) {
           if (!((n = Math.floor(transform2)) >= 2)) throw new Error("n must be \u22652");
           box = topology.bbox || bbox(topology);
-          var x05 = box[0], y05 = box[1], x12 = box[2], y12 = box[3], n;
-          transform2 = { scale: [x12 - x05 ? (x12 - x05) / (n - 1) : 1, y12 - y05 ? (y12 - y05) / (n - 1) : 1], translate: [x05, y05] };
+          var x0 = box[0], y0 = box[1], x1 = box[2], y1 = box[3], n;
+          transform2 = { scale: [x1 - x0 ? (x1 - x0) / (n - 1) : 1, y1 - y0 ? (y1 - y0) / (n - 1) : 1], translate: [x0, y0] };
         } else {
           box = topology.bbox;
         }
@@ -15280,7 +12556,7 @@ var require_topojson_client = __commonJS({
       }
       exports3.bbox = bbox;
       exports3.feature = feature2;
-      exports3.merge = merge2;
+      exports3.merge = merge;
       exports3.mergeArcs = mergeArcs;
       exports3.mesh = mesh;
       exports3.meshArcs = meshArcs;
@@ -15293,32 +12569,1021 @@ var require_topojson_client = __commonJS({
   }
 });
 
+// node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/escape.js
+var require_escape = __commonJS({
+  "node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/escape.js"(exports2) {
+    "use strict";
+    var escapeXMLTable = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&apos;"
+    };
+    function escapeXMLReplace(match) {
+      return escapeXMLTable[match];
+    }
+    var unescapeXMLTable = {
+      "&amp;": "&",
+      "&lt;": "<",
+      "&gt;": ">",
+      "&quot;": '"',
+      "&apos;": "'"
+    };
+    function unescapeXMLReplace(match) {
+      if (match[1] === "#") {
+        const num = match[2] === "x" ? parseInt(match.slice(3), 16) : parseInt(match.slice(2), 10);
+        if (num === 9 || num === 10 || num === 13 || num >= 32 && num <= 55295 || num >= 57344 && num <= 65533 || num >= 65536 && num <= 1114111) {
+          return String.fromCodePoint(num);
+        }
+        throw new Error("Illegal XML character 0x" + num.toString(16));
+      }
+      if (unescapeXMLTable[match]) {
+        return unescapeXMLTable[match] || match;
+      }
+      throw new Error("Illegal XML entity " + match);
+    }
+    function escapeXML2(s2) {
+      return s2.replace(/["&'<>]/g, escapeXMLReplace);
+    }
+    function unescapeXML2(s2) {
+      let result = "";
+      let start = -1;
+      let end = -1;
+      let previous = 0;
+      while ((start = s2.indexOf("&", previous)) !== -1 && (end = s2.indexOf(";", start + 1)) !== -1) {
+        result = result + s2.slice(previous, start) + unescapeXMLReplace(s2.slice(start, end + 1));
+        previous = end + 1;
+      }
+      if (previous === 0) return s2;
+      result = result + s2.substring(previous);
+      return result;
+    }
+    function escapeXMLText2(s2) {
+      return s2.replace(/[&<>]/g, escapeXMLReplace);
+    }
+    function unescapeXMLText2(s2) {
+      return s2.replace(/&(amp|#38|lt|#60|gt|#62);/g, unescapeXMLReplace);
+    }
+    exports2.escapeXML = escapeXML2;
+    exports2.escapeXMLText = escapeXMLText2;
+    exports2.unescapeXML = unescapeXML2;
+    exports2.unescapeXMLText = unescapeXMLText2;
+  }
+});
+
+// node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/Element.js
+var require_Element = __commonJS({
+  "node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/Element.js"(exports2, module2) {
+    "use strict";
+    var escape2 = require_escape();
+    var Element3 = class _Element {
+      constructor(name, attrs) {
+        this.name = name;
+        this.parent = null;
+        this.children = [];
+        this.attrs = {};
+        this.setAttrs(attrs);
+      }
+      /* Accessors */
+      /**
+       * if (element.is('message', 'jabber:client')) ...
+       **/
+      is(name, xmlns) {
+        return this.getName() === name && (!xmlns || this.getNS() === xmlns);
+      }
+      /* without prefix */
+      getName() {
+        const idx = this.name.indexOf(":");
+        return idx >= 0 ? this.name.slice(idx + 1) : this.name;
+      }
+      /**
+       * retrieves the namespace of the current element, upwards recursively
+       **/
+      getNS() {
+        const idx = this.name.indexOf(":");
+        if (idx >= 0) {
+          const prefix = this.name.slice(0, idx);
+          return this.findNS(prefix);
+        }
+        return this.findNS();
+      }
+      /**
+       * find the namespace to the given prefix, upwards recursively
+       **/
+      findNS(prefix) {
+        if (!prefix) {
+          if (this.attrs.xmlns) {
+            return this.attrs.xmlns;
+          } else if (this.parent) {
+            return this.parent.findNS();
+          }
+        } else {
+          const attr = "xmlns:" + prefix;
+          if (this.attrs[attr]) {
+            return this.attrs[attr];
+          } else if (this.parent) {
+            return this.parent.findNS(prefix);
+          }
+        }
+      }
+      /**
+       * Recursiverly gets all xmlns defined, in the form of {url:prefix}
+       **/
+      getXmlns() {
+        let namespaces = {};
+        if (this.parent) {
+          namespaces = this.parent.getXmlns();
+        }
+        for (const attr in this.attrs) {
+          const m2 = attr.match("xmlns:?(.*)");
+          if (this.attrs.hasOwnProperty(attr) && m2) {
+            namespaces[this.attrs[attr]] = m2[1];
+          }
+        }
+        return namespaces;
+      }
+      setAttrs(attrs) {
+        if (typeof attrs === "string") {
+          this.attrs.xmlns = attrs;
+        } else if (attrs) {
+          Object.assign(this.attrs, attrs);
+        }
+      }
+      /**
+       * xmlns can be null, returns the matching attribute.
+       **/
+      getAttr(name, xmlns) {
+        if (!xmlns) {
+          return this.attrs[name];
+        }
+        const namespaces = this.getXmlns();
+        if (!namespaces[xmlns]) {
+          return null;
+        }
+        return this.attrs[[namespaces[xmlns], name].join(":")];
+      }
+      /**
+       * xmlns can be null
+       **/
+      getChild(name, xmlns) {
+        return this.getChildren(name, xmlns)[0];
+      }
+      /**
+       * xmlns can be null
+       **/
+      getChildren(name, xmlns) {
+        const result = [];
+        for (const child of this.children) {
+          if (child.getName && child.getName() === name && (!xmlns || child.getNS() === xmlns)) {
+            result.push(child);
+          }
+        }
+        return result;
+      }
+      /**
+       * xmlns and recursive can be null
+       **/
+      getChildByAttr(attr, val, xmlns, recursive) {
+        return this.getChildrenByAttr(attr, val, xmlns, recursive)[0];
+      }
+      /**
+       * xmlns and recursive can be null
+       **/
+      getChildrenByAttr(attr, val, xmlns, recursive) {
+        let result = [];
+        for (const child of this.children) {
+          if (child.attrs && child.attrs[attr] === val && (!xmlns || child.getNS() === xmlns)) {
+            result.push(child);
+          }
+          if (recursive && child.getChildrenByAttr) {
+            result.push(child.getChildrenByAttr(attr, val, xmlns, true));
+          }
+        }
+        if (recursive) {
+          result = result.flat();
+        }
+        return result;
+      }
+      getChildrenByFilter(filter, recursive) {
+        let result = [];
+        for (const child of this.children) {
+          if (filter(child)) {
+            result.push(child);
+          }
+          if (recursive && child.getChildrenByFilter) {
+            result.push(child.getChildrenByFilter(filter, true));
+          }
+        }
+        if (recursive) {
+          result = result.flat();
+        }
+        return result;
+      }
+      getText() {
+        let text = "";
+        for (const child of this.children) {
+          if (typeof child === "string" || typeof child === "number") {
+            text += child;
+          }
+        }
+        return text;
+      }
+      getChildText(name, xmlns) {
+        const child = this.getChild(name, xmlns);
+        return child ? child.getText() : null;
+      }
+      /**
+       * Return all direct descendents that are Elements.
+       * This differs from `getChildren` in that it will exclude text nodes,
+       * processing instructions, etc.
+       */
+      getChildElements() {
+        return this.getChildrenByFilter((child) => {
+          return child instanceof _Element;
+        });
+      }
+      /* Builder */
+      /** returns uppermost parent */
+      root() {
+        if (this.parent) {
+          return this.parent.root();
+        }
+        return this;
+      }
+      /** just parent or itself */
+      up() {
+        if (this.parent) {
+          return this.parent;
+        }
+        return this;
+      }
+      /** create child node and return it */
+      c(name, attrs) {
+        return this.cnode(new _Element(name, attrs));
+      }
+      cnode(child) {
+        this.children.push(child);
+        if (typeof child === "object") {
+          child.parent = this;
+        }
+        return child;
+      }
+      append(...nodes) {
+        for (const node of nodes) {
+          this.children.push(node);
+          if (typeof node === "object") {
+            node.parent = this;
+          }
+        }
+      }
+      prepend(...nodes) {
+        for (const node of nodes) {
+          this.children.unshift(node);
+          if (typeof node === "object") {
+            node.parent = this;
+          }
+        }
+      }
+      /** add text node and return element */
+      t(text) {
+        this.children.push(text);
+        return this;
+      }
+      /* Manipulation */
+      /**
+       * Either:
+       *   el.remove(childEl)
+       *   el.remove('author', 'urn:...')
+       */
+      remove(el, xmlns) {
+        const filter = typeof el === "string" ? (child) => {
+          return !(child.is && child.is(el, xmlns));
+        } : (child) => {
+          return child !== el;
+        };
+        this.children = this.children.filter(filter);
+        return this;
+      }
+      text(val) {
+        if (val && this.children.length === 1) {
+          this.children[0] = val;
+          return this;
+        }
+        return this.getText();
+      }
+      attr(attr, val) {
+        if (typeof val !== "undefined" || val === null) {
+          if (!this.attrs) {
+            this.attrs = {};
+          }
+          this.attrs[attr] = val;
+          return this;
+        }
+        return this.attrs[attr];
+      }
+      /* Serialization */
+      toString() {
+        let s2 = "";
+        this.write((c) => {
+          s2 += c;
+        });
+        return s2;
+      }
+      _addChildren(writer) {
+        writer(">");
+        for (const child of this.children) {
+          if (child != null) {
+            if (child.write) {
+              child.write(writer);
+            } else if (typeof child === "string") {
+              writer(escape2.escapeXMLText(child));
+            } else if (child.toString) {
+              writer(escape2.escapeXMLText(child.toString(10)));
+            }
+          }
+        }
+        writer("</");
+        writer(this.name);
+        writer(">");
+      }
+      write(writer) {
+        writer("<");
+        writer(this.name);
+        for (const k2 in this.attrs) {
+          const v2 = this.attrs[k2];
+          if (v2 != null) {
+            writer(" ");
+            writer(k2);
+            writer('="');
+            writer(escape2.escapeXML(typeof v2 === "string" ? v2 : v2.toString(10)));
+            writer('"');
+          }
+        }
+        if (this.children.length === 0) {
+          writer("/>");
+        } else {
+          this._addChildren(writer);
+        }
+      }
+    };
+    Element3.prototype.tree = Element3.prototype.root;
+    module2.exports = Element3;
+  }
+});
+
+// node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/createElement.js
+var require_createElement = __commonJS({
+  "node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/createElement.js"(exports2, module2) {
+    "use strict";
+    var Element3 = require_Element();
+    function append(el, child) {
+      if (Array.isArray(child)) {
+        for (const c of child) append(el, c);
+        return;
+      }
+      if (child === "" || child == null || child === true || child === false) {
+        return;
+      }
+      el.cnode(child);
+    }
+    function createElement2(name, attrs, ...children) {
+      if (typeof attrs === "object" && attrs !== null) {
+        delete attrs.__source;
+        delete attrs.__self;
+        for (const [key, value] of Object.entries(attrs)) {
+          if (value == null) delete attrs[key];
+          else attrs[key] = value.toString(10);
+        }
+      }
+      const el = new Element3(name, attrs);
+      for (const child of children) {
+        append(el, child);
+      }
+      return el;
+    }
+    module2.exports = createElement2;
+  }
+});
+
+// node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/parsers/ltx.js
+var require_ltx = __commonJS({
+  "node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/parsers/ltx.js"(exports2, module2) {
+    "use strict";
+    var events = require("events");
+    var escape2 = require_escape();
+    var STATE_TEXT = 0;
+    var STATE_IGNORE_COMMENT = 1;
+    var STATE_IGNORE_INSTRUCTION = 2;
+    var STATE_TAG_NAME = 3;
+    var STATE_TAG = 4;
+    var STATE_ATTR_NAME = 5;
+    var STATE_ATTR_EQ = 6;
+    var STATE_ATTR_QUOT = 7;
+    var STATE_ATTR_VALUE = 8;
+    var STATE_CDATA = 9;
+    var STATE_IGNORE_CDATA = 10;
+    var SaxLtx = class extends events.EventEmitter {
+      constructor() {
+        super();
+        let state = STATE_TEXT;
+        let remainder;
+        let parseRemainder;
+        let tagName;
+        let attrs;
+        let endTag;
+        let selfClosing;
+        let attrQuote;
+        let attrQuoteChar;
+        let recordStart = 0;
+        let attrName;
+        this._handleTagOpening = function _handleTagOpening(endTag2, tagName2, attrs2) {
+          if (!endTag2) {
+            this.emit("startElement", tagName2, attrs2);
+            if (selfClosing) {
+              this.emit("endElement", tagName2, true);
+            }
+          } else {
+            this.emit("endElement", tagName2, false);
+          }
+        };
+        this.write = function write(data) {
+          if (typeof data !== "string") {
+            data = data.toString();
+          }
+          let pos = 0;
+          if (remainder) {
+            data = remainder + data;
+            pos += !parseRemainder ? remainder.length : 0;
+            parseRemainder = false;
+            remainder = null;
+          }
+          function endRecording() {
+            if (typeof recordStart === "number") {
+              const recorded = data.slice(recordStart, pos);
+              recordStart = void 0;
+              return recorded;
+            }
+          }
+          for (; pos < data.length; pos++) {
+            switch (state) {
+              case STATE_TEXT: {
+                const lt = data.indexOf("<", pos);
+                if (lt !== -1 && pos !== lt) {
+                  pos = lt;
+                }
+                break;
+              }
+              case STATE_ATTR_VALUE: {
+                const quot = data.indexOf(attrQuoteChar, pos);
+                if (quot !== -1) {
+                  pos = quot;
+                }
+                break;
+              }
+              case STATE_IGNORE_COMMENT: {
+                const endcomment = data.indexOf("-->", pos);
+                if (endcomment !== -1) {
+                  pos = endcomment + 2;
+                }
+                break;
+              }
+              case STATE_IGNORE_CDATA: {
+                const endCDATA = data.indexOf("]]>", pos);
+                if (endCDATA !== -1) {
+                  pos = endCDATA + 2;
+                }
+                break;
+              }
+            }
+            const c = data.charCodeAt(pos);
+            switch (state) {
+              case STATE_TEXT:
+                if (c === 60) {
+                  const text = endRecording();
+                  if (text) {
+                    this.emit("text", escape2.unescapeXML(text));
+                  }
+                  state = STATE_TAG_NAME;
+                  recordStart = pos + 1;
+                  attrs = {};
+                }
+                break;
+              case STATE_CDATA:
+                if (c === 93) {
+                  if (data.substr(pos + 1, 2) === "]>") {
+                    const cData = endRecording();
+                    if (cData) {
+                      this.emit("text", cData);
+                    }
+                    state = STATE_TEXT;
+                  } else if (data.length < pos + 2) {
+                    parseRemainder = true;
+                    pos = data.length;
+                  }
+                }
+                break;
+              case STATE_TAG_NAME:
+                if (c === 47 && recordStart === pos) {
+                  recordStart = pos + 1;
+                  endTag = true;
+                } else if (c === 33) {
+                  if (data.substr(pos + 1, 7) === "[CDATA[") {
+                    recordStart = pos + 8;
+                    state = STATE_CDATA;
+                  } else if (data.length < pos + 8 && "[CDATA[".startsWith(data.slice(pos + 1))) {
+                    parseRemainder = true;
+                    pos = data.length;
+                  } else {
+                    recordStart = void 0;
+                    state = STATE_IGNORE_COMMENT;
+                  }
+                } else if (c === 63) {
+                  recordStart = void 0;
+                  state = STATE_IGNORE_INSTRUCTION;
+                } else if (c <= 32 || c === 47 || c === 62) {
+                  tagName = endRecording();
+                  pos--;
+                  state = STATE_TAG;
+                }
+                break;
+              case STATE_IGNORE_COMMENT:
+                if (c === 62) {
+                  const prevFirst = data.charCodeAt(pos - 1);
+                  const prevSecond = data.charCodeAt(pos - 2);
+                  if (prevFirst === 45 && prevSecond === 45 || prevFirst === 93 && prevSecond === 93) {
+                    state = STATE_TEXT;
+                  }
+                }
+                break;
+              case STATE_IGNORE_INSTRUCTION:
+                if (c === 62) {
+                  const prev = data.charCodeAt(pos - 1);
+                  if (prev === 63) {
+                    state = STATE_TEXT;
+                  }
+                }
+                break;
+              case STATE_TAG:
+                if (c === 62) {
+                  this._handleTagOpening(endTag, tagName, attrs);
+                  tagName = void 0;
+                  attrs = void 0;
+                  endTag = void 0;
+                  selfClosing = void 0;
+                  state = STATE_TEXT;
+                  recordStart = pos + 1;
+                } else if (c === 47) {
+                  selfClosing = true;
+                } else if (c > 32) {
+                  recordStart = pos;
+                  state = STATE_ATTR_NAME;
+                }
+                break;
+              case STATE_ATTR_NAME:
+                if (c <= 32 || c === 61) {
+                  attrName = endRecording();
+                  pos--;
+                  state = STATE_ATTR_EQ;
+                }
+                break;
+              case STATE_ATTR_EQ:
+                if (c === 61) {
+                  state = STATE_ATTR_QUOT;
+                }
+                break;
+              case STATE_ATTR_QUOT:
+                if (c === 34 || c === 39) {
+                  attrQuote = c;
+                  attrQuoteChar = c === 34 ? '"' : "'";
+                  state = STATE_ATTR_VALUE;
+                  recordStart = pos + 1;
+                }
+                break;
+              case STATE_ATTR_VALUE:
+                if (c === attrQuote) {
+                  const value = escape2.unescapeXML(endRecording());
+                  attrs[attrName] = value;
+                  attrName = void 0;
+                  state = STATE_TAG;
+                }
+                break;
+            }
+          }
+          if (typeof recordStart === "number" && recordStart <= data.length) {
+            remainder = data.slice(recordStart);
+            recordStart = 0;
+          }
+        };
+      }
+      end(data) {
+        if (data) {
+          this.write(data);
+        }
+        this.write = function write() {
+        };
+      }
+    };
+    module2.exports = SaxLtx;
+  }
+});
+
+// node_modules/.pnpm/koa-compose@4.1.0/node_modules/koa-compose/index.js
+var require_koa_compose = __commonJS({
+  "node_modules/.pnpm/koa-compose@4.1.0/node_modules/koa-compose/index.js"(exports2, module2) {
+    "use strict";
+    module2.exports = compose2;
+    function compose2(middleware2) {
+      if (!Array.isArray(middleware2)) throw new TypeError("Middleware stack must be an array!");
+      for (const fn of middleware2) {
+        if (typeof fn !== "function") throw new TypeError("Middleware must be composed of functions!");
+      }
+      return function(context, next) {
+        let index = -1;
+        return dispatch(0);
+        function dispatch(i) {
+          if (i <= index) return Promise.reject(new Error("next() called multiple times"));
+          index = i;
+          let fn = middleware2[i];
+          if (i === middleware2.length) fn = next;
+          if (!fn) return Promise.resolve();
+          try {
+            return Promise.resolve(fn(context, dispatch.bind(null, i + 1)));
+          } catch (err) {
+            return Promise.reject(err);
+          }
+        }
+      };
+    }
+  }
+});
+
+// node_modules/.pnpm/saslmechanisms@0.1.1/node_modules/saslmechanisms/lib/factory.js
+var require_factory = __commonJS({
+  "node_modules/.pnpm/saslmechanisms@0.1.1/node_modules/saslmechanisms/lib/factory.js"(exports2, module2) {
+    (function(root, factory) {
+      if (typeof exports2 === "object") {
+        factory(exports2, module2);
+      } else if (typeof define === "function" && define.amd) {
+        define(["exports", "module"], factory);
+      }
+    })(exports2, function(exports3, module3) {
+      function Factory() {
+        this._mechs = [];
+      }
+      Factory.prototype.use = function(name, mech4) {
+        if (!mech4) {
+          mech4 = name;
+          name = mech4.prototype.name;
+        }
+        this._mechs.push({ name, mech: mech4 });
+        return this;
+      };
+      Factory.prototype.create = function(mechs) {
+        for (var i = 0, len = this._mechs.length; i < len; i++) {
+          for (var j2 = 0, jlen = mechs.length; j2 < jlen; j2++) {
+            var entry = this._mechs[i];
+            if (entry.name == mechs[j2]) {
+              return new entry.mech();
+            }
+          }
+        }
+        return null;
+      };
+      exports3 = module3.exports = Factory;
+    });
+  }
+});
+
+// node_modules/.pnpm/saslmechanisms@0.1.1/node_modules/saslmechanisms/main.js
+var require_main = __commonJS({
+  "node_modules/.pnpm/saslmechanisms@0.1.1/node_modules/saslmechanisms/main.js"(exports2, module2) {
+    (function(root, factory) {
+      if (typeof exports2 === "object") {
+        factory(
+          exports2,
+          module2,
+          require_factory()
+        );
+      } else if (typeof define === "function" && define.amd) {
+        define([
+          "exports",
+          "module",
+          "./lib/factory"
+        ], factory);
+      }
+    })(exports2, function(exports3, module3, Factory) {
+      exports3 = module3.exports = Factory;
+      exports3.Factory = Factory;
+    });
+  }
+});
+
+// node_modules/.pnpm/sasl-scram-sha-1@1.4.0/node_modules/sasl-scram-sha-1/lib/bitops.js
+var require_bitops = __commonJS({
+  "node_modules/.pnpm/sasl-scram-sha-1@1.4.0/node_modules/sasl-scram-sha-1/lib/bitops.js"(exports2) {
+    exports2.XOR = function(a, b2) {
+      var res = [];
+      if (a.length > b2.length) {
+        for (var i = 0; i < b2.length; i++) {
+          res.push(a[i] ^ b2[i]);
+        }
+      } else {
+        for (var j2 = 0; j2 < a.length; j2++) {
+          res.push(a[j2] ^ b2[j2]);
+        }
+      }
+      return new Uint8Array(res);
+    };
+    exports2.H = async function(text) {
+      return new Uint8Array(
+        await crypto.subtle.digest("SHA-1", text)
+      );
+    };
+    exports2.HMAC = async function(key, msg) {
+      const hmac = await crypto.subtle.importKey(
+        "raw",
+        key,
+        // https://developer.mozilla.org/en-US/docs/Web/API/HmacImportParams
+        { name: "HMAC", hash: "SHA-1" },
+        false,
+        // extractable
+        ["sign"]
+      );
+      return new Uint8Array(await crypto.subtle.sign(
+        "HMAC",
+        hmac,
+        msg
+      ));
+    };
+    exports2.Hi = async function(text, salt, iterations) {
+      const key = new TextEncoder().encode(text);
+      var concat = new Uint8Array(salt.length + 4);
+      concat.set(salt);
+      concat.set(new Uint8Array([0, 0, 0, 1]), salt.length);
+      var ui1 = await exports2.HMAC(key, concat);
+      var ui = ui1;
+      for (var i = 0; i < iterations - 1; i++) {
+        ui1 = await exports2.HMAC(key, ui1);
+        ui = exports2.XOR(ui, ui1);
+      }
+      return ui;
+    };
+  }
+});
+
+// node_modules/.pnpm/sasl-scram-sha-1@1.4.0/node_modules/sasl-scram-sha-1/lib/utils.js
+var require_utils2 = __commonJS({
+  "node_modules/.pnpm/sasl-scram-sha-1@1.4.0/node_modules/sasl-scram-sha-1/lib/utils.js"(exports2) {
+    exports2.parse = function(chal) {
+      var dtives = {};
+      var tokens = chal.split(/,(?=(?:[^"]|"[^"]*")*$)/);
+      for (var i = 0, len = tokens.length; i < len; i++) {
+        var dtiv = /(\w+)=["]?([^"]+)["]?$/.exec(tokens[i]);
+        if (dtiv) {
+          dtives[dtiv[1]] = dtiv[2];
+        }
+      }
+      return dtives;
+    };
+    exports2.saslname = function(name) {
+      var escaped = [];
+      var curr = "";
+      for (var i = 0; i < name.length; i++) {
+        curr = name[i];
+        if (curr === ",") {
+          escaped.push("=2C");
+        } else if (curr === "=") {
+          escaped.push("=3D");
+        } else {
+          escaped.push(curr);
+        }
+      }
+      return escaped.join("");
+    };
+    exports2.genNonce = function(len) {
+      const bytes = new Uint8Array((len || 32) / 2);
+      crypto.getRandomValues(bytes);
+      return Array.from(bytes, (b2) => b2.toString(16).padStart(2, "0")).join("");
+    };
+  }
+});
+
+// node_modules/.pnpm/sasl-scram-sha-1@1.4.0/node_modules/sasl-scram-sha-1/index.js
+var require_sasl_scram_sha_1 = __commonJS({
+  "node_modules/.pnpm/sasl-scram-sha-1@1.4.0/node_modules/sasl-scram-sha-1/index.js"(exports2, module2) {
+    var bitops = require_bitops();
+    var utils = require_utils2();
+    var RESP = {};
+    var CLIENT_KEY = new TextEncoder().encode("Client Key");
+    var SERVER_KEY = new TextEncoder().encode("Server Key");
+    function base64decode(s2) {
+      if (atob) {
+        return Uint8Array.from(atob(s2), function(c) {
+          return c.charCodeAt(0);
+        });
+      } else {
+        return Uint8Array.from(Buffer.from(s2, "base64"));
+      }
+    }
+    function base64encode(s2) {
+      if (btoa) {
+        return btoa(s2);
+      } else {
+        return Buffer.from(s2).toString("base64");
+      }
+    }
+    function Mechanism2(options) {
+      options = options || {};
+      this._genNonce = options.genNonce || utils.genNonce;
+      this._stage = "initial";
+    }
+    Mechanism2.Mechanism = Mechanism2;
+    Mechanism2.prototype.name = "SCRAM-SHA-1";
+    Mechanism2.prototype.clientFirst = true;
+    Mechanism2.prototype.response = function(cred) {
+      return RESP[this._stage](this, cred);
+    };
+    Mechanism2.prototype.challenge = function(chal) {
+      var values = utils.parse(chal);
+      this._salt = base64decode(values.s || "");
+      this._iterationCount = parseInt(values.i, 10);
+      this._nonce = values.r;
+      this._verifier = values.v;
+      this._error = values.e;
+      this._challenge = chal;
+      return this;
+    };
+    RESP.initial = function(mech4, cred) {
+      mech4._cnonce = mech4._genNonce();
+      var authzid = "";
+      if (cred.authzid) {
+        authzid = "a=" + utils.saslname(cred.authzid);
+      }
+      mech4._gs2Header = "n," + authzid + ",";
+      var nonce = "r=" + mech4._cnonce;
+      var username = "n=" + utils.saslname(cred.username || "");
+      mech4._clientFirstMessageBare = username + "," + nonce;
+      var result = mech4._gs2Header + mech4._clientFirstMessageBare;
+      mech4._stage = "challenge";
+      return result;
+    };
+    RESP.challenge = async function(mech4, cred) {
+      var gs2Header = base64encode(mech4._gs2Header);
+      mech4._clientFinalMessageWithoutProof = "c=" + gs2Header + ",r=" + mech4._nonce;
+      var saltedPassword, clientKey, serverKey;
+      if (cred.salt && cred.salt.every(function(value, index) {
+        return value === mech4._salt[index];
+      })) {
+        if (cred.clientKey && cred.serverKey) {
+          clientKey = cred.clientKey;
+          serverKey = cred.serverKey;
+        } else if (cred.saltedPassword) {
+          saltedPassword = cred.saltedPassword;
+          clientKey = await bitops.HMAC(saltedPassword, CLIENT_KEY);
+          serverKey = await bitops.HMAC(saltedPassword, SERVER_KEY);
+        }
+      } else {
+        saltedPassword = await bitops.Hi(cred.password || "", mech4._salt, mech4._iterationCount);
+        clientKey = await bitops.HMAC(saltedPassword, CLIENT_KEY);
+        serverKey = await bitops.HMAC(saltedPassword, SERVER_KEY);
+      }
+      var storedKey = await bitops.H(clientKey);
+      var authMessage = new TextEncoder().encode(mech4._clientFirstMessageBare + "," + mech4._challenge + "," + mech4._clientFinalMessageWithoutProof);
+      var clientSignature = await bitops.HMAC(storedKey, authMessage);
+      var clientProof = base64encode(String.fromCharCode.apply(null, bitops.XOR(clientKey, clientSignature)));
+      mech4._serverSignature = await bitops.HMAC(serverKey, authMessage);
+      var result = mech4._clientFinalMessageWithoutProof + ",p=" + clientProof;
+      mech4._stage = "final";
+      mech4.cache = {
+        salt: mech4._salt,
+        saltedPassword,
+        clientKey,
+        serverKey
+      };
+      return result;
+    };
+    RESP.final = function() {
+      return "";
+    };
+    module2.exports = Mechanism2;
+  }
+});
+
+// node_modules/.pnpm/sasl-plain@0.1.0/node_modules/sasl-plain/lib/mechanism.js
+var require_mechanism = __commonJS({
+  "node_modules/.pnpm/sasl-plain@0.1.0/node_modules/sasl-plain/lib/mechanism.js"(exports2, module2) {
+    (function(root, factory) {
+      if (typeof exports2 === "object") {
+        factory(exports2, module2);
+      } else if (typeof define === "function" && define.amd) {
+        define(["exports", "module"], factory);
+      }
+    })(exports2, function(exports3, module3) {
+      function Mechanism2() {
+      }
+      Mechanism2.prototype.name = "PLAIN";
+      Mechanism2.prototype.clientFirst = true;
+      Mechanism2.prototype.response = function(cred) {
+        var str = "";
+        str += cred.authzid || "";
+        str += "\0";
+        str += cred.username;
+        str += "\0";
+        str += cred.password;
+        return str;
+      };
+      Mechanism2.prototype.challenge = function(chal) {
+        return this;
+      };
+      exports3 = module3.exports = Mechanism2;
+    });
+  }
+});
+
+// node_modules/.pnpm/sasl-plain@0.1.0/node_modules/sasl-plain/main.js
+var require_main2 = __commonJS({
+  "node_modules/.pnpm/sasl-plain@0.1.0/node_modules/sasl-plain/main.js"(exports2, module2) {
+    (function(root, factory) {
+      if (typeof exports2 === "object") {
+        factory(
+          exports2,
+          module2,
+          require_mechanism()
+        );
+      } else if (typeof define === "function" && define.amd) {
+        define([
+          "exports",
+          "module",
+          "./lib/mechanism"
+        ], factory);
+      }
+    })(exports2, function(exports3, module3, Mechanism2) {
+      exports3 = module3.exports = Mechanism2;
+      exports3.Mechanism = Mechanism2;
+    });
+  }
+});
+
+// node_modules/.pnpm/sasl-anonymous@0.1.0/node_modules/sasl-anonymous/lib/mechanism.js
+var require_mechanism2 = __commonJS({
+  "node_modules/.pnpm/sasl-anonymous@0.1.0/node_modules/sasl-anonymous/lib/mechanism.js"(exports2, module2) {
+    (function(root, factory) {
+      if (typeof exports2 === "object") {
+        factory(exports2, module2);
+      } else if (typeof define === "function" && define.amd) {
+        define(["exports", "module"], factory);
+      }
+    })(exports2, function(exports3, module3) {
+      function Mechanism2() {
+      }
+      Mechanism2.prototype.name = "ANONYMOUS";
+      Mechanism2.prototype.clientFirst = true;
+      Mechanism2.prototype.response = function(cred) {
+        return cred.trace || "";
+      };
+      Mechanism2.prototype.challenge = function(chal) {
+      };
+      exports3 = module3.exports = Mechanism2;
+    });
+  }
+});
+
+// node_modules/.pnpm/sasl-anonymous@0.1.0/node_modules/sasl-anonymous/main.js
+var require_main3 = __commonJS({
+  "node_modules/.pnpm/sasl-anonymous@0.1.0/node_modules/sasl-anonymous/main.js"(exports2, module2) {
+    (function(root, factory) {
+      if (typeof exports2 === "object") {
+        factory(
+          exports2,
+          module2,
+          require_mechanism2()
+        );
+      } else if (typeof define === "function" && define.amd) {
+        define([
+          "exports",
+          "module",
+          "./lib/mechanism"
+        ], factory);
+      }
+    })(exports2, function(exports3, module3, Mechanism2) {
+      exports3 = module3.exports = Mechanism2;
+      exports3.Mechanism = Mechanism2;
+    });
+  }
+});
+
 // src/index.ts
 var index_exports = {};
 __export(index_exports, {
-  ClearEvents: () => ClearEvents,
-  GenerateAudioMessage: () => GenerateAudioMessage,
-  GenerateGraphic: () => GenerateGraphic,
-  GetCleanedEvent: () => GetCleanedEvent,
-  GetEventGeometry: () => GetEventGeometry,
-  GetEvents: () => GetEvents,
-  GetNodes: () => GetNodes,
-  GetRandomEvent: () => GetRandomEvent,
-  GetVersion: () => GetVersion,
   Manager: () => Manager,
-  ManualEvent: () => ManualEvent,
-  QueryStanza: () => QueryStanza,
-  SetNode: () => SetNode,
-  SetSettings: () => SetSettings,
-  StartService: () => StartService,
-  StopService: () => StopService,
   default: () => index_default
 });
 module.exports = __toCommonJS(index_exports);
 
-// src/enums/Themes.ts
-var EnumThemes = [
-  { Event: `Tornado Emergency`, RGB: `rgb(166, 0, 255)` },
+// src/enums/properties/Themes.ts
+var ENUM_THEMES = [
+  { Event: `*Tornado Emergency*`, RGB: `rgb(166, 0, 255)` },
   { Event: `Flash Flood Emergency`, RGB: `rgb(21, 216, 37)` },
   { Event: `*PDS Tornado Warning*`, RGB: `rgb(208, 0, 255)` },
   { Event: `*Tornado Warning*`, RGB: `rgb(255, 0, 0)` },
@@ -15362,21 +13627,19 @@ var EnumThemes = [
   { Event: `*Excessive Heat Warning*`, RGB: `rgb(255, 255, 255)` },
   { Event: `*Flood*`, RGB: `rgb(0, 255, 128)` },
   { Event: `*Heat*`, RGB: `rgb(240, 197, 119)` },
-  { Event: `*Special Weather Statement*`, RGB: `rgb(211, 191, 125)` },
-  { Event: `Default`, RGB: `rgb(86, 125, 165)` }
+  { Event: `*Special Weather Statement*`, RGB: `rgb(211, 191, 125)` }
 ];
 
 // src/bootstrap.ts
 var import_node_events = require("node:events");
-var import_path = require("path");
+var import_node_path = require("node:path");
 var Bootstrap = {
-  Version: `b3.1-031`,
-  Ready: false,
-  Ratelimits: {},
+  Version: `b3.1-04`,
+  ServiceReady: false,
+  Listener: new import_node_events.EventEmitter(),
+  Scheduler: null,
   Session: null,
   Database: null,
-  Job: null,
-  Listener: new import_node_events.EventEmitter(),
   Colors: {
     Red: `\x1B[31m`,
     Green: `\x1B[32m`,
@@ -15387,799 +13650,432 @@ var Bootstrap = {
     White: `\x1B[37m`,
     Reset: `\x1B[0m`
   },
-  Cache: {
-    LastStanzaTime: null,
-    Connected: false,
-    Reconnecting: false,
-    TotalReconnects: 0,
-    Hault: false,
-    Events: { type: "FeatureCollection", features: [] },
-    Watches: [],
-    Nodes: { type: "FeatureCollection", features: [] },
-    Hashes: [],
-    Parsed: [],
-    UGC: /* @__PURE__ */ new Map()
+  CacheControl: {
+    Limits: {},
+    Session: {
+      Connected: false,
+      HaultConnection: false,
+      LastStanzaReported: Date.now(),
+      Reconnecting: false,
+      ReconnectAttempts: 0
+    },
+    Manager: {
+      Cache: [],
+      Zones: /* @__PURE__ */ new Map()
+    }
   },
   Settings: {
-    Timezone: "UTC",
-    Database: (0, import_path.join)(process.cwd(), "shapefiles.db"),
-    DeveloperDisableEvents: false,
-    EnableWireService: false,
-    DeveloperMode: false,
-    EnableJournal: true,
-    DeveloperEventLogging: false,
-    NOAAWeatherWireServiceSettings: {
-      ReconnectionSettings: {
-        Enabled: true,
-        ReconnectionInterval: 60
-      },
-      CredentialSettings: {
-        Username: null,
-        Password: null,
-        Nickname: "@atmosx/event-product-parser/3.0"
-      },
-      CacheSettings: {
-        Enabled: true,
-        MaxDatabaseHistory: 5e3,
-        MaxRetentionHistory: 1e3
-      },
-      StanzaSettings: {
-        DisableUGC: false,
-        DisableVTEC: false,
-        DisableText: false
-      }
+    Timezone: `UTC`,
+    Database: (0, import_node_path.join)(process.cwd(), `event-product-parser.db`),
+    DeveloperSettings: {
+      ConsoleMessages: true,
+      DebugMessages: false,
+      DisableEvents: false,
+      DebugMinimumTime: 10
     },
-    NationalWeatherServiceSettings: {
-      EventsEndpoint: `https://api.weather.gov/alerts/active`
-    },
-    BroadcastifySettings: {
-      BroadcastifyAttachments: true,
-      BroadcastifyDatabase: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/broadcastify.json`,
-      BroadcastifyTags: [`Ham`, `Air`, `Fire`, `Public Safety`, `Weather`, `EMS`, `Police`, `Rail`]
-    },
-    BoundarySettings: {
-      BoundaryDatabase: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/counties-10m.json`,
-      CityDatabase: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/cities500.json`
-    },
-    NotifyServer: {
-      Enabled: false,
-      Server: `https://ntfy.sh`,
-      MediaStorage: {
-        AUDIO: null,
-        TEXT: null,
-        JSON: null,
-        IMAGE: null
-      },
+    WeatherWireService: false,
+    WeatherWireServiceSettings: {
       Credentials: {
         Username: null,
-        Password: null
+        Password: null,
+        Nickname: null
+      },
+      CacheControl: {
+        Enabled: false,
+        MaxStanzas: 5e3,
+        MaxStartupStanzas: 125
+      },
+      ReconnectionPeriod: 60
+    },
+    Integrations: {
+      Broadcastify: {
+        Attachments: true,
+        FilteredTags: [`Ham`, `Air`, `Fire`, `Public Safety`, `Weather`, `EMS`, `Police`, `Rail`],
+        Download: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/broadcastify.json`
+      },
+      GIS: {
+        ConusDownload: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/counties-10m.json`,
+        PopulationDownload: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/cities500.json`
+      },
+      NTFY: {
+        Enabled: false,
+        DefaultServer: `https://ntfy.sh`,
+        MediaDirectories: {
+          Audio: null,
+          Products: null,
+          GeoJSON: null,
+          Graphics: null
+        },
+        Credentials: {
+          Username: null,
+          Password: null
+        }
       }
     },
-    ActionSettings: [],
+    Tasks: [],
     GlobalSettings: {
-      DisableGeometryParsing: false,
-      UseShapefileCoordinates: true,
-      CensusPopulationData: true,
-      NodePolygonTTL: 60,
-      NodeMaxDistance: 120,
-      EventFiltering: {
-        ListeningEvents: [],
-        ListeningICAO: [],
-        ListeningUGC: [],
-        ListeningStates: [],
-        IgnoredICAO: [],
-        IgnoredEvents: [`Test Message`],
-        NodeLocationFiltering: false,
-        IgnoreTestProducts: true
+      ProductGeometryParsing: true,
+      GeometryShapefileFallback: true,
+      CityPopulationAttachments: true,
+      Nodes: {
+        AlertNodeTTL: 60,
+        NodeMaxDistance: 100,
+        DefinedNodes: []
       },
-      Themes: EnumThemes,
-      ArchiveSettings: {
-        TTL: 60,
-        ImageDirectory: `Archive/Images`,
-        JSONDirectory: `Archive/Products`,
-        TextDirectory: `Archive/Text`,
-        AudioDirectory: `Archive/Audio`,
-        Logo: null,
-        AudioToneout: null
-      }
-    }
-  }
-};
-
-// src/components/utilities/SetWarning.ts
-var SetWarning = ({ Title, Message, Tree }) => {
-  const settings = Bootstrap.Settings;
-  const title = Title ?? `[${Bootstrap.Colors.Yellow}@atmosx/event-product-parser${Bootstrap.Colors.Reset}]`;
-  const log2 = (message) => {
-    Bootstrap.Listener.emit(`log`, message);
-    if (settings.EnableJournal) {
-      console.log(message);
-    }
-  };
-  log2(`${title} ${Message}`);
-  if (!Tree?.length) return;
-  const cleanTitle = title.replace(/\x1b\[[0-9;]*m/g, ``);
-  const padding = ` `.repeat(cleanTitle.length + 1);
-  const entries = Tree.filter((entry) => entry !== void 0 && entry !== null);
-  entries.forEach((entry, index) => {
-    const prefix = index === entries.length - 1 ? `\u2514\u2500` : `\u251C\u2500`;
-    log2(`${padding}${prefix} ${entry}`);
-  });
-};
-
-// src/components/database/CreateQuery.ts
-var CreateQuery = function({ Query, Parameters }) {
-  try {
-    const parameters = Array.isArray(Parameters) ? Parameters : [];
-    const statement = Bootstrap?.Database?.prepare(Query);
-    return /^\s*select/i.test(Query) ? statement?.all(...parameters) : statement?.run(...parameters);
-  } catch (error) {
-    SetWarning({ Message: `Database Query Error: ${error instanceof Error ? error.stack ?? error.message : String(error)}` });
-    throw error;
-  }
-};
-
-// src/components/geometry/GetUnionPolygon.ts
-var import_polygon_clipping = __toESM(require_polygon_clipping_cjs());
-var GetUnionPolygon = ({ Polygons }) => {
-  if (!Polygons || Polygons.length === 0) {
-    return null;
-  }
-  const unionFn = import_polygon_clipping.union;
-  const unioned = unionFn(...Polygons);
-  return {
-    type: `MultiPolygon`,
-    coordinates: unioned
-  };
-};
-
-// src/parsers/ugc/GetZonePolygon.ts
-var import_crypto = require("crypto");
-var GetZonePolygon = ({ Zones, Union }) => {
-  const list = [...new Set(Zones.map((z) => z.trim()))].filter((z) => z === "XX000" ? false : true);
-  if (list.length === 0) return null;
-  const placeholders = list.map(() => "?").join(",");
-  const rows = CreateQuery({
-    Query: `SELECT geometry FROM shapefiles WHERE id IN (${placeholders})`,
-    Parameters: list
-  });
-  const polygons = [];
-  const geometryHashes = /* @__PURE__ */ new Set();
-  for (const row of rows) {
-    if (!row?.geometry) continue;
-    const geometryHash = (0, import_crypto.createHash)("sha256").update(row.geometry).digest("hex");
-    if (geometryHashes.has(geometryHash)) continue;
-    geometryHashes.add(geometryHash);
-    const geom = JSON.parse(row.geometry);
-    if (geom?.type === "Polygon") {
-      polygons.push(geom.coordinates);
-    }
-    if (geom?.type === "MultiPolygon") {
-      for (const poly of geom.coordinates) {
-        polygons.push(poly);
-      }
-    }
-  }
-  if (polygons.length === 0) return null;
-  if (Union) {
-    return GetUnionPolygon({ Polygons: polygons });
-  } else {
-    const multi = [];
-    for (const polyCoords of polygons) {
-      if (Array.isArray(polyCoords) && Array.isArray(polyCoords[0])) {
-        multi.push(polyCoords);
-      }
-    }
-    if (multi.length === 0) return null;
-    return { type: "MultiPolygon", coordinates: multi };
-  }
-};
-
-// src/components/events/components/GetEventGeometry.ts
-var GetEventGeometry = ({ Event, Union }) => {
-  const { properties } = Event;
-  const settings = Bootstrap.Settings;
-  const generated = properties?.geocode?.polygon ?? null;
-  const ugc = properties?.geocode?.ugc ?? null;
-  let geo = {
-    type: `Polygon`,
-    coordinates: generated != null ? JSON.parse(Buffer.from(generated, "base64").toString("utf-8")) : null
-  };
-  if (settings.GlobalSettings.UseShapefileCoordinates && generated == null && ugc != null) {
-    geo = GetZonePolygon({ Zones: ugc, Union: Union ?? false });
-    if (geo == null) {
-      geo = {
-        type: `Polygon`,
-        coordinates: []
-      };
-    }
-  }
-  return geo;
-};
-
-// src/components/events/components/GetCleanedEvent.ts
-var GetCleanedEvent = (event) => {
-  for (const key of Object.keys(event)) {
-    const value = event[key];
-    if (value === null || value === void 0) {
-      delete event[key];
-    } else if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-      event[key] = GetCleanedEvent(value);
-    }
-  }
-  return event;
-};
-
-// src/components/utilities/SetSettings.ts
-var SetSettings = (imported) => {
-  const settings = Bootstrap.Settings;
-  const merge2 = (target, source) => {
-    for (const key in source) {
-      if (!Object.prototype.hasOwnProperty.call(source, key)) continue;
-      const srcVal = source[key];
-      const tgtVal = target[key];
-      if (srcVal && typeof srcVal === "object" && !Array.isArray(srcVal)) {
-        if (!tgtVal || typeof tgtVal !== "object" || Array.isArray(tgtVal)) {
-          target[key] = {};
+      AlertFiltering: {
+        ListeningEvents: [],
+        ListeningOffice: [],
+        ListeningFIPS: [],
+        ListeningStates: [],
+        IgnoredOffice: [],
+        IgnoredFIPS: [],
+        TestProducts: false,
+        Nodes: false
+      },
+      Themes: ENUM_THEMES,
+      Generation: {
+        FileTTL: 60,
+        Graphics: `bucket/graphics`,
+        GeoJSON: `bucket/geojson`,
+        Audio: `bucket/audio`,
+        Products: `bucket/products`,
+        GraphicGeneration: {
+          Logo: null,
+          MaxWidth: 1920,
+          MaxHeight: 1080
+        },
+        AudioGeneration: {
+          Toneout: null
         }
-        merge2(target[key], srcVal);
-      } else {
-        target[key] = srcVal;
       }
     }
-  };
-  merge2(settings, imported);
-  return settings;
+  }
+};
+
+// src/enums/Strings.ts
+var ENUM_STRINGS = {
+  DEFAULT_PREFIX: `${Bootstrap.Colors.Yellow}@atmosx/event-product-parser-${Bootstrap.Version}${Bootstrap.Colors.Reset}`,
+  DEBUG_PREFIX: `${Bootstrap.Colors.Cyan}Debug${Bootstrap.Colors.Reset}`,
+  ERROR_PREFIX: `${Bootstrap.Colors.Red}Error${Bootstrap.Colors.Reset}`,
+  CALLBACKS: {
+    SETTINGS_INVALID_KEY: `This configuration '%s' ${Bootstrap.Colors.Red}DOES NOT${Bootstrap.Colors.Reset} exist. Please check the documentation for valid configuration options.`,
+    HTTP_REQUEST_FAILED: `HTTP Request Failed`
+  },
+  DATABASE: {
+    CREATED: `No database found, creating a new database at the specified path.`,
+    CONNECTED: `Successfully connected to local database (SQlite3)`,
+    QUERY_FAILED: `Database query failed, please check the database schema and ensure that the query is valid.`,
+    BUILDING: `The required database tables are missing, the parsing is currently rebuilding them and this may take a few seconds. Please ${Bootstrap.Colors.Red}DO NOT${Bootstrap.Colors.Reset} exit the parser while this is happening.`,
+    BUILD_COMPLETE: `Database building complete. The required tables have been successfully created and populated. You can now continue using the parser.`,
+    SHAPEFILE_BUILD: `Building 'shapefiles' database table with %s and %d features.`,
+    POPULATION_BUILD: `Building 'population' database table with %s cities.`,
+    CONUS_BUILD: `Building 'conus' database table with %s states and %d counties.`,
+    BROADCASTIFY_BUILD: `Building 'broadcastify' database table with %s counties from %d.`
+  },
+  SERVICE: {
+    ERROR_OCCURED: `An uncaught exception occured, please report this issue to the development team via GitHub (https://github.com/AtmosphericX/event-product-parser/issues)`,
+    ALREADY_STARTED: `The service has already been started, Please stop the service before attempting to start it again. (See documentation)`,
+    CONNECTED: `Successfully connected to NOAA Weather Wire Service as '%s'`,
+    DISCONNECTED: `Server not reachable, incorrect credentials, or networking error from NOAA Weather Wire Service, reconnecting in 5 seconds.`,
+    OCCUPANT: `Occupant '%s' has %d the room`,
+    RECONNECTING: `Attempting to reconnect (Reconnect attempts: %s)`,
+    RECONNECT_INTERVAL_SMALL: `The reconnection interval is set to %s seconds, which is below the recommended minimum of 15 seconds. Please increase the reconnection interval to avoid potential issues.`,
+    NOT_STARTED: `The service has not been started, Please start the service before attempting to stop it. (See documentation)`
+  },
+  DB_STRINGS: {
+    CREATE: {
+      SHAPEFILE: `CREATE TABLE IF NOT EXISTS Shapefiles (ID, Location TEXT, Source TEXT, Geometry TEXT )`,
+      CONUS: `CREATE TABLE IF NOT EXISTS Conus (ID TEXT PRIMARY KEY, Type TEXT NOT NULL, State TEXT, Name TEXT, Geometry TEXT NOT NULL)`,
+      POPULATION: `CREATE TABLE IF NOT EXISTS Population (ID TEXT PRIMARY KEY, Name TEXT, State TEXT, County TEXT, Population TEXT, Latitude REAL NOT NULL, Longitude REAL NOT NULL)`,
+      BROADCASTIFY: `CREATE TABLE IF NOT EXISTS BroadcastifyFeeds (State TEXT, County TEXT, Feed TEXT, Type TEXT, Link TEXT)`,
+      STANZA: `CREATE TABLE IF NOT EXISTS Stanzas (ID INTEGER PRIMARY KEY AUTOINCREMENT, Product TEXT, Issuance TEXT, Stanza TEXT)`,
+      ACTIVE: `CREATE TABLE IF NOT EXISTS Active (Tracking TEXT PRIMARY KEY, Event TEXT, GeoJSON TEXT, Geometry TEXT, Hashes TEXT, Issued TIMESTAMP, Expires TIMESTAMP, Updated TIMESTAMP)`,
+      ACTIVE_INDEX: `CREATE INDEX IF NOT EXISTS IDX_ACTIVE_EVENTS_TRACKING ON Active (Tracking)`,
+      SHAPEFILE_INDEX: `CREATE INDEX IF NOT EXISTS IDX_SHAPEFILES_ID ON Shapefiles (ID)`
+    },
+    IMPORTS: {
+      SHAPEFILE: `INSERT INTO Shapefiles (ID, Location, Source, Geometry) VALUES (?, ?, ?, ?)`,
+      POPULATION: `INSERT INTO Population (ID, Name, State, County, Population, Latitude, Longitude) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      CONUS: `INSERT INTO Conus (ID, Type, State, Name, Geometry) VALUES (?, ?, ?, ?, ?)`,
+      BROADCASTIFY: `INSERT INTO BroadcastifyFeeds (State, County, Feed, Type, Link) VALUES (?, ?, ?, ?, ?)`,
+      STANZA: `INSERT INTO Stanzas (Product, Issuance, Stanza) VALUES (?, ?, ?)`
+    },
+    EXISTS: {
+      STANZA: `SELECT name FROM sqlite_master WHERE type='table' AND name='Stanzas';`,
+      SHAPEFILE: `SELECT name FROM sqlite_master WHERE type='table' AND name='Shapefiles';`,
+      CONUS: `SELECT name FROM sqlite_master WHERE type='table' AND name='Conus';`,
+      POPULATION: `SELECT name FROM sqlite_master WHERE type='table' AND name='Population';`,
+      ACTIVE: `SELECT name FROM sqlite_master WHERE type='table' AND name='Active';`,
+      BROADCASTIFY: `SELECT name FROM sqlite_master WHERE type='table' AND name='BroadcastifyFeeds';`
+    },
+    COUNTS: {
+      STANZA: `SELECT COUNT(*) AS count FROM Stanzas`,
+      SHAPEFILE: `SELECT COUNT(*) AS count FROM Shapefiles`,
+      CONUS: `SELECT COUNT(*) AS count FROM Conus`,
+      POPULATION: `SELECT COUNT(*) AS count FROM Population`,
+      ACTIVE: `SELECT COUNT(*) AS count FROM Active`,
+      BROADCASTIFY: `SELECT COUNT(*) AS count FROM BroadcastifyFeeds`
+    },
+    DELETE: {
+      STANZA_ALL: `DELETE FROM Stanzas`,
+      STANZA_OLD: `DELETE FROM stanzas WHERE id IN (SELECT id FROM stanzas ORDER BY Issuance ASC LIMIT ?)`
+    },
+    QUERIES: {
+      ZONE_LOOKUP: `SELECT Geometry FROM Shapefiles WHERE ID IN (%s)`,
+      LOCATION_LOOKUP: `SELECT ID, Location FROM Shapefiles WHERE ID IN (%s)`,
+      BROADCASTIFY_LOOKUP: `SELECT * FROM BroadcastifyFeeds WHERE State = ? AND County = ?`
+    }
+  }
 };
 
 // src/components/utilities/SetTimeoutAction.ts
 var SetTimeoutAction = ({ Identifier, AddTime, Max, Interval, Expire }) => {
-  let target = Bootstrap?.Ratelimits?.[Identifier];
-  if (!target) {
-    Bootstrap.Ratelimits[Identifier] = [];
-    target = Bootstrap.Ratelimits[Identifier];
+  const { CacheControl } = Bootstrap;
+  let lTarget = Bootstrap.CacheControl.Limits?.[Identifier];
+  if (!lTarget) {
+    CacheControl.Limits[Identifier] = [];
+    lTarget = CacheControl.Limits?.[Identifier];
   }
   if (Expire) {
-    delete Bootstrap.Ratelimits[Identifier];
-    return { Limited: false };
+    delete CacheControl.Limits?.[Identifier];
+    return false;
   }
-  if (target?.length > 0) {
-    Bootstrap.Ratelimits[Identifier] = target.filter((ts) => Date.now() - ts < Interval * 1e3);
-    target = Bootstrap.Ratelimits[Identifier];
+  if (lTarget?.length > 0) {
+    CacheControl.Limits[Identifier] = lTarget.filter((ts) => Date.now() - ts < Interval * 1e3);
+    lTarget = CacheControl.Limits?.[Identifier];
   }
-  const oldestTimestamp = target?.[0];
-  const getWait = oldestTimestamp ? Math.ceil(Interval * 1e3 - (Date.now() - oldestTimestamp)) : 0;
-  const max = Max ?? 1;
-  if (target?.length >= max && getWait > 0) {
-    return {
-      Limited: true,
-      Remaining: getWait,
-      Response: `You are being rate limited, please wait ${(getWait / 1e3).toFixed(1)} second(s) before performing this action again.`
-    };
+  const cTimetstamp = lTarget?.[0];
+  const mWait = cTimetstamp ? Math.ceil(Interval * 1e3 - (Date.now() - cTimetstamp)) : 0;
+  const cMaxRequests = Max ?? 1;
+  if (lTarget?.length >= cMaxRequests && mWait > 0) {
+    return true;
   }
-  Bootstrap.Ratelimits[Identifier].push(Date.now());
-  return { Limited: false };
+  CacheControl.Limits?.[Identifier].push(Date.now());
+  return false;
 };
 
-// src/components/utilities/SetEventEmit.ts
-var SetEventEmit = ({ Event, Metadata, Message, Limited, Tree }) => {
+// src/components/utilities/SetLog.ts
+var ENUM_LOGS_TYPES = {
+  DEBUG: { Title: ENUM_STRINGS.DEBUG_PREFIX, Debug: true },
+  ERROR: { Title: ENUM_STRINGS.ERROR_PREFIX, Debug: false },
+  DEFAULT: { Title: ENUM_STRINGS.DEFAULT_PREFIX, Debug: false }
+};
+var SetLog = ({ Type = "DEFAULT", Message, Event, Metadata, Limited, Hidden }) => {
+  const { ConsoleMessages, DebugMessages, DebugMinimumTime } = Bootstrap.Settings.DeveloperSettings;
+  const cType = ENUM_LOGS_TYPES[Type] ?? ENUM_LOGS_TYPES.DEFAULT;
+  const cFullMessage = `[${cType.Title}] ${Message}`;
+  const cCleanMessage = String(Message)?.replace(/\x1b\[[0-9;]*m/g, ``);
+  const cEvent = Event ?? (cType.Debug ? `debug` : `log`);
   if (Limited) {
-    const isTimeout = SetTimeoutAction({ Identifier: `event.${Event}`, AddTime: true, Max: 1, Interval: 1 });
-    if (isTimeout.Limited) return;
+    const A2 = SetTimeoutAction({
+      Identifier: `CE-${Event}`,
+      AddTime: true,
+      Max: 1,
+      Interval: 1
+    });
+    if (A2) {
+      return;
+    }
   }
-  Bootstrap.Listener.emit(Event, Metadata);
-  if (Event != `log`) {
-    Bootstrap.Listener.emit(`*`, { event: Event, data: Metadata });
+  Bootstrap.Listener.emit(cEvent, { Message: cCleanMessage, Headers: Metadata ?? {} });
+  Bootstrap.Listener.emit(`*`, { Event: cEvent, Metadata: cCleanMessage, Headers: Metadata ?? {} });
+  if (DebugMessages && cType.Debug && !Hidden) {
+    const cDebugMatch = cCleanMessage.match(/\[(\d+\.\d+)ms\]/);
+    if (cDebugMatch && parseFloat(cDebugMatch[1]) <= DebugMinimumTime) {
+      return;
+    }
+    console.log(cFullMessage);
+    return;
   }
-  if (Message) {
-    SetWarning({ Message, Tree });
+  if (!cType.Debug && ConsoleMessages && !Hidden) {
+    console.log(cFullMessage);
   }
 };
 
 // src/components/utilities/CreateErrorHandler.ts
+var ENUM_IGNORED_ERRORS = [
+  "ETIMEDOUT",
+  "ECONNRESET",
+  "EHOSTUNREACH",
+  "ENOTFOUND",
+  "ECONNREFUSED",
+  "EPIPE",
+  "EADDRINUSE",
+  "EALREADY",
+  "EACCES",
+  "EAGAIN",
+  "EHOSTDOWN",
+  "STARTTLS_FAILURE"
+];
 var CreateErrorHandler = () => {
   process.on("uncaughtException", (error) => {
-    const A2 = [
-      "ETIMEDOUT",
-      "ECONNRESET",
-      "EHOSTUNREACH",
-      "ENOTFOUND",
-      "ECONNREFUSED",
-      "EPIPE",
-      "EADDRINUSE",
-      "EALREADY",
-      "EACCES",
-      "EAGAIN",
-      "EHOSTDOWN",
-      "STARTTLS_FAILURE"
-    ];
-    if (A2.includes(error?.code)) {
-      SetEventEmit({
-        Event: `onServiceStatus`,
-        Metadata: {
-          Message: `Ignored Critical Error: ${error?.code ?? "Unknown error code"}. This may indicate a connection issue. Attempting to continue...`,
-          Type: `error`,
-          Error: true
-        }
-      });
+    const cMessage = error instanceof Error ? error.stack ?? error.message : String(error);
+    const cErrorCode = error?.code ?? `UNKNOWN_ERROR`;
+    const cStackTraceLines = cMessage.split("\n").map((lLine) => lLine.replace(/.*(?:dist[\\/]+index\.cjs:)(\d+:\d+)/, "dist/index.cjs:$1")).filter((lLine) => lLine.includes("dist/index.cjs:")).map((lLine) => lLine.replace(/\)?$/, ""));
+    if (ENUM_IGNORED_ERRORS.includes(cErrorCode)) {
+      return;
     }
-    console.log(`Uncaught Exception: ${error instanceof Error ? error.stack ?? error.message : String(error)}`);
-    SetWarning({ Message: `Uncaught Exception: ${error instanceof Error ? error.stack ?? error.message : String(error)}` });
+    SetLog({
+      Type: `ERROR`,
+      Message: `${ENUM_STRINGS.SERVICE.ERROR_OCCURED}
+
+Traces: ${cStackTraceLines.length > 0 ? cStackTraceLines.join(", ") : "No stack trace available"}
+
+Error: ${cMessage}`
+    });
   });
 };
 
-// src/components/audio/components/GetWavPCM16.ts
-var GetWavPCM16 = (buffer) => {
-  if (buffer.toString("ascii", 0, 4) !== "RIFF" || buffer.toString("ascii", 8, 12) !== "WAVE") {
-    return null;
-  }
-  let fmt = null;
-  let data = null;
-  let i = 12;
-  while (i + 8 <= buffer.length) {
-    const id2 = buffer.toString("ascii", i, i + 4);
-    const size = buffer.readUInt32LE(i + 4);
-    const start = i + 8;
-    const end = start + size;
-    if (id2 === "fmt ") fmt = buffer.slice(start, end);
-    if (id2 === "data") data = buffer.slice(start, end);
-    i = end + size % 2;
-  }
-  if (!fmt || !data) return null;
-  const audioFormat = fmt.readUInt16LE(0);
-  const channels = fmt.readUInt16LE(2);
-  const sampleRate = fmt.readUInt32LE(4);
-  const bitsPerSample = fmt.readUInt16LE(14);
-  if (audioFormat !== 1 || bitsPerSample !== 16 || channels !== 1) {
-    return null;
-  }
-  const samples = new Int16Array(data.buffer, data.byteOffset, data.length / 2);
-  return { Samples: new Int16Array(samples), SampleRate: sampleRate, Channels: channels, BitsPerSample: bitsPerSample };
-};
-
-// src/components/audio/components/GetSampledPCM16.ts
-var GetSampledPCM16 = ({ Int16, OriginalRate, TargetRate }) => {
-  if (OriginalRate === TargetRate) return Int16;
-  const ratio = TargetRate / OriginalRate;
-  const outLen = Math.max(1, Math.round(Int16.length * ratio));
-  const out = new Int16Array(outLen);
-  for (let i = 0; i < outLen; i++) {
-    const pos = i / ratio;
-    const i0 = Math.floor(pos);
-    const i1 = Math.min(i0 + 1, Int16.length - 1);
-    const frac = pos - i0;
-    const v2 = Int16[i0] * (1 - frac) + Int16[i1] * frac;
-    out[i] = Math.round(v2);
-  }
-  return out;
-};
-
-// src/components/audio/components/GetPCMToFloat.ts
-var GetPCMToFloat = (int16) => {
-  const out = new Float32Array(int16.length);
-  for (let i = 0; i < int16.length; i++) out[i] = int16[i] / 32768;
-  return out;
-};
-
-// src/components/audio/components/GetFloatPCM16.ts
-var GetFloatPCM16 = (float32) => {
-  const out = new Int16Array(float32.length);
-  for (let i = 0; i < float32.length; i++) {
-    let v2 = Math.max(-1, Math.min(1, float32[i]));
-    out[i] = Math.round(v2 * 32767);
-  }
-  return out;
-};
-
-// src/components/audio/components/SetRadioEffect.ts
-var SetRadioEffect = ({ Int16, SampleRate }) => {
-  const hpCut = 3555;
-  const lpCut = 1600;
-  const x2 = GetPCMToFloat(Int16);
-  const dt = 1 / SampleRate;
-  const rcHP = 1 / (2 * Math.PI * hpCut);
-  const aHP = rcHP / (rcHP + dt);
-  let yHP = 0, xPrev = 0;
-  for (let i = 0; i < x2.length; i++) {
-    const xi = x2[i];
-    yHP = aHP * (yHP + xi - xPrev);
-    xPrev = xi;
-    x2[i] = yHP;
-  }
-  const rcLP = 1 / (2 * Math.PI * lpCut);
-  const aLP = dt / (rcLP + dt);
-  let yLP = 0;
-  for (let i = 0; i < x2.length; i++) {
-    yLP = yLP + aLP * (x2[i] - yLP);
-    x2[i] = yLP;
-  }
-  const compGain = 2;
-  const norm = Math.tanh(compGain);
-  for (let i = 0; i < x2.length; i++) x2[i] = Math.tanh(x2[i] * compGain) / norm;
-  return GetFloatPCM16(x2);
-};
-
-// src/components/audio/components/SetAFSK.ts
-var SetAFSK = ({ Bits, SampleRate }) => {
-  const baud = 520.83;
-  const markFreq = 2083.3;
-  const spaceFreq = 1562.5;
-  const amplitude = 0.6;
-  const twoPi = Math.PI * 2;
-  const result = [];
-  let phase = 0;
-  let frac = 0;
-  for (let b2 = 0; b2 < Bits.length; b2++) {
-    const bit = Bits[b2];
-    const freq = bit ? markFreq : spaceFreq;
-    const samplesPerBit = SampleRate / baud + frac;
-    const n = Math.round(samplesPerBit);
-    frac = samplesPerBit - n;
-    const inc = twoPi * freq / SampleRate;
-    for (let i = 0; i < n; i++) {
-      result.push(Math.round(Math.sin(phase) * amplitude * 32767));
-      phase += inc;
-      if (phase > twoPi) phase -= twoPi;
-    }
-  }
-  const fadeSamples = Math.floor(SampleRate * 2e-3);
-  for (let i = 0; i < fadeSamples; i++) {
-    const gain = i / fadeSamples;
-    result[i] = Math.round(result[i] * gain);
-    result[result.length - 1 - i] = Math.round(result[result.length - 1 - i] * gain);
-  }
-  return Int16Array.from(result);
-};
-
-// src/components/audio/components/SetAsciiToBits.ts
-var SetAsciiToBits = (str) => {
-  const bits = [];
-  for (let i = 0; i < str.length; i++) {
-    const c = str.charCodeAt(i) & 255;
-    bits.push(0);
-    for (let b2 = 0; b2 < 8; b2++) bits.push(c >> b2 & 1);
-    bits.push(1, 1);
-  }
-  return bits;
-};
-
-// src/components/audio/components/GetMergedPCM16.ts
-var GetMergedPCM16 = (arrays) => {
-  let total = 0;
-  for (const a of arrays) total += a.length;
-  const out = new Int16Array(total);
-  let o = 0;
-  for (const a of arrays) {
-    out.set(a, o);
-    o += a.length;
-  }
-  return out;
-};
-
-// src/components/audio/components/SetSameHeader.ts
-var SetSameHeader = ({ VTEC, Repeats, SampleRate, PreMarkSec, GapSec }) => {
-  const preMarkSec = PreMarkSec ?? 0.3;
-  const gapSec = GapSec ?? 0.1;
-  const bursts = [];
-  const gap = new Int16Array(Math.floor(gapSec * SampleRate));
-  for (let i = 0; i < Repeats; i++) {
-    const bodyBits = SetAsciiToBits(VTEC);
-    const body = SetAFSK({ Bits: bodyBits, SampleRate });
-    const extendedBodyDuration = Math.round(preMarkSec * SampleRate);
-    const extendedBody = new Int16Array(extendedBodyDuration + gap.length);
-    for (let j2 = 0; j2 < extendedBodyDuration; j2++) {
-      extendedBody[j2] = Math.round(body[j2 % body.length] * 0.2);
-    }
-    extendedBody.set(gap, extendedBodyDuration);
-    bursts.push(extendedBody);
-    if (i !== Repeats - 1) bursts.push(gap);
-  }
-  return GetMergedPCM16(bursts);
-};
-
-// src/components/audio/components/SetAttentionTone.ts
-var SetAttentionTone = ({ MS, SampleRate }) => {
-  const len = Math.floor(MS * SampleRate);
-  const out = new Int16Array(len);
-  const f1 = 853;
-  const f2 = 960;
-  const twoPi = Math.PI * 2;
-  const amp = 0.1;
-  const fadeLen = Math.floor(SampleRate * 0);
-  for (let i = 0; i < len; i++) {
-    const t = i / SampleRate;
-    const s2 = Math.sin(twoPi * f1 * t) + Math.sin(twoPi * f2 * t);
-    let gain = 1;
-    if (i < fadeLen) gain = i / fadeLen;
-    else if (i > len - fadeLen) gain = (len - i) / fadeLen;
-    const v2 = Math.max(-1, Math.min(1, s2 / 2 * amp * gain));
-    out[i] = Math.round(v2 * 32767);
-  }
-  return out;
-};
-
-// src/components/audio/components/SetNoise.ts
-var SetNoise = ({ Int16, NoiseLevel }) => {
-  const x2 = GetPCMToFloat(Int16);
-  for (let i = 0; i < x2.length; i++) x2[i] += (Math.random() * 2 - 1) * (NoiseLevel ?? 0.02);
-  let peak = 0;
-  for (let i = 0; i < x2.length; i++) peak = Math.max(peak, Math.abs(x2[i]));
-  if (peak > 1) for (let i = 0; i < x2.length; i++) x2[i] *= 0.98 / peak;
-  return GetFloatPCM16(x2);
-};
-
-// src/components/audio/components/GetPCM16.ts
-var GetPCM16 = ({ Samples, SampleRate }) => {
-  let o = 0;
-  const bytesPerSample = 2;
-  const blockAlign = 1 * bytesPerSample;
-  const byteRate = SampleRate * blockAlign;
-  const subchunk2Size = Samples.length * bytesPerSample;
-  const chunkSize = 36 + subchunk2Size;
-  const buffer = Buffer.alloc(44 + subchunk2Size);
-  buffer.write("RIFF", o);
-  o += 4;
-  buffer.writeUInt32LE(chunkSize, o);
-  o += 4;
-  buffer.write("WAVE", o);
-  o += 4;
-  buffer.write("fmt ", o);
-  o += 4;
-  buffer.writeUInt32LE(16, o);
-  o += 4;
-  buffer.writeUInt16LE(1, o);
-  o += 2;
-  buffer.writeUInt16LE(1, o);
-  o += 2;
-  buffer.writeUInt32LE(SampleRate, o);
-  o += 4;
-  buffer.writeUInt32LE(byteRate, o);
-  o += 4;
-  buffer.writeUInt16LE(blockAlign, o);
-  o += 2;
-  buffer.writeUInt16LE(16, o);
-  o += 2;
-  buffer.write("data", o);
-  o += 4;
-  buffer.writeUInt32LE(subchunk2Size, o);
-  o += 4;
-  for (let i = 0; i < Samples.length; i++, o += 2) {
-    buffer.writeInt16LE(Samples[i].value, o);
-  }
-  return buffer;
-};
-
-// src/components/audio/components/GetTTS.ts
-var import_os = require("os");
-var import_fs = require("fs");
-var import_child_process = require("child_process");
-var GetTTS = async ({ Text, OutputPath }) => {
-  const vPlatform = (0, import_os.platform)();
-  switch (vPlatform) {
-    case "win32": {
-      try {
-        const txtPath = OutputPath + ".txt";
-        (0, import_fs.writeFileSync)(txtPath, Text, "utf8");
-        const command = [
-          "Add-Type -AssemblyName System.Speech;",
-          `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`,
-          `$text = Get-Content -Raw -LiteralPath '${txtPath}';`,
-          `$speak.SetOutputToWaveFile('${OutputPath}');`,
-          `$speak.Speak($text);`,
-          `$speak.Dispose();`
-        ].join(" ");
-        (0, import_child_process.execSync)(`powershell -Command "${command}"`, { stdio: "inherit" });
-        try {
-          (0, import_fs.unlinkSync)(txtPath);
-        } catch {
-        }
-      } catch (error) {
-        console.error("Error occurred while generating TTS:", error);
+// src/components/utilities/SetSettings.ts
+var SetSettings = (settings) => {
+  const callAssign = (TargetConfiguration, SourceConfiguration) => {
+    for (const cKey in SourceConfiguration) {
+      const cSetting = cKey;
+      if (!Object.prototype.hasOwnProperty.call(TargetConfiguration, cSetting)) {
+        SetLog({ Type: `ERROR`, Message: `${ENUM_STRINGS.CALLBACKS.SETTINGS_INVALID_KEY.replace(/%s/g, cSetting)}` });
+        continue;
       }
-      break;
-    }
-    case "linux":
-      try {
-        (0, import_child_process.execSync)(`espeak -w "${OutputPath}" "${Text.replace(/"/g, '\\"')}"`);
-      } catch {
+      const cNewValue = SourceConfiguration[cKey];
+      const cCurrentValue = TargetConfiguration[cSetting];
+      if (cNewValue !== null && typeof cNewValue === "object" && !Array.isArray(cNewValue)) {
+        const nextTarget = cCurrentValue && typeof cCurrentValue === "object" && !Array.isArray(cCurrentValue) ? cCurrentValue : {};
+        TargetConfiguration[cSetting] = nextTarget;
+        callAssign(nextTarget, cNewValue);
+      } else {
+        TargetConfiguration[cSetting] = cNewValue;
       }
-      break;
-    default:
-      break;
-  }
-};
-
-// src/components/audio/components/GetCleanDescription.ts
-var GetCleanDescription = (message) => {
-  const patches = [
-    { regex: /\.{3,}/g, replacement: ". " },
-    { regex: /\bUTC\b/g, replacement: "Coordinated Universal Time" },
-    { regex: /\bGMT\b/g, replacement: "Greenwich Mean Time" },
-    { regex: /\bEST\b(?!\w)/g, replacement: "Eastern Standard Time" },
-    { regex: /\bEDT\b(?!\w)/g, replacement: "Eastern Daylight Time" },
-    { regex: /\bCST\b(?!\w)/g, replacement: "Central Standard Time" },
-    { regex: /\bCDT\b(?!\w)/g, replacement: "Central Daylight Time" },
-    { regex: /\bMST\b(?!\w)/g, replacement: "Mountain Standard Time" },
-    { regex: /\bMDT\b(?!\w)/g, replacement: "Mountain Daylight Time" },
-    { regex: /\bPST\b(?!\w)/g, replacement: "Pacific Standard Time" },
-    { regex: /\bPDT\b(?!\w)/g, replacement: "Pacific Daylight Time" },
-    { regex: /\bAKST\b(?!\w)/g, replacement: "Alaska Standard Time" },
-    { regex: /\bAKDT\b(?!\w)/g, replacement: "Alaska Daylight Time" },
-    { regex: /\bHST\b(?!\w)/g, replacement: "Hawaii Standard Time" },
-    { regex: /\bHDT\b(?!\w)/g, replacement: "Hawaii Daylight Time" },
-    { regex: /\bmph\b(?!\w)/g, replacement: "miles per hour" },
-    { regex: /\bkm\/h\b(?!\w)/g, replacement: "kilometers per hour" },
-    { regex: /\bkmh\b(?!\w)/g, replacement: "kilometers per hour" },
-    { regex: /\bkt\b(?!\w)/g, replacement: "knots" },
-    { regex: /\bNE\b(?!\w)/g, replacement: "northeast" },
-    { regex: /\bNW\b(?!\w)/g, replacement: "northwest" },
-    { regex: /\bSE\b(?!\w)/g, replacement: "southeast" },
-    { regex: /\bSW\b(?!\w)/g, replacement: "southwest" },
-    { regex: /\bNM\b(?!\w)/g, replacement: "nautical miles" },
-    { regex: /\bdeg\b(?!\w)/g, replacement: "degrees" },
-    { regex: /\btstm\b(?!\w)/g, replacement: "thunderstorm" },
-    { regex: /\bmm\b(?!\w)/g, replacement: "millimeters" },
-    { regex: /\bcm\b(?!\w)/g, replacement: "centimeters" },
-    { regex: /\bin.\b(?!\w)/g, replacement: "inches" },
-    { regex: /\bft\b(?!\w)/g, replacement: "feet" },
-    { regex: /\bmi\b(?!\w)/g, replacement: "miles" },
-    { regex: /\bhr\b(?!\w)/g, replacement: "hour" },
-    { regex: /\bhourly\b(?!\w)/g, replacement: "per hour" },
-    { regex: /\bkg\b(?!\w)/g, replacement: "kilograms" },
-    { regex: /\bg\/kg\b(?!\w)/g, replacement: "grams per kilogram" },
-    { regex: /\bMB\b(?!\w)/g, replacement: "millibars" },
-    { regex: /\bhPa\b(?!\w)/g, replacement: "hectopascals" },
-    { regex: /\bPa\b(?!\w)/g, replacement: "pascals" },
-    { regex: /\bKPa\b(?!\w)/g, replacement: "kilopascals" },
-    { regex: /\bC\/hr\b(?!\w)/g, replacement: "degrees Celsius per hour" },
-    { regex: /\bF\/hr\b(?!\w)/g, replacement: "degrees Fahrenheit per hour" },
-    { regex: /\bC\/min\b(?!\w)/g, replacement: "degrees Celsius per minute" },
-    { regex: /\bF\/min\b(?!\w)/g, replacement: "degrees Fahrenheit per minute" },
-    { regex: /\bC\b(?!\w)/g, replacement: "degrees Celsius" },
-    { regex: /\bF\b(?!\w)/g, replacement: "degrees Fahrenheit" }
-  ];
-  const hours = {
-    0: "twelve",
-    1: "one",
-    2: "two",
-    3: "three",
-    4: "four",
-    5: "five",
-    6: "six",
-    7: "seven",
-    8: "eight",
-    9: "nine",
-    10: "ten",
-    11: "eleven",
-    12: "twelve"
+    }
   };
-  const minWord = (m2) => m2 === 0 ? "o'clock" : m2 < 10 ? `oh ${m2}` : `${m2}`;
-  const fmt = (h, m2, ap) => `${hours[h % 12]} ${minWord(m2)} ${ap}`;
-  for (const { regex, replacement } of patches) {
-    message = message.replace(regex, replacement);
-  }
-  return message.replace(/'/g, "''").replace(/\b(\d{1,2}):(\d{2})\s*(AM|PM)\b/gi, (_2, h, m2, ap) => fmt(+h, +m2, ap.toUpperCase())).replace(/\b(\d{1,2})\s+(\d{2})\s+(AM|PM)\b/gi, (_2, h, m2, ap) => fmt(+h, +m2, ap.toUpperCase())).replace(/\b(\d{2})(\d{2})\s+(AM|PM)\b/gi, (_2, hh, mm, ap) => fmt(+hh, +mm, ap.toUpperCase())).replace(/\b(\d{1,2})\s+(AM|PM)\b/gi, (_2, h, ap) => fmt(+h, 0, ap.toUpperCase())).replace(/\*+/g, " ").replace(/-/g, " ").replace(/\n/g, " ").trim();
+  callAssign(Bootstrap.Settings, settings);
+  return Bootstrap.Settings;
 };
 
-// src/components/utilities/SetDebug.ts
-var SetDebug = ({ Title, Message }) => {
-  const settings = Bootstrap.Settings;
-  Bootstrap.Listener.emit(`debug`, {
-    message: Message,
-    function: Title ?? `debug`
-  });
-  if (settings.DeveloperMode) {
-    console.log(`[${Bootstrap.Colors.Blue}${Title ?? `debug`}${Bootstrap.Colors.Reset}] ${Message}`);
+// src/components/database/InitializeDatabase.ts
+var import_node_fs = require("node:fs");
+var import_better_sqlite3 = __toESM(require("better-sqlite3"));
+var InitializeDatabase = async () => {
+  const { Database } = Bootstrap.Settings;
+  if (!(0, import_node_fs.existsSync)(Database)) {
+    (0, import_node_fs.writeFileSync)(Database, ``);
+    SetLog({ Message: ENUM_STRINGS.DATABASE.CREATED + ` -> ${Database}` });
   }
+  Bootstrap.Database = new import_better_sqlite3.default(Database);
+  Bootstrap.Database.pragma("journal_mode = WAL");
+  Bootstrap.Database.pragma("synchronous = NORMAL");
+  Bootstrap.Database.pragma("cache_size = -20000");
+  SetLog({ Message: ENUM_STRINGS.DATABASE.CONNECTED + ` -> ${Database}` });
 };
 
-// src/components/audio/GenerateAudioMessage.ts
-var import_path2 = require("path");
-var import_fs2 = require("fs");
-var import_child_process2 = require("child_process");
-var import_os2 = require("os");
-var GenerateAudioMessage = async ({ Message, Directory, Header, Title }) => {
-  const tick = performance.now();
-  const settings = Bootstrap.Settings;
-  const prefix = settings.GlobalSettings.ArchiveSettings.AudioToneout;
-  let title = (Title ?? `${Math.random().toString(36).substring(2, 15)}-${Header.replace(/[^a-zA-Z0-9]/g, "")}`).replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim();
-  if (!Message || !Header) {
-    SetWarning({
-      Title: `Audio`,
-      Message: `Message and header are required to generate an audio message.`
-    });
-    return null;
-  }
-  let buffTTS;
-  let buffRadio;
-  let buffFull = [];
-  if (!Directory) {
-    SetWarning({
-      Title: `Audio`,
-      Message: `Audio directory is not set in the settings. Please set it to generate audio messages.`
-    });
-    return null;
-  }
-  if (!(0, import_fs2.existsSync)(Directory)) {
-    (0, import_fs2.mkdirSync)(Directory, { recursive: true });
-  }
-  const tmpTTS = (0, import_path2.join)(Directory, `/${title}-tts.wav`);
-  const outTTS = (0, import_path2.join)(Directory, `/${title}.wav`);
-  const vPlatform = (0, import_os2.platform)();
-  if (vPlatform === "darwin") {
-    SetWarning({
-      Title: `Audio`,
-      Message: `Audio tone generation is not supported on macOS.`
-    });
-    return null;
-  }
-  await new Promise((resolve6, reject) => {
-    const tMsg = GetCleanDescription(Message);
-    GetTTS({ Text: tMsg, OutputPath: tmpTTS }).then(() => {
-      resolve6();
-    });
-  });
-  if (!(0, import_fs2.existsSync)(tmpTTS)) {
-    return null;
-  }
-  buffTTS = (0, import_fs2.readFileSync)(tmpTTS);
-  const vWav = GetWavPCM16(buffTTS);
-  const vSamples = GetSampledPCM16({ Int16: vWav.Samples, OriginalRate: vWav.SampleRate, TargetRate: 8e3 });
-  const vRadio = SetRadioEffect({ Int16: vSamples, SampleRate: 8e3 });
-  if ((0, import_fs2.existsSync)(prefix)) {
-    let tBuffer = (0, import_fs2.readFileSync)(prefix);
-    let tWav = GetWavPCM16(tBuffer);
-    if (tWav == null) {
-      try {
-        const converted = (0, import_path2.join)(Directory, `/${title}-tts-fixed.wav`);
-        (0, import_child_process2.execSync)(`ffmpeg -y -i "${prefix}" -ar 8000 -ac 1 -sample_fmt s16 "${converted}"`, { stdio: "ignore" });
-        if ((0, import_fs2.existsSync)(converted)) {
-          tBuffer = (0, import_fs2.readFileSync)(converted);
-          tWav = GetWavPCM16(tBuffer);
-          try {
-            (0, import_fs2.unlinkSync)(converted);
-          } catch {
-          }
-        }
-      } catch (e) {
-      }
-    }
-    if (tWav == null) {
-      SetWarning({
-        Title: `EAS`,
-        Message: `Intro tone isn't a valid .WAV file or isn't in PCM 16-bit format. Converted attempt failed; please convert it then try again.`
-      });
-      return null;
-    }
-    const tSamples = tWav.SampleRate != 8e3 ? GetSampledPCM16({ Int16: tWav.Samples, OriginalRate: tWav.SampleRate, TargetRate: 8e3 }) : tWav.Samples;
-    buffRadio = SetRadioEffect({ Int16: tSamples, SampleRate: 8e3 });
-  }
-  buffFull = buffRadio != null ? [buffRadio, new Int16Array(Math.floor(0.5 * 8e3))] : [];
-  buffFull.push(
-    SetSameHeader({ VTEC: Header, Repeats: 3, SampleRate: 8e3, PreMarkSec: 1.1, GapSec: 0.5 }),
-    new Int16Array(Math.floor(0.5 * 8e3)),
-    SetAttentionTone({ MS: 8, SampleRate: 8e3 }),
-    new Int16Array(Math.floor(0.5 * 8e3)),
-    vRadio
-  );
-  for (let i = 0; i < 3; i++) {
-    buffFull.push(SetSameHeader({ VTEC: Header, Repeats: 1, SampleRate: 8e3, PreMarkSec: 0.5, GapSec: 0.1 }));
-    buffFull.push(new Int16Array(Math.floor(0.5 * 8e3)));
-  }
-  const aSamples = GetMergedPCM16(buffFull);
-  const aFinal = SetNoise({ Int16: aSamples, NoiseLevel: 2e-3 });
-  const aBuffer = GetPCM16({ Samples: Array.from(aFinal).map((v2) => ({ value: v2 })), SampleRate: 8e3 });
-  (0, import_fs2.writeFileSync)(outTTS, aBuffer);
+// src/components/database/CreateQuery.ts
+var CreateQuery = ({ Query, Parameters }) => {
   try {
-    (0, import_fs2.unlinkSync)(tmpTTS);
-  } catch {
+    const cParameters = Array.isArray(Parameters) ? Parameters : [];
+    const cStatement = Bootstrap?.Database?.prepare(Query);
+    return /^\s*select/i.test(Query) ? cStatement?.all(...cParameters) : cStatement?.run(...cParameters);
+  } catch (error) {
+    throw new Error(`${ENUM_STRINGS.DATABASE.QUERY_FAILED}: ${Query}
+${Parameters}
+Error: ${error}`);
   }
-  SetDebug({ Title: `GenerateEASMessage`, Message: `${Math.round(performance.now() - tick)}ms` });
-  return outTTS;
 };
 
-// src/enums/States.ts
-var EnumStates = {
+// src/enums/Shapefiles.ts
+var ENUM_SHAPEFILES = [
+  { Name: "us_counties", Type: "C", Link: "https://www.weather.gov/source/gis/Shapefiles/County/c_16ap26.zip" },
+  { Name: "us_states_territories", Type: "Z", Link: "https://www.weather.gov/source/gis/Shapefiles/County/s_16ap26.zip" },
+  { Name: "fire_weather_zones", Type: "Z", Link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/fz16ap26.zip" },
+  { Name: "costal_marine_zones", Type: "Z", Link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/mz16ap26.zip" },
+  { Name: "offshore_marine_zones", Type: "Z", Link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/oz16ap26.zip" },
+  { Name: "public_forecast_zones", Type: "Z", Link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/z_16ap26.zip" },
+  { Name: "county_warning_areas", Type: "Z", Link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/w_16ap26.zip" },
+  { Name: "river_forecast_boundaries", Type: "Z", Link: "https://www.weather.gov/source/gis/Shapefiles/Misc/rf05mr24.zip" },
+  { Name: "high_seas_marine_zones", Type: "Z", Link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/hz17fe26.zip" }
+];
+
+// src/components/database/building/BuildShapefiles.ts
+var import_node_fs2 = require("node:fs");
+var import_node_path2 = require("node:path");
+var import_jszip = __toESM(require_lib3());
+var import_shapefile = __toESM(require_shapefile_node());
+var BuildShapefiles = async () => {
+  const dbgTickA = performance.now();
+  const { Database } = Bootstrap;
+  const { count } = CreateQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.SHAPEFILE })[0];
+  if (count == 0) {
+    const cDirectory = `tmp-${Math.random().toString(36).substring(2, 15)}`;
+    for (const cShapefile of ENUM_SHAPEFILES) {
+      const dbgTickB = performance.now();
+      const cResponse = await fetch(cShapefile.Link);
+      const cBuffer = await cResponse.arrayBuffer();
+      const cArchive = await (0, import_jszip.loadAsync)(cBuffer);
+      SetLog({ Type: `DEBUG`, Message: `[${(Math.round((performance.now() - dbgTickB) * 100) / 100).toFixed(1)}ms] Downloaded shapefile ${cShapefile.Name}` });
+      if (!(0, import_node_fs2.existsSync)(cDirectory)) {
+        (0, import_node_fs2.mkdirSync)(cDirectory, { recursive: true });
+      }
+      for (const file of Object.keys(cArchive.files)) {
+        if (file.endsWith(".shp") || file.endsWith(".dbf")) {
+          const data = await cArchive.files[file].async(`nodebuffer`);
+          const output = (0, import_node_path2.resolve)(cDirectory, `${cShapefile.Name ?? ``}_${cShapefile.Type ?? ``}${(0, import_node_path2.extname)(file)}`);
+          (0, import_node_fs2.writeFileSync)(output, data);
+        }
+      }
+      const cFilePath = (0, import_node_path2.resolve)(cDirectory, `${cShapefile.Name}_${cShapefile.Type}`);
+      const { features } = await (0, import_shapefile.read)(cFilePath, cFilePath);
+      SetLog({
+        Message: ENUM_STRINGS.DATABASE.SHAPEFILE_BUILD.replace(/%s/g, String(cShapefile.Name)).replace(/%d/g, String(features.length))
+      });
+      const dbgTickC = performance.now();
+      const callTransaction = Database.transaction((lEntries) => {
+        for (const cEntry of lEntries) {
+          const { properties, geometry } = cEntry;
+          const {
+            STATE,
+            ST,
+            FULLSTAID,
+            FIPS,
+            COUNTYNAME,
+            WFO,
+            CITY,
+            NAME,
+            RFC_NAME,
+            RFC_CITY,
+            SITE_ID,
+            ID,
+            ZONE
+          } = properties;
+          let lFinal, lLocation;
+          if (FIPS) {
+            lFinal = `${STATE}${cShapefile.Type}${FIPS.substring(2)}`;
+            lLocation = `${COUNTYNAME}, ${STATE}`;
+          } else if (FULLSTAID) {
+            lFinal = `${ST}${cShapefile.Type}${WFO}`;
+            lLocation = `${CITY}, ${STATE}`;
+          } else if (STATE) {
+            lFinal = `${STATE}${cShapefile.Type}${ZONE ?? SITE_ID}`;
+            lLocation = `${NAME ?? `${RFC_NAME} ${RFC_CITY}`}, ${STATE}`;
+          } else {
+            lFinal = ID ?? WFO;
+            lLocation = NAME;
+          }
+          CreateQuery({
+            Query: ENUM_STRINGS.DB_STRINGS.IMPORTS.SHAPEFILE,
+            Parameters: [lFinal, lLocation, `${cShapefile.Name}_${cShapefile.Type}`, JSON.stringify(geometry)]
+          });
+        }
+      });
+      (0, import_node_fs2.unlinkSync)(`${cFilePath}.shp`);
+      (0, import_node_fs2.unlinkSync)(`${cFilePath}.dbf`);
+      callTransaction(features);
+      SetLog({ Type: `DEBUG`, Message: `[${(Math.round((performance.now() - dbgTickC) * 100) / 100).toFixed(1)}ms] Shapefile ${cShapefile.Name} population` });
+    }
+    (0, import_node_fs2.rm)(cDirectory, { recursive: true, force: true }, (err) => {
+    });
+    SetLog({ Type: `DEBUG`, Message: `[${(Math.round((performance.now() - dbgTickA) * 100) / 100).toFixed(1)}ms] BuildShapefiles` });
+  }
+};
+
+// src/enums/geographic/StateAbreviations.ts
+var ENUM_STATES_FULL_NAMES = {
   "AL": "Alabama",
   "AK": "Alaska",
   "AZ": "Arizona",
@@ -16232,16 +14128,94 @@ var EnumStates = {
   "WY": "Wyoming",
   "DC": "District of Columbia"
 };
-var EnumZones = {
-  "LM": "Lake Michigan",
-  "GM": "Gulf of Mexico",
-  "LH": "Lake Huron",
-  "LE": "Lake Erie",
-  "LS": "Lake Superior",
-  "LO": "Lake Ontario",
-  "AM": "Atlantic Ocean"
+
+// src/components/utilities/CreateFetchRequest.ts
+var CreateFetchRequest = async ({ Destination, Headers, Timeout, Authentication, Method, Body, Form }) => {
+  const dbgTickA = performance.now();
+  const cOptions = {
+    method: Method ?? `GET`,
+    headers: Headers ?? {
+      "User-Agent": `@atmosx/event-product-parser/${Bootstrap.Version}`,
+      "Accept": "application/geo+json, text/plain, */*; q=0.9",
+      "Accept-Language": "en-US,en;q=0.9"
+    },
+    signal: AbortSignal.timeout(Timeout ?? 1e4),
+    redirect: "follow"
+  };
+  if (Authentication) {
+    const { Username, Password } = Authentication;
+    const cAuthString = `${Username}:${Password}`;
+    const cEncoded64 = Buffer.from(cAuthString).toString("base64");
+    cOptions.headers = {
+      ...cOptions.headers,
+      "Authorization": `Basic ${cEncoded64}`
+    };
+  }
+  if (Form) {
+    cOptions.body = Form;
+  } else if (Body != void 0) {
+    cOptions.body = Body instanceof FormData ? Body : typeof Body === "string" ? Body : JSON.stringify(Body);
+  }
+  try {
+    const cResponse = await fetch(Destination, cOptions);
+    const cBodyText = await cResponse.text();
+    SetLog({ Type: `DEBUG`, Message: `[${(Math.round((performance.now() - dbgTickA) * 100) / 100).toFixed(1)}ms] CreateFetchRequest ${Destination} (${cResponse.status})` });
+    if (!cResponse.ok) {
+      return { Error: true, StatusCode: cResponse.status, Body: cBodyText };
+    }
+    return { Error: false, StatusCode: cResponse.status, Body: cBodyText };
+  } catch (error) {
+    return { Error: true, StatusCode: 0, Body: `${error}` };
+  }
 };
-var EnumStateFIPS = {
+
+// src/components/database/building/BuildPopulation.ts
+var BuildPopulation = async () => {
+  const dbgTickA = performance.now();
+  const { Database, Settings } = Bootstrap;
+  const { GIS } = Settings.Integrations;
+  const { count } = CreateQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.POPULATION })[0];
+  if (count == 0) {
+    const cResponse = await CreateFetchRequest({
+      Destination: GIS.PopulationDownload,
+      Timeout: 5e3
+    });
+    if (cResponse.Error) {
+      return SetLog({ Type: `ERROR`, Message: `${ENUM_STRINGS.CALLBACKS.HTTP_REQUEST_FAILED} for population download (Status: ${cResponse.StatusCode})` });
+    }
+    const cCityRows = [];
+    const cDatabase = JSON.parse(cResponse.Body);
+    const cStateCodes = Object.fromEntries(
+      Object.entries(ENUM_STATES_FULL_NAMES).map(([code, name]) => [name, code])
+    );
+    SetLog({ Message: ENUM_STRINGS.DATABASE.POPULATION_BUILD.replace(/%s/g, String(cDatabase.length)) });
+    for (const cCity of cDatabase) {
+      if (cCity.country != `US`) continue;
+      cCityRows.push({
+        id: cCity.id,
+        name: cCity.name,
+        state: cStateCodes[cCity.admin1] ?? null,
+        county: cCity.admin2,
+        population: cCity.pop ?? null,
+        lat: cCity.lat,
+        lon: cCity.lon
+      });
+    }
+    const callTransaction = Database.transaction((cEntries) => {
+      for (const cEntry of cEntries) {
+        CreateQuery({
+          Query: ENUM_STRINGS.DB_STRINGS.IMPORTS.POPULATION,
+          Parameters: [cEntry.id, cEntry.name, cEntry.state, cEntry.county, cEntry.population, cEntry.lat, cEntry.lon]
+        });
+      }
+    });
+    callTransaction(cCityRows);
+    SetLog({ Type: `DEBUG`, Message: `[${(Math.round((performance.now() - dbgTickA) * 100) / 100).toFixed(1)}ms] BuildPopulation` });
+  }
+};
+
+// src/enums/geographic/FIPCodes.ts
+var ENUM_STATE_FIPS = {
   "01": "AL",
   "02": "AK",
   "04": "AZ",
@@ -16295,2277 +14269,179 @@ var EnumStateFIPS = {
   "56": "WY"
 };
 
-// src/components/formatting/GetStringText.ts
-var GetStringText = (event) => {
-  const timezone = Bootstrap.Settings.Timezone ?? `UTC`;
-  const line = (label, value, condition = true) => condition && value ? `${label} ${value}` : null;
-  const isStatement = event.properties.status_metadata.is_statement;
-  const isExpired = event.properties.status_metadata.is_expired;
-  const isIssued = event.properties.status_metadata.is_issued;
-  const isUpdated = event.properties.status_metadata.is_updated;
-  return [
-    line(`Locations:`, event?.properties?.locations?.slice(0, 100)),
-    line(`Issued:`, `${new Date(event.properties.issued).toLocaleString([], { timeZone: timezone })} (${timezone.replace(`America/`, ``)})`, isIssued),
-    line(`Updated:`, `${new Date(event.properties.issued).toLocaleString([], { timeZone: timezone })} (${timezone.replace(`America/`, ``)})`, isUpdated && !isExpired),
-    line(`Expires:`, `${new Date(event.properties.expires).toLocaleString([], { timeZone: timezone })} (${timezone.replace(`America/`, ``)})`, !isStatement && !isExpired),
-    line(`Expired:`, `${new Date(event.properties.expires).toLocaleString([], { timeZone: timezone })} (${timezone.replace(`America/`, ``)})`, isExpired),
-    line(`Damage Threat:`, event?.properties?.parameters?.damage_threat, !isExpired),
-    line(`Flood Threat:`, event?.properties?.parameters?.flood_threat, !isExpired),
-    line(`Tornado Threat:`, event?.properties?.parameters?.tornado_threat, !isExpired),
-    line(`Wind Gusts:`, `${event?.properties?.parameters?.estimated_wind_gusts} ${event?.properties?.parameters?.wind_threat ? ` (${event?.properties?.parameters?.wind_threat})` : ""}`, !isExpired && event?.properties?.parameters?.estimated_wind_gusts != null),
-    line(`Hail Size:`, `${event?.properties?.parameters?.estimated_hail_size} ${event?.properties?.parameters?.hail_threat ? ` (${event?.properties?.parameters?.hail_threat})` : ""}`, !isExpired && event?.properties?.parameters?.estimated_hail_size != null),
-    line(`Direction:`, event?.properties?.parameters?.direction, !isExpired && event?.properties?.parameters?.direction != null),
-    line(`Discussion:`, event?.properties?.discussion_parameters?.discussion_number, !isExpired),
-    line(`Concern:`, event?.properties?.discussion_parameters?.discussion_concerning, !isExpired),
-    line(`SPC Max Tornado Threat:`, event?.properties?.discussion_parameters?.discussion_max_tornado, !isExpired),
-    line(`SPC Max Hail Threat:`, event?.properties?.discussion_parameters?.discussion_max_hail, !isExpired),
-    line(`SPC Max Wind Threat:`, event?.properties?.discussion_parameters?.discussion_max_wind, !isExpired),
-    line(`SPC Watch Issuance Probability:`, event?.properties?.discussion_parameters?.discussion_watch_issuance ? `${event?.properties?.discussion_parameters?.discussion_watch_issuance}%` : null, !isExpired),
-    line(`Watch Number:`, event?.properties?.watch_parameters?.watch_number, !isExpired),
-    line(`Strong Tornadoes Probability:`, event?.properties?.watch_parameters?.strong_tornadoes_probability ? `${event?.properties?.watch_parameters?.strong_tornadoes_probability}%` : null, !isExpired),
-    line(`Additional Tornadoes Probability:`, event?.properties?.watch_parameters?.additional_tornadoes_probability ? `${event?.properties?.watch_parameters?.additional_tornadoes_probability}%` : null, !isExpired),
-    line(`Combined Hail/Wind Probability:`, event?.properties?.watch_parameters?.combined_hail_wind_probability ? `${event?.properties?.watch_parameters?.combined_hail_wind_probability}%` : null, !isExpired),
-    line(`Severe Hail Probability:`, event?.properties?.watch_parameters?.severe_hail_probability ? `${event?.properties?.watch_parameters?.severe_hail_probability}%` : null, !isExpired),
-    line(`Hail >2in Probability:`, event?.properties?.watch_parameters?.hail_2in_probability ? `${event?.properties?.watch_parameters?.hail_2in_probability}%` : null, !isExpired),
-    line(`Max Hail Inches:`, event?.properties?.watch_parameters?.max_hail_in, !isExpired),
-    line(`Severe Wind Probability:`, event?.properties?.watch_parameters?.severe_wind_probability ? `${event?.properties?.watch_parameters?.severe_wind_probability}%` : null, !isExpired),
-    line(`Max Surface Wind:`, event?.properties?.watch_parameters?.max_wind_surface, !isExpired),
-    line(`Max Tops (x100 feet):`, event?.properties?.watch_parameters?.max_tops_x100feet, !isExpired),
-    line(`Sender:`, event?.properties?.geocode?.office?.name ? `${event?.properties?.geocode?.office?.name} (${event?.properties?.geocode?.office?.office})` : event?.properties?.geocode?.office?.office),
-    line(`Population:`, event?.properties?.geocode?.census?.population, !isExpired),
-    line(`Tracking:`, event?.properties?.metadata?.tracking)
-  ].filter(Boolean).join("\n");
-};
-
-// src/components/images/modules/GetGeographicalEvents.ts
-var GetGeographicalEvents = ({ Regions, Event }) => {
-  const events = Bootstrap.Cache.Events.features;
-  if (Event) {
-    return [Event];
-  }
-  if (!Regions) {
-    return events;
-  }
-  return events.filter((event) => {
-    const ugcs = event.properties?.geocode?.ugc ?? [];
-    return Regions.some((region) => {
-      const normalized = region.trim().toUpperCase();
-      const ugcMatch = normalized.match(/^([A-Z]{2})[CZ](\d{3})$/);
-      if (ugcMatch) {
-        return ugcs.some((ugc) => ugc.trim().toUpperCase() === normalized);
-      }
-      const stateMatch = normalized.match(/^[A-Z]{2}$/);
-      if (stateMatch) {
-        return ugcs.some((ugc) => ugc.trim().toUpperCase().startsWith(`${normalized}Z`) || ugc.trim().toUpperCase().startsWith(`${normalized}C`));
-      }
-      return false;
+// src/components/database/building/BuildConus.ts
+var import_topojson_client = __toESM(require_topojson_client());
+var BuildConus = async () => {
+  const dbgTickA = performance.now();
+  const { Database, Settings } = Bootstrap;
+  const { GIS } = Settings.Integrations;
+  const { count } = CreateQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.CONUS })[0];
+  if (count == 0) {
+    const cResponse = await CreateFetchRequest({
+      Destination: GIS.ConusDownload,
+      Timeout: 5e3
     });
-  });
-};
-
-// src/components/images/modules/GetGeographicalBoundaries.ts
-var GetGeographicalBoundaries = ({ Regions }) => {
-  const states = [];
-  const counties = [];
-  if (!Regions) {
-    const stateBoundaries = CreateQuery({
-      Query: `SELECT * FROM boundaries WHERE type = 'state' AND state NOT IN ('AK', 'HI')`
-    });
-    const countyBoundaries = CreateQuery({
-      Query: `SELECT * FROM boundaries WHERE type = 'county' AND state NOT IN ('AK', 'HI')`
-    });
-    states.push(...stateBoundaries);
-    counties.push(...countyBoundaries);
-    return { states, counties };
-  }
-  for (const region of Regions) {
-    const match = region.match(/^([A-Z]{2})[CZ](\d{3})$/i) ?? null;
-    if (!match) {
-      const children = CreateQuery({
-        Query: `SELECT * FROM boundaries WHERE type = 'county' AND state = ?`,
-        Parameters: [region]
-      });
-      const parent = CreateQuery({
-        Query: `SELECT * FROM boundaries WHERE type = 'state' AND state = ?`,
-        Parameters: [region]
-      });
-      for (const child of children) {
-        counties.push(child);
-      }
-      states.push(...parent);
-    } else {
-      const [, state, county] = match;
-      const fips = Object.entries(EnumStateFIPS).find(([, value]) => value === state)?.[0];
-      const child = CreateQuery({
-        Query: `SELECT * FROM boundaries WHERE type = 'county' AND id = ?`,
-        Parameters: [fips + county]
-      });
-      counties.push(...child);
+    if (cResponse.Error) {
+      return SetLog({ Type: `ERROR`, Message: `${ENUM_STRINGS.CALLBACKS.HTTP_REQUEST_FAILED} for conus download (Status: ${cResponse.StatusCode})` });
     }
-  }
-  return { states, counties };
-};
-
-// src/components/images/modules/GetGeographicalCities.ts
-var GetGeographicalCities = ({ Regions }) => {
-  const cities = [];
-  if (!Regions) {
-    const cityBoundaries = CreateQuery({
-      Query: `SELECT * FROM cities WHERE state NOT IN ('AK', 'HI')`
-    });
-    cities.push(...cityBoundaries);
-    return { cities };
-  }
-  for (const region of Regions) {
-    const match = region.match(/^([A-Z]{2})[CZ](\d{3})$/i) ?? null;
-    if (!match) {
-      const parent = CreateQuery({
-        Query: `SELECT * FROM cities WHERE state = ?`,
-        Parameters: [region]
-      });
-      cities.push(...parent);
-    }
-  }
-  return { cities };
-};
-
-// src/components/images/modules/GetParsedBoundary.ts
-var GetParsedBoundary = (rows) => {
-  const features = [];
-  for (const row of rows) {
-    try {
-      const geometry = JSON.parse(row.geometry);
-      if (!geometry || typeof geometry !== `object` || geometry.type !== `Polygon` && geometry.type !== `MultiPolygon`) {
+    const cDatabase = JSON.parse(cResponse.Body);
+    const cStates = (0, import_topojson_client.feature)(cDatabase, cDatabase.objects.states);
+    const cCounties = (0, import_topojson_client.feature)(cDatabase, cDatabase.objects.counties);
+    const cStateRows = [];
+    const cCountyRows = [];
+    for (const cState of cStates.features) {
+      const { id: id2, properties, geometry } = cState;
+      const cFIPS = String(id2).padStart(2, `0`);
+      const cAbv = ENUM_STATE_FIPS[cFIPS];
+      if (!geometry || !cAbv) {
         continue;
       }
-      features.push({
-        type: `Feature`,
-        properties: {
-          state: row.state,
-          name: row.name,
-          ...row.type === `county` ? { id: row.id } : {}
-        },
-        geometry
-      });
-    } catch {
-      continue;
-    }
-  }
-  return features;
-};
-
-// node_modules/.pnpm/d3-array@3.2.4/node_modules/d3-array/src/fsum.js
-var Adder = class {
-  constructor() {
-    this._partials = new Float64Array(32);
-    this._n = 0;
-  }
-  add(x2) {
-    const p2 = this._partials;
-    let i = 0;
-    for (let j2 = 0; j2 < this._n && j2 < 32; j2++) {
-      const y = p2[j2], hi = x2 + y, lo = Math.abs(x2) < Math.abs(y) ? x2 - (hi - y) : y - (hi - x2);
-      if (lo) p2[i++] = lo;
-      x2 = hi;
-    }
-    p2[i] = x2;
-    this._n = i + 1;
-    return this;
-  }
-  valueOf() {
-    const p2 = this._partials;
-    let n = this._n, x2, y, lo, hi = 0;
-    if (n > 0) {
-      hi = p2[--n];
-      while (n > 0) {
-        x2 = hi;
-        y = p2[--n];
-        hi = x2 + y;
-        lo = y - (hi - x2);
-        if (lo) break;
-      }
-      if (n > 0 && (lo < 0 && p2[n - 1] < 0 || lo > 0 && p2[n - 1] > 0)) {
-        y = lo * 2;
-        x2 = hi + y;
-        if (y == x2 - hi) hi = x2;
-      }
-    }
-    return hi;
-  }
-};
-
-// node_modules/.pnpm/d3-array@3.2.4/node_modules/d3-array/src/merge.js
-function* flatten(arrays) {
-  for (const array of arrays) {
-    yield* array;
-  }
-}
-function merge(arrays) {
-  return Array.from(flatten(arrays));
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/math.js
-var epsilon = 1e-6;
-var epsilon2 = 1e-12;
-var pi = Math.PI;
-var halfPi = pi / 2;
-var quarterPi = pi / 4;
-var tau = pi * 2;
-var degrees = 180 / pi;
-var radians = pi / 180;
-var abs = Math.abs;
-var atan = Math.atan;
-var atan2 = Math.atan2;
-var cos = Math.cos;
-var exp = Math.exp;
-var log = Math.log;
-var sin = Math.sin;
-var sign = Math.sign || function(x2) {
-  return x2 > 0 ? 1 : x2 < 0 ? -1 : 0;
-};
-var sqrt = Math.sqrt;
-var tan = Math.tan;
-function acos(x2) {
-  return x2 > 1 ? 0 : x2 < -1 ? pi : Math.acos(x2);
-}
-function asin(x2) {
-  return x2 > 1 ? halfPi : x2 < -1 ? -halfPi : Math.asin(x2);
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/noop.js
-function noop() {
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/stream.js
-function streamGeometry(geometry, stream) {
-  if (geometry && streamGeometryType.hasOwnProperty(geometry.type)) {
-    streamGeometryType[geometry.type](geometry, stream);
-  }
-}
-var streamObjectType = {
-  Feature: function(object, stream) {
-    streamGeometry(object.geometry, stream);
-  },
-  FeatureCollection: function(object, stream) {
-    var features = object.features, i = -1, n = features.length;
-    while (++i < n) streamGeometry(features[i].geometry, stream);
-  }
-};
-var streamGeometryType = {
-  Sphere: function(object, stream) {
-    stream.sphere();
-  },
-  Point: function(object, stream) {
-    object = object.coordinates;
-    stream.point(object[0], object[1], object[2]);
-  },
-  MultiPoint: function(object, stream) {
-    var coordinates = object.coordinates, i = -1, n = coordinates.length;
-    while (++i < n) object = coordinates[i], stream.point(object[0], object[1], object[2]);
-  },
-  LineString: function(object, stream) {
-    streamLine(object.coordinates, stream, 0);
-  },
-  MultiLineString: function(object, stream) {
-    var coordinates = object.coordinates, i = -1, n = coordinates.length;
-    while (++i < n) streamLine(coordinates[i], stream, 0);
-  },
-  Polygon: function(object, stream) {
-    streamPolygon(object.coordinates, stream);
-  },
-  MultiPolygon: function(object, stream) {
-    var coordinates = object.coordinates, i = -1, n = coordinates.length;
-    while (++i < n) streamPolygon(coordinates[i], stream);
-  },
-  GeometryCollection: function(object, stream) {
-    var geometries = object.geometries, i = -1, n = geometries.length;
-    while (++i < n) streamGeometry(geometries[i], stream);
-  }
-};
-function streamLine(coordinates, stream, closed) {
-  var i = -1, n = coordinates.length - closed, coordinate;
-  stream.lineStart();
-  while (++i < n) coordinate = coordinates[i], stream.point(coordinate[0], coordinate[1], coordinate[2]);
-  stream.lineEnd();
-}
-function streamPolygon(coordinates, stream) {
-  var i = -1, n = coordinates.length;
-  stream.polygonStart();
-  while (++i < n) streamLine(coordinates[i], stream, 1);
-  stream.polygonEnd();
-}
-function stream_default(object, stream) {
-  if (object && streamObjectType.hasOwnProperty(object.type)) {
-    streamObjectType[object.type](object, stream);
-  } else {
-    streamGeometry(object, stream);
-  }
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/area.js
-var areaRingSum = new Adder();
-var areaSum = new Adder();
-var lambda00;
-var phi00;
-var lambda0;
-var cosPhi0;
-var sinPhi0;
-var areaStream = {
-  point: noop,
-  lineStart: noop,
-  lineEnd: noop,
-  polygonStart: function() {
-    areaRingSum = new Adder();
-    areaStream.lineStart = areaRingStart;
-    areaStream.lineEnd = areaRingEnd;
-  },
-  polygonEnd: function() {
-    var areaRing = +areaRingSum;
-    areaSum.add(areaRing < 0 ? tau + areaRing : areaRing);
-    this.lineStart = this.lineEnd = this.point = noop;
-  },
-  sphere: function() {
-    areaSum.add(tau);
-  }
-};
-function areaRingStart() {
-  areaStream.point = areaPointFirst;
-}
-function areaRingEnd() {
-  areaPoint(lambda00, phi00);
-}
-function areaPointFirst(lambda, phi) {
-  areaStream.point = areaPoint;
-  lambda00 = lambda, phi00 = phi;
-  lambda *= radians, phi *= radians;
-  lambda0 = lambda, cosPhi0 = cos(phi = phi / 2 + quarterPi), sinPhi0 = sin(phi);
-}
-function areaPoint(lambda, phi) {
-  lambda *= radians, phi *= radians;
-  phi = phi / 2 + quarterPi;
-  var dLambda = lambda - lambda0, sdLambda = dLambda >= 0 ? 1 : -1, adLambda = sdLambda * dLambda, cosPhi = cos(phi), sinPhi = sin(phi), k2 = sinPhi0 * sinPhi, u = cosPhi0 * cosPhi + k2 * cos(adLambda), v2 = k2 * sdLambda * sin(adLambda);
-  areaRingSum.add(atan2(v2, u));
-  lambda0 = lambda, cosPhi0 = cosPhi, sinPhi0 = sinPhi;
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/cartesian.js
-function spherical(cartesian2) {
-  return [atan2(cartesian2[1], cartesian2[0]), asin(cartesian2[2])];
-}
-function cartesian(spherical2) {
-  var lambda = spherical2[0], phi = spherical2[1], cosPhi = cos(phi);
-  return [cosPhi * cos(lambda), cosPhi * sin(lambda), sin(phi)];
-}
-function cartesianDot(a, b2) {
-  return a[0] * b2[0] + a[1] * b2[1] + a[2] * b2[2];
-}
-function cartesianCross(a, b2) {
-  return [a[1] * b2[2] - a[2] * b2[1], a[2] * b2[0] - a[0] * b2[2], a[0] * b2[1] - a[1] * b2[0]];
-}
-function cartesianAddInPlace(a, b2) {
-  a[0] += b2[0], a[1] += b2[1], a[2] += b2[2];
-}
-function cartesianScale(vector, k2) {
-  return [vector[0] * k2, vector[1] * k2, vector[2] * k2];
-}
-function cartesianNormalizeInPlace(d) {
-  var l = sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
-  d[0] /= l, d[1] /= l, d[2] /= l;
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/bounds.js
-var lambda02;
-var phi0;
-var lambda1;
-var phi1;
-var lambda2;
-var lambda002;
-var phi002;
-var p0;
-var deltaSum;
-var ranges;
-var range;
-var boundsStream = {
-  point: boundsPoint,
-  lineStart: boundsLineStart,
-  lineEnd: boundsLineEnd,
-  polygonStart: function() {
-    boundsStream.point = boundsRingPoint;
-    boundsStream.lineStart = boundsRingStart;
-    boundsStream.lineEnd = boundsRingEnd;
-    deltaSum = new Adder();
-    areaStream.polygonStart();
-  },
-  polygonEnd: function() {
-    areaStream.polygonEnd();
-    boundsStream.point = boundsPoint;
-    boundsStream.lineStart = boundsLineStart;
-    boundsStream.lineEnd = boundsLineEnd;
-    if (areaRingSum < 0) lambda02 = -(lambda1 = 180), phi0 = -(phi1 = 90);
-    else if (deltaSum > epsilon) phi1 = 90;
-    else if (deltaSum < -epsilon) phi0 = -90;
-    range[0] = lambda02, range[1] = lambda1;
-  },
-  sphere: function() {
-    lambda02 = -(lambda1 = 180), phi0 = -(phi1 = 90);
-  }
-};
-function boundsPoint(lambda, phi) {
-  ranges.push(range = [lambda02 = lambda, lambda1 = lambda]);
-  if (phi < phi0) phi0 = phi;
-  if (phi > phi1) phi1 = phi;
-}
-function linePoint(lambda, phi) {
-  var p2 = cartesian([lambda * radians, phi * radians]);
-  if (p0) {
-    var normal = cartesianCross(p0, p2), equatorial = [normal[1], -normal[0], 0], inflection = cartesianCross(equatorial, normal);
-    cartesianNormalizeInPlace(inflection);
-    inflection = spherical(inflection);
-    var delta = lambda - lambda2, sign2 = delta > 0 ? 1 : -1, lambdai = inflection[0] * degrees * sign2, phii, antimeridian = abs(delta) > 180;
-    if (antimeridian ^ (sign2 * lambda2 < lambdai && lambdai < sign2 * lambda)) {
-      phii = inflection[1] * degrees;
-      if (phii > phi1) phi1 = phii;
-    } else if (lambdai = (lambdai + 360) % 360 - 180, antimeridian ^ (sign2 * lambda2 < lambdai && lambdai < sign2 * lambda)) {
-      phii = -inflection[1] * degrees;
-      if (phii < phi0) phi0 = phii;
-    } else {
-      if (phi < phi0) phi0 = phi;
-      if (phi > phi1) phi1 = phi;
-    }
-    if (antimeridian) {
-      if (lambda < lambda2) {
-        if (angle(lambda02, lambda) > angle(lambda02, lambda1)) lambda1 = lambda;
-      } else {
-        if (angle(lambda, lambda1) > angle(lambda02, lambda1)) lambda02 = lambda;
-      }
-    } else {
-      if (lambda1 >= lambda02) {
-        if (lambda < lambda02) lambda02 = lambda;
-        if (lambda > lambda1) lambda1 = lambda;
-      } else {
-        if (lambda > lambda2) {
-          if (angle(lambda02, lambda) > angle(lambda02, lambda1)) lambda1 = lambda;
-        } else {
-          if (angle(lambda, lambda1) > angle(lambda02, lambda1)) lambda02 = lambda;
-        }
-      }
-    }
-  } else {
-    ranges.push(range = [lambda02 = lambda, lambda1 = lambda]);
-  }
-  if (phi < phi0) phi0 = phi;
-  if (phi > phi1) phi1 = phi;
-  p0 = p2, lambda2 = lambda;
-}
-function boundsLineStart() {
-  boundsStream.point = linePoint;
-}
-function boundsLineEnd() {
-  range[0] = lambda02, range[1] = lambda1;
-  boundsStream.point = boundsPoint;
-  p0 = null;
-}
-function boundsRingPoint(lambda, phi) {
-  if (p0) {
-    var delta = lambda - lambda2;
-    deltaSum.add(abs(delta) > 180 ? delta + (delta > 0 ? 360 : -360) : delta);
-  } else {
-    lambda002 = lambda, phi002 = phi;
-  }
-  areaStream.point(lambda, phi);
-  linePoint(lambda, phi);
-}
-function boundsRingStart() {
-  areaStream.lineStart();
-}
-function boundsRingEnd() {
-  boundsRingPoint(lambda002, phi002);
-  areaStream.lineEnd();
-  if (abs(deltaSum) > epsilon) lambda02 = -(lambda1 = 180);
-  range[0] = lambda02, range[1] = lambda1;
-  p0 = null;
-}
-function angle(lambda03, lambda12) {
-  return (lambda12 -= lambda03) < 0 ? lambda12 + 360 : lambda12;
-}
-function rangeCompare(a, b2) {
-  return a[0] - b2[0];
-}
-function rangeContains(range2, x2) {
-  return range2[0] <= range2[1] ? range2[0] <= x2 && x2 <= range2[1] : x2 < range2[0] || range2[1] < x2;
-}
-function bounds_default(feature2) {
-  var i, n, a, b2, merged, deltaMax, delta;
-  phi1 = lambda1 = -(lambda02 = phi0 = Infinity);
-  ranges = [];
-  stream_default(feature2, boundsStream);
-  if (n = ranges.length) {
-    ranges.sort(rangeCompare);
-    for (i = 1, a = ranges[0], merged = [a]; i < n; ++i) {
-      b2 = ranges[i];
-      if (rangeContains(a, b2[0]) || rangeContains(a, b2[1])) {
-        if (angle(a[0], b2[1]) > angle(a[0], a[1])) a[1] = b2[1];
-        if (angle(b2[0], a[1]) > angle(a[0], a[1])) a[0] = b2[0];
-      } else {
-        merged.push(a = b2);
-      }
-    }
-    for (deltaMax = -Infinity, n = merged.length - 1, i = 0, a = merged[n]; i <= n; a = b2, ++i) {
-      b2 = merged[i];
-      if ((delta = angle(a[1], b2[0])) > deltaMax) deltaMax = delta, lambda02 = b2[0], lambda1 = a[1];
-    }
-  }
-  ranges = range = null;
-  return lambda02 === Infinity || phi0 === Infinity ? [[NaN, NaN], [NaN, NaN]] : [[lambda02, phi0], [lambda1, phi1]];
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/compose.js
-function compose_default(a, b2) {
-  function compose2(x2, y) {
-    return x2 = a(x2, y), b2(x2[0], x2[1]);
-  }
-  if (a.invert && b2.invert) compose2.invert = function(x2, y) {
-    return x2 = b2.invert(x2, y), x2 && a.invert(x2[0], x2[1]);
-  };
-  return compose2;
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/rotation.js
-function rotationIdentity(lambda, phi) {
-  if (abs(lambda) > pi) lambda -= Math.round(lambda / tau) * tau;
-  return [lambda, phi];
-}
-rotationIdentity.invert = rotationIdentity;
-function rotateRadians(deltaLambda, deltaPhi, deltaGamma) {
-  return (deltaLambda %= tau) ? deltaPhi || deltaGamma ? compose_default(rotationLambda(deltaLambda), rotationPhiGamma(deltaPhi, deltaGamma)) : rotationLambda(deltaLambda) : deltaPhi || deltaGamma ? rotationPhiGamma(deltaPhi, deltaGamma) : rotationIdentity;
-}
-function forwardRotationLambda(deltaLambda) {
-  return function(lambda, phi) {
-    lambda += deltaLambda;
-    if (abs(lambda) > pi) lambda -= Math.round(lambda / tau) * tau;
-    return [lambda, phi];
-  };
-}
-function rotationLambda(deltaLambda) {
-  var rotation = forwardRotationLambda(deltaLambda);
-  rotation.invert = forwardRotationLambda(-deltaLambda);
-  return rotation;
-}
-function rotationPhiGamma(deltaPhi, deltaGamma) {
-  var cosDeltaPhi = cos(deltaPhi), sinDeltaPhi = sin(deltaPhi), cosDeltaGamma = cos(deltaGamma), sinDeltaGamma = sin(deltaGamma);
-  function rotation(lambda, phi) {
-    var cosPhi = cos(phi), x2 = cos(lambda) * cosPhi, y = sin(lambda) * cosPhi, z = sin(phi), k2 = z * cosDeltaPhi + x2 * sinDeltaPhi;
-    return [
-      atan2(y * cosDeltaGamma - k2 * sinDeltaGamma, x2 * cosDeltaPhi - z * sinDeltaPhi),
-      asin(k2 * cosDeltaGamma + y * sinDeltaGamma)
-    ];
-  }
-  rotation.invert = function(lambda, phi) {
-    var cosPhi = cos(phi), x2 = cos(lambda) * cosPhi, y = sin(lambda) * cosPhi, z = sin(phi), k2 = z * cosDeltaGamma - y * sinDeltaGamma;
-    return [
-      atan2(y * cosDeltaGamma + z * sinDeltaGamma, x2 * cosDeltaPhi + k2 * sinDeltaPhi),
-      asin(k2 * cosDeltaPhi - x2 * sinDeltaPhi)
-    ];
-  };
-  return rotation;
-}
-function rotation_default(rotate) {
-  rotate = rotateRadians(rotate[0] * radians, rotate[1] * radians, rotate.length > 2 ? rotate[2] * radians : 0);
-  function forward(coordinates) {
-    coordinates = rotate(coordinates[0] * radians, coordinates[1] * radians);
-    return coordinates[0] *= degrees, coordinates[1] *= degrees, coordinates;
-  }
-  forward.invert = function(coordinates) {
-    coordinates = rotate.invert(coordinates[0] * radians, coordinates[1] * radians);
-    return coordinates[0] *= degrees, coordinates[1] *= degrees, coordinates;
-  };
-  return forward;
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/circle.js
-function circleStream(stream, radius, delta, direction, t0, t1) {
-  if (!delta) return;
-  var cosRadius = cos(radius), sinRadius = sin(radius), step = direction * delta;
-  if (t0 == null) {
-    t0 = radius + direction * tau;
-    t1 = radius - step / 2;
-  } else {
-    t0 = circleRadius(cosRadius, t0);
-    t1 = circleRadius(cosRadius, t1);
-    if (direction > 0 ? t0 < t1 : t0 > t1) t0 += direction * tau;
-  }
-  for (var point, t = t0; direction > 0 ? t > t1 : t < t1; t -= step) {
-    point = spherical([cosRadius, -sinRadius * cos(t), -sinRadius * sin(t)]);
-    stream.point(point[0], point[1]);
-  }
-}
-function circleRadius(cosRadius, point) {
-  point = cartesian(point), point[0] -= cosRadius;
-  cartesianNormalizeInPlace(point);
-  var radius = acos(-point[1]);
-  return ((-point[2] < 0 ? -radius : radius) + tau - epsilon) % tau;
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/clip/buffer.js
-function buffer_default() {
-  var lines = [], line;
-  return {
-    point: function(x2, y, m2) {
-      line.push([x2, y, m2]);
-    },
-    lineStart: function() {
-      lines.push(line = []);
-    },
-    lineEnd: noop,
-    rejoin: function() {
-      if (lines.length > 1) lines.push(lines.pop().concat(lines.shift()));
-    },
-    result: function() {
-      var result = lines;
-      lines = [];
-      line = null;
-      return result;
-    }
-  };
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/pointEqual.js
-function pointEqual_default(a, b2) {
-  return abs(a[0] - b2[0]) < epsilon && abs(a[1] - b2[1]) < epsilon;
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/clip/rejoin.js
-function Intersection(point, points, other, entry) {
-  this.x = point;
-  this.z = points;
-  this.o = other;
-  this.e = entry;
-  this.v = false;
-  this.n = this.p = null;
-}
-function rejoin_default(segments, compareIntersection2, startInside, interpolate, stream) {
-  var subject = [], clip = [], i, n;
-  segments.forEach(function(segment) {
-    if ((n2 = segment.length - 1) <= 0) return;
-    var n2, p02 = segment[0], p1 = segment[n2], x2;
-    if (pointEqual_default(p02, p1)) {
-      if (!p02[2] && !p1[2]) {
-        stream.lineStart();
-        for (i = 0; i < n2; ++i) stream.point((p02 = segment[i])[0], p02[1]);
-        stream.lineEnd();
-        return;
-      }
-      p1[0] += 2 * epsilon;
-    }
-    subject.push(x2 = new Intersection(p02, segment, null, true));
-    clip.push(x2.o = new Intersection(p02, null, x2, false));
-    subject.push(x2 = new Intersection(p1, segment, null, false));
-    clip.push(x2.o = new Intersection(p1, null, x2, true));
-  });
-  if (!subject.length) return;
-  clip.sort(compareIntersection2);
-  link(subject);
-  link(clip);
-  for (i = 0, n = clip.length; i < n; ++i) {
-    clip[i].e = startInside = !startInside;
-  }
-  var start = subject[0], points, point;
-  while (1) {
-    var current = start, isSubject = true;
-    while (current.v) if ((current = current.n) === start) return;
-    points = current.z;
-    stream.lineStart();
-    do {
-      current.v = current.o.v = true;
-      if (current.e) {
-        if (isSubject) {
-          for (i = 0, n = points.length; i < n; ++i) stream.point((point = points[i])[0], point[1]);
-        } else {
-          interpolate(current.x, current.n.x, 1, stream);
-        }
-        current = current.n;
-      } else {
-        if (isSubject) {
-          points = current.p.z;
-          for (i = points.length - 1; i >= 0; --i) stream.point((point = points[i])[0], point[1]);
-        } else {
-          interpolate(current.x, current.p.x, -1, stream);
-        }
-        current = current.p;
-      }
-      current = current.o;
-      points = current.z;
-      isSubject = !isSubject;
-    } while (!current.v);
-    stream.lineEnd();
-  }
-}
-function link(array) {
-  if (!(n = array.length)) return;
-  var n, i = 0, a = array[0], b2;
-  while (++i < n) {
-    a.n = b2 = array[i];
-    b2.p = a;
-    a = b2;
-  }
-  a.n = b2 = array[0];
-  b2.p = a;
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/polygonContains.js
-function longitude(point) {
-  return abs(point[0]) <= pi ? point[0] : sign(point[0]) * ((abs(point[0]) + pi) % tau - pi);
-}
-function polygonContains_default(polygon, point) {
-  var lambda = longitude(point), phi = point[1], sinPhi = sin(phi), normal = [sin(lambda), -cos(lambda), 0], angle2 = 0, winding = 0;
-  var sum = new Adder();
-  if (sinPhi === 1) phi = halfPi + epsilon;
-  else if (sinPhi === -1) phi = -halfPi - epsilon;
-  for (var i = 0, n = polygon.length; i < n; ++i) {
-    if (!(m2 = (ring = polygon[i]).length)) continue;
-    var ring, m2, point0 = ring[m2 - 1], lambda03 = longitude(point0), phi02 = point0[1] / 2 + quarterPi, sinPhi02 = sin(phi02), cosPhi02 = cos(phi02);
-    for (var j2 = 0; j2 < m2; ++j2, lambda03 = lambda12, sinPhi02 = sinPhi1, cosPhi02 = cosPhi1, point0 = point1) {
-      var point1 = ring[j2], lambda12 = longitude(point1), phi12 = point1[1] / 2 + quarterPi, sinPhi1 = sin(phi12), cosPhi1 = cos(phi12), delta = lambda12 - lambda03, sign2 = delta >= 0 ? 1 : -1, absDelta = sign2 * delta, antimeridian = absDelta > pi, k2 = sinPhi02 * sinPhi1;
-      sum.add(atan2(k2 * sign2 * sin(absDelta), cosPhi02 * cosPhi1 + k2 * cos(absDelta)));
-      angle2 += antimeridian ? delta + sign2 * tau : delta;
-      if (antimeridian ^ lambda03 >= lambda ^ lambda12 >= lambda) {
-        var arc = cartesianCross(cartesian(point0), cartesian(point1));
-        cartesianNormalizeInPlace(arc);
-        var intersection = cartesianCross(normal, arc);
-        cartesianNormalizeInPlace(intersection);
-        var phiArc = (antimeridian ^ delta >= 0 ? -1 : 1) * asin(intersection[2]);
-        if (phi > phiArc || phi === phiArc && (arc[0] || arc[1])) {
-          winding += antimeridian ^ delta >= 0 ? 1 : -1;
-        }
-      }
-    }
-  }
-  return (angle2 < -epsilon || angle2 < epsilon && sum < -epsilon2) ^ winding & 1;
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/clip/index.js
-function clip_default(pointVisible, clipLine, interpolate, start) {
-  return function(sink) {
-    var line = clipLine(sink), ringBuffer = buffer_default(), ringSink = clipLine(ringBuffer), polygonStarted = false, polygon, segments, ring;
-    var clip = {
-      point,
-      lineStart,
-      lineEnd,
-      polygonStart: function() {
-        clip.point = pointRing;
-        clip.lineStart = ringStart;
-        clip.lineEnd = ringEnd;
-        segments = [];
-        polygon = [];
-      },
-      polygonEnd: function() {
-        clip.point = point;
-        clip.lineStart = lineStart;
-        clip.lineEnd = lineEnd;
-        segments = merge(segments);
-        var startInside = polygonContains_default(polygon, start);
-        if (segments.length) {
-          if (!polygonStarted) sink.polygonStart(), polygonStarted = true;
-          rejoin_default(segments, compareIntersection, startInside, interpolate, sink);
-        } else if (startInside) {
-          if (!polygonStarted) sink.polygonStart(), polygonStarted = true;
-          sink.lineStart();
-          interpolate(null, null, 1, sink);
-          sink.lineEnd();
-        }
-        if (polygonStarted) sink.polygonEnd(), polygonStarted = false;
-        segments = polygon = null;
-      },
-      sphere: function() {
-        sink.polygonStart();
-        sink.lineStart();
-        interpolate(null, null, 1, sink);
-        sink.lineEnd();
-        sink.polygonEnd();
-      }
-    };
-    function point(lambda, phi) {
-      if (pointVisible(lambda, phi)) sink.point(lambda, phi);
-    }
-    function pointLine(lambda, phi) {
-      line.point(lambda, phi);
-    }
-    function lineStart() {
-      clip.point = pointLine;
-      line.lineStart();
-    }
-    function lineEnd() {
-      clip.point = point;
-      line.lineEnd();
-    }
-    function pointRing(lambda, phi) {
-      ring.push([lambda, phi]);
-      ringSink.point(lambda, phi);
-    }
-    function ringStart() {
-      ringSink.lineStart();
-      ring = [];
-    }
-    function ringEnd() {
-      pointRing(ring[0][0], ring[0][1]);
-      ringSink.lineEnd();
-      var clean = ringSink.clean(), ringSegments = ringBuffer.result(), i, n = ringSegments.length, m2, segment, point2;
-      ring.pop();
-      polygon.push(ring);
-      ring = null;
-      if (!n) return;
-      if (clean & 1) {
-        segment = ringSegments[0];
-        if ((m2 = segment.length - 1) > 0) {
-          if (!polygonStarted) sink.polygonStart(), polygonStarted = true;
-          sink.lineStart();
-          for (i = 0; i < m2; ++i) sink.point((point2 = segment[i])[0], point2[1]);
-          sink.lineEnd();
-        }
-        return;
-      }
-      if (n > 1 && clean & 2) ringSegments.push(ringSegments.pop().concat(ringSegments.shift()));
-      segments.push(ringSegments.filter(validSegment));
-    }
-    return clip;
-  };
-}
-function validSegment(segment) {
-  return segment.length > 1;
-}
-function compareIntersection(a, b2) {
-  return ((a = a.x)[0] < 0 ? a[1] - halfPi - epsilon : halfPi - a[1]) - ((b2 = b2.x)[0] < 0 ? b2[1] - halfPi - epsilon : halfPi - b2[1]);
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/clip/antimeridian.js
-var antimeridian_default = clip_default(
-  function() {
-    return true;
-  },
-  clipAntimeridianLine,
-  clipAntimeridianInterpolate,
-  [-pi, -halfPi]
-);
-function clipAntimeridianLine(stream) {
-  var lambda03 = NaN, phi02 = NaN, sign0 = NaN, clean;
-  return {
-    lineStart: function() {
-      stream.lineStart();
-      clean = 1;
-    },
-    point: function(lambda12, phi12) {
-      var sign1 = lambda12 > 0 ? pi : -pi, delta = abs(lambda12 - lambda03);
-      if (abs(delta - pi) < epsilon) {
-        stream.point(lambda03, phi02 = (phi02 + phi12) / 2 > 0 ? halfPi : -halfPi);
-        stream.point(sign0, phi02);
-        stream.lineEnd();
-        stream.lineStart();
-        stream.point(sign1, phi02);
-        stream.point(lambda12, phi02);
-        clean = 0;
-      } else if (sign0 !== sign1 && delta >= pi) {
-        if (abs(lambda03 - sign0) < epsilon) lambda03 -= sign0 * epsilon;
-        if (abs(lambda12 - sign1) < epsilon) lambda12 -= sign1 * epsilon;
-        phi02 = clipAntimeridianIntersect(lambda03, phi02, lambda12, phi12);
-        stream.point(sign0, phi02);
-        stream.lineEnd();
-        stream.lineStart();
-        stream.point(sign1, phi02);
-        clean = 0;
-      }
-      stream.point(lambda03 = lambda12, phi02 = phi12);
-      sign0 = sign1;
-    },
-    lineEnd: function() {
-      stream.lineEnd();
-      lambda03 = phi02 = NaN;
-    },
-    clean: function() {
-      return 2 - clean;
-    }
-  };
-}
-function clipAntimeridianIntersect(lambda03, phi02, lambda12, phi12) {
-  var cosPhi02, cosPhi1, sinLambda0Lambda1 = sin(lambda03 - lambda12);
-  return abs(sinLambda0Lambda1) > epsilon ? atan((sin(phi02) * (cosPhi1 = cos(phi12)) * sin(lambda12) - sin(phi12) * (cosPhi02 = cos(phi02)) * sin(lambda03)) / (cosPhi02 * cosPhi1 * sinLambda0Lambda1)) : (phi02 + phi12) / 2;
-}
-function clipAntimeridianInterpolate(from, to, direction, stream) {
-  var phi;
-  if (from == null) {
-    phi = direction * halfPi;
-    stream.point(-pi, phi);
-    stream.point(0, phi);
-    stream.point(pi, phi);
-    stream.point(pi, 0);
-    stream.point(pi, -phi);
-    stream.point(0, -phi);
-    stream.point(-pi, -phi);
-    stream.point(-pi, 0);
-    stream.point(-pi, phi);
-  } else if (abs(from[0] - to[0]) > epsilon) {
-    var lambda = from[0] < to[0] ? pi : -pi;
-    phi = direction * lambda / 2;
-    stream.point(-lambda, phi);
-    stream.point(0, phi);
-    stream.point(lambda, phi);
-  } else {
-    stream.point(to[0], to[1]);
-  }
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/clip/circle.js
-function circle_default(radius) {
-  var cr = cos(radius), delta = 2 * radians, smallRadius = cr > 0, notHemisphere = abs(cr) > epsilon;
-  function interpolate(from, to, direction, stream) {
-    circleStream(stream, radius, delta, direction, from, to);
-  }
-  function visible(lambda, phi) {
-    return cos(lambda) * cos(phi) > cr;
-  }
-  function clipLine(stream) {
-    var point0, c0, v0, v00, clean;
-    return {
-      lineStart: function() {
-        v00 = v0 = false;
-        clean = 1;
-      },
-      point: function(lambda, phi) {
-        var point1 = [lambda, phi], point2, v2 = visible(lambda, phi), c = smallRadius ? v2 ? 0 : code(lambda, phi) : v2 ? code(lambda + (lambda < 0 ? pi : -pi), phi) : 0;
-        if (!point0 && (v00 = v0 = v2)) stream.lineStart();
-        if (v2 !== v0) {
-          point2 = intersect(point0, point1);
-          if (!point2 || pointEqual_default(point0, point2) || pointEqual_default(point1, point2))
-            point1[2] = 1;
-        }
-        if (v2 !== v0) {
-          clean = 0;
-          if (v2) {
-            stream.lineStart();
-            point2 = intersect(point1, point0);
-            stream.point(point2[0], point2[1]);
-          } else {
-            point2 = intersect(point0, point1);
-            stream.point(point2[0], point2[1], 2);
-            stream.lineEnd();
-          }
-          point0 = point2;
-        } else if (notHemisphere && point0 && smallRadius ^ v2) {
-          var t;
-          if (!(c & c0) && (t = intersect(point1, point0, true))) {
-            clean = 0;
-            if (smallRadius) {
-              stream.lineStart();
-              stream.point(t[0][0], t[0][1]);
-              stream.point(t[1][0], t[1][1]);
-              stream.lineEnd();
-            } else {
-              stream.point(t[1][0], t[1][1]);
-              stream.lineEnd();
-              stream.lineStart();
-              stream.point(t[0][0], t[0][1], 3);
-            }
-          }
-        }
-        if (v2 && (!point0 || !pointEqual_default(point0, point1))) {
-          stream.point(point1[0], point1[1]);
-        }
-        point0 = point1, v0 = v2, c0 = c;
-      },
-      lineEnd: function() {
-        if (v0) stream.lineEnd();
-        point0 = null;
-      },
-      // Rejoin first and last segments if there were intersections and the first
-      // and last points were visible.
-      clean: function() {
-        return clean | (v00 && v0) << 1;
-      }
-    };
-  }
-  function intersect(a, b2, two) {
-    var pa = cartesian(a), pb = cartesian(b2);
-    var n1 = [1, 0, 0], n2 = cartesianCross(pa, pb), n2n2 = cartesianDot(n2, n2), n1n2 = n2[0], determinant = n2n2 - n1n2 * n1n2;
-    if (!determinant) return !two && a;
-    var c1 = cr * n2n2 / determinant, c2 = -cr * n1n2 / determinant, n1xn2 = cartesianCross(n1, n2), A2 = cartesianScale(n1, c1), B = cartesianScale(n2, c2);
-    cartesianAddInPlace(A2, B);
-    var u = n1xn2, w2 = cartesianDot(A2, u), uu = cartesianDot(u, u), t2 = w2 * w2 - uu * (cartesianDot(A2, A2) - 1);
-    if (t2 < 0) return;
-    var t = sqrt(t2), q = cartesianScale(u, (-w2 - t) / uu);
-    cartesianAddInPlace(q, A2);
-    q = spherical(q);
-    if (!two) return q;
-    var lambda03 = a[0], lambda12 = b2[0], phi02 = a[1], phi12 = b2[1], z;
-    if (lambda12 < lambda03) z = lambda03, lambda03 = lambda12, lambda12 = z;
-    var delta2 = lambda12 - lambda03, polar = abs(delta2 - pi) < epsilon, meridian = polar || delta2 < epsilon;
-    if (!polar && phi12 < phi02) z = phi02, phi02 = phi12, phi12 = z;
-    if (meridian ? polar ? phi02 + phi12 > 0 ^ q[1] < (abs(q[0] - lambda03) < epsilon ? phi02 : phi12) : phi02 <= q[1] && q[1] <= phi12 : delta2 > pi ^ (lambda03 <= q[0] && q[0] <= lambda12)) {
-      var q1 = cartesianScale(u, (-w2 + t) / uu);
-      cartesianAddInPlace(q1, A2);
-      return [q, spherical(q1)];
-    }
-  }
-  function code(lambda, phi) {
-    var r = smallRadius ? radius : pi - radius, code2 = 0;
-    if (lambda < -r) code2 |= 1;
-    else if (lambda > r) code2 |= 2;
-    if (phi < -r) code2 |= 4;
-    else if (phi > r) code2 |= 8;
-    return code2;
-  }
-  return clip_default(visible, clipLine, interpolate, smallRadius ? [0, -radius] : [-pi, radius - pi]);
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/clip/line.js
-function line_default(a, b2, x05, y05, x12, y12) {
-  var ax = a[0], ay = a[1], bx = b2[0], by = b2[1], t0 = 0, t1 = 1, dx = bx - ax, dy = by - ay, r;
-  r = x05 - ax;
-  if (!dx && r > 0) return;
-  r /= dx;
-  if (dx < 0) {
-    if (r < t0) return;
-    if (r < t1) t1 = r;
-  } else if (dx > 0) {
-    if (r > t1) return;
-    if (r > t0) t0 = r;
-  }
-  r = x12 - ax;
-  if (!dx && r < 0) return;
-  r /= dx;
-  if (dx < 0) {
-    if (r > t1) return;
-    if (r > t0) t0 = r;
-  } else if (dx > 0) {
-    if (r < t0) return;
-    if (r < t1) t1 = r;
-  }
-  r = y05 - ay;
-  if (!dy && r > 0) return;
-  r /= dy;
-  if (dy < 0) {
-    if (r < t0) return;
-    if (r < t1) t1 = r;
-  } else if (dy > 0) {
-    if (r > t1) return;
-    if (r > t0) t0 = r;
-  }
-  r = y12 - ay;
-  if (!dy && r < 0) return;
-  r /= dy;
-  if (dy < 0) {
-    if (r > t1) return;
-    if (r > t0) t0 = r;
-  } else if (dy > 0) {
-    if (r < t0) return;
-    if (r < t1) t1 = r;
-  }
-  if (t0 > 0) a[0] = ax + t0 * dx, a[1] = ay + t0 * dy;
-  if (t1 < 1) b2[0] = ax + t1 * dx, b2[1] = ay + t1 * dy;
-  return true;
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/clip/rectangle.js
-var clipMax = 1e9;
-var clipMin = -clipMax;
-function clipRectangle(x05, y05, x12, y12) {
-  function visible(x2, y) {
-    return x05 <= x2 && x2 <= x12 && y05 <= y && y <= y12;
-  }
-  function interpolate(from, to, direction, stream) {
-    var a = 0, a1 = 0;
-    if (from == null || (a = corner(from, direction)) !== (a1 = corner(to, direction)) || comparePoint(from, to) < 0 ^ direction > 0) {
-      do
-        stream.point(a === 0 || a === 3 ? x05 : x12, a > 1 ? y12 : y05);
-      while ((a = (a + direction + 4) % 4) !== a1);
-    } else {
-      stream.point(to[0], to[1]);
-    }
-  }
-  function corner(p2, direction) {
-    return abs(p2[0] - x05) < epsilon ? direction > 0 ? 0 : 3 : abs(p2[0] - x12) < epsilon ? direction > 0 ? 2 : 1 : abs(p2[1] - y05) < epsilon ? direction > 0 ? 1 : 0 : direction > 0 ? 3 : 2;
-  }
-  function compareIntersection2(a, b2) {
-    return comparePoint(a.x, b2.x);
-  }
-  function comparePoint(a, b2) {
-    var ca = corner(a, 1), cb = corner(b2, 1);
-    return ca !== cb ? ca - cb : ca === 0 ? b2[1] - a[1] : ca === 1 ? a[0] - b2[0] : ca === 2 ? a[1] - b2[1] : b2[0] - a[0];
-  }
-  return function(stream) {
-    var activeStream = stream, bufferStream = buffer_default(), segments, polygon, ring, x__, y__, v__, x_, y_, v_, first, clean;
-    var clipStream = {
-      point,
-      lineStart,
-      lineEnd,
-      polygonStart,
-      polygonEnd
-    };
-    function point(x2, y) {
-      if (visible(x2, y)) activeStream.point(x2, y);
-    }
-    function polygonInside() {
-      var winding = 0;
-      for (var i = 0, n = polygon.length; i < n; ++i) {
-        for (var ring2 = polygon[i], j2 = 1, m2 = ring2.length, point2 = ring2[0], a0, a1, b0 = point2[0], b1 = point2[1]; j2 < m2; ++j2) {
-          a0 = b0, a1 = b1, point2 = ring2[j2], b0 = point2[0], b1 = point2[1];
-          if (a1 <= y12) {
-            if (b1 > y12 && (b0 - a0) * (y12 - a1) > (b1 - a1) * (x05 - a0)) ++winding;
-          } else {
-            if (b1 <= y12 && (b0 - a0) * (y12 - a1) < (b1 - a1) * (x05 - a0)) --winding;
-          }
-        }
-      }
-      return winding;
-    }
-    function polygonStart() {
-      activeStream = bufferStream, segments = [], polygon = [], clean = true;
-    }
-    function polygonEnd() {
-      var startInside = polygonInside(), cleanInside = clean && startInside, visible2 = (segments = merge(segments)).length;
-      if (cleanInside || visible2) {
-        stream.polygonStart();
-        if (cleanInside) {
-          stream.lineStart();
-          interpolate(null, null, 1, stream);
-          stream.lineEnd();
-        }
-        if (visible2) {
-          rejoin_default(segments, compareIntersection2, startInside, interpolate, stream);
-        }
-        stream.polygonEnd();
-      }
-      activeStream = stream, segments = polygon = ring = null;
-    }
-    function lineStart() {
-      clipStream.point = linePoint2;
-      if (polygon) polygon.push(ring = []);
-      first = true;
-      v_ = false;
-      x_ = y_ = NaN;
-    }
-    function lineEnd() {
-      if (segments) {
-        linePoint2(x__, y__);
-        if (v__ && v_) bufferStream.rejoin();
-        segments.push(bufferStream.result());
-      }
-      clipStream.point = point;
-      if (v_) activeStream.lineEnd();
-    }
-    function linePoint2(x2, y) {
-      var v2 = visible(x2, y);
-      if (polygon) ring.push([x2, y]);
-      if (first) {
-        x__ = x2, y__ = y, v__ = v2;
-        first = false;
-        if (v2) {
-          activeStream.lineStart();
-          activeStream.point(x2, y);
-        }
-      } else {
-        if (v2 && v_) activeStream.point(x2, y);
-        else {
-          var a = [x_ = Math.max(clipMin, Math.min(clipMax, x_)), y_ = Math.max(clipMin, Math.min(clipMax, y_))], b2 = [x2 = Math.max(clipMin, Math.min(clipMax, x2)), y = Math.max(clipMin, Math.min(clipMax, y))];
-          if (line_default(a, b2, x05, y05, x12, y12)) {
-            if (!v_) {
-              activeStream.lineStart();
-              activeStream.point(a[0], a[1]);
-            }
-            activeStream.point(b2[0], b2[1]);
-            if (!v2) activeStream.lineEnd();
-            clean = false;
-          } else if (v2) {
-            activeStream.lineStart();
-            activeStream.point(x2, y);
-            clean = false;
-          }
-        }
-      }
-      x_ = x2, y_ = y, v_ = v2;
-    }
-    return clipStream;
-  };
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/identity.js
-var identity_default = (x2) => x2;
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/path/area.js
-var areaSum2 = new Adder();
-var areaRingSum2 = new Adder();
-var x00;
-var y00;
-var x0;
-var y0;
-var areaStream2 = {
-  point: noop,
-  lineStart: noop,
-  lineEnd: noop,
-  polygonStart: function() {
-    areaStream2.lineStart = areaRingStart2;
-    areaStream2.lineEnd = areaRingEnd2;
-  },
-  polygonEnd: function() {
-    areaStream2.lineStart = areaStream2.lineEnd = areaStream2.point = noop;
-    areaSum2.add(abs(areaRingSum2));
-    areaRingSum2 = new Adder();
-  },
-  result: function() {
-    var area = areaSum2 / 2;
-    areaSum2 = new Adder();
-    return area;
-  }
-};
-function areaRingStart2() {
-  areaStream2.point = areaPointFirst2;
-}
-function areaPointFirst2(x2, y) {
-  areaStream2.point = areaPoint2;
-  x00 = x0 = x2, y00 = y0 = y;
-}
-function areaPoint2(x2, y) {
-  areaRingSum2.add(y0 * x2 - x0 * y);
-  x0 = x2, y0 = y;
-}
-function areaRingEnd2() {
-  areaPoint2(x00, y00);
-}
-var area_default = areaStream2;
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/path/bounds.js
-var x02 = Infinity;
-var y02 = x02;
-var x1 = -x02;
-var y1 = x1;
-var boundsStream2 = {
-  point: boundsPoint2,
-  lineStart: noop,
-  lineEnd: noop,
-  polygonStart: noop,
-  polygonEnd: noop,
-  result: function() {
-    var bounds = [[x02, y02], [x1, y1]];
-    x1 = y1 = -(y02 = x02 = Infinity);
-    return bounds;
-  }
-};
-function boundsPoint2(x2, y) {
-  if (x2 < x02) x02 = x2;
-  if (x2 > x1) x1 = x2;
-  if (y < y02) y02 = y;
-  if (y > y1) y1 = y;
-}
-var bounds_default2 = boundsStream2;
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/path/centroid.js
-var X0 = 0;
-var Y0 = 0;
-var Z0 = 0;
-var X1 = 0;
-var Y1 = 0;
-var Z1 = 0;
-var X2 = 0;
-var Y2 = 0;
-var Z2 = 0;
-var x002;
-var y002;
-var x03;
-var y03;
-var centroidStream = {
-  point: centroidPoint,
-  lineStart: centroidLineStart,
-  lineEnd: centroidLineEnd,
-  polygonStart: function() {
-    centroidStream.lineStart = centroidRingStart;
-    centroidStream.lineEnd = centroidRingEnd;
-  },
-  polygonEnd: function() {
-    centroidStream.point = centroidPoint;
-    centroidStream.lineStart = centroidLineStart;
-    centroidStream.lineEnd = centroidLineEnd;
-  },
-  result: function() {
-    var centroid = Z2 ? [X2 / Z2, Y2 / Z2] : Z1 ? [X1 / Z1, Y1 / Z1] : Z0 ? [X0 / Z0, Y0 / Z0] : [NaN, NaN];
-    X0 = Y0 = Z0 = X1 = Y1 = Z1 = X2 = Y2 = Z2 = 0;
-    return centroid;
-  }
-};
-function centroidPoint(x2, y) {
-  X0 += x2;
-  Y0 += y;
-  ++Z0;
-}
-function centroidLineStart() {
-  centroidStream.point = centroidPointFirstLine;
-}
-function centroidPointFirstLine(x2, y) {
-  centroidStream.point = centroidPointLine;
-  centroidPoint(x03 = x2, y03 = y);
-}
-function centroidPointLine(x2, y) {
-  var dx = x2 - x03, dy = y - y03, z = sqrt(dx * dx + dy * dy);
-  X1 += z * (x03 + x2) / 2;
-  Y1 += z * (y03 + y) / 2;
-  Z1 += z;
-  centroidPoint(x03 = x2, y03 = y);
-}
-function centroidLineEnd() {
-  centroidStream.point = centroidPoint;
-}
-function centroidRingStart() {
-  centroidStream.point = centroidPointFirstRing;
-}
-function centroidRingEnd() {
-  centroidPointRing(x002, y002);
-}
-function centroidPointFirstRing(x2, y) {
-  centroidStream.point = centroidPointRing;
-  centroidPoint(x002 = x03 = x2, y002 = y03 = y);
-}
-function centroidPointRing(x2, y) {
-  var dx = x2 - x03, dy = y - y03, z = sqrt(dx * dx + dy * dy);
-  X1 += z * (x03 + x2) / 2;
-  Y1 += z * (y03 + y) / 2;
-  Z1 += z;
-  z = y03 * x2 - x03 * y;
-  X2 += z * (x03 + x2);
-  Y2 += z * (y03 + y);
-  Z2 += z * 3;
-  centroidPoint(x03 = x2, y03 = y);
-}
-var centroid_default = centroidStream;
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/path/context.js
-function PathContext(context) {
-  this._context = context;
-}
-PathContext.prototype = {
-  _radius: 4.5,
-  pointRadius: function(_2) {
-    return this._radius = _2, this;
-  },
-  polygonStart: function() {
-    this._line = 0;
-  },
-  polygonEnd: function() {
-    this._line = NaN;
-  },
-  lineStart: function() {
-    this._point = 0;
-  },
-  lineEnd: function() {
-    if (this._line === 0) this._context.closePath();
-    this._point = NaN;
-  },
-  point: function(x2, y) {
-    switch (this._point) {
-      case 0: {
-        this._context.moveTo(x2, y);
-        this._point = 1;
-        break;
-      }
-      case 1: {
-        this._context.lineTo(x2, y);
-        break;
-      }
-      default: {
-        this._context.moveTo(x2 + this._radius, y);
-        this._context.arc(x2, y, this._radius, 0, tau);
-        break;
-      }
-    }
-  },
-  result: noop
-};
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/path/measure.js
-var lengthSum = new Adder();
-var lengthRing;
-var x003;
-var y003;
-var x04;
-var y04;
-var lengthStream = {
-  point: noop,
-  lineStart: function() {
-    lengthStream.point = lengthPointFirst;
-  },
-  lineEnd: function() {
-    if (lengthRing) lengthPoint(x003, y003);
-    lengthStream.point = noop;
-  },
-  polygonStart: function() {
-    lengthRing = true;
-  },
-  polygonEnd: function() {
-    lengthRing = null;
-  },
-  result: function() {
-    var length = +lengthSum;
-    lengthSum = new Adder();
-    return length;
-  }
-};
-function lengthPointFirst(x2, y) {
-  lengthStream.point = lengthPoint;
-  x003 = x04 = x2, y003 = y04 = y;
-}
-function lengthPoint(x2, y) {
-  x04 -= x2, y04 -= y;
-  lengthSum.add(sqrt(x04 * x04 + y04 * y04));
-  x04 = x2, y04 = y;
-}
-var measure_default = lengthStream;
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/path/string.js
-var cacheDigits;
-var cacheAppend;
-var cacheRadius;
-var cacheCircle;
-var PathString = class {
-  constructor(digits) {
-    this._append = digits == null ? append : appendRound(digits);
-    this._radius = 4.5;
-    this._ = "";
-  }
-  pointRadius(_2) {
-    this._radius = +_2;
-    return this;
-  }
-  polygonStart() {
-    this._line = 0;
-  }
-  polygonEnd() {
-    this._line = NaN;
-  }
-  lineStart() {
-    this._point = 0;
-  }
-  lineEnd() {
-    if (this._line === 0) this._ += "Z";
-    this._point = NaN;
-  }
-  point(x2, y) {
-    switch (this._point) {
-      case 0: {
-        this._append`M${x2},${y}`;
-        this._point = 1;
-        break;
-      }
-      case 1: {
-        this._append`L${x2},${y}`;
-        break;
-      }
-      default: {
-        this._append`M${x2},${y}`;
-        if (this._radius !== cacheRadius || this._append !== cacheAppend) {
-          const r = this._radius;
-          const s2 = this._;
-          this._ = "";
-          this._append`m0,${r}a${r},${r} 0 1,1 0,${-2 * r}a${r},${r} 0 1,1 0,${2 * r}z`;
-          cacheRadius = r;
-          cacheAppend = this._append;
-          cacheCircle = this._;
-          this._ = s2;
-        }
-        this._ += cacheCircle;
-        break;
-      }
-    }
-  }
-  result() {
-    const result = this._;
-    this._ = "";
-    return result.length ? result : null;
-  }
-};
-function append(strings) {
-  let i = 1;
-  this._ += strings[0];
-  for (const j2 = strings.length; i < j2; ++i) {
-    this._ += arguments[i] + strings[i];
-  }
-}
-function appendRound(digits) {
-  const d = Math.floor(digits);
-  if (!(d >= 0)) throw new RangeError(`invalid digits: ${digits}`);
-  if (d > 15) return append;
-  if (d !== cacheDigits) {
-    const k2 = 10 ** d;
-    cacheDigits = d;
-    cacheAppend = function append2(strings) {
-      let i = 1;
-      this._ += strings[0];
-      for (const j2 = strings.length; i < j2; ++i) {
-        this._ += Math.round(arguments[i] * k2) / k2 + strings[i];
-      }
-    };
-  }
-  return cacheAppend;
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/path/index.js
-function path_default(projection2, context) {
-  let digits = 3, pointRadius = 4.5, projectionStream, contextStream;
-  function path(object) {
-    if (object) {
-      if (typeof pointRadius === "function") contextStream.pointRadius(+pointRadius.apply(this, arguments));
-      stream_default(object, projectionStream(contextStream));
-    }
-    return contextStream.result();
-  }
-  path.area = function(object) {
-    stream_default(object, projectionStream(area_default));
-    return area_default.result();
-  };
-  path.measure = function(object) {
-    stream_default(object, projectionStream(measure_default));
-    return measure_default.result();
-  };
-  path.bounds = function(object) {
-    stream_default(object, projectionStream(bounds_default2));
-    return bounds_default2.result();
-  };
-  path.centroid = function(object) {
-    stream_default(object, projectionStream(centroid_default));
-    return centroid_default.result();
-  };
-  path.projection = function(_2) {
-    if (!arguments.length) return projection2;
-    projectionStream = _2 == null ? (projection2 = null, identity_default) : (projection2 = _2).stream;
-    return path;
-  };
-  path.context = function(_2) {
-    if (!arguments.length) return context;
-    contextStream = _2 == null ? (context = null, new PathString(digits)) : new PathContext(context = _2);
-    if (typeof pointRadius !== "function") contextStream.pointRadius(pointRadius);
-    return path;
-  };
-  path.pointRadius = function(_2) {
-    if (!arguments.length) return pointRadius;
-    pointRadius = typeof _2 === "function" ? _2 : (contextStream.pointRadius(+_2), +_2);
-    return path;
-  };
-  path.digits = function(_2) {
-    if (!arguments.length) return digits;
-    if (_2 == null) digits = null;
-    else {
-      const d = Math.floor(_2);
-      if (!(d >= 0)) throw new RangeError(`invalid digits: ${_2}`);
-      digits = d;
-    }
-    if (context === null) contextStream = new PathString(digits);
-    return path;
-  };
-  return path.projection(projection2).digits(digits).context(context);
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/transform.js
-function transformer(methods) {
-  return function(stream) {
-    var s2 = new TransformStream();
-    for (var key in methods) s2[key] = methods[key];
-    s2.stream = stream;
-    return s2;
-  };
-}
-function TransformStream() {
-}
-TransformStream.prototype = {
-  constructor: TransformStream,
-  point: function(x2, y) {
-    this.stream.point(x2, y);
-  },
-  sphere: function() {
-    this.stream.sphere();
-  },
-  lineStart: function() {
-    this.stream.lineStart();
-  },
-  lineEnd: function() {
-    this.stream.lineEnd();
-  },
-  polygonStart: function() {
-    this.stream.polygonStart();
-  },
-  polygonEnd: function() {
-    this.stream.polygonEnd();
-  }
-};
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/projection/fit.js
-function fit(projection2, fitBounds, object) {
-  var clip = projection2.clipExtent && projection2.clipExtent();
-  projection2.scale(150).translate([0, 0]);
-  if (clip != null) projection2.clipExtent(null);
-  stream_default(object, projection2.stream(bounds_default2));
-  fitBounds(bounds_default2.result());
-  if (clip != null) projection2.clipExtent(clip);
-  return projection2;
-}
-function fitExtent(projection2, extent, object) {
-  return fit(projection2, function(b2) {
-    var w2 = extent[1][0] - extent[0][0], h = extent[1][1] - extent[0][1], k2 = Math.min(w2 / (b2[1][0] - b2[0][0]), h / (b2[1][1] - b2[0][1])), x2 = +extent[0][0] + (w2 - k2 * (b2[1][0] + b2[0][0])) / 2, y = +extent[0][1] + (h - k2 * (b2[1][1] + b2[0][1])) / 2;
-    projection2.scale(150 * k2).translate([x2, y]);
-  }, object);
-}
-function fitSize(projection2, size, object) {
-  return fitExtent(projection2, [[0, 0], size], object);
-}
-function fitWidth(projection2, width, object) {
-  return fit(projection2, function(b2) {
-    var w2 = +width, k2 = w2 / (b2[1][0] - b2[0][0]), x2 = (w2 - k2 * (b2[1][0] + b2[0][0])) / 2, y = -k2 * b2[0][1];
-    projection2.scale(150 * k2).translate([x2, y]);
-  }, object);
-}
-function fitHeight(projection2, height, object) {
-  return fit(projection2, function(b2) {
-    var h = +height, k2 = h / (b2[1][1] - b2[0][1]), x2 = -k2 * b2[0][0], y = (h - k2 * (b2[1][1] + b2[0][1])) / 2;
-    projection2.scale(150 * k2).translate([x2, y]);
-  }, object);
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/projection/resample.js
-var maxDepth = 16;
-var cosMinDistance = cos(30 * radians);
-function resample_default(project, delta2) {
-  return +delta2 ? resample(project, delta2) : resampleNone(project);
-}
-function resampleNone(project) {
-  return transformer({
-    point: function(x2, y) {
-      x2 = project(x2, y);
-      this.stream.point(x2[0], x2[1]);
-    }
-  });
-}
-function resample(project, delta2) {
-  function resampleLineTo(x05, y05, lambda03, a0, b0, c0, x12, y12, lambda12, a1, b1, c1, depth, stream) {
-    var dx = x12 - x05, dy = y12 - y05, d2 = dx * dx + dy * dy;
-    if (d2 > 4 * delta2 && depth--) {
-      var a = a0 + a1, b2 = b0 + b1, c = c0 + c1, m2 = sqrt(a * a + b2 * b2 + c * c), phi2 = asin(c /= m2), lambda22 = abs(abs(c) - 1) < epsilon || abs(lambda03 - lambda12) < epsilon ? (lambda03 + lambda12) / 2 : atan2(b2, a), p2 = project(lambda22, phi2), x2 = p2[0], y2 = p2[1], dx2 = x2 - x05, dy2 = y2 - y05, dz = dy * dx2 - dx * dy2;
-      if (dz * dz / d2 > delta2 || abs((dx * dx2 + dy * dy2) / d2 - 0.5) > 0.3 || a0 * a1 + b0 * b1 + c0 * c1 < cosMinDistance) {
-        resampleLineTo(x05, y05, lambda03, a0, b0, c0, x2, y2, lambda22, a /= m2, b2 /= m2, c, depth, stream);
-        stream.point(x2, y2);
-        resampleLineTo(x2, y2, lambda22, a, b2, c, x12, y12, lambda12, a1, b1, c1, depth, stream);
-      }
-    }
-  }
-  return function(stream) {
-    var lambda003, x004, y004, a00, b00, c00, lambda03, x05, y05, a0, b0, c0;
-    var resampleStream = {
-      point,
-      lineStart,
-      lineEnd,
-      polygonStart: function() {
-        stream.polygonStart();
-        resampleStream.lineStart = ringStart;
-      },
-      polygonEnd: function() {
-        stream.polygonEnd();
-        resampleStream.lineStart = lineStart;
-      }
-    };
-    function point(x2, y) {
-      x2 = project(x2, y);
-      stream.point(x2[0], x2[1]);
-    }
-    function lineStart() {
-      x05 = NaN;
-      resampleStream.point = linePoint2;
-      stream.lineStart();
-    }
-    function linePoint2(lambda, phi) {
-      var c = cartesian([lambda, phi]), p2 = project(lambda, phi);
-      resampleLineTo(x05, y05, lambda03, a0, b0, c0, x05 = p2[0], y05 = p2[1], lambda03 = lambda, a0 = c[0], b0 = c[1], c0 = c[2], maxDepth, stream);
-      stream.point(x05, y05);
-    }
-    function lineEnd() {
-      resampleStream.point = point;
-      stream.lineEnd();
-    }
-    function ringStart() {
-      lineStart();
-      resampleStream.point = ringPoint;
-      resampleStream.lineEnd = ringEnd;
-    }
-    function ringPoint(lambda, phi) {
-      linePoint2(lambda003 = lambda, phi), x004 = x05, y004 = y05, a00 = a0, b00 = b0, c00 = c0;
-      resampleStream.point = linePoint2;
-    }
-    function ringEnd() {
-      resampleLineTo(x05, y05, lambda03, a0, b0, c0, x004, y004, lambda003, a00, b00, c00, maxDepth, stream);
-      resampleStream.lineEnd = lineEnd;
-      lineEnd();
-    }
-    return resampleStream;
-  };
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/projection/index.js
-var transformRadians = transformer({
-  point: function(x2, y) {
-    this.stream.point(x2 * radians, y * radians);
-  }
-});
-function transformRotate(rotate) {
-  return transformer({
-    point: function(x2, y) {
-      var r = rotate(x2, y);
-      return this.stream.point(r[0], r[1]);
-    }
-  });
-}
-function scaleTranslate(k2, dx, dy, sx, sy) {
-  function transform(x2, y) {
-    x2 *= sx;
-    y *= sy;
-    return [dx + k2 * x2, dy - k2 * y];
-  }
-  transform.invert = function(x2, y) {
-    return [(x2 - dx) / k2 * sx, (dy - y) / k2 * sy];
-  };
-  return transform;
-}
-function scaleTranslateRotate(k2, dx, dy, sx, sy, alpha) {
-  if (!alpha) return scaleTranslate(k2, dx, dy, sx, sy);
-  var cosAlpha = cos(alpha), sinAlpha = sin(alpha), a = cosAlpha * k2, b2 = sinAlpha * k2, ai = cosAlpha / k2, bi = sinAlpha / k2, ci = (sinAlpha * dy - cosAlpha * dx) / k2, fi = (sinAlpha * dx + cosAlpha * dy) / k2;
-  function transform(x2, y) {
-    x2 *= sx;
-    y *= sy;
-    return [a * x2 - b2 * y + dx, dy - b2 * x2 - a * y];
-  }
-  transform.invert = function(x2, y) {
-    return [sx * (ai * x2 - bi * y + ci), sy * (fi - bi * x2 - ai * y)];
-  };
-  return transform;
-}
-function projection(project) {
-  return projectionMutator(function() {
-    return project;
-  })();
-}
-function projectionMutator(projectAt) {
-  var project, k2 = 150, x2 = 480, y = 250, lambda = 0, phi = 0, deltaLambda = 0, deltaPhi = 0, deltaGamma = 0, rotate, alpha = 0, sx = 1, sy = 1, theta = null, preclip = antimeridian_default, x05 = null, y05, x12, y12, postclip = identity_default, delta2 = 0.5, projectResample, projectTransform, projectRotateTransform, cache, cacheStream;
-  function projection2(point) {
-    return projectRotateTransform(point[0] * radians, point[1] * radians);
-  }
-  function invert(point) {
-    point = projectRotateTransform.invert(point[0], point[1]);
-    return point && [point[0] * degrees, point[1] * degrees];
-  }
-  projection2.stream = function(stream) {
-    return cache && cacheStream === stream ? cache : cache = transformRadians(transformRotate(rotate)(preclip(projectResample(postclip(cacheStream = stream)))));
-  };
-  projection2.preclip = function(_2) {
-    return arguments.length ? (preclip = _2, theta = void 0, reset()) : preclip;
-  };
-  projection2.postclip = function(_2) {
-    return arguments.length ? (postclip = _2, x05 = y05 = x12 = y12 = null, reset()) : postclip;
-  };
-  projection2.clipAngle = function(_2) {
-    return arguments.length ? (preclip = +_2 ? circle_default(theta = _2 * radians) : (theta = null, antimeridian_default), reset()) : theta * degrees;
-  };
-  projection2.clipExtent = function(_2) {
-    return arguments.length ? (postclip = _2 == null ? (x05 = y05 = x12 = y12 = null, identity_default) : clipRectangle(x05 = +_2[0][0], y05 = +_2[0][1], x12 = +_2[1][0], y12 = +_2[1][1]), reset()) : x05 == null ? null : [[x05, y05], [x12, y12]];
-  };
-  projection2.scale = function(_2) {
-    return arguments.length ? (k2 = +_2, recenter()) : k2;
-  };
-  projection2.translate = function(_2) {
-    return arguments.length ? (x2 = +_2[0], y = +_2[1], recenter()) : [x2, y];
-  };
-  projection2.center = function(_2) {
-    return arguments.length ? (lambda = _2[0] % 360 * radians, phi = _2[1] % 360 * radians, recenter()) : [lambda * degrees, phi * degrees];
-  };
-  projection2.rotate = function(_2) {
-    return arguments.length ? (deltaLambda = _2[0] % 360 * radians, deltaPhi = _2[1] % 360 * radians, deltaGamma = _2.length > 2 ? _2[2] % 360 * radians : 0, recenter()) : [deltaLambda * degrees, deltaPhi * degrees, deltaGamma * degrees];
-  };
-  projection2.angle = function(_2) {
-    return arguments.length ? (alpha = _2 % 360 * radians, recenter()) : alpha * degrees;
-  };
-  projection2.reflectX = function(_2) {
-    return arguments.length ? (sx = _2 ? -1 : 1, recenter()) : sx < 0;
-  };
-  projection2.reflectY = function(_2) {
-    return arguments.length ? (sy = _2 ? -1 : 1, recenter()) : sy < 0;
-  };
-  projection2.precision = function(_2) {
-    return arguments.length ? (projectResample = resample_default(projectTransform, delta2 = _2 * _2), reset()) : sqrt(delta2);
-  };
-  projection2.fitExtent = function(extent, object) {
-    return fitExtent(projection2, extent, object);
-  };
-  projection2.fitSize = function(size, object) {
-    return fitSize(projection2, size, object);
-  };
-  projection2.fitWidth = function(width, object) {
-    return fitWidth(projection2, width, object);
-  };
-  projection2.fitHeight = function(height, object) {
-    return fitHeight(projection2, height, object);
-  };
-  function recenter() {
-    var center = scaleTranslateRotate(k2, 0, 0, sx, sy, alpha).apply(null, project(lambda, phi)), transform = scaleTranslateRotate(k2, x2 - center[0], y - center[1], sx, sy, alpha);
-    rotate = rotateRadians(deltaLambda, deltaPhi, deltaGamma);
-    projectTransform = compose_default(project, transform);
-    projectRotateTransform = compose_default(rotate, projectTransform);
-    projectResample = resample_default(projectTransform, delta2);
-    return reset();
-  }
-  function reset() {
-    cache = cacheStream = null;
-    return projection2;
-  }
-  return function() {
-    project = projectAt.apply(this, arguments);
-    projection2.invert = project.invert && invert;
-    return recenter();
-  };
-}
-
-// node_modules/.pnpm/d3-geo@3.1.1/node_modules/d3-geo/src/projection/mercator.js
-function mercatorRaw(lambda, phi) {
-  return [lambda, log(tan((halfPi + phi) / 2))];
-}
-mercatorRaw.invert = function(x2, y) {
-  return [x2, 2 * atan(exp(y)) - halfPi];
-};
-function mercator_default() {
-  return mercatorProjection(mercatorRaw).scale(961 / tau);
-}
-function mercatorProjection(project) {
-  var m2 = projection(project), center = m2.center, scale = m2.scale, translate = m2.translate, clipExtent = m2.clipExtent, x05 = null, y05, x12, y12;
-  m2.scale = function(_2) {
-    return arguments.length ? (scale(_2), reclip()) : scale();
-  };
-  m2.translate = function(_2) {
-    return arguments.length ? (translate(_2), reclip()) : translate();
-  };
-  m2.center = function(_2) {
-    return arguments.length ? (center(_2), reclip()) : center();
-  };
-  m2.clipExtent = function(_2) {
-    return arguments.length ? (_2 == null ? x05 = y05 = x12 = y12 = null : (x05 = +_2[0][0], y05 = +_2[0][1], x12 = +_2[1][0], y12 = +_2[1][1]), reclip()) : x05 == null ? null : [[x05, y05], [x12, y12]];
-  };
-  function reclip() {
-    var k2 = pi * scale(), t = m2(rotation_default(m2.rotate()).invert([0, 0]));
-    return clipExtent(x05 == null ? [[t[0] - k2, t[1] - k2], [t[0] + k2, t[1] + k2]] : project === mercatorRaw ? [[Math.max(t[0] - k2, x05), y05], [Math.min(t[0] + k2, x12), y12]] : [[x05, Math.max(t[1] - k2, y05)], [x12, Math.min(t[1] + k2, y12)]]);
-  }
-  return reclip();
-}
-
-// src/components/images/modules/NormalizePolygon.ts
-var NormalizePolygon = (geometry) => {
-  if (geometry.type !== `Polygon` && geometry.type !== `MultiPolygon`) {
-    return geometry;
-  }
-  const reverseRing = (ring) => {
-    const reversed = ring.slice().reverse();
-    return reversed;
-  };
-  if (geometry.type === `Polygon`) {
-    return {
-      type: `Polygon`,
-      coordinates: geometry.coordinates.map((ring, index) => index === 0 ? reverseRing(ring) : ring.slice().reverse())
-    };
-  }
-  return {
-    type: `MultiPolygon`,
-    coordinates: geometry.coordinates.map((polygon) => polygon.map((ring, index) => index === 0 ? reverseRing(ring) : ring.slice().reverse()))
-  };
-};
-
-// src/components/images/modules/GetSVGPath.ts
-var GetSVGPath = ({ Polygons, IPath, Settings, Map: Map2 }) => {
-  if (!Polygons) return;
-  const feature2 = {
-    type: `Feature`,
-    properties: {},
-    geometry: !Map2 ? NormalizePolygon(Polygons) : Polygons
-  };
-  const d = IPath(feature2);
-  if (!d) return ``;
-  return `<path
-        d="${d}"
-        fill="${Settings.FillColor}"
-        fill-opacity="${Settings.FillOpacity}"
-        fill-rule="evenodd"
-        stroke="${Settings.BorderColor}"
-        stroke-width="${Settings.BorderWidth}"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-    />`;
-};
-
-// src/components/images/modules/CreateSVG.ts
-var CreateSVG = ({ MapFeatures, Features, Width, Height }) => {
-  return `
-        <svg xmlns="http://www.w3.org/2000/svg" width="${Width}" height="${Height}" viewBox="0 0 ${Width} ${Height}">
-            <rect width="${Width}" height="${Height}" fill="black"/> 
-            <g fill-rule="evenodd" clip-rule="evenodd"> 
-                ${MapFeatures.join(`
-`)}
-                ${Features.join(`
-`)}
-            </g>
-        </svg>
-    `;
-};
-
-// src/components/images/modules/GetGeometryBounds.ts
-var GetGeometryBounds = ({ Geometry, Padding }) => {
-  let minLon = Infinity;
-  let minLat = Infinity;
-  let maxLon = -Infinity;
-  let maxLat = -Infinity;
-  const ProcessCoordinate = (coordinate) => {
-    const [lon, lat] = coordinate;
-    if (!Number.isFinite(lon) || !Number.isFinite(lat)) {
-      return;
-    }
-    minLon = Math.min(minLon, lon);
-    minLat = Math.min(minLat, lat);
-    maxLon = Math.max(maxLon, lon);
-    maxLat = Math.max(maxLat, lat);
-  };
-  const ProcessRing = (ring) => {
-    for (const coordinate of ring) {
-      ProcessCoordinate(coordinate);
-    }
-  };
-  if (Geometry.type === `Polygon`) {
-    for (const ring of Geometry.coordinates) {
-      ProcessRing(ring);
-    }
-  } else if (Geometry.type === `MultiPolygon`) {
-    for (const polygon of Geometry.coordinates) {
-      for (const ring of polygon) {
-        ProcessRing(ring);
-      }
-    }
-  }
-  const centerLat = (minLat + maxLat) / 2;
-  const latPadding = Padding / 69;
-  const lonPadding = Padding / (69 * Math.cos(centerLat * Math.PI / 180));
-  const searchMinLon = minLon - lonPadding;
-  const searchMaxLon = maxLon + lonPadding;
-  const searchMinLat = minLat - latPadding;
-  const searchMaxLat = maxLat + latPadding;
-  return {
-    Search: { minLon: searchMinLon, minLat: searchMinLat, maxLon: searchMaxLon, maxLat: searchMaxLat },
-    Bounds: { minLon, minLat, maxLon, maxLat }
-  };
-};
-
-// src/components/images/GenerateGraphic.ts
-var import_promises = require("fs/promises");
-var import_path4 = require("path");
-var import_sharp = __toESM(require("sharp"));
-var GenerateGraphic = async ({ File, Regions, Event, MaxMiles = 350, Width = 1200, Height = 675 }) => {
-  let polygons;
-  let icon;
-  let renders = {
-    cities: null,
-    states: null,
-    counties: null
-  };
-  let pathing = {
-    cities: null,
-    events: null,
-    counties: null,
-    states: null
-  };
-  const A2 = [EnumStates, EnumZones].reduce((acc, obj) => ({ ...acc, ...obj }), {});
-  const B = [`HI`, `AK`];
-  const { coordinates } = Event?.geometry ?? {};
-  const { properties } = Event ?? {};
-  const { regions, theme, event } = properties ?? {};
-  const inConus = Event ? regions?.every((state) => A2[state] && !B.includes(state)) : true;
-  const R2 = (Regions ?? null)?.length ? [...new Set(Regions ?? null)] : null;
-  const E2 = GetGeographicalEvents({ Regions: R2, Event });
-  if (inConus || !Event) {
-    const boundaries = GetGeographicalBoundaries({ Regions: R2 });
-    const cities = GetGeographicalCities({ Regions: R2 });
-    renders.cities = cities.cities.filter((city) => city.population >= 5e3).sort((a, b2) => b2.population - a.population).filter((city, index, cities2) => {
-      return !cities2.slice(0, index).some((other) => {
-        const dist = Math.sqrt(
-          Math.pow(city.lat - other.lat, 2) + Math.pow(city.lon - other.lon, 2)
-        );
-        return dist < (Event || Regions ? 0.4 : 3);
-      });
-    });
-    renders.states = GetParsedBoundary(boundaries.states);
-    renders.counties = GetParsedBoundary(boundaries.counties);
-  }
-  if (Event) {
-    polygons = coordinates?.length > 0 ? Event?.geometry : await GetEventGeometry({ Event });
-    if (polygons.coordinates.length == 0) {
-      return null;
-    }
-    if (inConus) {
-      const eBounds = GetGeometryBounds({ Geometry: polygons, Padding: MaxMiles });
-      renders.counties = renders?.counties?.filter((county) => {
-        const cBounds = GetGeometryBounds({ Geometry: county.geometry, Padding: MaxMiles });
-        return cBounds.Bounds.minLon <= eBounds.Search.maxLon && cBounds.Bounds.maxLon >= eBounds.Search.minLon && cBounds.Bounds.minLat <= eBounds.Search.maxLat && cBounds.Bounds.maxLat >= eBounds.Search.minLat;
-      });
-      renders.states = renders?.states?.filter((state) => {
-        const sBounds = GetGeometryBounds({ Geometry: state.geometry, Padding: MaxMiles });
-        return sBounds.Bounds.minLon <= eBounds.Search.maxLon && sBounds.Bounds.maxLon >= eBounds.Search.minLon && sBounds.Bounds.minLat <= eBounds.Search.maxLat && sBounds.Bounds.maxLat >= eBounds.Search.minLat;
-      });
-      renders.cities = renders?.cities?.filter((city) => {
-        return city.lat >= eBounds.Search.minLat && city.lat <= eBounds.Search.maxLat && city.lon >= eBounds.Search.minLon && city.lon <= eBounds.Search.maxLon;
+      cStateRows.push({
+        id: cFIPS,
+        type: `state`,
+        state: cAbv,
+        name: properties?.name ?? cAbv,
+        geometry: JSON.stringify(geometry)
       });
     }
-  }
-  const iMode = mercator_default();
-  const iPath = path_default().projection(iMode);
-  const jFeatures = [...renders?.states ?? [], ...renders?.counties ?? []];
-  const jCollection = { type: `FeatureCollection`, features: jFeatures };
-  const events = (await Promise.all(
-    (await E2).map(async (event2) => {
-      return { event: event2, polygon: await GetUnionPolygon({
-        Polygons: polygons ? [polygons.coordinates] : [await GetEventGeometry({ Event: event2 }).coordinates]
-      }) };
-    })
-  )).filter(Boolean);
-  if (polygons) {
-    let geometry = polygons;
-    const geo = {
-      type: "FeatureCollection",
-      features: [{ type: "Feature", geometry, properties: {} }]
-    };
-    const bounds = bounds_default(geo);
-    if (bounds[0][0] === -180 && bounds[0][1] === -90 && bounds[1][0] === 180 && bounds[1][1] === 90) {
-      if (geometry.type === "Polygon") {
-        geometry = { ...geometry, coordinates: geometry.coordinates.map((ring) => [...ring].reverse()) };
-      } else if (geometry.type === "MultiPolygon") {
-        geometry = { ...geometry, coordinates: geometry.coordinates.map((polygon) => polygon.map((ring) => [...ring].reverse())) };
+    for (const cCounty of cCounties.features) {
+      const { id: id2, properties, geometry } = cCounty;
+      const fips = String(id2).padStart(5, `0`).substring(0, 2);
+      const abbreviation = ENUM_STATE_FIPS[fips];
+      if (!geometry || !abbreviation) {
+        continue;
       }
-      geo.features[0].geometry = geometry;
-    }
-    iMode.fitExtent([[150, 150], [Width - 150, Height - 150]], geo);
-  } else {
-    iMode.fitExtent([[60, 60], [Width - 60, Height - 60]], jCollection);
-  }
-  pathing.events = events?.map(({ event: event2, polygon: polys }) => {
-    const color = event2?.properties?.theme ?? theme ?? `rgb(56, 72, 88)`;
-    return GetSVGPath({
-      Polygons: polys,
-      IPath: iPath,
-      Map: false,
-      Settings: { BorderColor: `${color}`, BorderWidth: 2, FillColor: `${color}`, FillOpacity: 0.1 }
-    });
-  }).filter(Boolean).join(``);
-  pathing.counties = renders?.counties?.map((polygon) => GetSVGPath({
-    Polygons: polygon.geometry,
-    IPath: iPath,
-    Map: true,
-    Settings: { BorderColor: `darkgray`, BorderWidth: 0.5, FillColor: `black`, FillOpacity: 1 }
-  })).filter(Boolean).join(``);
-  pathing.states = renders?.states?.map((polygon) => GetSVGPath({
-    Polygons: polygon.geometry,
-    IPath: iPath,
-    Map: false,
-    Settings: { BorderColor: `white`, BorderWidth: 1, FillColor: `#ffffff`, FillOpacity: 0 }
-  })).filter(Boolean).join(``);
-  pathing.cities = renders?.cities?.map((city) => {
-    const point = iMode([city.lon, city.lat]);
-    const [x2, y] = point;
-    const radius = 2 * Math.max(0.75, Math.min(1.5, Width / 1e3));
-    return `
-            <circle cx="${x2}" cy="${y}" r="${radius}" fill="#ffffff" />
-            <text x="${x2}" y="${y + radius + 9}" fill="#ffffff" font-size="${Math.max(10, Math.min(10, Width / 140))}px" font-family="Arial, sans-serif" font-weight="500" text-anchor="middle" dominant-baseline="middle" stroke="#000000" stroke-width="2.5" stroke-opacity="0.7" paint-order="stroke" >${city.name}</text>
-        `;
-  }).join(``);
-  const title = Event ? event ?? `Event` : R2?.length > 0 ? `Region: ${R2.map((state) => EnumStates[state] ?? state).join(`, `)}` : `Contiguous United States`;
-  const subtitleLines = Event ? GetStringText(Event).split(`
-`).filter((line) => line.trim().length > 0).slice(0, 10) : [`Last Updated: ${(/* @__PURE__ */ new Date()).toLocaleString()}`];
-  const scale = Math.max(0.75, Math.min(1, Width / 1e3));
-  const titleSize = Math.round(17 * scale);
-  const lineSize = Math.round(13 * scale);
-  const lineHeight = Math.round(15 * scale);
-  const paddingX = Math.round(16 * scale);
-  const paddingTop = Math.round(16 * scale);
-  const paddingBottom = Math.round(16 * scale);
-  const accentWidth = Math.max(4, Math.round(5 * scale));
-  const iconSize = Math.round(Math.min(122, Math.max(48, Width * 0.07)) * scale);
-  const hasIcon = Boolean(Bootstrap?.Settings?.GlobalSettings?.ArchiveSettings?.Logo);
-  if (hasIcon) {
-    const buffer = await (0, import_promises.readFile)(Bootstrap.Settings.GlobalSettings.ArchiveSettings.Logo);
-    icon = `data:image/png;base64,${Buffer.from(buffer).toString(`base64`)}`;
-  }
-  const boxWidth = Math.min(Math.round(Width * 0.4), Width - Math.round(28 * scale));
-  const textStartX = paddingX + accentWidth + Math.round(6 * scale);
-  const textEndPadding = hasIcon ? iconSize + Math.round(20 * scale) : Math.round(16 * scale);
-  const availableTextWidth = boxWidth - textStartX - textEndPadding;
-  const maxTitleChars = Math.max(20, Math.floor(availableTextWidth / (titleSize * 0.52)));
-  const maxLineChars = Math.max(24, Math.floor(availableTextWidth / (lineSize * 0.52)));
-  const titleY = paddingTop + titleSize;
-  const firstLineY = titleY + Math.round(22 * scale);
-  const contentHeight = firstLineY + subtitleLines.length * lineHeight + paddingBottom;
-  const boxHeight = Math.max(contentHeight, hasIcon ? paddingTop + iconSize + paddingBottom : contentHeight);
-  const iconX = boxWidth - iconSize - Math.round(5 * scale);
-  const iconY = paddingTop;
-  const SVG = CreateSVG({
-    Width,
-    Height,
-    MapFeatures: !inConus ? [pathing.events] : [pathing.counties, pathing.states, pathing.events, pathing.cities],
-    Features: [
-      `<rect x="${Math.round(9 * scale)}" y="${Math.round(10 * scale)}" width="${boxWidth}" height="${boxHeight}"  fill="rgba(0, 0, 0, 0.57)" />`,
-      `<rect x="${Math.round(6 * scale)}" y="${Math.round(7 * scale)}" width="${boxWidth}" height="${boxHeight}" fill="rgba(16, 18, 24, 0.36)" stroke="rgba(255,255,255,0.12)" stroke-width="${Math.max(1, scale)}" />`,
-      `<rect x="${Math.round(6 * scale)}" y="${Math.round(7 * scale)}" width="${accentWidth}" height="${boxHeight}" fill="${theme ?? `rgb(56, 72, 88)`}" />`,
-      hasIcon && icon ? `<image href="${icon}" x="${iconX}" y="${iconY}" width="${iconSize}" height="${iconSize}" preserveAspectRatio="xMidYMid meet" opacity="0.95" />` : ``,
-      `<text x="${textStartX}" y="${titleY}" text-anchor="start" font-family="Arial, sans-serif" font-size="${titleSize}" font-weight="700" fill="white">${title.length > maxTitleChars ? title.slice(0, maxTitleChars - 3) + `...` : title}</text>`,
-      ...subtitleLines.map(
-        (line, i) => `<text x="${textStartX}" y="${firstLineY + i * lineHeight}" text-anchor="start" font-family="Arial, sans-serif" font-size="${lineSize}" fill="rgba(255,255,255,0.82)">${line.length > maxLineChars ? line.slice(0, maxLineChars - 3) + `...` : line.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</text>`
-      ),
-      `<text x="${textStartX}" y="${boxHeight - Math.round(5 * scale)}" text-anchor="start" font-family="Arial, sans-serif" font-size="${Math.max(8, Math.min(8, Width / 140))}px" fill="rgba(255,255,255,0.82)" >This graphic was created by AtmosphericX and is not an official NOAA graphic.</text>`
-    ]
-  });
-  const { Directory, Name } = File ?? {};
-  const dir = Directory ?? Bootstrap.Settings?.GlobalSettings?.ArchiveSettings?.ImageDirectory;
-  const name = Name ?? event ?? `img`;
-  await (0, import_promises.mkdir)(dir, { recursive: true });
-  await (0, import_sharp.default)(Buffer.from(SVG)).png().toFile((0, import_path4.join)(dir, `${name}${name.includes(`.png`) ? `` : `.png`}`));
-  return dir + `/${name}${name.includes(`.png`) ? `` : `.png`}`;
-};
-
-// src/enums/Strings.ts
-var EnumStrings = {
-  nostart: `You have attempted to call an export without starting the service. Please run \`StartService()\` before calling any exports.`,
-  cancellation: `{EVENT} has been allowed to expire. This event is no longer in effect.`
-};
-
-// src/exports/GetNearestCity.ts
-var GetNearestCity = ({ Radius = 15, Coordinates }) => {
-  if (!Bootstrap.Ready) {
-    SetWarning({ Message: EnumStrings.nostart });
-    return;
-  }
-  const A2 = CreateQuery({
-    Query: `SELECT * FROM cities WHERE lat BETWEEN ? AND ? AND lon BETWEEN ? AND ? AND population > 0 ORDER BY ((lat - ?) * (lat - ?) + (lon - ?) * (lon - ?)) ASC LIMIT 1`,
-    Parameters: [
-      Coordinates.Latitude - Radius / 69,
-      Coordinates.Latitude + Radius / 69,
-      Coordinates.Longitude - Radius / 69,
-      Coordinates.Longitude + Radius / 69,
-      Coordinates.Latitude,
-      Coordinates.Latitude,
-      Coordinates.Longitude,
-      Coordinates.Longitude
-    ]
-  });
-  return A2?.[0] ?? null;
-};
-
-// src/exports/SetNode.ts
-var SetNode = ({ Identifier, Delete, Coordinates }) => {
-  if (!Bootstrap.Ready) {
-    SetWarning({ Message: EnumStrings.nostart });
-    return;
-  }
-  const nodes = Bootstrap.Cache.Nodes.features;
-  const exists = nodes.find((node) => node.properties.identifier === Identifier);
-  const nearest = GetNearestCity({ Coordinates, Radius: 25 });
-  if (Delete) {
-    if (exists) {
-      const index = nodes.indexOf(exists);
-      nodes.splice(index, 1);
-      SetWarning({ Message: `Node with identifier '${Identifier}' deleted.` });
-      return SetEventEmit({
-        Event: `onNodeDelete`,
-        Metadata: {
-          Type: `node-delete`,
-          Node: exists
-        }
+      cCountyRows.push({
+        id: String(id2).padStart(5, `0`),
+        type: `county`,
+        state: abbreviation,
+        name: properties?.name ?? `Unknown`,
+        geometry: JSON.stringify(geometry)
       });
     }
-    return SetWarning({ Message: `Node with identifier '${Identifier}' not found.` });
-  }
-  if (exists) {
-    const index = nodes.indexOf(exists);
-    if (exists.geometry.coordinates[0] === Coordinates.Longitude && exists.geometry.coordinates[1] === Coordinates.Latitude) {
-      return;
-    }
-    nodes[index] = {
-      ...exists,
-      geometry: {
-        type: "Point",
-        coordinates: [Coordinates.Longitude, Coordinates.Latitude]
-      },
-      properties: {
-        ...exists.properties,
-        city: nearest?.name ?? null,
-        county: nearest?.county ?? null,
-        state: nearest?.state ?? null,
-        population: nearest?.population ?? null
-      }
-    };
-    SetWarning({ Message: `Node with identifier '${Identifier}' updated. (${nearest?.name ?? "---"}, ${nearest?.county ?? "---"}, ${nearest?.state ?? "---"})` });
-    return SetEventEmit({
-      Event: `onNodeUpdate`,
-      Metadata: {
-        Type: `node-update`,
-        Node: nodes[index]
+    SetLog({ Message: ENUM_STRINGS.DATABASE.CONUS_BUILD.replace(/%s/g, String(cStateRows.length)).replace(/%d/g, String(cCountyRows.length)) });
+    const callTransaction = Database.transaction((cEntries) => {
+      for (const cEntry of cEntries) {
+        CreateQuery({
+          Query: ENUM_STRINGS.DB_STRINGS.IMPORTS.CONUS,
+          Parameters: [cEntry.id, cEntry.type, cEntry.state, cEntry.name, cEntry.geometry]
+        });
       }
     });
+    callTransaction([...cStateRows, ...cCountyRows]);
+    SetLog({ Type: `DEBUG`, Message: `[${(Math.round((performance.now() - dbgTickA) * 100) / 100).toFixed(1)}ms] BuildConus` });
   }
-  nodes.push({
-    type: "Feature",
-    geometry: {
-      type: "Point",
-      coordinates: [Coordinates.Longitude, Coordinates.Latitude]
-    },
-    properties: {
-      identifier: Identifier,
-      city: nearest?.name ?? null,
-      county: nearest?.county ?? null,
-      state: nearest?.state ?? null,
-      population: nearest?.population ?? null
+};
+
+// src/components/database/building/BuildBroadcastify.ts
+var BuildBroadcastify = async () => {
+  const dbgTickA = performance.now();
+  const { Database, Settings } = Bootstrap;
+  const { Broadcastify } = Settings.Integrations;
+  const { count } = CreateQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.BROADCASTIFY })[0];
+  if (count == 0) {
+    const cResponse = await CreateFetchRequest({
+      Destination: Broadcastify.Download,
+      Timeout: 5e3
+    });
+    if (cResponse.Error) {
+      return SetLog({ Type: `ERROR`, Message: `${ENUM_STRINGS.CALLBACKS.HTTP_REQUEST_FAILED} for broadcastify download (Status: ${cResponse.StatusCode})` });
     }
-  });
-  SetWarning({ Message: `Node with identifier '${Identifier}' added. (${nearest?.name ?? "---"}, ${nearest?.county ?? "---"}, ${nearest?.state ?? "---"})` });
-  return SetEventEmit({
-    Event: `onNodeAdd`,
-    Metadata: {
-      Type: `node-add`,
-      Node: nodes[nodes.length - 1]
+    const cBatch = [];
+    const cDatabase = JSON.parse(cResponse.Body);
+    const callTransaction = Database.transaction((cEntries) => {
+      for (const cEntry of cEntries) {
+        const { State, County, Feed, Type, Link } = cEntry;
+        CreateQuery({
+          Query: ENUM_STRINGS.DB_STRINGS.IMPORTS.BROADCASTIFY,
+          Parameters: [State, County, Feed, Type, Link]
+        });
+      }
+    });
+    for (const cBroadcastify of cDatabase) {
+      const { counties, state } = cBroadcastify;
+      SetLog({ Message: ENUM_STRINGS.DATABASE.BROADCASTIFY_BUILD.replace(/%s/g, String(counties.length)).replace(`%d`, String(state)) });
+      for (const cCounty of counties) {
+        const { county, feeds } = cCounty;
+        for (const cFeed of feeds) {
+          const { name, type, link } = cFeed;
+          const cDuplicate = cBatch.some((lEntry) => lEntry.State === state && lEntry.County === county && lEntry.Feed === name && lEntry.Type === type && lEntry.Link === link);
+          if (!cDuplicate) {
+            cBatch.push({ State: state, County: county, Feed: name, Type: type, Link: link });
+          }
+        }
+      }
     }
+    callTransaction(cBatch);
+    SetLog({ Type: `DEBUG`, Message: `[${(Math.round((performance.now() - dbgTickA) * 100) / 100).toFixed(1)}ms] BuildBroadcastify` });
+  }
+};
+
+// src/components/database/CreatePopulatedDatabase.ts
+var CreatePopulatedDatabase = async () => {
+  const dbgTickA = performance.now();
+  const { DB_STRINGS } = ENUM_STRINGS;
+  const [stanzas, shapefiles, conus, population, active, feeds] = await Promise.all([
+    await CreateQuery({ Query: DB_STRINGS.EXISTS.STANZA }),
+    await CreateQuery({ Query: DB_STRINGS.EXISTS.SHAPEFILE }),
+    await CreateQuery({ Query: DB_STRINGS.EXISTS.CONUS }),
+    await CreateQuery({ Query: DB_STRINGS.EXISTS.POPULATION }),
+    await CreateQuery({ Query: DB_STRINGS.EXISTS.ACTIVE }),
+    await CreateQuery({ Query: DB_STRINGS.EXISTS.BROADCASTIFY })
+  ]);
+  const cTables = [stanzas, shapefiles, conus, population, active, feeds];
+  const cMissingTables = cTables.some((table) => table.length === 0);
+  if (cMissingTables) {
+    SetLog({ Message: ENUM_STRINGS.DATABASE.BUILDING });
+    await Promise.all([
+      await CreateQuery({ Query: DB_STRINGS.CREATE.STANZA }),
+      await CreateQuery({ Query: DB_STRINGS.CREATE.SHAPEFILE }),
+      await CreateQuery({ Query: DB_STRINGS.CREATE.CONUS }),
+      await CreateQuery({ Query: DB_STRINGS.CREATE.POPULATION }),
+      await CreateQuery({ Query: DB_STRINGS.CREATE.ACTIVE }),
+      await CreateQuery({ Query: DB_STRINGS.CREATE.BROADCASTIFY }),
+      await CreateQuery({ Query: DB_STRINGS.CREATE.ACTIVE_INDEX }),
+      await CreateQuery({ Query: DB_STRINGS.CREATE.SHAPEFILE_INDEX })
+    ]);
+  }
+  await Promise.all([
+    await BuildShapefiles(),
+    await BuildPopulation(),
+    await BuildConus(),
+    await BuildBroadcastify()
+  ]);
+  if (cMissingTables) {
+    SetLog({ Message: ENUM_STRINGS.DATABASE.BUILD_COMPLETE });
+    SetLog({ Type: `DEBUG`, Message: `[${(Math.round((performance.now() - dbgTickA) * 100) / 100).toFixed(1)}ms] CreatePopulatedDatabase` });
+  }
+};
+
+// src/components/utilities/SetSleep.ts
+var SetSleep = async ({ Timeout }) => {
+  return new Promise((resolve6) => {
+    setTimeout(resolve6, Timeout);
   });
 };
 
-// src/exports/GetEvents.ts
-var GetEvents = () => {
-  if (!Bootstrap.Ready) {
-    SetWarning({ Message: EnumStrings.nostart });
-    return;
-  }
-  return Bootstrap.Cache.Events;
+// src/enums/RegularExpressions.ts
+var ENUM_REGULAR_EXPRESSIONS = {
+  Location: new RegExp(/^([A-Za-z.\-' ]+),\s*([A-Z]{2})$/),
+  VTEC: new RegExp(`[OTEX].(NEW|CON|EXT|EXA|EXB|UPG|CAN|EXP|COR|ROU).[A-Z]{4}.[A-Z]{2}.[WAYSFON].[0-9]{4}.[0-9]{6}T[0-9]{4}Z-[0-9]{6}T[0-9]{4}Z`, "g"),
+  HVTEC: new RegExp(`[a-zA-Z0-9]{4}.[A-Z0-9].[A-Z]{2}.[0-9]{6}T[0-9]{4}Z.[0-9]{6}T[0-9]{4}Z.[0-9]{6}T[0-9]{4}Z.[A-Z]{2}`, "imu"),
+  OFFICE: new RegExp(`[A-Z0-9]{6}\\s[A-Z]{4}\\s\\d{6}`, "imu"),
+  UGC_PT1: new RegExp(`(\\w{2}[CZ](\\d{3}((-|>)\\s?(\\n\\n)?))+)`, "imu"),
+  UGC_PT2: new RegExp(`(\\d{6}(-|>)\\s?(\\n\\n)?)`, "imu"),
+  UGC_PT3: new RegExp(`(\\d{6})(?=-|$)`, "imu"),
+  HEADLINE_INDEX: new RegExp(`(?:^|\\r?\\n)\\.[A-Z][A-Z .-]*(?:\\r?\\n|$)`, "imu"),
+  UGC_INDEX: new RegExp(`\\r?\\n[A-Z]{2}[CZ]\\d{3}(?:>|-|$)`, "imu"),
+  TEXT_EXPIRY: new RegExp(`\\b\\d{6}Z\\s*-\\s*(\\d{6})Z\\b`, "imu"),
+  POLYGON_INDEX: new RegExp(`LAT\\.{3}LON\\s+([\\s\\S]*?)(?=\\r?\\n\\s*\\r?\\n\\s*[A-Z]|\\r?\\n\\s*\\/\\*|$)`, "imu"),
+  POLYGON_COORDINATES: new RegExp(`(\\d{4,8})`, "g"),
+  DATE: new RegExp(`\\d{3,4}\\s*(AM|PM)?\\s*[A-Z]{2,4}\\s+[A-Z]{3,}\\s+[A-Z]{3,}\\s+\\d{1,2}\\s+\\d{4}`, "gim")
 };
 
-// src/exports/GetNodes.ts
-var GetNodes = () => {
-  if (!Bootstrap.Ready) {
-    SetWarning({ Message: EnumStrings.nostart });
-    return;
-  }
-  return Bootstrap.Cache.Nodes;
-};
-
-// src/enums/Expressions.ts
-var EnumExpressions = {
-  location: new RegExp(/^([A-Za-z.\-' ]+),\s*([A-Z]{2})$/),
-  vtec: new RegExp(`[OTEX].(NEW|CON|EXT|EXA|EXB|UPG|CAN|EXP|COR|ROU).[A-Z]{4}.[A-Z]{2}.[WAYSFON].[0-9]{4}.[0-9]{6}T[0-9]{4}Z-[0-9]{6}T[0-9]{4}Z`, "g"),
-  hvtec: new RegExp(`[a-zA-Z0-9]{4}.[A-Z0-9].[A-Z]{2}.[0-9]{6}T[0-9]{4}Z.[0-9]{6}T[0-9]{4}Z.[0-9]{6}T[0-9]{4}Z.[A-Z]{2}`, "imu"),
-  wmo: new RegExp(`[A-Z0-9]{6}\\s[A-Z]{4}\\s\\d{6}`, "imu"),
-  ugc1: new RegExp(`(\\w{2}[CZ](\\d{3}((-|>)\\s?(\\n\\n)?))+)`, "imu"),
-  ugc2: new RegExp(`(\\d{6}(-|>)\\s?(\\n\\n)?)`, "imu"),
-  ugc3: new RegExp(`(\\d{6})(?=-|$)`, "imu"),
-  dateline: new RegExp(`\\d{3,4}\\s*(AM|PM)?\\s*[A-Z]{2,4}\\s+[A-Z]{3,}\\s+[A-Z]{3,}\\s+\\d{1,2}\\s+\\d{4}`, "gim")
-};
-
-// src/enums/AWIPS.ts
-var EnumAWIPS = {
+// src/enums/products/AWIPProducts.ts
+var ENUM_AWIP_PRODUCTS = {
   ABV: `Rawinsonde Data Above 100 Millibars`,
   ADA: `Alarm Alert Administrative Message`,
   ADM: `Alert Administrative Message`,
@@ -18607,6 +14483,7 @@ var EnumAWIPS = {
   CLQ: `Climatological Report Quarterly`,
   CLS: `Climatological Report Seasonal`,
   CLT: `Climate Report`,
+  TST: `Test Product`,
   CMM: `Coded Climatological Monthly Means`,
   COD: `Coded Analysis and Forecasts`,
   CPF: `Great Lakes Port Forecast`,
@@ -18921,2688 +14798,81 @@ var EnumAWIPS = {
 var GetAwipsType = ({ Attributes }) => {
   if (!Attributes.awipsid) {
     return {
-      Type: null,
-      Prefix: null,
+      Name: null,
+      ID: null,
       Discovered: false
     };
   }
-  for (const [prefix, type] of Object.entries(EnumAWIPS)) {
-    if (Attributes.awipsid.startsWith(prefix)) {
-      return { Type: type, Prefix: prefix, Discovered: true };
+  for (const [cPrefix, cName] of Object.entries(ENUM_AWIP_PRODUCTS)) {
+    if (Attributes.awipsid.startsWith(cPrefix)) {
+      return { Name: cName, ID: cPrefix, Discovered: true };
     }
   }
-  return { Type: Attributes.awipsid, Prefix: Attributes.awipsid, Discovered: false };
+  return { Name: Attributes.awipsid, ID: Attributes.awipsid, Discovered: false };
 };
 
-// src/enums/Matches.ts
-var EnumMatches = {
-  SPS: [
-    { match: /STRONG\s+THUNDERSTORM/i, label: "Convective Special Weather Statement", statement: false },
-    { match: /SPECIAL\s+WEATHER\s+STATEMENT/i, label: "Special Weather Statement", statement: false }
-  ],
-  TSU: [
-    { match: /TSUNAMI\s+WARNING/i, label: "Tsunami Warning", statement: false },
-    { match: /TSUNAMI\s+WATCH/i, label: "Tsunami Watch", statement: false },
-    { match: /TSUNAMI\s+ADVISORY/i, label: "Tsunami Advisory", statement: false },
-    { match: /TSUNAMI\s+INFORMATION\s+STATEMENT/i, label: "Tsunami Information Statement", statement: false },
-    { match: /TSUNAMI\s+WARNING\s+CANCELLATION/i, label: "Tsunami Cancellation", statement: false }
-  ],
-  TCP: [
-    { match: /A\s+HURRICANE\s+WARNING\s+IS\s+IN\s+EFFECT/i, label: "Hurricane Warning", statement: false },
-    { match: /A\s+HURRICANE\s+WATCH\s+IS\s+IN\s+EFFECT/i, label: "Hurricane Watch", statement: false },
-    { match: /A\s+TROPICAL\s+STORM\s+WARNING\s+IS\s+IN\s+EFFECT/i, label: "Tropical Storm Warning", statement: false },
-    { match: /A\s+TROPICAL\s+STORM\s+WATCH\s+IS\s+IN\s+EFFECT/i, label: "Tropical Storm Watch", statement: false },
-    { match: /A\s+STORM\s+SURGE\s+WARNING\s+IS\s+IN\s+EFFECT/i, label: "Storm Surge Warning", statement: false },
-    { match: /A\s+STORM\s+SURGE\s+WATCH\s+IS\s+IN\s+EFFECT/i, label: "Storm Surge Watch", statement: false }
-  ],
-  MWW: [
-    { match: /\.\.\.HURRICANE\s+FORCE\s+WIND\s+WARNING/i, label: "Hurricane Force Wind Warning", statement: false },
-    { match: /\.\.\.HURRICANE\s+WARNING/i, label: "Hurricane Warning", statement: false },
-    { match: /\.\.\.STORM\s+WARNING/i, label: "Storm Warning", statement: false },
-    { match: /\.\.\.GALE\s+WARNING/i, label: "Gale Warning", statement: false },
-    { match: /\.\.\.SMALL\s+CRAFT\s+ADVISORY/i, label: "Small Craft Advisory", statement: false },
-    { match: /\.\.\.HAZARDOUS\s+SEAS\s+WARNING/i, label: "Hazardous Seas Warning", statement: false },
-    { match: /\.\.\.DENSE\s+FOG\s+ADVISORY/i, label: "Dense Fog Advisory", statement: false },
-    { match: /THUNDERSTORMS/i, label: "Convective Marine Weather Statement", statement: false },
-    { match: /MARINE\s+WEATHER\s+STATEMENT/i, label: "Marine Weather Statement", statement: false }
-  ],
-  PNS: [
-    { match: /NOAA\s+WEATHER\s+WIRE\s+SERVICE/i, label: "NOAA Weather Wire Service Report", statement: true },
-    { match: /Public\s+Information\s+Statement/i, label: "Public Information Statement", statement: true }
-  ],
-  OFF: [
-    { match: /\.\.\.HURRICANE\s+FORCE\s+WIND\s+WARNING/i, label: "Hurricane Force Wind Warning", statement: false },
-    { match: /\.\.\.HURRICANE\s+WARNING/i, label: "Hurricane Warning", statement: false },
-    { match: /\.\.\.STORM\s+WARNING/i, label: "Storm Warning", statement: false },
-    { match: /\.\.\.GALE\s+WARNING/i, label: "Gale Warning", statement: false }
-  ]
-};
-
-// src/parsers/text/GetDescriptionFromProduct.ts
-var GetDescriptionFromProduct = ({ Message, Handle }) => {
-  const originalMessage = Message;
-  const predefinedEndMarkers = ["&&", "LAT..."];
-  const getFallbackDescription = (text, endIndex) => {
-    const headlineIndex = text.search(/(?:^|\r?\n)\.[A-Z][A-Z .-]*(?:\r?\n|$)/);
-    const ugcIndex = text.search(/\r?\n[A-Z]{2}[CZ]\d{3}(?:>|-|$)/);
-    const descriptionEnd = ugcIndex >= 0 && ugcIndex < endIndex ? ugcIndex : endIndex;
-    return text.substring(headlineIndex >= 0 ? headlineIndex : 0, descriptionEnd).trim();
-  };
-  const getEndIndex = (text, fromIndex = 0) => {
-    const indices = predefinedEndMarkers.map((marker) => text.indexOf(marker, fromIndex)).filter((idx) => idx !== -1);
-    return indices.length ? Math.min(...indices) : -1;
-  };
-  const dates = Array.from(Message.matchAll(EnumExpressions.dateline));
-  if (dates.length) {
-    const lastMatch = dates[dates.length - 1][0];
-    const sIndx = Message.lastIndexOf(lastMatch);
-    if (sIndx !== -1) {
-      const endIndx = getEndIndex(Message, sIndx);
-      Message = Message.substring(sIndx + lastMatch.length, endIndx !== -1 ? endIndx : void 0).trimStart();
-      if (Message.startsWith("/")) Message = Message.slice(1).trimStart();
-      if (Handle && Message.includes(Handle)) {
-        const handleIdx = Message.indexOf(Handle);
-        Message = Message.substring(handleIdx + Handle.length).trimStart();
-        if (Message.startsWith("/")) Message = Message.slice(1).trimStart();
-      }
-    }
-  } else if (Handle) {
-    const handleIndx = Message.indexOf(Handle);
-    if (handleIndx !== -1) {
-      let afterHandle = Message.substring(handleIndx + Handle.length).trimStart();
-      if (afterHandle.startsWith("/")) afterHandle = afterHandle.slice(1).trimStart();
-      const latEnd = getEndIndex(afterHandle);
-      Message = latEnd !== -1 ? afterHandle.substring(0, latEnd).trim() : afterHandle.trim();
-    }
-  }
-  if (Message == "" || Message == null) {
-    const handleIndex = Handle ? originalMessage.indexOf(Handle) : -1;
-    if (handleIndex !== -1) {
-      Message = getFallbackDescription(originalMessage, handleIndex);
-      if (Message == "$$") {
-        Message = `This product did not contain a valid description. Please check the product for more information`;
-      }
-    }
-  }
-  return Message.trim();
-};
-
-// src/parsers/text/GetPolygonFromProduct.ts
-var GetPolygonFromProduct = (message) => {
-  const coordinates = [];
-  const match = message.match(
-    /LAT\.\.\.LON\s+([\s\S]*?)(?=\r?\n\s*\r?\n\s*[A-Z]|\r?\n\s*\/\*|$)/i
-  );
-  if (!match) return coordinates;
-  const text = match[1].split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !/[A-Za-z]/.test(l)).join(" ").trim();
-  if (!text) return coordinates;
-  const values = text.match(/\d{4,8}/g);
-  if (!values || values.length === 0) return coordinates;
-  const points = [];
-  if (values.every((v2) => v2.length === 8)) {
-    for (const value of values) {
-      const lat = parseInt(value.slice(0, 4), 10) / 100;
-      let lon = parseInt(value.slice(4, 8), 10) / 100;
-      if (lon < 20) lon += 100;
-      points.push({ lat, lon });
-    }
-  } else if (values.every((v2) => v2.length === 4)) {
-    for (let i = 0; i + 1 < values.length; i += 2) {
-      const lat = parseInt(values[i], 10) / 100;
-      const lon = parseInt(values[i + 1], 10) / 100;
-      points.push({ lat, lon });
-    }
-  } else {
-    for (let i = 0; i + 1 < values.length; i += 2) {
-      const latStr = values[i];
-      const lonStr = values[i + 1];
-      if (latStr.length !== 4) continue;
-      if (lonStr.length < 4 || lonStr.length > 5) continue;
-      const lat = parseInt(latStr, 10) / 100;
-      let lon = parseInt(lonStr, 10) / 100;
-      points.push({ lat, lon });
-    }
-  }
-  if (points.length === 0) return coordinates;
-  const isEast = points.some((p2) => p2.lon > 130 && p2.lon < 180);
-  for (const p2 of points) {
-    const lon = isEast ? p2.lon : -p2.lon;
-    if (Number.isFinite(p2.lat) && Number.isFinite(lon) && p2.lat >= -90 && p2.lat <= 90 && lon >= -180 && lon <= 180) {
-      coordinates.push([lon, p2.lat]);
-    }
-  }
-  if (coordinates.length > 2 && (coordinates[0][0] !== coordinates[coordinates.length - 1][0] || coordinates[0][1] !== coordinates[coordinates.length - 1][1])) {
-    coordinates.push([...coordinates[0]]);
-  }
-  return coordinates;
-};
-
-// src/parsers/text/GetTextFromProduct.ts
-var GetTextFromProduct = ({ Message, Find, Append, Removal }) => {
-  const lines = Message.split(`
-`);
-  for (const line of lines) {
-    const matchedFind = Find.find((find) => line.includes(find));
-    if (matchedFind) {
-      let result = line.slice(line.indexOf(matchedFind) + matchedFind.length).trim();
-      if (Removal) {
-        for (const str of Removal) {
-          result = result.toLowerCase().split(str.toLowerCase()).join("");
-        }
-        result = result.replace(matchedFind, "").replace("<", "").trim();
-      }
-      return result.toUpperCase() + (Append ?? ``);
-    }
-  }
-  return null;
-};
-
-// src/enums/ICAO.ts
-var EnumICAO = {
-  "KLUB": "Lubbock, TX",
-  "KLCH": "Lake Charles, LA",
-  "TSTL": "St. Louis, MO",
-  "PABC": "Bethel, AK",
-  "TCMH": "Columbus, OH",
-  "KEPZ": "El Paso, TX",
-  "KCYS": "Cheyenne, WY",
-  "KJKL": "Jackson, KY",
-  "KWNS": "Storm Prediction Center",
-  "KNHC": "National Hurricane Center",
-  "KPAH": "Paducah, KY",
-  "KEMX": "Tucson, AZ",
-  "KMHX": "Morehead City, NC",
-  "PAPD": "Fairbanks, AK",
-  "KDLH": "Duluth, MN",
-  "TADW": "Andrews Air Force Base, MD",
-  "KOKX": "Brookhaven, NY",
-  "KLZK": "Little Rock, AR",
-  "KHGX": "Houston, TX",
-  "TMSY": "New Orleans, LA",
-  "KDGX": "Jackson/Brandon, MS",
-  "KCTP": "Caribou, ME",
-  "KAMA": "Amarillo, TX",
-  "PGUA": "Andersen AFB, GU",
-  "KAPX": "Gaylord, MI",
-  "PAHG": "Kenai, AK",
-  "KLWX": "Sterling, VA",
-  "HWPA2": "Homer, AK",
-  "KGRK": "Fort Hood, TX",
-  "KAKQ": "Wakefield, VA",
-  "ROCO2": "Norman, OK",
-  "KCLX": "Charleston, SC",
-  "TPHX": "Phoenix, AZ",
-  "KNKX": "San Diego, CA",
-  "TDEN": "Denver, CO",
-  "TLAS": "Las Vegas, NV",
-  "KBUF": "Buffalo, NY",
-  "KTLX": "Norman, OK",
-  "KILX": "Lincoln, IL",
-  "KHDC": "Hammond, LA",
-  "KVWX": "Evansville, IN",
-  "TCLT": "Charlotte, NC",
-  "TEWR": "Newark, NJ",
-  "KFSD": "Sioux Falls, SD",
-  "KEAX": "Pleasant Hill, MO",
-  "KICX": "Cedar City, UT",
-  "KHTX": "Huntsville, AL",
-  "PACG": "Sitka, AK",
-  "KSOX": "Santa Ana Mountains, CA",
-  "TPBI": "West Palm Beach, FL",
-  "TSLC": "Salt Lake City, UT",
-  "KGLD": "Goodland, KS",
-  "TRDU": "Raleigh-Durham, NC",
-  "KATX": "Seattle, WA",
-  "TICH": "Wichita, KS",
-  "TSDF": "Louisville, KY",
-  "TBOS": "Boston, MA",
-  "TDCA": "Washington, DC",
-  "KUEX": "Grand Island, NE",
-  "TLKA2": "Talkeetna, AK",
-  "KBGM": "Binghamton, NY",
-  "TLVE": "Cleveland, OH",
-  "KCAE": "Columbia, SC",
-  "KDVN": "Quad Cities, IA",
-  "KABR": "Aberdeen, SD",
-  "KBYX": "Key West, FL",
-  "KMPX": "Minneapolis, MN",
-  "KCRP": "Corpus Christi, TX",
-  "KCBW": "Caribou, ME",
-  "KMRX": "Knoxville, TN",
-  "KSHV": "Shreveport, LA",
-  "KIWA": "Phoenix, AZ",
-  "KRGX": "Reno, NV",
-  "PHKM": "Kamuela, HI",
-  "KABX": "Albuquerque, NM",
-  "KBMX": "Birmingham, AL",
-  "TMDW": "Chicago Midway, IL",
-  "KVAX": "Moody AFB, GA",
-  "KHDX": "Holloman AFB, NM",
-  "KBRO": "Brownsville, TX",
-  "KTWX": "Topeka, KS",
-  "KRTX": "Portland, OR",
-  "KCXX": "Burlington, VT",
-  "KFCX": "Roanoke, VA",
-  "KFFC": "Atlanta, GA",
-  "KBOX": "Boston, MA",
-  "KTLH": "Tallahassee, FL",
-  "KPUX": "Pueblo, CO",
-  "KFDR": "Altus AFB, OK",
-  "KGJX": "Grand Junction, CO",
-  "KDTX": "Detroit, MI",
-  "PHWA": "Waimea, HI",
-  "KMQT": "Marquette, MI",
-  "KSJT": "San Angelo, TX",
-  "KUDX": "Rapid City, SD",
-  "TIAH": "Houston, TX",
-  "KSRX": "Fort Smith, AR",
-  "TJFK": "New York City, NY",
-  "KDDC": "Dodge City, KS",
-  "PAKC": "King Salmon, AK",
-  "PAIH": "Middleton Island, AK",
-  "RODN": "Kadena AB, JA",
-  "TBWI": "Baltimore/Washington, MD",
-  "KIWX": "Northern Indiana, IN",
-  "KFDX": "Cannon AFB, NM",
-  "TMIA": "Miami, FL",
-  "KICT": "Wichita, KS",
-  "TMKE": "Milwaukee, WI",
-  "TFLL": "Fort Lauderdale, FL",
-  "KARX": "La Crosse, WI",
-  "KLRX": "Elko, NV",
-  "KDAX": "Sacramento, CA",
-  "KGRB": "Green Bay, WI",
-  "KLGX": "Langley Hill, WA",
-  "KFTG": "Denver, CO",
-  "KMKX": "Milwaukee, WI",
-  "TTUL": "Tulsa, OK",
-  "TDFW": "Dallas/Fort Worth, TX",
-  "TTPA": "Tampa Bay, FL",
-  "TDAL": "Dallas Love Field, TX",
-  "KDFX": "Laughlin AFB, TX",
-  "KSFX": "Pocatello, ID",
-  "KMTX": "Salt Lake City, UT",
-  "PAEC": "Nome, AK",
-  "RKSG": "Camp Humphreys, KR",
-  "KOAX": "Omaha, NE",
-  "PHMO": "Molokai, HI",
-  "TDTW": "Detroit, MI",
-  "THOU": "Houston, TX",
-  "AWPA2": "Anchorage, AK",
-  "KTYX": "Fort Drum, NY",
-  "KCCX": "State College, PA",
-  "TMSP": "Minneapolis, MN",
-  "KMVX": "Grand Forks, ND",
-  "KBIS": "Bismarck, ND",
-  "KBBX": "Beale AFB, CA",
-  "KVBX": "Vandenberg AFB, CA",
-  "KPOE": "Fort Polk, LA",
-  "KMOB": "Mobile, AL",
-  "KJGX": "Robins AFB, GA",
-  "KMUX": "San Francisco, CA",
-  "TMCI": "Kansas City, MO",
-  "KLSX": "St. Louis, MO",
-  "KMAX": "Medford, OR",
-  "KRAX": "Raleigh/Durham, NC",
-  "KINX": "Tulsa, OK",
-  "RKJK": "Kunsan AB, KR",
-  "KSGF": "Springfield, MO",
-  "TDAY": "Dayton, OH",
-  "KDOX": "Dover AFB, DE",
-  "KGGW": "Glasgow, MT",
-  "KAMX": "Miami, FL",
-  "KENX": "Albany, NY",
-  "KTFX": "Great Falls, MT",
-  "KPBZ": "Pittsburgh, PA",
-  "KMAF": "Midland/Odessa, TX",
-  "KPDT": "Pendleton, OR",
-  "KLNX": "North Platte, NE",
-  "KEOX": "Fort Rucker, AL",
-  "KGSP": "Greer, SC",
-  "KHPX": "Fort Campbell, KY",
-  "KGRR": "Grand Rapids, MI",
-  "KLOT": "Chicago, IL",
-  "TPIT": "Pittsburgh, PA",
-  "KEYX": "Edwards AFB, CA",
-  "TIAD": "Dulles, VA",
-  "KFWS": "Dallas/Fort Worth, TX",
-  "KMLB": "Melbourne, FL",
-  "KMBX": "Minot AFB, ND",
-  "KDMX": "Des Moines, IA",
-  "KEVX": "Eglin AFB, FL",
-  "TBNA": "Nashville, TN",
-  "KDYX": "Dyess AFB, TX",
-  "TOKC": "Oklahoma City, OK",
-  "PHKI": "South Kauai, HI",
-  "TMCO": "Orlando, FL",
-  "KDIX": "Philadelphia, PA",
-  "TORD": "Chicago, IL",
-  "KYUX": "Yuma, AZ",
-  "KVNX": "Vance AFB, OK",
-  "TJUA": "San Juan, PR",
-  "TATL": "Atlanta, GA",
-  "KVTX": "Los Angeles, CA",
-  "KIND": "Indianapolis, IN",
-  "KCBX": "Boise, ID",
-  "KGYX": "Portland, ME",
-  "KMXX": "Maxwell AFB, AL",
-  "TSJU": "San Juan, PR",
-  "KHNX": "San Joaquin Valley, CA",
-  "KLVX": "Louisville, KY",
-  "KMSX": "Missoula, MT",
-  "KJAX": "Jacksonville, FL",
-  "KNQA": "Memphis, TN",
-  "KRIW": "Riverton/Lander, WY",
-  "TCVG": "Covington, KY",
-  "KBLX": "Billings, MT",
-  "TPHL": "Philadelphia, PA",
-  "KRLX": "Charleston, WV",
-  "TMEM": "Memphis, TN",
-  "KCLE": "Cleveland, OH",
-  "KBHX": "Eureka, CA",
-  "KLBB": "Lubbock, TX",
-  "KOTX": "Spokane, WA",
-  "KEWX": "Austin/San Antonio, TX",
-  "KGWX": "Columbus AFB, MS",
-  "KESX": "Las Vegas, NV",
-  "KTBW": "Tampa, FL",
-  "KOHX": "Nashville, TN",
-  "KLTX": "Wilmington, NC",
-  "KFSX": "Flagstaff, AZ",
-  "TIDS": "Indianapolis, IN",
-  "KILN": "Cincinnati, OH",
-  "PAFG": "Fairbanks, AK",
-  "KPQR": "Portland, OR",
-  "KILM": "Wilmington, NC",
-  "KEKA": "Eureka, CA",
-  "KCHS": "Charleston, SC",
-  "KPHI": "Philadelphia/Mt. Holly, NJ",
-  "KUNR": "Rapid City, SD",
-  "KMFL": "Miami, FL",
-  "TJSJ": "San Juan, PR",
-  "KFGF": "Grand Forks, ND",
-  "KSEW": "Seattle, WA",
-  "PAFC": "Anchorage, AK",
-  "KLMK": "Louisville, KY",
-  "PHFO": "Honolulu, HI",
-  "KLIX": "New Orleans/Baton Rouge, LA",
-  "KBOI": "Boise, ID",
-  "KPIH": "Pocatello, ID",
-  "KMTR": "San Francisco/Monterey, CA",
-  "KGJT": "Grand Junction, CO",
-  "PAAQ": "Anchorage, AK",
-  "KABQ": "Albuquerque, NM",
-  "KTAE": "Tallahassee, FL",
-  "KCAR": "Caribou, ME",
-  "KMFR": "Medford, OR",
-  "PGUM": "Guam, GU",
-  "PACR": "Cordova, AK",
-  "PAJK": "Juneau, AK"
-};
-
-// src/components/events/components/GetEventOffice.ts
-var GetEventOffice = ({ Attributes, Organization, VTEC }) => {
-  const office = VTEC != null ? VTEC?.tracking?.split(`.`)[0] : Attributes?.cccc ?? (Organization != null ? Array.isArray(Organization) ? Organization?.[0] : Organization : null);
-  const name = EnumICAO?.[office] ?? null;
-  return { office, name };
-};
-
-// src/enums/Tags.ts
-var EnumTags = {
-  SEVERE_WEATHER: [
-    { match: /A Large And Extremely Dangerous Tornado/i, tag: "Large and Dangerous Tornado" },
-    { match: /This Is A Particularly Dangerous Situation/i, tag: "Particularly Dangerous Situation" },
-    { match: /Weather Spotters Confirmed Tornado/i, tag: "Weather Spotters Confirmed Tornado" },
-    { match: /Law Enforcement Confirmed Tornado/i, tag: "Law Enforcement Confirmed Tornado" },
-    { match: /Radar Confirmed/i, tag: "Radar Confirmed" },
-    { match: /Radar Indicated Rotation/i, tag: "Radar Indicated Rotation" },
-    { match: /Radar Indicated(?! Rotation)/i, tag: "Radar Indicated" },
-    { match: /A Tornado Is On The Ground/i, tag: "Tornado On The Ground" },
-    { match: /Tornado Was Reported Briefly On The Ground/i, tag: "Tornado Briefly On Ground" },
-    { match: /Weather Spotters Reported Funnel Cloud/i, tag: "Confirmed Funnel Cloud" },
-    { match: /Spotters Indicate That A Funnel Cloud Continues With This Storm/i, tag: "Funnel Cloud Continues" },
-    { match: /A Severe Thunderstorm Capable Of Producing A Tornado/i, tag: "Tornado Possible" },
-    { match: /A Tornado May Develop At Any Time/i, tag: "Tornado May Develop" },
-    { match: /A Tornado Watch Remains In Effect/i, tag: "Active Tornado Watch" },
-    { match: /Complete Destruction Is Possible/i, tag: "Extremely Damaging Tornado" },
-    { match: /Potentially Deadly Tornado/i, tag: "Deadly Tornado" },
-    { match: /Life-Threatening Situation/i, tag: "Life Threatening Situation" },
-    { match: /Capable Of Producing A Landspout/i, tag: "Landspout Possible" },
-    { match: /Public Confirmed Tornado/i, tag: "Public Confirmed Tornado" },
-    { match: /Expect Wind Damage/i, tag: "Wind Damage" },
-    { match: /Destructive Winds/i, tag: "Destructive Winds" },
-    { match: /Wind Damage With This Storm Will Occur/i, tag: "Immediate Wind Damage Threat" },
-    { match: /Widespread Wind Damage/i, tag: "Widespread Wind Damage" },
-    { match: /Significant Wind Damage/i, tag: "Significant Wind Damage" },
-    { match: /Tornado Like Wind Speeds/i, tag: "Tornado-Like Wind Speeds" },
-    { match: /Winds Will Strengthen/i, tag: "Strengthening Winds" },
-    { match: /Gusty Winds/i, tag: "Gusty Winds" },
-    { match: /Could Knock Down Tree Limbs/i, tag: "Tree Damage Possible" },
-    { match: /Blow Around Unsecured Objects/i, tag: "Loose Object Damage Possible" },
-    { match: /Unsecured lightweight objects blown about/i, tag: "Loose Objects May Blow Around" },
-    { match: /Many large tree limbs broken off/i, tag: "Tree Limb Damage Possible" },
-    { match: /Some fences and roadway signs blown over/i, tag: "Fence and Sign Damage Possible" },
-    { match: /Hazardous driving conditions on bridges/i, tag: "Hazardous Bridge Travel" },
-    { match: /Scattered power and communications outages/i, tag: "Power Outages Possible" },
-    { match: /Hail Damage To Vehicles Is Expected/i, tag: "Vehicle Damaging Hail" },
-    { match: /Extremely Large Hail/i, tag: "Extremely Large Hail" },
-    { match: /(?<!Extremely )Large Hail/i, tag: "Large Hail" },
-    { match: /Tennis Ball Size Hail/i, tag: "Tennis Ball Size Hail" },
-    { match: /Baseball Size Hail/i, tag: "Baseball Size Hail" },
-    { match: /Golf Ball Size Hail/i, tag: "Golf Ball Size Hail" },
-    { match: /Quarter Size Hail/i, tag: "Quarter Size Hail" },
-    { match: /Ping Pong Ball Size Hail/i, tag: "Ping Pong Ball Size Hail" },
-    { match: /Nickel Size Hail/i, tag: "Nickel Size Hail" },
-    { match: /Hail Driven By Severe Winds/i, tag: "Wind Driven Hail" },
-    { match: /Prepare Immediately For Large Hail/i, tag: "Large Hail" },
-    { match: /Half Inch Hail/i, tag: "Half Inch Hail" },
-    { match: /Frequent Lightning/i, tag: "Frequent Lightning" },
-    { match: /Deadly Cloud To Ground Lightning/i, tag: "Deadly Cloud To Ground Lightning" },
-    { match: /Continuous Cloud To Ground Lightning/i, tag: "Continuous Cloud To Ground Lightning" },
-    { match: /Frequent Cloud To Ground Lightning/i, tag: "Frequent Cloud To Ground Lightning" },
-    { match: /Lightning Can Strike \d+ Miles Away/i, tag: "Lightning Safety Threat" },
-    { match: /Showers and thunderstorms with gusty winds may still occur/i, tag: "Gusty Thunderstorms Possible" }
-  ],
-  FLOOD: [
-    { match: /Flash Flooding Caused By Thunderstorms/i, tag: "Thunderstorm Flash Flooding" },
-    { match: /Flash Flooding Caused By Heavy Rain/i, tag: "Heavy Rain Flash Flooding" },
-    { match: /Torrential Rainfall/i, tag: "Torrential Rainfall" },
-    { match: /May Lead To Flash Flooding/i, tag: "Flash Flooding Possible" },
-    { match: /Minor Flooding Is Occurring/i, tag: "Minor Flooding Occurring" },
-    { match: /Localized Flooding/i, tag: "Localized Flooding Possible" },
-    { match: /Do Not Drive Your Vehicle Through Flooded Roadways/i, tag: "Flooded Roadways" },
-    { match: /No storm surge inundation forecast/i, tag: "No Storm Surge Inundation" },
-    { match: /Localized storm surge possible/i, tag: "Localized Storm Surge Possible" },
-    { match: /Peak Storm Surge Inundation/i, tag: "Storm Surge Inundation Risk" },
-    { match: /Potential for storm surge flooding/i, tag: "Storm Surge Flooding Possible" },
-    { match: /Small streams, creeks, and ditches may become swollen/i, tag: "Small Stream Flooding Risk" },
-    { match: /Rivers and tributaries may quickly rise/i, tag: "Rapid River Rise Possible" },
-    { match: /Flood waters can enter a few structures/i, tag: "Flood Damage Possible" },
-    { match: /Rapid ponding of water occurs/i, tag: "Water Ponding Possible" },
-    { match: /Brief road and bridge closures/i, tag: "Road Closures Possible" }
-  ],
-  WINTER_WEATHER: [
-    { match: /Frostbite And Hypothermia Are Likely/i, tag: "Frostbite and Hypothermia Likely" },
-    { match: /Very Cold Temperatures Can Lead To Hypothermia/i, tag: "Hypothermia Risk" },
-    { match: /Hypothermia If Precautions Are Not Taken/i, tag: "Hypothermia Risk" },
-    { match: /Frostbite And Hypothermia Will Occur If Unprotected Skin/i, tag: "Frostbite Risk" },
-    { match: /Temperatures Could Cause Ruptured Water Pipes/i, tag: "Ruptured Water Pipes Possible" },
-    { match: /Blowing Snow Which Could Reduce Visibility/i, tag: "Reduced Visibility From Blowing Snow" },
-    { match: /Lake Effect Snow Expected/i, tag: "Lake Effect Snow" },
-    { match: /Slick And Icy Spots On Roads/i, tag: "Icy Roads" },
-    { match: /Hazardous Roadways And Black Ice/i, tag: "Black Ice" },
-    { match: /Icy Patches May Be More Common On Bridges/i, tag: "Bridge Icing" }
-  ],
-  COASTAL_MARINE: [
-    { match: /Rip Currents Can Sweep Even The Best Swimmer/i, tag: "Dangerous Rip Currents" },
-    { match: /Small Craft Could Be Damaged/i, tag: "Small Craft Damage Possible" },
-    { match: /No Tsunami Threat/i, tag: "No Tsunami Threat" },
-    { match: /Tsunami Threat Exists/i, tag: "Tsunami Threat Exists" },
-    { match: /TROPICAL STORM WARNING IN EFFECT/i, tag: "Tropical Storm Warning" },
-    { match: /TROPICAL STORM WARNING REMAINS IN EFFECT/i, tag: "Tropical Storm Warning Continues" },
-    { match: /Tropical storm[- ]force winds/i, tag: "Tropical Storm Force Winds" },
-    { match: /hazardous wind/i, tag: "Hazardous Winds" },
-    { match: /hazardous seas/i, tag: "Hazardous Seas" },
-    { match: /could capsize or damage vessels/i, tag: "Vessel Damage Risk" },
-    { match: /reduce visibility/i, tag: "Reduced Visibility" },
-    { match: /Mariners should alter plans/i, tag: "Marine Travel Disruption" },
-    { match: /Remain in port/i, tag: "Remain In Port" },
-    { match: /seek safe harbor/i, tag: "Seek Safe Harbor" },
-    { match: /secure the vessel for severe conditions/i, tag: "Secure Vessel" }
-  ],
-  SAFETY_INFO: [
-    { match: /Seek Shelter Now/i, tag: "Seek Shelter Now" },
-    { match: /Seek Shelter Immediately/i, tag: "Seek Shelter Immediately" },
-    { match: /Move To An Interior Room/i, tag: "Move To Interior Room" },
-    { match: /Move To Safe Shelter Now/i, tag: "Move To Safe Shelter" },
-    { match: /Potentially Deadly Storm/i, tag: "Potentially Deadly Storm" },
-    { match: /Serious Injury And Significant Property Damage/i, tag: "Serious Damage Possible" },
-    { match: /People And Animals Outdoors Will Be Injured/i, tag: "Outdoor Injury Risk" },
-    { match: /IMMINENT DANGEROUS WEATHER CONDITIONS/i, tag: "Imminent Dangerous Weather" },
-    { match: /Follow the instructions of local officials/i, tag: "Follow Local Officials" },
-    { match: /Monitor forecasts/i, tag: "Monitor Forecast Updates" },
-    { match: /Complete preparations.*before conditions become unsafe/i, tag: "Complete Preparations Early" },
-    { match: /Leave immediately if evacuation orders are given/i, tag: "Evacuate If Ordered" },
-    { match: /Heed any flood watches and warnings/i, tag: "Monitor Flood Alerts" },
-    { match: /Listen for changes in the forecast/i, tag: "Stay Weather Aware" },
-    { match: /Travel Could Be Very Difficult/i, tag: "Difficult Travel Conditions" },
-    { match: /Expect Disruptions/i, tag: "Travel Disruptions Expected" },
-    { match: /Trained Weather Spotters/i, tag: "Confirmed By Storm Spotters" },
-    { match: /Doppler Radar/i, tag: "Confirmed By Radar" },
-    { match: /Source\.\.\.Storm Spotters/i, tag: "Confirmed By Storm Spotters" },
-    { match: /Source\.\.\.Doppler Radar/i, tag: "Confirmed By Radar" },
-    { match: /Source\.\.\.Automated Gauges/i, tag: "Confirmed By Automated Gauges" },
-    { match: /Source\.\.\.Radar Confirmed/i, tag: "Confirmed By Radar" },
-    { match: /Source\.\.\.Radar Indicated/i, tag: "Radar Indicated" },
-    { match: /Source\.\.\.Public/i, tag: "Confirmed By Public" },
-    { match: /Source\.\.\.Amateur Radio/i, tag: "Confirmed By Amateur Radio" },
-    { match: /Source\.\.\.Emergency Management/i, tag: "Confirmed By Emergency Management" },
-    { match: /Source\.\.\.Law Enforcement Reported/i, tag: "Confirmed By Law Enforcement" },
-    { match: /Source\.\.\.Broadcast Media/i, tag: "Confirmed By Broadcast Media" },
-    { match: /Source\.\.\.Media/i, tag: "Confirmed By Media" },
-    { match: /Source\.\.\.Media Reported/i, tag: "Confirmed By Media" },
-    { match: /Doppler Radar And Automated Gauges/i, tag: "Confirmed By Radar and Gauges" },
-    { match: /Potential Impacts:\s*Limited/i, tag: "Limited Impacts Expected" },
-    { match: /Potential Impacts:\s*Little to None/i, tag: "Minimal Impacts Expected" },
-    { match: /Slow Down And Allow Extra Time/i, tag: "Allow Extra Travel Time" },
-    { match: /Should Exercise Caution/i, tag: "Exercise Caution" },
-    { match: /Heat Illnesses/i, tag: "Heat Illness Risk" },
-    { match: /\bIntensifying\b/i, tag: "Intensifying Conditions" }
-  ]
-};
-
-// src/components/events/components/GetEventTags.ts
-var GetEventTags = (message) => {
-  if (!message) return [];
-  return [...new Set(
-    Object.values(EnumTags).flat().filter(({ match }) => match.test(message)).map(({ tag }) => tag)
-  )];
-};
-
-// src/components/events/components/GetEventDirection.ts
-var GetEventDirection = (message) => {
-  const direction = message.replace(/\s+/g, " ").match(/moving\s+(north|south|east|west|northeast|northwest|southeast|southwest)\s+at\s+(\d+)\s+mph/i);
-  if (direction) {
-    return direction[1].charAt(0).toUpperCase() + direction[1].slice(1).toLowerCase() + ` @ ${direction[2]} MPH`;
-  }
-  return null;
-};
-
-// src/components/events/components/GetEventProperties.ts
-var GetEventProperties = ({ Message, Attributes, UGC, VTEC }) => {
-  const organization = Message.match(EnumExpressions.wmo)?.[0] ?? null;
-  const polygons = GetPolygonFromProduct(Message);
-  const properties = {
-    locations: UGC?.Locations?.join(`; `) ?? null,
-    locations_array: UGC?.Locations ?? [],
-    regions: [...new Set(
-      UGC?.Zones?.map((location) => location.match(/^([A-Z]{2})[CZ](\d{3})$/)?.[1]).filter(Boolean) ?? []
-    )],
-    regions_string: (() => {
-      const abbrs = [...new Set(UGC?.Zones?.map((l) => l.match(/^([A-Z]{2})[CZ](\d{3})$/)?.[1]).filter(Boolean) ?? [])];
-      return abbrs.length ? abbrs.join(`-`) : null;
-    })(),
-    description: GetDescriptionFromProduct({ Message, Handle: VTEC?.raw ?? null }),
-    attributes: Attributes,
-    geocode: {
-      office: GetEventOffice({ Attributes, Organization: organization, VTEC }),
-      organization,
-      ugc: UGC?.Zones ?? [],
-      census: {},
-      polygon: polygons.length > 0 ? Buffer.from(JSON.stringify([polygons])).toString("base64") : null,
-      polygon_generated: polygons.length > 0 ? true : false
-    },
-    parameters: {
-      tags: GetEventTags(Message),
-      instructions: GetTextFromProduct({ Message, Find: [`For your protection`, `do not`, `use extreme caution`], Append: `...`, Removal: [`.`] }) ?? null,
-      source: GetTextFromProduct({ Message, Find: [`SOURCE...`], Removal: [`.`] }) ?? null,
-      hazards: GetTextFromProduct({ Message, Find: [`HAZARD...`], Removal: [`.`] }) ?? null,
-      impacts: GetTextFromProduct({ Message, Find: [`IMPACT...`], Removal: [`.`] }) ?? null,
-      estimated_hail_size: GetTextFromProduct({ Message, Find: [`MAX HAIL SIZE...`, `HAIL...`], Removal: ["in"] }) ?? null,
-      estimated_wind_gusts: GetTextFromProduct({ Message, Find: [`MAX WIND GUST...`, `WIND...`] }) ?? null,
-      direction: GetEventDirection(Message) ?? null,
-      damage_threat: GetTextFromProduct({ Message, Find: [`DAMAGE THREAT...`, `SNOW SQUALL IMPACT...`], Removal: [] }) ?? null,
-      snowsquall_threat: GetTextFromProduct({ Message, Find: [`SNOW SQUALL...`] }) ?? null,
-      tornado_threat: GetTextFromProduct({ Message, Find: [`TORNADO...`, `WATERSPOUT...`] }) ?? null,
-      flood_threat: GetTextFromProduct({ Message, Find: [`FLASH FLOOD...`] }) ?? null,
-      wind_threat: GetTextFromProduct({ Message, Find: [`WIND THREAT...`] }) ?? null,
-      hail_threat: GetTextFromProduct({ Message, Find: [`HAIL THREAT...`], Removal: [] }) ?? null
-    },
-    discussion_parameters: {
-      discussion_number: GetTextFromProduct({ Message, Find: [`Mesoscale Discussion `], Removal: [`Mesoscale Discussion`, `Number`, `...`] })?.toString()?.padStart(4, "0") ?? null,
-      discussion_concerning: GetTextFromProduct({ Message, Find: [`Concerning...`] }) ?? null,
-      discussion_max_tornado: GetTextFromProduct({ Message, Find: [`MOST PROBABLE PEAK TORNADO INTENSITY...`] }) ?? null,
-      discussion_max_hail: GetTextFromProduct({ Message, Find: [`MOST PROBABLE PEAK HAIL SIZE...`] }) ?? null,
-      discussion_max_wind: GetTextFromProduct({ Message, Find: [`MOST PROBABLE PEAK WIND GUST...`] }) ?? null,
-      discussion_watch_issuance: GetTextFromProduct({ Message, Find: [`Probability of Watch Issuance...`], Removal: [`percent`] }) ?? null
-    },
-    watch_parameters: {
-      watch_number: VTEC?.watch?.national || VTEC?.watch?.tropical ? GetTextFromProduct({ Message, Find: [`ITIES FOR`, `UPDATE FOR`, `Watch Number `], Removal: [`%`, `<`, `:`] })?.replace(/(WT|WS|)/g, "")?.trim()?.toString()?.padStart(4, "0") ?? VTEC?.tracking?.slice(-4)?.toString()?.padStart(4, "0") ?? null : null,
-      watch_type: Message.includes(`TORNADO WATCH`) ? `Tornado` : Message.includes(`SEVERE`) ? `Severe` : null,
-      additional_tornadoes_probability: GetTextFromProduct({ Message, Find: [`PROB OF 2 OR MORE TORNADOES`], Removal: [`%`, `<`, `:`] }) ?? null,
-      strong_tornadoes_probability: GetTextFromProduct({ Message, Find: [`PROB OF 1 OR MORE STRONG /EF2-EF5/ TORNADOES`], Removal: [`%`, `<`, `:`] }) ?? null,
-      severe_wind_probability: GetTextFromProduct({ Message, Find: [`PROB OF 10 OR MORE SEVERE WIND EVENTS`], Removal: [`%`, `<`, `:`] }) ?? null,
-      severe_hail_probability: GetTextFromProduct({ Message, Find: [`PROB OF 10 OR MORE SEVERE HAIL EVENTS`], Removal: [`%`, `<`, `:`] }) ?? null,
-      hail_2in_probability: GetTextFromProduct({ Message, Find: [`PROB OF 1 OR MORE HAIL EVENTS >= 2 INCHES`], Removal: [`%`, `<`, `:`] }) ?? null,
-      combined_hail_wind_probability: GetTextFromProduct({ Message, Find: [`PROB OF 6 OR MORE COMBINED SEVERE HAIL/WIND EVENTS`], Removal: [`%`, `<`, `:`] }) ?? null,
-      max_hail_in: GetTextFromProduct({ Message, Find: [`MAX HAIL /INCHES/`], Removal: [`%`, `<`, `:`] }) ?? null,
-      max_wind_surface: GetTextFromProduct({ Message, Find: [`MAX WIND GUSTS SURFACE /KNOTS/`], Removal: [`%`, `<`, `:`] }) ?? null,
-      max_tops_x100feet: GetTextFromProduct({ Message, Find: [`MAX TOPS /X 100 FEET/`], Removal: [`%`, `<`, `:`] }) ?? null,
-      pds_watch: GetTextFromProduct({ Message, Find: [`PARTICULARLY DANGEROUS SITUATION`], Removal: [`%`, `<`, `:`] }) === `YES` ? true : null
-    }
-  };
-  if (isNaN(Number(properties.watch_parameters.watch_number))) {
-    properties.watch_parameters.watch_number = null;
-  }
-  return properties;
-};
-
-// src/parsers/text/GetExpiryFromProduct.ts
-var GetExpiryFromProduct = (message) => {
-  const match = message.match(/\b\d{6}Z\s*-\s*(\d{6})Z\b/);
-  if (!match) {
-    return null;
-  }
-  const [, expiry] = match;
-  const day = parseInt(expiry.slice(0, 2), 10);
-  const hour = parseInt(expiry.slice(2, 4), 10);
-  const minute = parseInt(expiry.slice(4, 6), 10);
-  const now = /* @__PURE__ */ new Date();
-  const expires = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), day, hour, minute));
-  return expires;
-};
-
-// src/components/events/components/GetEventHeader.ts
-var GetEventHeader = ({ Properties, VTEC, Type }) => {
-  const properties = Properties;
-  const vtec = VTEC ?? null;
-  const ugc = properties.geocode.ugc != null ? properties.geocode.ugc.join(`-`) : `0`;
-  return `ZCZC-ATMOSX-${Type?.Prefix}-${ugc}-${vtec?.status ?? `Issued`}-${(/* @__PURE__ */ new Date()).toISOString().replace(/[-:]/g, "").split(".")[0]}-${properties.geocode.office.office ?? `KWNS`}`;
-};
-
-// src/components/events/components/GetEventTracking.ts
-var GetEventTracking = ({ Type, Stanza, Attributes, Properties, WMO, VTEC }) => {
-  if (Type === `RAW`) {
-    const getWatchNumber = Properties?.watch_parameters?.watch_number ?? null;
-    if (getWatchNumber) {
-      return `${Properties.geocode.office.office}.${Stanza.Type.Prefix}.A.${getWatchNumber}`;
-    }
-    return `${Properties.geocode.office.office}.${Attributes.ttaaii}.${Attributes.id.slice(-4).replace(`.`, ``) ?? "0"}`;
-  }
-  if (Type === `VTEC`) {
-    return VTEC?.tracking;
-  }
-  if (Type === `API`) {
-    if (VTEC) {
-      const vtecValue = Array.isArray(VTEC) ? VTEC[0].vtec : VTEC?.raw;
-      const splitVTEC = vtecValue.split(".");
-      return `${splitVTEC[2]}.${splitVTEC[3]}.${splitVTEC[4]}.${splitVTEC[5]}`;
-    }
-    const wmoMatch = WMO?.Identifier?.match(/([A-Z]{4}\d{2})\s+([A-Z]{4})/);
-    const station = wmoMatch?.[2] ?? "---";
-    if (WMO?.ID) {
-      const idMatch = WMO?.ID.match(/([a-f0-9]+)\.(\d+)\.(\d+)$/);
-      return `${station}.${idMatch?.[0]?.replace(/\./g, "") ?? "---"}`;
-    }
-    const id2 = wmoMatch?.[1] ?? "---";
-    return `${station}.${id2?.replace(/\./g, "") ?? "---"}`;
-  }
-};
-
-// src/components/utilities/GetMatched.ts
-var GetMatched = ({ Strings, String: String2 }) => {
-  const isMatched = Strings.some((pattern) => {
-    if (!pattern) return false;
-    const lowerP = pattern.toLowerCase();
-    const lowerS = String2.toLowerCase();
-    if (lowerP === "*" || lowerP === lowerS) return true;
-    if (lowerP.includes("*")) {
-      const regex = "^" + lowerP.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*") + "$";
-      return new RegExp(regex).test(lowerS);
-    }
-    return false;
-  });
-  return isMatched;
-};
-
-// src/components/events/components/GetEventTheme.ts
-var GetEventTheme = (Event) => {
-  return Bootstrap.Settings.GlobalSettings.Themes.find((theme) => GetMatched({ Strings: [theme.Event], String: Event }))?.RGB ?? EnumThemes.find((theme) => theme.Event === `Default`)?.RGB ?? `rgb(56, 72, 88)`;
-};
-
-// src/events/ParseText.ts
-var ParseText = async (Stanza) => {
-  const getMessages = Stanza?.Message?.split(/(?=\$\$)/g)?.map((message) => message.trim())?.filter((message) => message && message !== "$$")?.filter((message) => message.length > 25);
-  if (!getMessages || getMessages?.length == 0) return;
-  for (const message of getMessages) {
-    const tick = performance.now();
-    const attributes = Stanza?.Attributes;
-    const props = GetEventProperties({ Message: message, Attributes: attributes });
-    const header = GetEventHeader({ Properties: props, VTEC: null, Type: Stanza.Type });
-    const issued = new Date(attributes.issue);
-    const expires = new Date(Date.now() + 12 * 60 * 60 * 1e3);
-    const matches = EnumMatches[Stanza.Type.Prefix]?.find((match) => match.match.test(message.toUpperCase()));
-    let expiration = GetExpiryFromProduct(message);
-    let event = matches?.label;
-    let isStatement = matches?.statement ?? false;
-    if (!event) {
-      event = Stanza.Type.Type;
-      if (!Stanza.Type.Discovered) {
-        event += ` (Unknown AWIPS)`;
-      }
-      if (!expiration) {
-        isStatement = true;
-        expiration = new Date(issued.getTime() + 120 * 1e3);
-      }
-    }
-    Bootstrap.Cache.Parsed.push({
-      type: `Feature`,
-      geometry: {
-        type: `Polygon`,
-        coordinates: []
-      },
-      properties: {
-        event,
-        parent: event,
-        status: isStatement ? `Statement` : `Issued`,
-        issued: !isNaN(issued.getTime()) ? issued.toISOString() : (/* @__PURE__ */ new Date()).toISOString(),
-        expires: expiration && !isNaN(expiration.getTime()) ? expiration.toISOString() : expires.toISOString(),
-        theme: GetEventTheme(event),
-        ...props,
-        metadata: {
-          ms: performance.now() - tick,
-          source: `events.text`,
-          tracking: GetEventTracking({ Type: `RAW`, Stanza, Attributes: attributes, Properties: props }),
-          header,
-          vtec: null,
-          hvtec: null,
-          raw: message,
-          history: [
-            {
-              description: props.description,
-              issued: !isNaN(issued.getTime()) ? issued.toISOString() : (/* @__PURE__ */ new Date()).toISOString(),
-              status: `Issued`
-            }
-          ]
-        }
-      }
-    });
-    SetDebug({ Title: `ParseText`, Message: `${Math.round(performance.now() - tick)}ms` });
-  }
-};
-
-// src/parsers/ugc/GetHeader.ts
-var GetHeader = (message) => {
-  const start = message.search(EnumExpressions.ugc1);
-  const sub = message.substring(start);
-  const end = sub.search(EnumExpressions.ugc2);
-  const fin = sub.substring(0, end).replace(/\s+/g, "").slice(0, -1);
-  return fin ?? null;
-};
-
-// src/parsers/ugc/GetZones.ts
-var GetZones = (header) => {
-  const splits = header.split("-");
-  const zones = [];
-  let state = splits[0].substring(0, 2);
-  const format = splits[0].substring(2, 3);
-  for (const part of splits) {
-    if (/^[A-Z]/.test(part)) {
-      state = part.substring(0, 2);
-      if (part.includes(">")) {
-        const [start, end] = part.split(">");
-        const startNum = parseInt(start.substring(3), 10);
-        const endNum = parseInt(end, 10);
-        for (let j2 = startNum; j2 <= endNum; j2++) {
-          zones.push(`${state}${format}${j2.toString().padStart(3, "0")}`);
-        }
-      } else {
-        zones.push(part);
-      }
-      continue;
-    }
-    if (part.includes(">")) {
-      const [start, end] = part.split(">");
-      const startNum = parseInt(start, 10);
-      const endNum = parseInt(end, 10);
-      for (let j2 = startNum; j2 <= endNum; j2++) {
-        zones.push(`${state}${format}${j2.toString().padStart(3, "0")}`);
-      }
-    } else {
-      zones.push(`${state}${format}${part}`);
-    }
-  }
-  return zones.filter((item) => item !== "");
-};
-
-// src/parsers/ugc/GetExpiry.ts
-var GetExpiry = (message) => {
-  const match = message.match(/\b(\d{6})-/);
-  if (!match) {
-    return null;
-  }
-  const [, expiry] = match;
-  const day = parseInt(expiry.slice(0, 2), 10);
-  const hour = parseInt(expiry.slice(2, 4), 10);
-  const minute = parseInt(expiry.slice(4, 6), 10);
-  const now = /* @__PURE__ */ new Date();
-  const expires = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), day, hour, minute));
-  return expires.toISOString();
-};
-
-// src/parsers/ugc/GetCache.ts
-var GetCache = (key) => {
-  return Bootstrap.Cache.UGC.get(key);
-};
-
-// src/parsers/ugc/SetCache.ts
-var SetCache = ({ Key, Value }) => {
-  if (Bootstrap.Cache.UGC.size >= 5e3) {
-    const firstKey = Bootstrap.Cache.UGC.keys().next().value;
-    Bootstrap.Cache.UGC.delete(firstKey);
-  }
-  Bootstrap.Cache.UGC.set(Key, Value);
-};
-
-// src/parsers/ugc/GetLocations.ts
-var GetLocations = async (zones) => {
-  const uniqueZones = Array.from(new Set(zones));
-  const results = [];
-  const missing = [];
-  for (let i = 0; i < uniqueZones.length; i++) {
-    const zone = uniqueZones[i];
-    const cached = GetCache(zone);
-    if (cached) {
-      for (let j2 = 0; j2 < cached.length; j2++) {
-        results.push(cached[j2]);
-      }
-    } else {
-      missing.push(zone);
-    }
-  }
-  if (missing.length > 0) {
-    const rows = await Bootstrap.Database.prepare(
-      `SELECT id, location FROM shapefiles WHERE id IN (${missing.map(() => "?").join(",")})`
-    ).all(...missing);
-    for (let i = 0; i < rows.length; i++) {
-      const r = rows[i];
-      SetCache({ Key: r.id, Value: [r.location] });
-      results.push(r.location);
-    }
-  }
-  return Array.from(new Set(results));
-};
-
-// src/parsers/ugc/UGCExtract.ts
-var UGCExtract = async (message) => {
-  const expires = GetExpiry(message);
-  const head = GetHeader(message);
-  const ugcs = GetZones(head);
-  const areas = await GetLocations(ugcs);
-  if (!head || ugcs?.length == 0) return;
+// src/components/stanza/ValidateStanza.ts
+var ValidateStanza = ({ Stanza }) => {
+  if (!Stanza.is(`message`)) return null;
+  const cb = Stanza?.getChild(`x`);
+  if (!cb || !cb.children || !cb.attrs?.awipsid || !cb.attrs?.awipsid.length) return null;
+  const cAttributes = cb.attrs;
+  const cMessage = unescape(cb.children?.[0]);
+  const cCAP = cMessage.includes(`<?xml`) && cMessage.includes(`<areaDesc>`);
+  const cVTEC = cMessage.match(ENUM_REGULAR_EXPRESSIONS.VTEC) != null;
+  const cUGC = cMessage.match(ENUM_REGULAR_EXPRESSIONS.UGC_PT1) != null;
+  const { Name, ID, Discovered } = GetAwipsType({ Attributes: cAttributes });
+  if (Name == null) return null;
   return {
-    Zones: ugcs,
-    Locations: areas,
-    Expires: expires
-  };
-};
-
-// src/events/ParseUGC.ts
-var ParseUGC = async (Stanza) => {
-  const getMessages = Stanza?.Message?.split(/(?=\$\$)/g)?.map((message) => message.trim())?.filter((message) => message && message !== "$$")?.filter((message) => message.length > 25);
-  if (!getMessages || getMessages?.length == 0) return;
-  for (const message of getMessages) {
-    const tick = performance.now();
-    const attributes = Stanza?.Attributes;
-    const A2 = await UGCExtract(message);
-    if (A2 != null) {
-      const props = GetEventProperties({ Message: message, Attributes: attributes, UGC: A2 });
-      const issued = new Date(attributes.issue);
-      const expires = new Date(A2.Expires);
-      const header = GetEventHeader({ Properties: props, VTEC: null, Type: Stanza.Type });
-      const matches = EnumMatches[Stanza.Type.Prefix]?.find((match) => match.match.test(message.toUpperCase()));
-      let event = matches?.label;
-      let isStatement = matches?.statement ?? false;
-      if (!event) {
-        event = Stanza.Type.Type;
-        if (!Stanza.Type.Discovered) {
-          event += ` (AWIPSID)`;
-        }
-        isStatement = true;
-      }
-      Bootstrap.Cache.Parsed.push({
-        type: `Feature`,
-        geometry: {
-          type: `Polygon`,
-          coordinates: []
-        },
-        properties: {
-          event,
-          parent: event,
-          status: isStatement ? `Statement` : `Issued`,
-          issued: !isNaN(issued.getTime()) ? issued.toISOString() : (/* @__PURE__ */ new Date()).toISOString(),
-          expires: isStatement ? new Date(issued.getTime() + 120 * 1e3).toISOString() : !isNaN(expires.getTime()) ? expires.toISOString() : new Date(Date.now() + 12 * 60 * 60 * 1e3).toISOString(),
-          theme: GetEventTheme(event),
-          ...props,
-          metadata: {
-            ms: performance.now() - tick,
-            source: `events.ugc`,
-            tracking: GetEventTracking({ Type: `RAW`, Stanza, Attributes: attributes, Properties: props }),
-            header,
-            vtec: null,
-            hvtec: null,
-            raw: message,
-            history: [
-              {
-                description: props.description,
-                issued: !isNaN(issued.getTime()) ? issued.toISOString() : (/* @__PURE__ */ new Date()).toISOString(),
-                status: `Issued`
-              }
-            ]
-          }
-        }
-      });
-      SetDebug({ Title: `ParseUGC`, Message: `${Math.round(performance.now() - tick)}ms` });
-    }
-  }
-};
-
-// src/enums/Products.ts
-var EnumProducts = {
-  "O": "Operational Product",
-  "T": "Test Product",
-  "E": "Experimental Product",
-  "X": "Experimental Product (Non-Operational)"
-};
-
-// src/enums/Events.ts
-var EnumEvents = {
-  "AF": "Ashfall",
-  "AS": "Air Stagnation",
-  "BH": "Beach Hazard",
-  "BW": "Brisk Wind",
-  "BZ": "Blizzard",
-  "CF": "Coastal Flood",
-  "DF": "Debris Flow",
-  "DS": "Dust Storm",
-  "EC": "Extreme Cold",
-  "EH": "Excessive Heat",
-  "XH": "Extreme Heat",
-  "EW": "Extreme Wind",
-  "FA": "Areal Flood",
-  "FF": "Flash Flood",
-  "FG": "Dense Fog",
-  "FL": "Flood",
-  "FR": "Frost",
-  "FW": "Fire Weather",
-  "FZ": "Freeze",
-  "GL": "Gale",
-  "HF": "Hurricane Force Wind",
-  "HT": "Heat",
-  "HU": "Hurricane",
-  "HW": "High Wind",
-  "HY": "Hydrologic",
-  "HZ": "Hard Freeze",
-  "IS": "Ice Storm",
-  "LE": "Lake Effect Snow",
-  "LO": "Low Water",
-  "LS": "Lakeshore Flood",
-  "LW": "Lake Wind",
-  "MA": "Special Marine",
-  "EQ": "Earthquake",
-  "MF": "Dense Fog",
-  "MH": "Ashfall",
-  "MS": "Dense Smoke",
-  "RB": "Small Craft for Rough Bar",
-  "RP": "Rip Current Risk",
-  "SC": "Small Craft",
-  "SE": "Hazardous Seas",
-  "SI": "Small Craft for Winds",
-  "SM": "Dense Smoke",
-  "SQ": "Snow Squall",
-  "SR": "Storm",
-  "SS": "Storm Surge",
-  "SU": "High Surf",
-  "SV": "Severe Thunderstorm",
-  "SW": "Small Craft for Hazardous Seas",
-  "TO": "Tornado",
-  "TR": "Tropical Storm",
-  "TS": "Tsunami",
-  "TY": "Typhoon",
-  "SP": "Special Weather",
-  "UP": "Heavy Freezing Spray",
-  "WC": "Wind Chill",
-  "WI": "Wind",
-  "WS": "Winter Storm",
-  "WW": "Winter Weather",
-  "ZF": "Freezing Fog",
-  "ZR": "Freezing Rain",
-  "ZY": "Freezing Spray"
-};
-
-// src/enums/Actions.ts
-var EnumActions = {
-  "W": "Warning",
-  "F": "Forecast",
-  "A": "Watch",
-  "O": "Outlook",
-  "Y": "Advisory",
-  "N": "Synopsis",
-  "S": "Statement"
-};
-
-// src/enums/Status.ts
-var EnumStatus = {
-  "NEW": "Issued",
-  "CON": "Updated",
-  "EXT": "Extended",
-  "EXA": "Extended",
-  "EXB": "Extended",
-  "UPG": "Upgraded",
-  "COR": "Correction",
-  "ROU": "Routine",
-  "CAN": "Cancelled",
-  "EXP": "Expired"
-};
-
-// src/parsers/vtec/GetExpiry.ts
-var GetExpiry2 = (dates) => {
-  if (dates?.[1] == `000000T0000Z`) return "Invalid Date Format";
-  const expires = `${(/* @__PURE__ */ new Date()).getFullYear().toString().substring(0, 2)}${dates[1].substring(0, 2)}-${dates[1].substring(2, 4)}-${dates[1].substring(4, 6)}T${dates[1].substring(7, 9)}:${dates[1].substring(9, 11)}:00`;
-  const local = new Date(new Date(expires).getTime() - 4 * 60 * 6e4);
-  const pad = (n) => n.toString().padStart(2, "0");
-  return `${local.getFullYear()}-${pad(local.getMonth() + 1)}-${pad(local.getDate())}T${pad(local.getHours())}:${pad(local.getMinutes())}:00.000-04:00`;
-};
-
-// src/parsers/vtec/VTECExtract.ts
-var VTECExtract = (message) => {
-  if (!message) return null;
-  const getVTECs = message.match(EnumExpressions.vtec) ?? [];
-  const vtecs = [];
-  for (const vtec of getVTECs) {
-    const sub = vtec.split(`.`);
-    if (sub?.length < 7) continue;
-    const dates = sub[6]?.split(`-`);
-    vtecs.push({
-      raw: vtec,
-      type: EnumProducts[sub[0]],
-      tracking: `${sub[2]}.${sub[3]}.${sub[4]}.${sub[5]}`,
-      event: `${EnumEvents[sub[3]]} ${EnumActions[sub[4]]}`,
-      status: EnumStatus[sub[1]],
-      wmo: message.match(EnumExpressions.wmo)?.[0] ?? null,
-      expires: GetExpiry2(dates),
-      watch: {
-        severe: (sub[4] == `A` || sub[4] == `Y`) && (sub[3] == `TO` || sub[3] == `SV`),
-        tropical: (sub[4] == `A` || sub[4] == `Y`) && (sub[3] == `TR` || sub[3] == `HU`),
-        national: [`KWNS`, `KNHC`].includes(sub[2])
-      }
-    });
-  }
-  return vtecs.length > 0 ? vtecs : null;
-};
-
-// src/enums/Causes.ts
-var EnumCauses = {
-  "SM": "Snow Melt",
-  "RS": "Rain/Snow Melt",
-  "ER": "Excessive Rain",
-  "DM": "Dam/Levee Failure",
-  "IJ": "Ice Jam",
-  "GO": "Glacier Lake Outburst",
-  "IC": "Ice",
-  "FS": "Flash Flood / Storm Surge",
-  "FT": "Tidal Effects",
-  "ET": "Elevated Upstream Flow",
-  "MC": "Other Multiple Causes",
-  "WT": "Wind and/or Tidal Effects",
-  "DR": "Reservoir Release",
-  "UU": "Unknown",
-  "OT": "Other Effects"
-};
-
-// src/enums/Records.ts
-var EnumRecords = {
-  "NO": "No Record Expected",
-  "NR": "Near Record or possible record",
-  "UU": "Unknown history of records",
-  "OO": "Other"
-};
-
-// src/enums/Severity.ts
-var EnumSeverity = {
-  N: "Not Expected",
-  0: "Areal Flood or FF Product",
-  1: "Minor",
-  2: "Moderate",
-  3: "Major",
-  U: "Unknown"
-};
-
-// src/parsers/hvtec/HVExtract.ts
-var HVExtract = (message) => {
-  const getHVTECs = message.match(EnumExpressions.hvtec) ?? [];
-  const vtecs = [];
-  for (const vtec of getHVTECs) {
-    const sub = vtec.split(`.`);
-    if (sub.length < 7) continue;
-    vtecs.push({
-      hvtec: vtec,
-      severity: EnumSeverity[sub[1]],
-      cause: EnumCauses[sub[2]],
-      record: EnumRecords[sub[6]]
-    });
-  }
-  return vtecs.length > 0 ? vtecs : null;
-};
-
-// src/events/ParseVTEC.ts
-var ParseVTEC = async (Stanza) => {
-  const getMessages = Stanza?.Message?.split(/(?=\$\$)/g)?.map((message) => message.trim())?.filter((message) => message && message !== "$$")?.filter((message) => message.length > 25);
-  if (!getMessages || getMessages?.length == 0) return;
-  for (const message of getMessages) {
-    const tick = performance.now();
-    const attributes = Stanza?.Attributes;
-    const A2 = VTECExtract(message);
-    const B = HVExtract(message);
-    const C2 = await UGCExtract(message);
-    if (A2 != null && C2 != null) {
-      for (const vtec of A2) {
-        const props = GetEventProperties({ Message: message, Attributes: attributes, UGC: C2, VTEC: vtec });
-        const header = GetEventHeader({ Properties: props, VTEC: vtec, Type: Stanza.Type });
-        const issued = new Date(attributes.issue) ?? /* @__PURE__ */ new Date();
-        const expires = new Date(vtec.expires);
-        Bootstrap.Cache.Parsed.push({
-          type: `Feature`,
-          geometry: {
-            type: `Polygon`,
-            coordinates: []
-          },
-          properties: {
-            event: vtec.event,
-            parent: vtec.event,
-            status: vtec.status,
-            issued: !isNaN(issued.getTime()) ? issued.toISOString() : (/* @__PURE__ */ new Date()).toISOString(),
-            expires: !isNaN(expires.getTime()) ? expires.toISOString() : C2.Expires ?? new Date(issued.getTime() + 12 * 60 * 60 * 1e3).toISOString(),
-            theme: GetEventTheme(vtec.event),
-            ...props,
-            metadata: {
-              ms: performance.now() - tick,
-              source: `events.vtec`,
-              tracking: GetEventTracking({ Type: `VTEC`, Stanza, Attributes: attributes, Properties: props, VTEC: vtec }),
-              header,
-              vtec,
-              hvtec: B,
-              raw: message,
-              history: [
-                {
-                  description: props.description,
-                  issued: !isNaN(issued.getTime()) ? issued.toISOString() : (/* @__PURE__ */ new Date()).toISOString(),
-                  status: vtec.status
-                }
-              ]
-            }
-          }
-        });
-        SetDebug({ Title: `ParseVTEC`, Message: `${Math.round(performance.now() - tick)}ms` });
-      }
-    }
-  }
-};
-
-// src/events/ParseAPI.ts
-var ParseAPI = async (Stanza) => {
-  const messages = Object.values(JSON.parse(Stanza.Message).features);
-  for (const feature2 of messages) {
-    const tick = performance.now();
-    const VTEC = VTECExtract(feature2?.properties?.parameters?.VTEC?.[0]) ?? null;
-    Bootstrap.Cache.Parsed.push({
-      type: `Feature`,
-      geometry: {
-        type: `Polygon`,
-        coordinates: []
-      },
-      properties: {
-        event: feature2?.properties?.event ?? null,
-        parent: feature2?.properties?.event ?? null,
-        status: feature2?.properties?.messageType ?? null,
-        issued: feature2?.properties?.sent ? new Date(feature2?.properties?.sent).toISOString() : null,
-        expires: feature2?.properties?.expires ? new Date(feature2?.properties?.expires).toISOString() : null,
-        locations: feature2?.properties?.areaDesc ?? null,
-        locations_array: feature2?.properties?.areaDesc ? feature2?.properties?.areaDesc.split("; ") : [],
-        regions: [...new Set(
-          feature2?.properties?.geocode?.UGC?.map((ugc) => ugc.match(/^([A-Z]{2})[CZ](\d{3})$/)?.[1]).filter(Boolean) ?? []
-        )],
-        regions_string: (() => {
-          const abbrs = [...new Set(feature2?.properties?.geocode?.UGC?.map((l) => l.match(/^([A-Z]{2})[CZ](\d{3})$/)?.[1]).filter(Boolean) ?? [])];
-          return abbrs.length ? abbrs.join(`-`) : null;
-        })(),
-        description: feature2?.properties?.description ?? `This product did not contain a valid description. Please check the product for more information`,
-        attributes: feature2?.properties?.attributes ?? {},
-        theme: GetEventTheme(feature2?.properties?.event),
-        geocode: {
-          office: {
-            office: VTEC ? VTEC?.[0]?.tracking.split(`.`)[0] : null,
-            name: EnumICAO[VTEC ? VTEC?.[0]?.tracking.split(`.`)[0] : null] ?? null
-          },
-          organization: feature2?.properties?.parameters?.WMOidentifier?.[0],
-          ugc: feature2?.properties?.geocode?.UGC ?? [],
-          census: {
-            population: null,
-            cities: []
-          },
-          polygon: feature2?.geometry?.coordinates.length > 0 ? Buffer.from(JSON.stringify([feature2?.geometry?.coordinates[0]])).toString("base64") : null,
-          polygon_generated: feature2?.geometry?.coordinates.length > 0 ? true : false
-        },
-        parameters: {
-          tags: GetEventTags(feature2?.properties?.description),
-          instructions: feature2?.properties?.instruction ?? null,
-          source: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`SOURCE...`], Removal: [`.`] }) ?? null,
-          hazards: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`HAZARD...`], Removal: [`.`] }) ?? null,
-          impacts: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`IMPACT...`], Removal: [`.`] }) ?? null,
-          estimated_hail_size: feature2?.properties?.parameters?.maxHailSize?.[0] ?? null,
-          estimated_wind_gusts: feature2?.properties?.parameters?.maxWindGust?.[0] ?? null,
-          direction: GetEventDirection(feature2?.properties?.description) ?? null,
-          damage_threat: feature2?.properties?.parameters?.thunderstormDamageThreat?.[0] ?? feature2?.properties?.parameters?.snowSquallImpact?.[0] ?? null,
-          snowsquall_threat: feature2?.properties?.parameters?.snowSquallDetection?.[0] ?? null,
-          tornado_threat: feature2?.properties?.parameters?.tornadoDetection?.[0] ?? null,
-          flood_threat: feature2?.properties?.parameters?.flashFloodDamageThreat?.[0] ?? null,
-          wind_threat: feature2?.properties?.parameters?.windThreat?.[0] ?? null,
-          hail_threat: feature2?.properties?.parameters?.hailThreat?.[0] ?? null
-        },
-        discussion_parameters: {
-          discussion_number: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`Mesoscale Discussion `], Removal: [`Mesoscale Discussion`, `Number`, `...`] })?.toString()?.padStart(4, "0") ?? null,
-          discussion_concerning: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`Concerning...`] }) ?? null,
-          discussion_max_tornado: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`MOST PROBABLE PEAK TORNADO INTENSITY...`] }) ?? null,
-          discussion_max_hail: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`MOST PROBABLE PEAK HAIL SIZE...`] }) ?? null,
-          discussion_max_wind: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`MOST PROBABLE PEAK WIND GUST...`] }) ?? null,
-          discussion_watch_issuance: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`Probability of Watch Issuance...`], Removal: [`percent`] }) ?? null
-        },
-        watch_parameters: {
-          watch_number: VTEC?.[0]?.watch && (GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`ITIES FOR`, `UPDATE FOR`, `Watch Number `], Removal: [`%`, `<`, `:`] })?.replace(/(WT|WS|)/g, "")?.trim()?.toString()?.padStart(4, "0") ?? VTEC?.[0]?.tracking?.slice(-4)?.toString()?.padStart(4, "0") ?? null),
-          watch_type: feature2?.properties?.description.includes(`TORNADO WATCH`) ? `Tornado` : feature2?.properties?.description.includes(`SEVERE`) ? `Severe` : null,
-          additional_tornadoes_probability: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`PROB OF 2 OR MORE TORNADOES`], Removal: [`%`, `<`, `:`] }) ?? null,
-          strong_tornadoes_probability: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`PROB OF 1 OR MORE STRONG /EF2-EF5/ TORNADOES`], Removal: [`%`, `<`, `:`] }) ?? null,
-          severe_wind_probability: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`PROB OF 10 OR MORE SEVERE WIND EVENTS`], Removal: [`%`, `<`, `:`] }) ?? null,
-          severe_hail_probability: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`PROB OF 10 OR MORE SEVERE HAIL EVENTS`], Removal: [`%`, `<`, `:`] }) ?? null,
-          hail_2in_probability: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`PROB OF 1 OR MORE HAIL EVENTS >= 2 INCHES`], Removal: [`%`, `<`, `:`] }) ?? null,
-          combined_hail_wind_probability: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`PROB OF 6 OR MORE COMBINED SEVERE HAIL/WIND EVENTS`], Removal: [`%`, `<`, `:`] }) ?? null,
-          max_hail_in: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`MAX HAIL /INCHES/`], Removal: [`%`, `<`, `:`] }) ?? null,
-          max_wind_surface: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`MAX WIND GUSTS SURFACE /KNOTS/`], Removal: [`%`, `<`, `:`] }) ?? null,
-          max_tops_x100feet: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`MAX TOPS /X 100 FEET/`], Removal: [`%`, `<`, `:`] }) ?? null,
-          pds_watch: GetTextFromProduct({ Message: feature2?.properties?.description, Find: [`PARTICULARLY DANGEROUS SITUATION`], Removal: [`%`, `<`, `:`] }) === `YES`
-        },
-        metadata: {
-          ms: performance.now() - tick,
-          source: `events.api`,
-          tracking: GetEventTracking({ Type: `API`, WMO: { Identifier: feature2?.properties?.parameters?.WMOidentifier?.[0], ID: feature2?.id }, VTEC: VTEC?.[0] }),
-          header: `ZCZC-ATMOSX-${feature2?.properties?.parameters?.WMOidentifier}`,
-          vtec: VTEC?.[0],
-          hvtec: null,
-          raw: feature2?.properties?.description,
-          history: [
-            {
-              description: feature2?.properties?.description,
-              issued: feature2?.properties?.sent ? new Date(feature2?.properties?.sent).toISOString() : null,
-              status: feature2?.properties?.messageType ?? null
-            }
-          ]
-        }
-      }
-    });
-    SetDebug({ Title: `ParseAPI`, Message: `${Math.round(performance.now() - tick)}ms` });
-  }
-};
-
-// src/enums/Enhanced.ts
-var EnumEnhanced = {
-  "Tornado Warning": {
-    "Tornado Emergency": { description: "tornado emergency" },
-    "PDS Tornado Warning": { description: "particularly dangerous situation", damage: `CONSIDERABLE` },
-    "Radar Confirmed Tornado Warning": { description: "source...radar confirmed tornado.", tornado: `OBSERVED` },
-    "Confirmed Tornado Warning": { tornado: `OBSERVED` },
-    "Radar Indicated Tornado Warning": {}
-  },
-  "Fire Weather Warning": {
-    "PDS Fire Weather Warning": { description: "particularly dangerous situation" }
-  },
-  "Snow Squall Warning": {
-    "Observed Snow Squall Warning (SIG)": { damage: `SIGNIFICANT`, snowsquall: `OBSERVED` },
-    "Radar Indicated Snow Squall Warning (SIG)": { damage: `SIGNIFICANT`, snowsquall: `RADAR INDICATED` }
-  },
-  "Blizzard Warning": {
-    "PDS Blizzard Warning": { description: "particularly dangerous situation" }
-  },
-  "Ice Storm Warning": {
-    "PDS Ice Storm Warning": { description: "particularly dangerous situation" }
-  },
-  "Special Marine Warning": {
-    "Special Marine Warning (WPROB)": { tornado: `POSSIBLE` },
-    "Special Marine Warning (WCONF)": { tornado: `OBSERVED` }
-  },
-  "Tornado Watch": {
-    "PDS Tornado Watch": { pdswatch: true }
-  },
-  "Severe Thunderstorm Watch": {
-    "PDS Severe Thunderstorm Watch": { pdswatch: true }
-  },
-  "Flash Flood Warning": {
-    "Flash Flood Emergency": { description: "flash flood emergency" },
-    "Considerable Flash Flood Warning": { damage: `CONSIDERABLE` }
-  },
-  "Severe Thunderstorm Warning": {
-    "EDS Severe Thunderstorm Warning (TPROB)": { description: "extremely dangerous situation", tornado: "POSSIBLE" },
-    "EDS Severe Thunderstorm Warning": { description: "extremely dangerous situation" },
-    "Destructive Severe Thunderstorm Warning (TPROB)": { damage: `DESTRUCTIVE`, tornado: `POSSIBLE` },
-    "Destructive Severe Thunderstorm Warning": { damage: `DESTRUCTIVE` },
-    "Considerable Severe Thunderstorm Warning (TPROB)": { damage: `CONSIDERABLE`, tornado: `POSSIBLE` },
-    "Considerable Severe Thunderstorm Warning": { damage: `CONSIDERABLE` },
-    "Severe Thunderstorm Warning (TPROB)": { tornado: `POSSIBLE` }
-  },
-  "Special Weather Statement": {
-    "Convective Special Weather Statement": { description: "strong thunderstorm" }
-  }
-};
-
-// src/components/events/components/GetEventEnhancedName.ts
-var GetEventEnhancedName = (event) => {
-  let name = event?.properties?.event;
-  const damage = event?.properties?.parameters?.damage_threat ?? event?.properties?.parameters?.flood_threat;
-  const tornado = event?.properties?.parameters?.tornado_threat;
-  const pdswatch = event?.properties?.watch_parameters?.pds_watch;
-  const snowsquall = event?.properties?.parameters?.snowsquall_threat;
-  const description = event?.properties?.description?.toLowerCase();
-  for (const [eventKey, eventConfig] of Object.entries(EnumEnhanced)) {
-    if (eventKey !== name) continue;
-    for (const [paramKey, paramValue] of Object.entries(eventConfig)) {
-      let matches = true;
-      if (paramValue?.description) {
-        if (!description.includes(paramValue.description.toLowerCase())) matches = false;
-      }
-      if (paramValue?.damage) {
-        if (paramValue.damage !== damage) matches = false;
-      }
-      if (paramValue?.tornado) {
-        if (paramValue.tornado !== tornado) matches = false;
-      }
-      if (paramValue?.snowsquall) {
-        if (paramValue.snowsquall !== snowsquall) matches = false;
-      }
-      if (paramValue?.pdswatch) {
-        if (paramValue.pdswatch !== pdswatch) matches = false;
-      }
-      if (matches) {
-        name = paramKey;
-        break;
-      }
-    }
-  }
-  return name;
-};
-
-// src/enums/Correlations.ts
-var EnumCorrelations = [
-  { type: "Statement", name: "Statement", isCancel: false, isUpdate: false, isIssued: true, isStatement: true },
-  { type: "Update", name: "Updated", isCancel: false, isUpdate: true, isIssued: false, isStatement: false },
-  { type: "Cancel", name: "Cancelled", isCancel: true, isUpdate: false, isIssued: false, isStatement: false },
-  { type: "Alert", name: "Issued", isCancel: false, isUpdate: false, isIssued: true, isStatement: false },
-  { type: "Updated", name: "Updated", isCancel: false, isUpdate: true, isIssued: false, isStatement: false },
-  { type: "Expired", name: "Expired", isCancel: true, isUpdate: false, isIssued: false, isStatement: false },
-  { type: "Issued", name: "Issued", isCancel: false, isUpdate: false, isIssued: true, isStatement: false },
-  { type: "Extended", name: "Extended", isCancel: false, isUpdate: true, isIssued: false, isStatement: false },
-  { type: "Correction", name: "Correction", isCancel: false, isUpdate: true, isIssued: false, isStatement: false },
-  { type: "Upgraded", name: "Upgraded", isCancel: false, isUpdate: true, isIssued: false, isStatement: false },
-  { type: "Cancelled", name: "Cancelled", isCancel: true, isUpdate: false, isIssued: false, isStatement: false },
-  { type: "Routine", name: "Routine", isCancel: false, isUpdate: true, isIssued: false, isStatement: false }
-];
-
-// src/enums/Cancellation.ts
-var EnumCancellation = [
-  "has been cancelled",
-  "subsided sufficiently for the advisory to be cancelled",
-  "has been cancelled",
-  "no tsunami threat from a nearby earthquake",
-  "will be allowed to expire",
-  "has diminished",
-  "and no longer",
-  "has been replaced",
-  "The threat has ended",
-  "has weakened below severe"
-];
-
-// src/enums/Testing.ts
-var EnumTesting = [
-  `This is a test message`,
-  `Monitoring message only.`,
-  `THIS_MESSAGE_IS_FOR_TEST_PURPOSES_ONLY`,
-  "TEST MESSAGE"
-];
-
-// src/enums/Hail.ts
-var EnumHail = {
-  "0.25": "Pea",
-  ".25": "Pea",
-  "0.50": "Penny",
-  ".50": "Penny",
-  ".75": "Penny",
-  "Up to .75": "Penny",
-  "0.75": "Penny",
-  ".88": "Nickel",
-  "0.88": "Nickel",
-  "1.00": "Quarter",
-  "1.25": "Half Dollar",
-  "1.50": "Ping Pong Ball",
-  "1.75": "Golf Ball",
-  "2.00": "Hen Egg",
-  "2.50": "Tennis Ball",
-  "2.75": "Baseball",
-  "4.00": "CD/DVD"
-};
-
-// src/components/events/components/GetEventSignature.ts
-var GetEventSignature = (event) => {
-  const properties = event?.properties;
-  const vtec = event?.properties?.metadata?.vtec;
-  const status = EnumCorrelations.find((c) => c.type === properties?.status);
-  const csig = EnumCancellation.find((sig) => properties.description.toLowerCase().includes(sig.toLowerCase()));
-  properties.status_metadata = { ...properties.status_metadata, is_issued: true, is_test: false };
-  if (properties?.parameters?.estimated_hail_size) {
-    properties.parameters.estimated_hail_size += ` (${EnumHail[properties?.parameters?.estimated_hail_size] ?? "--"})`;
-  }
-  if (status) {
-    properties.status = status.name ?? properties.status;
-    properties.status_metadata = { ...properties.status_metadata, is_updated: !!status.isUpdate, is_issued: !!status.isIssued, is_expired: !!status.isCancel, is_statement: !!status.isStatement };
-  }
-  if (csig) {
-    properties.status_metadata = { ...properties.status_metadata, is_expired: true };
-  }
-  const getProduct = vtec?.raw?.split(`.`)[0]?.replace(`/`, ``);
-  const isTestProduct = EnumProducts[getProduct] == `Test Product`;
-  if (isTestProduct || EnumTesting.some((sig) => properties.description?.toLowerCase().includes(sig.toLowerCase()) ?? properties?.parameters?.instructions?.toLowerCase().includes(sig.toLowerCase()))) {
-    properties.status_metadata = { ...properties.status_metadata, is_test: true };
-  }
-  if (new Date(properties.expires).getTime() < Date.now()) {
-    properties.status_metadata = { ...properties.status_metadata, is_expired: true };
-  }
-  properties.status_metadata = {
-    ...properties.status_metadata
-  };
-  return event;
-};
-
-// src/enums/GlobalFilter.ts
-var EnumGlobalFilter = [
-  "storm prediction center day 1 outlook",
-  "storm prediction center day 2 outlook",
-  "storm prediction center day 3 outlook"
-];
-
-// src/components/geometry/GetShapeNearestPoint.ts
-var GetShapeNearestPoint = ({ Coordinates, Point }) => {
-  if (!Coordinates || !Point) {
-    return { Proximity: false, Point: [0, 0], Distance: null };
-  }
-  const normalize = (coords) => {
-    if (!Array.isArray(coords)) return [];
-    if (typeof coords[0] === "number" && typeof coords[1] === "number") return [];
-    if (Array.isArray(coords[0]) && typeof coords[0][0] === "number") {
-      return [[coords]];
-    }
-    if (Array.isArray(coords[0]) && Array.isArray(coords[0][0]) && typeof coords[0][0][0] === "number") {
-      return [coords];
-    }
-    if (Array.isArray(coords[0]) && Array.isArray(coords[0][0]) && Array.isArray(coords[0][0][0]) && typeof coords[0][0][0][0] === "number") {
-      return coords;
-    }
-    return [];
-  };
-  const polys = normalize(Coordinates);
-  if (polys.length === 0) return { Proximity: false, Point: [0, 0], Distance: null };
-  const lon = Point[0];
-  const lat = Point[1];
-  const pointInRing = (pt, ring) => {
-    let x2 = pt[0], y = pt[1];
-    let inside = false;
-    for (let i = 0, j2 = ring.length - 1; i < ring.length; j2 = i++) {
-      const xi = ring[i][0], yi = ring[i][1];
-      const xj = ring[j2][0], yj = ring[j2][1];
-      const intersect = yi > y !== yj > y && x2 < (xj - xi) * (y - yi) / (yj - yi + 0) + xi;
-      if (intersect) inside = !inside;
-    }
-    return inside;
-  };
-  const toRadians = (deg) => deg * Math.PI / 180;
-  const haversineMiles = (a, b2) => {
-    const R2 = 3958.8;
-    const dLat = toRadians(b2[1] - a[1]);
-    const dLon = toRadians(b2[0] - a[0]);
-    const lat1 = toRadians(a[1]);
-    const lat2 = toRadians(b2[1]);
-    const sinDLat = Math.sin(dLat / 2);
-    const sinDLon = Math.sin(dLon / 2);
-    const c = 2 * Math.asin(Math.sqrt(sinDLat * sinDLat + Math.cos(lat1) * Math.cos(lat2) * sinDLon * sinDLon));
-    return R2 * c;
-  };
-  let minDistance = Infinity;
-  let closestPoint = null;
-  for (const poly of polys) {
-    const outer = poly[0];
-    const holes = poly.slice(1);
-    if (pointInRing(Point, outer)) {
-      let inHole = false;
-      for (const hole of holes) {
-        if (pointInRing(Point, hole)) {
-          inHole = true;
-          break;
-        }
-      }
-      if (!inHole) {
-        return { Proximity: true, Point, Distance: 0 };
-      }
-    }
-    for (const ring of poly) {
-      for (let i = 0; i < ring.length - 1; i++) {
-        const start = [ring[i][0], ring[i][1]];
-        const end = [ring[i + 1][0], ring[i + 1][1]];
-        const A2 = lon - start[0];
-        const B = lat - start[1];
-        const C2 = end[0] - start[0];
-        const D2 = end[1] - start[1];
-        const lenSq = C2 * C2 + D2 * D2;
-        const t = lenSq === 0 ? 0 : Math.max(0, Math.min(1, (A2 * C2 + B * D2) / lenSq));
-        const candidate = [start[0] + t * C2, start[1] + t * D2];
-        const dist = haversineMiles([lon, lat], candidate);
-        if (!isNaN(dist) && dist < minDistance) {
-          minDistance = Number(dist.toFixed(3));
-          closestPoint = candidate;
-        }
-      }
-    }
-  }
-  if (!isFinite(minDistance) || closestPoint == null) {
-    return { Proximity: false, Point: [0, 0], Distance: null };
-  }
-  const distanceMiles = minDistance;
-  const distanceKm = Number((distanceMiles * 1.609344).toFixed(3));
-  const distanceMeters = Math.round(distanceKm * 1e3);
-  return { Proximity: distanceMiles === 0, Point: closestPoint, Distance: distanceMiles, DistanceKm: distanceKm, DistanceMeters: distanceMeters };
-};
-
-// src/components/events/components/GetEventNodes.ts
-var GetEventNodes = async (event) => {
-  const nodes = Bootstrap.Cache.Nodes.features;
-  if (!nodes || nodes.length === 0) {
-    return { nodes: [], filtered: false, updated: Date.now() };
-  }
-  const metadata = { nodes: [], proximity: false, filtered: false };
-  const geometry = await GetEventGeometry({ Event: event });
-  ;
-  if (!geometry || !geometry.coordinates) {
-    return { nodes: [], filtered: false, updated: Date.now() };
-  }
-  for (const node of nodes) {
-    const [longitude2, latitude] = node?.geometry?.coordinates ?? [];
-    const getPoint = GetShapeNearestPoint({ Coordinates: geometry.coordinates, Point: [longitude2, latitude] });
-    const miles = getPoint.Distance ?? null;
-    const kilometers = miles != null ? Number((miles * 1.609344).toFixed(3)) : null;
-    const info = {
-      id: node.properties?.identifier,
-      coordinates: [longitude2, latitude],
-      nearest: getPoint.Point,
-      miles,
-      kilometers,
-      proximity: false
-    };
-    if (miles != null && miles < Bootstrap.Settings.GlobalSettings.NodeMaxDistance) {
-      info.proximity = true;
-      metadata.proximity = true;
-    }
-    metadata.nodes.push(info);
-  }
-  return {
-    nodes: metadata.nodes,
-    filtered: metadata.proximity,
-    updated: Date.now()
-  };
-};
-
-// src/components/events/utilities/SetEventPolygonNodes.ts
-var SetEventPolygonNodes = async (selected) => {
-  const events = Bootstrap.Cache.Events.features;
-  const ttl = Bootstrap.Settings.GlobalSettings.NodePolygonTTL * 1e3;
-  let total = 0;
-  const TTLEvents = selected ? [selected] : events.filter((evt) => {
-    const lastUpdate = evt?.properties?.metadata?.updated ?? null;
-    return lastUpdate == null || Date.now() - lastUpdate >= ttl;
-  });
-  if (TTLEvents.length === 0) return;
-  async function update(evt) {
-    const node = await GetEventNodes(evt);
-    if (node.nodes.length > 0) {
-      total++;
-    }
-    evt.properties.metadata.nodes = node.nodes;
-    evt.properties.metadata.filtered_proximity = node.filtered;
-    evt.properties.metadata.updated = node.updated;
-  }
-  const concurrency = 4;
-  for (let index = 0; index < TTLEvents.length; index += concurrency) {
-    const batch = TTLEvents.slice(index, index + concurrency);
-    await Promise.all(batch.map((evt) => update(evt)));
-  }
-  if (total > 0) {
-    SetEventEmit({
-      Event: `onNodeUpdate`,
-      Metadata: {
-        Type: `global-update`,
-        Updated: total
-      }
-    });
-  }
-};
-
-// src/components/events/utilities/SetHash.ts
-var SetHash = ({ Event, Entry }) => {
-  if (!Entry) {
-    Bootstrap.Cache.Hashes.push({
-      Tracking: Event.properties.metadata.tracking,
-      Hashes: [Event.properties.metadata.hash],
-      Expires: Event.properties.expires
-    });
-    return;
-  }
-  Entry.Hashes.push(Event.properties.metadata.hash);
-  Entry.Expires = Event.properties.expires;
-};
-
-// src/components/events/components/GetEventMerged.ts
-var uniqueBy = (items, getKey) => {
-  const seen = /* @__PURE__ */ new Set();
-  return items.filter((item) => {
-    const key = getKey(item);
-    if (seen.has(key)) {
-      return false;
-    }
-    seen.add(key);
-    return true;
-  });
-};
-var GetEventMerged = ({ Cached, New }) => {
-  const history = uniqueBy(
-    [...Cached.properties.metadata?.history ?? [], ...New.properties.metadata?.history ?? []],
-    (item) => `${item.description}|${item.issued}`
-  );
-  return {
-    ...New,
-    properties: {
-      ...New.properties,
-      metadata: { ...New.properties?.metadata, history }
-    }
-  };
-};
-
-// src/components/events/utilities/SetEventLocationMetadata.ts
-var SetEventLocationMetadata = async ({ Zones, Event }) => {
-  const locations = await GetLocations(Zones);
-  return {
-    Locations: locations?.join(`; `) ?? null,
-    LocationsArray: locations ?? [],
-    UGC: Zones,
-    Regions: [...new Set(
-      Zones?.map((location) => location.match(/^([A-Z]{2})[CZ](\d{3})$/)?.[1]).filter(Boolean) ?? []
-    )],
-    RegionsString: (() => {
-      const abbrs = [...new Set(Zones?.map((l) => l.match(/^([A-Z]{2})[CZ](\d{3})$/)?.[1]).filter(Boolean) ?? [])];
-      return abbrs.length ? abbrs.join(`-`) : null;
-    })()
-  };
-};
-
-// src/components/events/components/GetUpdatedWatch.ts
-var getWatch = (Tracking) => {
-  return Bootstrap.Cache.Watches.find((A2) => A2.tracking === Tracking);
-};
-var GetUpdatedWatch = async ({ Event }) => {
-  const tick = performance.now();
-  const { properties } = Event;
-  const { geocode, metadata, status_metadata } = properties;
-  const UGCs = geocode?.ugc ?? [];
-  const expires = properties?.expires;
-  const isExpired = status_metadata?.is_expired ?? false;
-  let watch = getWatch(metadata.tracking);
-  if (!watch) {
-    watch = { tracking: metadata.tracking, zones: [] };
-    Bootstrap.Cache.Watches.push(watch);
-  }
-  if (!isExpired) {
-    for (const UGC of UGCs) {
-      if (watch.zones.some((z) => z.id === UGC)) continue;
-      const zone = GetZonePolygon({ Zones: [UGC], Union: false });
-      watch.zones.push({
-        id: UGC,
-        expires,
-        polygon: zone
-      });
-    }
-  } else {
-    const expiredUGCs = new Set(UGCs);
-    watch.zones = watch.zones.filter((z) => !expiredUGCs.has(z.id));
-  }
-  const A2 = await SetEventLocationMetadata({ Event, Zones: watch.zones.map((z) => z.id) });
-  SetDebug({ Title: `GetUpdatedWatch`, Message: `${Math.round(performance.now() - tick)}ms` });
-  return {
-    ...Event,
-    properties: {
-      ...Event.properties,
-      locations: A2.Locations,
-      locations_array: A2.LocationsArray,
-      regions: A2.Regions,
-      regions_string: A2.RegionsString,
-      geocode: {
-        ...Event.properties.geocode,
-        ugc: A2.UGC
-      }
-    }
-  };
-};
-
-// src/components/utilities/QueueManager.ts
-var QueueManager = class {
-  constructor({ Concurrency, Error: Error2 } = {}) {
-    this.queue = [];
-    this.running = 0;
-    this.draining = false;
-    this.concurrency = Concurrency ?? 1;
-    this.onError = Error2 ?? ((error) => {
-      console.error("[QueueManager] Task failed:", error);
-    });
-  }
-  enqueue(task) {
-    this.queue.push(task);
-    this.drain();
-  }
-  drain() {
-    if (this.draining) {
-      return;
-    }
-    this.draining = true;
-    while (this.running < this.concurrency && this.queue.length > 0) {
-      const task = this.queue.shift();
-      if (!task) {
-        continue;
-      }
-      this.running++;
-      void this.execute(task);
-    }
-    this.draining = false;
-  }
-  async execute(task) {
-    try {
-      await task();
-    } catch (error) {
-      try {
-        this.onError(error);
-      } catch (handlerError) {
-      }
-    } finally {
-      this.running--;
-      this.drain();
-    }
-  }
-};
-
-// src/tasks/TaskGenerateFile.ts
-var import_promises2 = require("fs/promises");
-var TaskGenerateFile = async function({ String: String2, Directory, Filename }) {
-  if (Directory) {
-    await (0, import_promises2.mkdir)(Directory, { recursive: true });
-    await (0, import_promises2.appendFile)(Directory + "/" + Filename, `${String2}${"\n".repeat(5)}`);
-  }
-  return String2;
-};
-
-// src/components/utilities/CreateHttp.ts
-var CreateHttp = async ({ URL: URL2, Headers, Timeout, Auth, Method, Body, Form }) => {
-  const requestOptions = {
-    method: Method ?? "GET",
-    headers: Headers ?? {
-      "User-Agent": "AtmosphericX",
-      "Accept": "application/geo+json, text/plain, */*; q=0.9",
-      "Accept-Language": "en-US,en;q=0.9"
-    },
-    signal: AbortSignal.timeout(Timeout ?? 1e4),
-    redirect: "follow"
-  };
-  const returnHttp = function(error, status, message) {
-    return { error, options: requestOptions, status, message };
-  };
-  if (Auth) {
-    const authString = `${Auth.Username}:${Auth.Password}`;
-    const encodedAuth = Buffer.from(authString).toString("base64");
-    requestOptions.headers = {
-      ...requestOptions.headers,
-      "Authorization": `Basic ${encodedAuth}`
-    };
-  }
-  if (Form) {
-    requestOptions.body = Form;
-  } else if (Body != void 0) {
-    requestOptions.body = Body instanceof FormData ? Body : typeof Body === "string" ? Body : JSON.stringify(Body);
-  }
-  try {
-    const response2 = await fetch(
-      URL2 ?? `https://api.weather.gov/alerts/active`,
-      requestOptions
-    );
-    const body = await response2.text();
-    if (!response2.ok) {
-      return returnHttp(true, response2.status, `HTTP Status Code ${response2.status} (${response2.statusText})`);
-    }
-    return returnHttp(false, response2.status, body);
-  } catch (error) {
-    return returnHttp(true, 500, `Internal Server Error: ${error}`);
-  }
-};
-
-// src/tasks/TaskSendNTFY.ts
-var TaskSendNTFY = async function({ Event, Priority, Body, Topic }) {
-  const { properties, geometry } = Event;
-  const { event, status, metadata, parameters } = properties;
-  const { tags } = parameters;
-  const { tracking, filtered_proximity, attachments } = metadata;
-  const { NotifyServer } = Bootstrap.Settings;
-  const { MediaStorage } = NotifyServer ?? {};
-  const { Username, Password } = NotifyServer?.Credentials ?? {};
-  const image = MediaStorage?.IMAGE ? { link: `${MediaStorage.IMAGE}/${event}_${tracking}.png` } : void 0;
-  const graphic = attachments?.find((a) => a.name === "Image: SPC Graphic");
-  const topics = [`GLOBAL`, Topic, ...filtered_proximity ? [`${Topic}-LOCAL`] : []];
-  const actions = [
-    ...MediaStorage?.AUDIO ? [{ "action": "view", "label": "View Audio", "url": `${MediaStorage.AUDIO}/${event}_${tracking}.wav?unix=${(/* @__PURE__ */ new Date()).getTime()}` }] : [],
-    ...MediaStorage?.TEXT ? [{ "action": "view", "label": "View Text", "url": `${MediaStorage.TEXT}/${event}_${tracking}.txt?unix=${(/* @__PURE__ */ new Date()).getTime()}` }] : [],
-    ...graphic ? [{ "action": "view", "label": "View Graphic", "url": graphic.link + `?unix=${(/* @__PURE__ */ new Date()).getTime()}` }] : [],
-    ...[{ "action": "copy", "label": "Copy Card", "value": `${event} (${status})
-${Body}
-Tags: ${tags?.join(",") ?? "N/A"}` }]
-  ];
-  const headers = {
-    "Title": `${properties.event} (${properties.status})`,
-    "Tags": properties.parameters.tags?.join(",") ?? "N/A",
-    "Priority": Priority ?? "5",
-    ...image && geometry.coordinates.length > 0 && { "Attach": image.link + `?unix=${(/* @__PURE__ */ new Date()).getTime()}` },
-    ...actions.length > 0 && { "Actions": JSON.stringify(actions) }
-  };
-  const authentication = Username && Password ? { Username, Password } : void 0;
-  const push = async (topic) => {
-    const { error, message } = await CreateHttp({
-      URL: `${NotifyServer?.Server?.replace(/\/$/, "")}/${topic}`,
-      Timeout: 15e3,
-      Method: "PUT",
-      ...authentication && { Auth: authentication },
-      Headers: headers,
-      Body
-    });
-    if (error) {
-      SetDebug({ Title: `Tasks/NTFY`, Message: `Failed to send notification to topic "${topic}": ${message}` });
-    }
-  };
-  await Promise.all([...new Set(topics)].map(push));
-};
-
-// src/components/formatting/GetEmbededText.ts
-var GetEmbededText = (event) => {
-  const line = (label, value, condition = true) => condition && value ? `${label} ${value}` : null;
-  const isStatement = event.properties.status_metadata.is_statement;
-  const isExpired = event.properties.status_metadata.is_expired;
-  const isIssued = event.properties.status_metadata.is_issued;
-  const isUpdated = event.properties.status_metadata.is_updated;
-  return [
-    line(`**Locations:**`, event?.properties?.locations?.slice(0, 100)),
-    line(`**Issued:**`, `<t:${Math.floor(new Date(event.properties.issued).getTime() / 1e3)}:R>`, isIssued),
-    line(`**Updated:**`, `<t:${Math.floor(new Date(event.properties.issued).getTime() / 1e3)}:R>`, isUpdated && !isExpired),
-    line(`**Expires:**`, `<t:${Math.floor(new Date(event.properties.expires).getTime() / 1e3)}:R>`, !isStatement && !isExpired),
-    line(`**Expired:**`, `<t:${Math.floor(new Date(event.properties.expires).getTime() / 1e3)}:R>`, isExpired),
-    line(`**Damage Threat:**`, event?.properties?.parameters?.damage_threat, !isExpired),
-    line(`**Flood Threat:**`, event?.properties?.parameters?.flood_threat, !isExpired),
-    line(`**Tornado Threat:**`, event?.properties?.parameters?.tornado_threat, !isExpired),
-    line(`**Wind Gusts:**`, `${event?.properties?.parameters?.estimated_wind_gusts} ${event?.properties?.parameters?.wind_threat ? ` (${event?.properties?.parameters?.wind_threat})` : ""}`, !isExpired && event?.properties?.parameters?.estimated_wind_gusts != null),
-    line(`**Hail Size:**`, `${event?.properties?.parameters?.estimated_hail_size} ${event?.properties?.parameters?.hail_threat ? ` (${event?.properties?.parameters?.hail_threat})` : ""}`, !isExpired && event?.properties?.parameters?.estimated_hail_size != null),
-    line(`**Direction:**`, event?.properties?.parameters?.direction, !isExpired && event?.properties?.parameters?.direction != null),
-    line(`**Discussion:**`, event?.properties?.discussion_parameters?.discussion_number, !isExpired),
-    line(`**Concern:**`, event?.properties?.discussion_parameters?.discussion_concerning, !isExpired),
-    line(`**SPC Max Tornado Threat:**`, event?.properties?.discussion_parameters?.discussion_max_tornado, !isExpired),
-    line(`**SPC Max Hail Threat:**`, event?.properties?.discussion_parameters?.discussion_max_hail, !isExpired),
-    line(`**SPC Max Wind Threat:**`, event?.properties?.discussion_parameters?.discussion_max_wind, !isExpired),
-    line(`**SPC Watch Issuance Probability:**`, event?.properties?.discussion_parameters?.discussion_watch_issuance ? `${event?.properties?.discussion_parameters?.discussion_watch_issuance}%` : null, !isExpired),
-    line(`**Watch Number:**`, event?.properties?.watch_parameters?.watch_number, !isExpired),
-    line(`**Strong Tornadoes Probability:**`, event?.properties?.watch_parameters?.strong_tornadoes_probability ? `${event?.properties?.watch_parameters?.strong_tornadoes_probability}%` : null, !isExpired),
-    line(`**Additional Tornadoes Probability:**`, event?.properties?.watch_parameters?.additional_tornadoes_probability ? `${event?.properties?.watch_parameters?.additional_tornadoes_probability}%` : null, !isExpired),
-    line(`**Combined Hail/Wind Probability:**`, event?.properties?.watch_parameters?.combined_hail_wind_probability ? `${event?.properties?.watch_parameters?.combined_hail_wind_probability}%` : null, !isExpired),
-    line(`**Severe Hail Probability:**`, event?.properties?.watch_parameters?.severe_hail_probability ? `${event?.properties?.watch_parameters?.severe_hail_probability}%` : null, !isExpired),
-    line(`**Hail >2in Probability:**`, event?.properties?.watch_parameters?.hail_2in_probability ? `${event?.properties?.watch_parameters?.hail_2in_probability}%` : null, !isExpired),
-    line(`**Max Hail Inches:**`, event?.properties?.watch_parameters?.max_hail_in, !isExpired),
-    line(`**Severe Wind Probability:**`, event?.properties?.watch_parameters?.severe_wind_probability ? `${event?.properties?.watch_parameters?.severe_wind_probability}%` : null, !isExpired),
-    line(`**Max Surface Wind:**`, event?.properties?.watch_parameters?.max_wind_surface, !isExpired),
-    line(`**Max Tops (x100 feet):**`, event?.properties?.watch_parameters?.max_tops_x100feet, !isExpired),
-    line(`**Tags:**`, event?.properties?.parameters?.tags?.length > 0 ? event?.properties?.parameters?.tags.join(", ") : null, !isExpired),
-    line(`**Sender:**`, event?.properties?.geocode?.office?.name ? `${event?.properties?.geocode?.office?.name} (${event?.properties?.geocode?.office?.office})` : event?.properties?.geocode?.office?.office),
-    line(`**Population:**`, event?.properties?.geocode?.census?.population, !isExpired),
-    line(`**Tracking:**`, event?.properties?.metadata?.tracking),
-    line(`**Logs:**`, event?.properties?.metadata?.history?.length > 0 ? event?.properties?.metadata?.history.length : null)
-  ].filter(Boolean).join("\n");
-};
-
-// src/tasks/TaskSendWebhook.ts
-var import_promises3 = require("fs/promises");
-var TaskSendWebhook = async function({ Event, Webhook, Attachments }) {
-  const { Image, Text, Audio, Json } = Attachments;
-  const { Title, Message, Destination, Ratelimit } = Webhook;
-  const { properties } = Event;
-  const { event, status, description, metadata, status_metadata } = properties;
-  const { is_expired } = status_metadata;
-  const { tracking, attachments } = metadata;
-  const { Limited } = SetTimeoutAction({
-    Identifier: Destination,
-    Interval: (Ratelimit ?? 2) * 2,
-    Max: Ratelimit ?? 2,
-    AddTime: true
-  });
-  if (Limited) {
-    return;
-  }
-  const form = new FormData();
-  const embed = {
-    title: `${event} (${status})`,
-    description: GetEmbededText(Event),
-    fields: [],
-    color: 16711680,
-    thumbnail: Image ? { url: `attachment://${event}_${status}_${tracking}.png` } : void 0,
-    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-    footer: { text: Title ?? `AtmosphericX` }
-  };
-  if (description && !is_expired) {
-    const body = description.length > 900 ? description.substring(0, 900) + "\n\n[Message truncated due to length]" : description;
-    embed.fields.push({
-      name: "Description",
-      value: body ? "```\n" + body.split("\n").map((l) => l.trim()).filter(Boolean).join("\n") + "\n```" : ""
-    });
-  }
-  if (attachments?.length > 0) {
-    const attach = attachments.slice(0, 5);
-    embed.fields.push({
-      name: "Attachments",
-      value: attach.map((attachment) => `- [${attachment.name.length > 45 ? attachment.name.substring(0, 45) + "..." : attachment.name}](${attachment.link})`).join("\n")
-    });
-  }
-  if (Image) {
-    const file = await (0, import_promises3.readFile)(Image);
-    form.append("attachmentImage", new Blob([Buffer.from(file)], { type: "image/png" }), `${properties.event}_${properties.status}_${properties.metadata.tracking}.png`);
-  }
-  if (Text) {
-    form.append("attachmentText", new Blob([Buffer.from(Text)], { type: "application/text" }), `${properties.event}_${properties.status}_${properties.metadata.tracking}.txt`);
-  }
-  if (Json) {
-    form.append("attachmentJson", new Blob([Buffer.from(Json)], { type: "application/json" }), `${properties.event}_${properties.status}_${properties.metadata.tracking}.json`);
-  }
-  if (Audio) {
-    const file = await (0, import_promises3.readFile)(Audio);
-    form.append("attachmentAudio", new Blob([Buffer.from(file)], { type: "application/wav" }), `${properties.event}_${properties.status}_${properties.metadata.tracking}.wav`);
-  }
-  form.append("payload_json", JSON.stringify({
-    username: Title ?? `AtmosphericX`,
-    content: Message ?? "",
-    embeds: [embed]
-  }));
-  await CreateHttp({
-    URL: Destination,
-    Timeout: 15e3,
-    Method: `POST`,
-    Body: form
-  });
-};
-
-// src/tasks/CreateTasks.ts
-var Webhooks = new QueueManager({ Concurrency: 1 });
-var NTFY = new QueueManager({ Concurrency: 5 });
-var taskChains = /* @__PURE__ */ new Map();
-var CreateTasks = async (events) => {
-  const { ActionSettings, GlobalSettings, NotifyServer } = Bootstrap.Settings;
-  const actions = ActionSettings;
-  const run = async (event) => {
-    const tick = performance.now();
-    const { properties } = event;
-    const isActioning = Array.isArray(actions) && actions.length > 0;
-    if (!isActioning) {
-      return;
-    }
-    const matchingActions = actions.filter((action) => {
-      const { Events } = action;
-      return Events.length === 0 || GetMatched({ Strings: Events, String: properties.event });
-    });
-    if (matchingActions.length === 0) {
-      return;
-    }
-    const uploads = matchingActions.reduce((required, action) => ({
-      AUDIO: required.AUDIO || Boolean(action.Uploads?.AUDIO),
-      TEXT: required.TEXT || Boolean(action.Uploads?.TEXT),
-      JSON: required.JSON || Boolean(action.Uploads?.JSON),
-      IMAGE: required.IMAGE || Boolean(action.Uploads?.IMAGE)
-    }), { AUDIO: false, TEXT: false, JSON: false, IMAGE: false });
-    const [audio, text, json, image] = await Promise.all([
-      uploads.AUDIO && GlobalSettings?.ArchiveSettings?.AudioDirectory ? GenerateAudioMessage({
-        Directory: GlobalSettings.ArchiveSettings.AudioDirectory,
-        Title: `${properties.event}_${properties.metadata.tracking}`.replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim(),
-        Message: properties.description,
-        Header: properties.metadata.header
-      }) : Promise.resolve(null),
-      uploads.TEXT && GlobalSettings?.ArchiveSettings?.TextDirectory ? TaskGenerateFile({
-        String: properties.metadata.raw,
-        Directory: GlobalSettings.ArchiveSettings.TextDirectory,
-        Filename: `${properties.event}_${properties.metadata.tracking}.txt`.replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim()
-      }) : Promise.resolve(null),
-      uploads.JSON && GlobalSettings?.ArchiveSettings?.JSONDirectory ? TaskGenerateFile({
-        String: JSON.stringify(GetCleanedEvent(event), null, 2),
-        Directory: GlobalSettings.ArchiveSettings.JSONDirectory,
-        Filename: `${properties.event}_${properties.metadata.tracking}.json`.replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim()
-      }) : Promise.resolve(null),
-      uploads.IMAGE && GlobalSettings?.ArchiveSettings?.ImageDirectory ? GenerateGraphic({
-        Event: event,
-        File: {
-          Directory: GlobalSettings.ArchiveSettings.ImageDirectory,
-          Name: `${properties.event}_${properties.metadata.tracking}.png`.replace(/[\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim()
-        }
-      }) : Promise.resolve(null)
-    ]);
-    SetDebug({ Title: `Tasks/Generative`, Message: `${Math.round(performance.now() - tick)}ms` });
-    await Promise.all(matchingActions.map(async (action) => {
-      const { Webhook, NotificationServer, Uploads } = action;
-      const b2 = performance.now();
-      await Promise.all([
-        NotificationServer?.Enabled && NotifyServer?.Enabled && NotificationServer?.Topic ? NTFY.enqueue(() => TaskSendNTFY({
-          Event: event,
-          Priority: NotificationServer?.Priority ?? 5,
-          Body: GetStringText(event),
-          Topic: NotificationServer?.Topic
-        })) : Promise.resolve(null),
-        Webhook?.Enabled && Webhook?.Destination ? Webhooks.enqueue(() => TaskSendWebhook({
-          Event: event,
-          Webhook: {
-            Enabled: Webhook?.Enabled,
-            Destination: Webhook?.Destination,
-            Message: Webhook?.Message,
-            Title: Webhook?.Title,
-            Ratelimit: Webhook?.Ratelimit
-          },
-          Attachments: {
-            Image: Uploads?.IMAGE ? image : null,
-            Text: Uploads?.TEXT ? text : null,
-            Audio: Uploads?.AUDIO ? audio : null,
-            Json: Uploads?.JSON ? json : null
-          }
-        })) : Promise.resolve(null)
-      ]);
-      SetDebug({ Title: `Tasks/Send`, Message: `${Math.round(performance.now() - b2)}ms` });
-    }));
-    SetDebug({ Title: `Tasks/Completed`, Message: `${Math.round(performance.now() - tick)}ms` });
-  };
-  await Promise.all(events.map(async (event) => {
-    const tracking = event.properties.metadata.tracking;
-    const previous = taskChains.get(tracking) ?? Promise.resolve();
-    const current = previous.catch(() => void 0).then(() => run(event));
-    taskChains.set(tracking, current);
-    try {
-      await current;
-    } finally {
-      if (taskChains.get(tracking) === current) {
-        taskChains.delete(tracking);
-      }
-    }
-  }));
-};
-
-// src/components/events/CreateEvents.ts
-var CreateEvents = async (events) => {
-  let tasks = [];
-  const settings = Bootstrap.Settings;
-  if (events.length === 0) return;
-  const eventGroups = /* @__PURE__ */ new Map();
-  for (const event of events) {
-    const tracking = event.properties.metadata.tracking;
-    const group = eventGroups.get(tracking) ?? [];
-    group.push(event);
-    eventGroups.set(tracking, group);
-  }
-  await Promise.all([...eventGroups.values()].map(async (group) => {
-    for (const event of group) {
-      const active = Bootstrap.Cache.Events;
-      const hashes = Bootstrap.Cache.Hashes;
-      const nodes = Bootstrap.Cache.Nodes;
-      const { EventFiltering } = settings.GlobalSettings;
-      const { properties } = event;
-      const { metadata, status_metadata } = properties;
-      const { hash, tracking, filtered_proximity, vtec } = metadata;
-      const isEntry = hashes?.find((hash2) => hash2.Tracking === tracking);
-      const isHashed = isEntry?.Hashes?.includes(hash) ?? false;
-      const isNodeFiltering = EventFiltering.NodeLocationFiltering;
-      if (isHashed || status_metadata.is_expired) {
-        continue;
-      }
-      SetHash({ Event: event, Entry: isEntry });
-      await SetEventPolygonNodes(event);
-      if (isNodeFiltering && nodes.features.length > 0 && !filtered_proximity && !EnumGlobalFilter.includes(properties.event.toLowerCase())) {
-        continue;
-      }
-      const isRatelimited = SetTimeoutAction({ Identifier: tracking, Interval: 1, Max: 1, AddTime: true });
-      const isLocalProximity = filtered_proximity ? `[LOCAL] ` : ``;
-      const isCachedAlert = active.features.find((alert) => alert?.properties?.metadata?.tracking === tracking);
-      if (!isRatelimited.Limited) {
-        SetEventEmit({
-          Event: `onEventStatus`,
-          Metadata: {
-            Type: isCachedAlert ? `Updated` : `New`,
-            Event: event
-          },
-          Tree: Bootstrap.Settings.DeveloperEventLogging ? GetStringText(event).split("\n").filter((line) => line.trim() !== "") : [],
-          Message: `${isLocalProximity}[${isCachedAlert ? "Updated" : "New"}] ${event.properties.event} (${event.properties.status}) (${event.properties.metadata.tracking})`
-        });
-      }
-      if (status_metadata.is_issued || status_metadata.is_updated) {
-        const isWatch = vtec?.watch?.severe ?? vtec?.watch?.tropical ?? false;
-        const isNational = vtec?.watch?.national ?? false;
-        if (isWatch && isNational) {
-          const A2 = await GetUpdatedWatch({ Event: event });
-          if (isCachedAlert) {
-            const B = active.features.indexOf(isCachedAlert);
-            const C2 = await GetEventGeometry({ Event: A2 });
-            Bootstrap.Cache.Events.features[B] = GetEventMerged({ Cached: isCachedAlert, New: { ...A2, geometry: C2 } });
-            tasks.push(Bootstrap.Cache.Events.features[B]);
-          } else {
-            const C2 = await GetEventGeometry({ Event: A2 });
-            const D2 = { ...A2, geometry: C2 };
-            active.features.push(D2);
-            tasks.push(D2);
-          }
-        } else {
-          if (isCachedAlert) {
-            const B = active.features.indexOf(isCachedAlert);
-            Bootstrap.Cache.Events.features[B] = GetEventMerged({ Cached: isCachedAlert, New: event });
-            tasks.push(Bootstrap.Cache.Events.features[B]);
-          } else {
-            active.features.push(event);
-            tasks.push(event);
-          }
-        }
-      }
-    }
-  }));
-  tasks = tasks.filter((v2, i, a) => a.reduce((last, t, index) => t.properties.metadata.tracking === v2.properties.metadata.tracking ? index : last, -1) === i);
-  SetEventEmit({
-    Event: `onEventCache`,
-    Metadata: Bootstrap.Cache.Events,
-    Limited: true
-  });
-  return await CreateTasks(tasks);
-};
-
-// src/components/events/RemoveEvents.ts
-var RemoveEvents = async ({ Event, IsTimeBasedExpiration }) => {
-  const gTracking = Event.properties.metadata.tracking;
-  const cachedIndex = Bootstrap.Cache.Events.features.findIndex((f2) => f2?.properties?.metadata?.tracking === gTracking);
-  if (cachedIndex === -1) {
-    return;
-  }
-  const isStatement = Event.properties.status_metadata.is_statement;
-  Bootstrap.Cache.Events.features.splice(cachedIndex, 1);
-  Bootstrap.Cache.Hashes = Bootstrap.Cache.Hashes.filter((hash) => hash.Tracking !== gTracking);
-  Event.properties.expires = (/* @__PURE__ */ new Date()).toISOString();
-  Event.properties.status = `Expired`;
-  Event.properties.status_metadata.is_expired = true;
-  const isWatch = Event?.properties?.metadata?.vtec?.watch?.severe ?? Event?.properties?.metadata?.vtec?.watch?.tropical ?? false;
-  const isNational = Event?.properties?.metadata?.vtec?.watch?.national;
-  const description = IsTimeBasedExpiration ? EnumStrings.cancellation.replace(`{SENDER}`, Event.properties.geocode.office.name).replace(`{EVENT}`, Event.properties.event) : Event.properties.description;
-  Event.properties.description = description;
-  Event.properties.metadata.raw = IsTimeBasedExpiration ? description : Event.properties.metadata.raw;
-  Event.properties.metadata.history.push({
-    description: IsTimeBasedExpiration ? description : Event.properties.description,
-    issued: Event.properties.expires,
-    status: Event.properties.status
-  });
-  if (isWatch && isNational) {
-    const A2 = await GetUpdatedWatch({ Event });
-    const B = await GetEventGeometry({ Event: A2 });
-    Event = { ...A2, geometry: B };
-  }
-  if (!isStatement) {
-    SetEventEmit({
-      Event: `onEventStatus`,
-      Metadata: { type: `Removed`, event: Event },
-      Message: `[Removed] ${Event.properties.event} (${Event.properties.status}) (${gTracking})`
-    });
-    await CreateTasks([Event]);
-  }
-  SetTimeoutAction({ Identifier: gTracking, Expire: true });
-  SetEventEmit({
-    Event: `onEventCache`,
-    Metadata: Bootstrap.Cache.Events,
-    Limited: true
-  });
-};
-
-// src/components/utilities/GetLatestIssuance.ts
-var GetLatestIssuance = () => {
-  const now = /* @__PURE__ */ new Date();
-  const current = now.getUTCHours() * 100 + now.getUTCMinutes();
-  const issuances = [100, 600, 1300, 1630, 2e3];
-  let latest = issuances[0];
-  for (const issuance of issuances) {
-    if (current >= issuance) {
-      latest = issuance;
-    }
-  }
-  return latest.toString().padStart(4, "0");
-};
-
-// src/components/events/components/GetEventAttachments.ts
-var GetEventAttachments = (event) => {
-  let attachments = [];
-  const settings = Bootstrap.Settings;
-  const issuanceTime = GetLatestIssuance();
-  const spcNumber = event?.properties?.discussion_parameters?.discussion_number;
-  const watchNumber = event?.properties?.watch_parameters?.watch_number;
-  const locations = event?.properties?.locations_array;
-  const events = [
-    { target: "Storm Prediction Center Day 1 Outlook", attachment: `https://www.spc.noaa.gov/products/outlook/day1otlk_${issuanceTime}.png` },
-    { target: "Storm Prediction Center Day 2 Outlook", attachment: `https://www.spc.noaa.gov/products/outlook/day2otlk.png` },
-    { target: "Storm Prediction Center Day 3 Outlook", attachment: `https://www.spc.noaa.gov/products/outlook/day3otlk.png` },
-    { target: "Mesoscale Discussion", attachment: `https://www.spc.noaa.gov/products/md/mcd${spcNumber}.png` },
-    { target: "Tornado Watch", attachment: `https://www.spc.noaa.gov/products/watch/ww${watchNumber}_radar_big.gif` },
-    { target: "PDS Tornado Watch", attachment: `https://www.spc.noaa.gov/products/watch/ww${watchNumber}_radar_big.gif` },
-    { target: "Severe Thunderstorm Watch", attachment: `https://www.spc.noaa.gov/products/watch/ww${watchNumber}_radar_big.gif` },
-    { target: "PDS Severe Thunderstorm Watch", attachment: `https://www.spc.noaa.gov/products/watch/ww${watchNumber}_radar_big.gif` }
-  ];
-  if (events.find((e) => e.target === event.properties.event)) {
-    attachments.push({ name: `Image: Graphic`, link: events.find((e) => e.target.toLowerCase() === event.properties.event.toLowerCase()).attachment });
-  }
-  if (settings.BroadcastifySettings.BroadcastifyAttachments) {
-    for (const location of locations) {
-      if (EnumExpressions.location.test(location)) {
-        const lines = [`Northern`, `Southern`, `Eastern`, `Western`, `Inland`, `Costal`, `County`];
-        const county = location?.split(",")[0]?.trim().replace(new RegExp(`^(${lines.join("|")}) `), "");
-        const state = EnumStates[location?.split(",")[1]?.trim()];
-        const feeds = CreateQuery({ Query: `SELECT * FROM broadcastify WHERE state = ? AND county = ?`, Parameters: [state, county] });
-        const so = feeds.sort((a, b2) => {
-          const typeOrder = ["Other", "Public Safety"];
-          const indexA = typeOrder.indexOf(a.type);
-          const indexB = typeOrder.indexOf(b2.type);
-          return indexA - indexB;
-        });
-        const tags = Bootstrap.Settings.BroadcastifySettings.BroadcastifyTags;
-        const filtered = so.filter((feed) => tags.includes(feed.type));
-        if (filtered.length > 0) {
-          filtered.map((filtered2) => {
-            if (!attachments.some((a) => a.link === filtered2.link)) {
-              attachments.push({ name: `${filtered2.type}: ${filtered2.feed}`, link: filtered2.link });
-            }
-          });
-        }
-      }
-    }
-  }
-  return attachments;
-};
-
-// src/components/events/components/GetEventPopulation.ts
-var GetEventPopulation = (geometry) => {
-  const coordinates = geometry?.coordinates;
-  if (!coordinates || !Array.isArray(coordinates) || coordinates.length === 0 || !Bootstrap.Settings.GlobalSettings.CensusPopulationData) {
-    return { population: 0, cities: [] };
-  }
-  const normalized = NormalizePolygon(geometry);
-  const points = normalized.type === `Polygon` ? normalized.coordinates[0] : normalized.coordinates.flatMap((polygon) => polygon[0]);
-  let minLat = Infinity;
-  let maxLat = -Infinity;
-  let minLon = Infinity;
-  let maxLon = -Infinity;
-  for (const [lon, lat] of points) {
-    minLat = Math.min(minLat, lat);
-    maxLat = Math.max(maxLat, lat);
-    minLon = Math.min(minLon, lon);
-    maxLon = Math.max(maxLon, lon);
-  }
-  const A2 = CreateQuery({
-    Query: `SELECT * FROM cities WHERE LAT BETWEEN ? AND ? AND LON BETWEEN ? AND ?`,
-    Parameters: [minLat, maxLat, minLon, maxLon]
-  });
-  const population = A2.reduce((acc, city) => {
-    const census = Number(city.population);
-    return acc + (isNaN(census) ? 0 : census);
-  }, 0);
-  const cities = A2.map((city) => ({
-    name: city.name,
-    state: city.state,
-    county: city.county.replace(/ County$/i, ``),
-    population: Number(city.population)
-  }));
-  return { population, cities };
-};
-
-// src/components/events/FilterEvents.ts
-var import_crypto2 = require("crypto");
-var FilterEvents = async (events) => {
-  const tick = performance.now();
-  if (events.length === 0) return;
-  const configurations = Bootstrap.Settings;
-  const sets = {};
-  const bools = {};
-  const megered = { ...configurations.GlobalSettings, ...configurations.GlobalSettings.EventFiltering };
-  for (const key in megered) {
-    const setting = megered[key];
-    if (Array.isArray(setting)) {
-      sets[key] = new Set(setting.map((item) => String(item).toLowerCase()));
-    }
-    if (typeof setting === "boolean") {
-      bools[key] = setting;
-    }
-  }
-  const isFiltered = (define2) => {
-    const properties = define2.properties;
-    const zones = properties.geocode.ugc;
-    const icao = properties.geocode.office.office;
-    if (properties.status_metadata.is_test) {
-      SetEventEmit({ Event: `onTestProduct`, Metadata: define2 });
-      if (bools?.IgnoreTestProducts) return true;
-    }
-    if (properties.status_metadata.is_expired) {
-      SetEventEmit({ Event: `onExpiredProduct`, Metadata: define2 });
-      RemoveEvents({ Event: define2, IsTimeBasedExpiration: false });
-      return true;
-    }
-    if ((properties.metadata?.vtec?.watch?.severe || properties.metadata?.vtec?.watch?.tropical) && properties.metadata.source != `events.api`) {
-      const isNational = properties.metadata?.vtec?.watch?.national;
-      const center = properties.metadata?.vtec?.watch?.severe ? `KWNS` : properties.metadata?.vtec?.watch?.tropical ? `KNHC` : `KWNS`;
-      if (!isNational) {
-        properties.metadata.tracking = properties.metadata.tracking.replace(properties.metadata.tracking.split(`.`)[0], center);
-      }
-      SetEventEmit({ Event: isNational ? `onCenterWatchNotirication` : `onCountyWatchNotification`, Metadata: define2 });
-    }
-    for (const key in sets) {
-      const setting = sets[key];
-      const values = [...setting];
-      if (key === "ListeningEvents" && setting.size > 0 && !GetMatched({ Strings: values, String: define2.properties.event })) {
-        SetEventEmit({
-          Event: `onFilteredEvent`,
-          Metadata: define2
-        });
-        return true;
-      }
-      if (key === "IgnoredEvents" && setting.size > 0 && GetMatched({ Strings: values, String: define2.properties.event })) {
-        SetEventEmit({
-          Event: `onIgnoredEvent`,
-          Metadata: define2
-        });
-        return true;
-      }
-      if (key === "ListeningICAO" && setting.size > 0 && icao != null && !setting.has(icao.toLowerCase())) {
-        SetEventEmit({
-          Event: `onFilteredICAO`,
-          Metadata: define2
-        });
-        return true;
-      }
-      if (key === "IgnoredICAO" && setting.size > 0 && icao != null && setting.has(icao.toLowerCase())) {
-        SetEventEmit({
-          Event: `onIgnoredICAO`,
-          Metadata: define2
-        });
-        return true;
-      }
-      if (key === "ListeningUGC" && setting.size > 0 && zones.length > 0 && !zones.some((ugc) => setting.has(ugc.toLowerCase()))) {
-        SetEventEmit({
-          Event: `onFilteredUGC`,
-          Metadata: define2
-        });
-        return true;
-      }
-      if (key === "ListeningStates" && setting.size > 0 && zones.length > 0 && !zones.some((ugc) => setting.has(ugc.substring(0, 2).toLowerCase()))) {
-        SetEventEmit({
-          Event: `onFilteredState`,
-          Metadata: define2
-        });
-        return true;
-      }
-    }
-    return false;
-  };
-  const filtering = events.filter((event) => {
-    Bootstrap.Cache.Parsed = Bootstrap.Cache.Parsed.filter((e) => e !== event);
-    const define2 = GetEventSignature(event);
-    const pre = { ...define2, properties: { ...define2.properties, metadata: { ...define2.properties.metadata } } };
-    const properties = define2.properties;
-    delete pre.properties.metadata.ms;
-    delete pre.properties.metadata.header;
-    const enhanced = properties.event = GetEventEnhancedName(event);
-    const filtered = isFiltered(define2);
-    if (!filtered) {
-      const tick2 = performance.now();
-      const geometry = !bools?.DisableGeometryParsing ? GetEventGeometry({ Event: event }) : null;
-      const population = GetEventPopulation(geometry);
-      const attachments = GetEventAttachments(event);
-      event.geometry = geometry;
-      event.properties.geocode.census.population = population.population;
-      event.properties.geocode.census.cities = population.cities;
-      properties.metadata.attachments = attachments;
-      SetDebug({ Title: `Filtered`, Message: `${Math.round(performance.now() - tick2)}ms` });
-    }
-    properties.metadata.hash = (0, import_crypto2.createHash)("sha256").update(JSON.stringify(pre)).digest("hex");
-    SetEventEmit({ Event: `onProductType${enhanced.replace(/\s+/g, "")}`, Metadata: define2 });
-    return !filtered;
-  });
-  SetDebug({ Title: `FilterEvents (${filtering.length}/${events.length})`, Message: `${Math.round(performance.now() - tick)}ms` });
-  await CreateEvents(filtering);
-};
-
-// src/components/events/ProcessStanza.ts
-var ProcessStanza = async (Stanza) => {
-  const settings = Bootstrap.Settings;
-  const StanzaSettings = settings.NOAAWeatherWireServiceSettings.StanzaSettings;
-  const isVtecEvent = Stanza.VTEC && Stanza.UGC;
-  const isUgcEvent = !Stanza.VTEC && Stanza.UGC;
-  const isTextEvent = !Stanza.VTEC && !Stanza.UGC;
-  const isNWWS = Stanza.NWWS;
-  switch (true) {
-    case !isNWWS:
-      await ParseAPI(Stanza);
-      break;
-    case (isNWWS && !StanzaSettings.DisableVTEC && isVtecEvent):
-      await ParseVTEC(Stanza);
-      break;
-    case (isNWWS && !StanzaSettings.DisableUGC && isUgcEvent):
-      await ParseUGC(Stanza);
-      break;
-    case (isNWWS && !StanzaSettings.DisableText && isTextEvent):
-      await ParseText(Stanza);
-      break;
-  }
-  await FilterEvents(Bootstrap.Cache.Parsed);
-  return "nothing picked";
-};
-
-// src/exports/ManualEvent.ts
-var ManualEvent = async ({ Message, Awipsid, Tracking }) => {
-  if (!Bootstrap.Ready) {
-    SetWarning({ Message: EnumStrings.nostart });
-    return;
-  }
-  const isCapEvent = Message.includes(`<?xml`);
-  const isCapAreaDescription = Message.includes(`<areaDesc>`);
-  const isVTEC = Message.match(EnumExpressions.vtec) != null;
-  const isUGC = Message.match(EnumExpressions.ugc1) != null;
-  const attributes = {
-    "xmlns": "@atmosx/event-product-parser",
-    "id": `manual_processor.0000`,
-    "issue": new Date(Math.floor(Date.now() / 6e4) * 6e4).toISOString(),
-    "ttaaii": Awipsid ?? `XXXXXX`,
-    "cccc": `MANL`,
-    "awipsid": Awipsid ?? "XXXXXX"
-  };
-  const getType = GetAwipsType({ Attributes: attributes });
-  const result = {
-    Message,
-    Attributes: attributes,
-    CapEvent: isCapEvent,
-    VTEC: isVTEC,
-    UGC: isUGC,
-    CapAreaDescription: isCapAreaDescription,
+    Message: cMessage,
+    Attributes: cAttributes,
     Ignored: false,
-    NWWS: true,
-    Type: getType
-  };
-  await ProcessStanza(result);
-};
-
-// src/exports/GetRandomEvent.ts
-var GetRandomEvent = () => {
-  if (!Bootstrap.Ready) {
-    SetWarning({ Message: EnumStrings.nostart });
-    return;
-  }
-  return CreateQuery({
-    Query: `SELECT * FROM events ORDER BY RANDOM() LIMIT 1`,
-    Parameters: []
-  }).then((A2) => {
-    if (A2.length > 0) {
-      return JSON.parse(A2[0].json);
-    } else {
-      return null;
-    }
-  });
-};
-
-// src/exports/QueryStanza.ts
-var QueryStanza = async ({ Search, Max }) => {
-  if (!Bootstrap.Ready) {
-    SetWarning({ Message: EnumStrings.nostart });
-    return;
-  }
-  const query = CreateQuery({
-    Query: `SELECT * FROM stanzas WHERE stanza LIKE ? LIMIT ?`,
-    Parameters: [`%${Search}%`, Max ?? 100]
-  });
-  const events = query.map((row) => JSON.parse(row.stanza));
-  return events;
-};
-
-// src/exports/ClearEvents.ts
-var ClearEvents = () => {
-  if (!Bootstrap.Ready) {
-    SetWarning({ Message: EnumStrings.nostart });
-    return;
-  }
-  Bootstrap.Cache.Events.features = [];
-  Bootstrap.Cache.Hashes = [];
-  SetEventEmit({
-    Event: `onEventCache`,
-    Metadata: Bootstrap.Cache.Events,
-    Message: `Manually cleared event cache.`
-  });
-};
-
-// src/components/xmpp/ReconnectXMPP.ts
-var ReconnectXMPP = async (interval) => {
-  const settings = Bootstrap.Settings;
-  const last = Date.now() - Bootstrap.Cache.LastStanzaTime;
-  if (interval < 15) {
-    SetWarning({ Message: `Reconnection interval of ${interval} seconds is too low, setting to 15 seconds` });
-    interval = 15;
-    Bootstrap.Settings.NOAAWeatherWireServiceSettings.ReconnectionSettings.ReconnectionInterval = 15;
-  }
-  const reconnectThreshold = interval * 1e3;
-  if (!Bootstrap.Cache.Connected && !Bootstrap.Cache.Hault || !Bootstrap.Session) {
-    return;
-  }
-  if (last > reconnectThreshold) {
-    if (!Bootstrap.Cache.Reconnecting) {
-      Bootstrap.Cache.Reconnecting = true;
-      Bootstrap.Cache.Connected = false;
-      Bootstrap.Cache.TotalReconnects += 1;
-      try {
-        SetEventEmit({
-          Event: `onServiceStatus`,
-          Metadata: {
-            Message: `Attempting to reconnect to XMPP Service (Reconnect Attempt ${Bootstrap.Cache.TotalReconnects})`,
-            Data: {
-              Last: last,
-              Nickname: settings.NOAAWeatherWireServiceSettings.CredentialSettings.Nickname
-            },
-            Type: `reconnect`,
-            Error: true
-          },
-          Message: `Attempting to reconnect to XMPP Service (Reconnect Attempt ${Bootstrap.Cache.TotalReconnects})`
-        });
-        await Bootstrap.Session.stop().catch(() => {
-        });
-        await Bootstrap.Session.start().catch(() => {
-        });
-      } catch (error) {
-        SetWarning({ Message: `XMPP Reconnect Failed - ${error.message}` });
-      } finally {
-        Bootstrap.Cache.Reconnecting = false;
-      }
-    }
-  }
-};
-
-// src/components/utilities/EmitThread.ts
-var import_fs3 = require("fs");
-var import_path5 = require("path");
-var EmitThread = async () => {
-  const settings = Bootstrap.Settings;
-  const TTL = settings.GlobalSettings.ArchiveSettings.TTL;
-  const TTLCUT = Date.now() - TTL * 1e3;
-  const walk = (dir, deleteFolder = false) => {
-    if (!(0, import_fs3.existsSync)(dir)) return;
-    const entries = (0, import_fs3.readdirSync)(dir, { withFileTypes: true });
-    for (const entry of entries) {
-      const fullPath = (0, import_path5.join)(dir, entry.name);
-      if (entry.isDirectory()) {
-        walk(fullPath, deleteFolder);
-        continue;
-      }
-      const stats = (0, import_fs3.statSync)(fullPath);
-      if (stats.mtime.getTime() < TTLCUT) {
-        try {
-          (0, import_fs3.unlinkSync)(fullPath);
-        } catch (err) {
-        }
-      }
-    }
-    if (deleteFolder) {
-      try {
-        if ((0, import_fs3.readdirSync)(dir).length === 0 && (0, import_fs3.statSync)(dir).mtime.getTime() < Date.now() - 36e5) {
-          (0, import_fs3.rmdirSync)(dir);
-        }
-        if ((0, import_fs3.readdirSync)(dir).length === 0 && (0, import_fs3.statSync)(dir).mtime.getTime() < TTLCUT) {
-          (0, import_fs3.rmdirSync)(dir);
-        }
-      } catch (err) {
-      }
+    Metadata: {
+      CAP: cCAP,
+      VTEC: cVTEC,
+      UGC: cUGC,
+      Wire: true
+    },
+    Product: {
+      Name,
+      ID,
+      Discovered
     }
   };
-  walk(settings.GlobalSettings.ArchiveSettings.TextDirectory, true);
-  walk(settings.GlobalSettings.ArchiveSettings.AudioDirectory, true);
-  walk(settings.GlobalSettings.ArchiveSettings.JSONDirectory, true);
-  walk(settings.GlobalSettings.ArchiveSettings.ImageDirectory, true);
-  if (settings.EnableWireService) {
-    if (settings.NOAAWeatherWireServiceSettings.ReconnectionSettings.Enabled) {
-      void ReconnectXMPP(settings.NOAAWeatherWireServiceSettings.ReconnectionSettings.ReconnectionInterval);
-    }
-  } else {
-    const response2 = await CreateHttp({
-      URL: settings.NationalWeatherServiceSettings.EventsEndpoint,
-      Headers: {
-        "User-Agent": "@atmosx/event-product-parser"
-      }
-    });
-    if (response2.error) {
-      return SetEventEmit({
-        Event: `onServiceStatus`,
-        Metadata: {
-          type: "fetch-api",
-          message: `Failed to fetch latest events from National Weather Service API - ${response2.message}`,
-          data: {},
-          error: true
-        }
-      });
-    }
-    SetEventEmit({
-      Event: `onServiceStatus`,
-      Metadata: {
-        Message: `Fetched latest events from National Weather Service API`,
-        Data: {},
-        Type: "fetch-api",
-        Error: false
-      }
-    });
-    await ProcessStanza({ Message: response2.message, NWWS: false });
+};
+
+// src/components/stanza/ProcessStanza.ts
+var ProcessStanza = async ({ Stanza }) => {
+  const { VTEC, CAP, Wire } = Stanza.Metadata;
+  switch (true) {
+    case !Wire:
+      break;
+    case (Wire && CAP):
+      break;
+    case (Wire && VTEC):
+      break;
+    case Wire:
   }
+};
+
+// src/components/database/queries/CreateStanza.ts
+var CreateStanza = ({ Stanza }) => {
+  const dbgTickA = performance.now();
+  const { MaxStanzas } = Bootstrap.Settings.WeatherWireServiceSettings.CacheControl;
+  const { count } = CreateQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.STANZA })[0];
+  const { Name } = Stanza.Product;
+  const { issue } = Stanza.Attributes;
+  CreateQuery({
+    Query: ENUM_STRINGS.DB_STRINGS.IMPORTS.STANZA,
+    Parameters: [Name, issue, JSON.stringify(Stanza)]
+  });
+  if (count >= MaxStanzas) {
+    CreateQuery({
+      Query: ENUM_STRINGS.DB_STRINGS.DELETE.STANZA_OLD,
+      Parameters: [count - MaxStanzas]
+    });
+  }
+  SetLog({ Type: `DEBUG`, Message: `[${(Math.round((performance.now() - dbgTickA) * 100) / 100).toFixed(1)}ms] CreateStanza ${Name} (#${count + 1})` });
 };
 
 // node_modules/.pnpm/@xmpp+xml@0.14.0/node_modules/@xmpp/xml/index.js
@@ -23103,7 +16373,7 @@ function lookupSrvs(srvs, options) {
     })
   ).then(() => addresses);
 }
-function resolve(domain, options = {}) {
+function resolve2(domain, options = {}) {
   if (!options.srv) {
     options.srv = [
       {
@@ -23224,14 +16494,14 @@ function compare(a, b2) {
 }
 
 // node_modules/.pnpm/@xmpp+resolve@0.14.0/node_modules/@xmpp/resolve/lib/http.js
-function resolve2(domain) {
+function resolve3(domain) {
   return fetch(`https://${domain}/.well-known/host-meta`).then((res) => res.text()).then((res) => {
     return parse2(res).getChildren("Link").filter(
-      (link2) => [
+      (link) => [
         "urn:xmpp:alt-connections:websocket",
         "urn:xmpp:alt-connections:httppoll",
         "urn:xmpp:alt-connections:xbosh"
-      ].includes(link2.attrs.rel)
+      ].includes(link.attrs.rel)
     ).map(({ attrs }) => ({
       rel: attrs.rel,
       href: attrs.href,
@@ -23244,16 +16514,16 @@ function resolve2(domain) {
 }
 
 // node_modules/.pnpm/@xmpp+resolve@0.14.0/node_modules/@xmpp/resolve/resolve.js
-function resolve3(...args) {
+function resolve4(...args) {
   return Promise.all([
-    resolve ? resolve(...args) : Promise.resolve([]),
-    resolve2(...args)
+    resolve2 ? resolve2(...args) : Promise.resolve([]),
+    resolve3(...args)
   ]).then(([records, endpoints]) => [...records, ...endpoints]);
 }
 
 // node_modules/.pnpm/@xmpp+resolve@0.14.0/node_modules/@xmpp/resolve/index.js
 async function fetchURIs(domain) {
-  const result = await resolve3(domain, {
+  const result = await resolve4(domain, {
     srv: [
       {
         service: "xmpps-client",
@@ -23297,7 +16567,7 @@ async function fallbackConnect(entity, uris) {
   entity.Socket = Transport.prototype.Socket;
   entity.Parser = Transport.prototype.Parser;
 }
-function resolve4({ entity }) {
+function resolve5({ entity }) {
   const _connect = entity.connect;
   entity.connect = async function connect(service) {
     if (!service || /:\/\//.test(service)) {
@@ -24168,7 +17438,7 @@ function client(options = {}) {
   const streamFeatures2 = streamFeatures({ middleware: middleware2 });
   const iqCaller2 = iqCaller({ middleware: middleware2, entity });
   const iqCallee2 = iqCallee({ middleware: middleware2, entity });
-  const resolve6 = resolve4({ entity });
+  const resolve6 = resolve5({ entity });
   const saslFactory = new import_saslmechanisms2.default();
   const mechanisms = Object.entries({
     ...typeof saslScramSha1 === "function" && { scramsha1: saslScramSha1 },
@@ -24234,562 +17504,6 @@ function setupIfAvailable(module2, ...args) {
   }
   return module2(...args);
 }
-
-// src/components/xmpp/OnlineXMPP.ts
-var OnlineXMPP = () => {
-  const settings = Bootstrap.Settings;
-  Bootstrap.Session.on(`online`, async () => {
-    Bootstrap.Cache.Hault = false;
-    Bootstrap.Cache.Connected = true;
-    Bootstrap.Cache.TotalReconnects = 0;
-    const nickname = settings.NOAAWeatherWireServiceSettings.CredentialSettings.Nickname;
-    Bootstrap.Session.send(xml("presence", {
-      to: `nwws@conference.nwws-oi.weather.gov/${nickname}`,
-      xmlns: "http://jabber.org/protocol/muc"
-    }));
-    SetEventEmit({
-      Event: `onServiceStatus`,
-      Metadata: {
-        Message: `Succesfully connected to NOAA Weather Wire Service as "${nickname}"`,
-        Data: {},
-        Type: `online`,
-        Error: false
-      },
-      Message: `Succesfully connected to NOAA Weather Wire Service as "${nickname}"`
-    });
-  });
-};
-
-// src/components/xmpp/OfflineXMPP.ts
-var OfflineXMPP = () => {
-  Bootstrap.Session.on(`offline`, async () => {
-    Bootstrap.Cache.Connected = false;
-    Bootstrap.Cache.Hault = true;
-    SetEventEmit({
-      Event: `onServiceStatus`,
-      Metadata: {
-        Message: `Client has gone offline`,
-        Data: {},
-        Type: `offline`,
-        Error: true
-      }
-    });
-  });
-};
-
-// src/components/xmpp/ErrorXMPP.ts
-var ErrorXMPP = () => {
-  Bootstrap.Session.on(`error`, async () => {
-    Bootstrap.Cache.Connected = false;
-    Bootstrap.Cache.Hault = true;
-  });
-};
-
-// src/components/stanza/ValidateStanza.ts
-var ValidateStanza = ({ Stanza }) => {
-  if (Stanza.is(`message`)) {
-    const cb = Stanza.getChild(`x`);
-    if (cb && cb.children) {
-      const message = unescape(cb.children[0]);
-      const attributes = cb.attrs;
-      if (attributes.awipsid && attributes.awipsid.length > 1) {
-        const isCapEvent = message.includes(`<?xml`);
-        const isCapAreaDescription = message.includes(`<areaDesc>`);
-        const isVTEC = message.match(EnumExpressions.vtec) != null;
-        const isUGC = message.match(EnumExpressions.ugc1) != null;
-        const getType = GetAwipsType({ Attributes: attributes });
-        if (getType.Type != null) {
-          return {
-            Message: message,
-            Attributes: attributes,
-            CapEvent: isCapEvent,
-            VTEC: isVTEC,
-            UGC: isUGC,
-            CapAreaDescription: isCapAreaDescription,
-            Ignored: false,
-            NWWS: true,
-            Type: {
-              Type: getType.Type,
-              Prefix: getType.Prefix,
-              Discovered: getType.Discovered
-            }
-          };
-        }
-      }
-    }
-  }
-  return { Ignored: true };
-};
-
-// src/components/database/imports/Stanza.ts
-var ImportStanza = async (Stanza) => {
-  const settings = Bootstrap.Settings;
-  try {
-    if (!settings.NOAAWeatherWireServiceSettings.CacheSettings.Enabled) {
-      return;
-    }
-    CreateQuery({ Query: `INSERT OR IGNORE INTO stanzas (type, stanza, issued) VALUES (?, ?, ?)`, Parameters: [Stanza.Type.Type, JSON.stringify(Stanza), Stanza.Attributes.issue] });
-    const count = CreateQuery({ Query: `SELECT COUNT(*) as total FROM stanzas` });
-    const max = settings.NOAAWeatherWireServiceSettings.CacheSettings.MaxDatabaseHistory;
-    if (count.total > max) {
-      const toDelete = count.total - max;
-      if (toDelete > 0) {
-        CreateQuery({ Query: `DELETE FROM stanzas WHERE id IN (SELECT id FROM stanzas ORDER BY issued ASC LIMIT ?)`, Parameters: [toDelete] });
-      }
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    SetWarning({ Message: `An error occurred while importing stanza: ${message}` });
-  }
-};
-
-// src/components/xmpp/StanzaXMPP.ts
-var StanzaXMPP = () => {
-  Bootstrap.Session.on(`stanza`, async (stanza) => {
-    const msgFrom = stanza?.attrs?.from ?? ``;
-    const msgType = stanza?.attrs?.type ?? ``;
-    SetEventEmit({
-      Event: `onServiceStatus`,
-      Metadata: {
-        Message: stanza,
-        From: msgFrom,
-        Type: `stanza`
-      }
-    });
-    Bootstrap.Cache.LastStanzaTime = Date.now();
-    if (stanza.is(`message`)) {
-      const result = ValidateStanza({ Stanza: stanza });
-      const isSkippable = result.Ignored || result.CapEvent || result.CapEvent && !result.CapAreaDescription;
-      if (isSkippable) {
-        return;
-      }
-      await ProcessStanza(result);
-      await ImportStanza(result);
-    }
-    if (stanza.is(`presence`) && msgFrom.startsWith("nwws@conference.nwws-oi.weather.gov/")) {
-      const getOccupant = msgFrom.split(`/`).slice(1).join(`/`);
-      const getAvailability = msgType === `unavailable`;
-      SetEventEmit({
-        Event: `onServiceStatus`,
-        Metadata: {
-          Message: `Occupant ${getOccupant} has ${getAvailability ? `left` : `joined`} the room`,
-          Data: {},
-          Type: `occupant`,
-          Error: false
-        }
-      });
-    }
-  });
-};
-
-// src/components/xmpp/DeployXMPP.ts
-var DeployXMPP = async () => {
-  let session;
-  const settings = Bootstrap.Settings;
-  settings.NOAAWeatherWireServiceSettings.CredentialSettings.Nickname ??= settings.NOAAWeatherWireServiceSettings.CredentialSettings.Username;
-  session = Bootstrap.Session = client({
-    service: "xmpp://nwws-oi.weather.gov",
-    domain: "nwws-oi.weather.gov",
-    username: settings.NOAAWeatherWireServiceSettings.CredentialSettings.Username,
-    password: settings.NOAAWeatherWireServiceSettings.CredentialSettings.Password
-  });
-  try {
-    await OfflineXMPP();
-    await ErrorXMPP();
-    await StanzaXMPP();
-    await OnlineXMPP();
-    await session.start();
-  } catch (error) {
-    SetEventEmit({
-      Event: `onServiceStatus`,
-      Metadata: {
-        Message: `Error occured while starting XMPP Session: ${error}`,
-        Data: {},
-        Type: `error`,
-        Error: true
-      }
-    });
-  }
-};
-
-// src/enums/Shapefiles.ts
-var EnumShapefiles = [
-  { name: "us_counties", id: "C", link: "https://www.weather.gov/source/gis/Shapefiles/County/c_16ap26.zip" },
-  { name: "us_states_territories", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/County/s_16ap26.zip" },
-  { name: "fire_weather_zones", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/fz16ap26.zip" },
-  { name: "costal_marine_zones", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/mz16ap26.zip" },
-  { name: "offshore_marine_zones", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/oz16ap26.zip" },
-  { name: "public_forecast_zones", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/z_16ap26.zip" },
-  { name: "county_warning_areas", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/w_16ap26.zip" },
-  { name: "river_forecast_boundaries", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/Misc/rf05mr24.zip" },
-  { name: "high_seas_marine_zones", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/hz17fe26.zip" }
-];
-
-// src/components/utilities/SetSleep.ts
-var SetSleep = async ({ Timeout }) => {
-  return new Promise((resolve6) => {
-    setTimeout(() => {
-      resolve6();
-    }, Timeout);
-  });
-};
-
-// src/components/database/imports/Shapefiles.ts
-var import_fs4 = require("fs");
-var import_path6 = require("path");
-var import_jszip = __toESM(require_lib3());
-var import_shapefile = __toESM(require_shapefile_node());
-var Shapefiles = async () => {
-  try {
-    const tShapefiles = CreateQuery({ Query: `SELECT COUNT(*) AS count FROM shapefiles` })[0];
-    if (tShapefiles.count === 0) {
-      await SetSleep({ Timeout: 1e3 });
-      for (const shapefile of EnumShapefiles) {
-        const response2 = await fetch(shapefile.link);
-        const arrayBuff = await response2.arrayBuffer();
-        const content = await (0, import_jszip.loadAsync)(arrayBuff);
-        const directory = (0, import_path6.resolve)(__dirname, `shapefiles`);
-        if (!(0, import_fs4.existsSync)(directory)) {
-          (0, import_fs4.mkdirSync)(directory, { recursive: true });
-        }
-        for (const file of Object.keys(content.files)) {
-          if (file.endsWith(".shp") || file.endsWith(".dbf")) {
-            const data = await content.files[file].async(`nodebuffer`);
-            const output = (0, import_path6.resolve)(directory, `${shapefile?.name ?? ``}_${shapefile?.id ?? ``}${(0, import_path6.extname)(file)}`);
-            (0, import_fs4.writeFileSync)(output, data);
-          }
-        }
-        const filepath = (0, import_path6.resolve)(__dirname, "shapefiles", shapefile.name + "_" + shapefile.id);
-        const { features } = await (0, import_shapefile.read)(
-          filepath,
-          filepath
-        );
-        SetWarning({ Message: `Importing ${features.length} features from ${shapefile.name}_${shapefile.id} for Shapefiles` });
-        const insert = `INSERT INTO shapefiles (id, location, source, geometry) VALUES (?, ?, ?, ?)`;
-        const transaction = Bootstrap.Database.transaction((entries) => {
-          for (const entry of entries) {
-            const { properties, geometry } = entry;
-            let final2, location;
-            if (properties.FIPS) {
-              final2 = `${properties.STATE}${shapefile.id}${properties.FIPS.substring(2)}`;
-              location = `${properties.COUNTYNAME}, ${properties.STATE}`;
-            } else if (properties.FULLSTAID) {
-              final2 = `${properties.ST}${shapefile.id}${properties.WFO}`;
-              location = `${properties.CITY}, ${properties.STATE}`;
-            } else if (properties.STATE) {
-              final2 = `${properties.STATE}${shapefile.id}${properties.ZONE ?? properties.SITE_ID}`;
-              location = `${properties.NAME ?? `${properties.RFC_NAME} ${properties.RFC_CITY}`}, ${properties.STATE}`;
-            } else {
-              final2 = properties.ID ?? properties.WFO;
-              location = properties.NAME;
-            }
-            CreateQuery({ Query: insert, Parameters: [final2, location, `${shapefile.name}_${shapefile.id}`, JSON.stringify(geometry)] });
-          }
-        });
-        (0, import_fs4.unlinkSync)(`${filepath}.shp`);
-        (0, import_fs4.unlinkSync)(`${filepath}.dbf`);
-        transaction(features);
-      }
-      (0, import_fs4.rm)((0, import_path6.resolve)(__dirname, "shapefiles"), { recursive: true, force: true }, () => {
-      });
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    SetWarning({ Message: `An error occurred while compiling shapefiles: ${message}` });
-  }
-};
-
-// src/components/database/imports/Broadcastify.ts
-var Broadcastify = async () => {
-  const settings = Bootstrap.Settings;
-  const broadcastify = await CreateHttp({
-    URL: settings.BroadcastifySettings.BroadcastifyDatabase,
-    Timeout: 5e3
-  });
-  if (!broadcastify.error) {
-    const states = JSON.parse(broadcastify.message);
-    const insert = `INSERT INTO broadcastify (state, county, feed, type, link) VALUES (?, ?, ?, ?, ?)`;
-    const transaction = Bootstrap.Database.transaction((rows) => {
-      for (const row of rows) {
-        CreateQuery({ Query: insert, Parameters: row });
-      }
-    });
-    const batch = [];
-    for (const state of states) {
-      SetWarning({ Message: `Importing ${state.counties.length} counties from ${state.state} for Broadcastify` });
-      for (const county of state.counties) {
-        const countyName = county.county;
-        for (const feed of county.feeds) {
-          batch.push([
-            state.state,
-            countyName,
-            feed.name,
-            feed.type,
-            feed.link
-          ]);
-        }
-      }
-    }
-    transaction(batch);
-  }
-  if (broadcastify.error) {
-    SetWarning({ Message: `Error importing Broadcastify data: ${broadcastify.message}` });
-  }
-};
-
-// src/components/database/imports/Boundaires.ts
-var import_topojson_client = __toESM(require_topojson_client());
-var Boundaries = async () => {
-  try {
-    const existing = CreateQuery({ Query: `SELECT type, COUNT(*) AS count FROM boundaries GROUP BY type` });
-    const existingStates = existing.find((row) => row.type === `state`)?.count ?? 0;
-    const existingCounties = existing.find((row) => row.type === `county`)?.count ?? 0;
-    if (existingStates > 0 || existingCounties > 0) {
-      SetWarning({ Message: `Boundary database already contains ${existingStates} states and ${existingCounties} counties, skipping import` });
-      return;
-    }
-    const boundaries = await CreateHttp({
-      URL: Bootstrap.Settings.BoundarySettings.BoundaryDatabase,
-      Timeout: 5e3
-    });
-    if (boundaries.error || !boundaries.message) {
-      SetWarning({ Message: `Failed to download boundary database` });
-      return;
-    }
-    let database;
-    try {
-      database = JSON.parse(boundaries.message);
-    } catch {
-      SetWarning({ Message: `Failed to parse boundary database` });
-      return;
-    }
-    if (database?.type !== `Topology` || !database?.objects?.states || !database?.objects?.counties) {
-      SetWarning({ Message: `Boundary database is missing states or counties` });
-      return;
-    }
-    let states;
-    let counties;
-    try {
-      states = (0, import_topojson_client.feature)(database, database.objects.states);
-      counties = (0, import_topojson_client.feature)(database, database.objects.counties);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      SetWarning({ Message: `Failed to convert boundary database: ${message}` });
-      return;
-    }
-    if (!Array.isArray(states?.features) || !Array.isArray(counties?.features)) {
-      SetWarning({ Message: `Boundary database contains invalid state or county data` });
-      return;
-    }
-    const insert = `INSERT OR REPLACE INTO boundaries (id, type, state, name, geometry) VALUES (?, ?, ?, ?, ?)`;
-    const stateRows = [];
-    const countyRows = [];
-    let skippedStates = 0;
-    let skippedCounties = 0;
-    for (const state of states.features) {
-      if (!state?.geometry || state.id === void 0 || state.id === null) {
-        skippedStates++;
-        continue;
-      }
-      const fips = String(state.id).padStart(2, `0`);
-      const abbreviation = EnumStateFIPS[fips];
-      if (!abbreviation) {
-        skippedStates++;
-        continue;
-      }
-      stateRows.push({
-        id: fips,
-        type: `state`,
-        state: abbreviation,
-        name: state.properties?.name ?? abbreviation,
-        geometry: JSON.stringify(state.geometry)
-      });
-    }
-    for (const county of counties.features) {
-      if (!county?.geometry || county.id === void 0 || county.id === null) {
-        skippedCounties++;
-        continue;
-      }
-      const fips = String(county.id).padStart(5, `0`);
-      const stateFIPS = fips.slice(0, 2);
-      const abbreviation = EnumStateFIPS[stateFIPS];
-      if (!abbreviation) {
-        skippedCounties++;
-        continue;
-      }
-      countyRows.push({
-        id: fips,
-        type: `county`,
-        state: abbreviation,
-        name: county.properties?.name ?? fips,
-        geometry: JSON.stringify(county.geometry)
-      });
-    }
-    SetWarning({ Message: `Importing ${stateRows.length} states and ${countyRows.length} counties` });
-    const transaction = Bootstrap.Database.transaction((rows) => {
-      for (const row of rows) {
-        CreateQuery({
-          Query: insert,
-          Parameters: [row.id, row.type, row.state, row.name, row.geometry]
-        });
-      }
-    });
-    transaction(stateRows);
-    transaction(countyRows);
-    const imported = CreateQuery({ Query: `SELECT type, COUNT(*) AS count FROM boundaries GROUP BY type` });
-    const importedStates = imported.find((row) => row.type === `state`)?.count ?? 0;
-    const importedCounties = imported.find((row) => row.type === `county`)?.count ?? 0;
-    if (importedStates !== stateRows.length || importedCounties !== countyRows.length) {
-      SetWarning({ Message: `Boundary import verification failed: ${importedStates} states and ${importedCounties} counties` });
-      return;
-    }
-    SetWarning({ Message: `Imported ${importedStates} states and ${importedCounties} counties` });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    SetWarning({ Message: `An error occurred while importing boundaries: ${message}` });
-  }
-};
-
-// src/components/database/imports/Census.ts
-var Census = async () => {
-  const cities = await CreateHttp({
-    URL: Bootstrap.Settings.BoundarySettings.CityDatabase,
-    Timeout: 5e3
-  });
-  if (cities.error || !cities.message) {
-    SetWarning({ Message: `Failed to download city database` });
-    return;
-  }
-  let database;
-  try {
-    database = JSON.parse(cities.message);
-  } catch {
-    SetWarning({ Message: `Failed to parse city database` });
-    return;
-  }
-  if (!Array.isArray(database)) {
-    SetWarning({ Message: `Failed to parse city database` });
-    return;
-  }
-  const StateCodes = Object.fromEntries(
-    Object.entries(EnumStates).map(([code, name]) => [name, code])
-  );
-  const insert = `INSERT INTO cities (id, name, state, county, population, lat, lon) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-  const cityRows = [];
-  for (const city of database) {
-    if (city.country != `US`) continue;
-    cityRows.push({
-      id: city.id,
-      name: city.name,
-      state: StateCodes[city.admin1] ?? null,
-      county: city.admin2,
-      population: city.pop ?? null,
-      lat: city.lat,
-      lon: city.lon
-    });
-  }
-  SetWarning({ Message: `Importing ${cityRows.length} cities` });
-  const transaction = Bootstrap.Database.transaction((rows) => {
-    for (const row of rows) {
-      CreateQuery({
-        Query: insert,
-        Parameters: [row.id, row.name, row.state, row.county, row.population, row.lat, row.lon]
-      });
-    }
-  });
-  transaction(cityRows);
-};
-
-// src/components/database/InitializeDatabase.ts
-var import_fs5 = require("fs");
-var import_better_sqlite3 = __toESM(require("better-sqlite3"));
-var InitializeDatabase = async () => {
-  const settings = Bootstrap.Settings;
-  try {
-    if (!(0, import_fs5.existsSync)(settings.Database)) {
-      (0, import_fs5.writeFileSync)(settings.Database, "");
-      SetWarning({ Message: `Creating new database at ${settings.Database}` });
-    }
-    Bootstrap.Database = new import_better_sqlite3.default(settings.Database);
-    CreateQuery({ Query: `CREATE TABLE IF NOT EXISTS stanzas ( id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT, issued TEXT, stanza TEXT )` });
-    const isNeedingShapefiles = CreateQuery({ Query: `SELECT name FROM sqlite_master WHERE type='table' AND name='shapefiles';` });
-    const isNeedingBroadcastify = CreateQuery({ Query: `SELECT name FROM sqlite_master WHERE type='table' AND name='broadcastify';` });
-    const isNeedingBoundaries = CreateQuery({ Query: `SELECT name FROM sqlite_master WHERE type='table' AND name='boundaries';` });
-    const isNeedingCities = CreateQuery({ Query: `SELECT name FROM sqlite_master WHERE type='table' AND name='cities';` });
-    if (isNeedingShapefiles.length === 0 || isNeedingBroadcastify.length === 0 || isNeedingBoundaries.length === 0 || isNeedingCities.length === 0) {
-      CreateQuery({ Query: `CREATE TABLE IF NOT EXISTS broadcastify ( state TEXT, county TEXT, feed TEXT, type TEXT, link TEXT)` });
-      CreateQuery({ Query: `CREATE TABLE IF NOT EXISTS shapefiles ( id, location TEXT, source TEXT, geometry TEXT )` });
-      CreateQuery({ Query: `CREATE INDEX IF NOT EXISTS idx_shapefiles_id ON shapefiles (id)` });
-      CreateQuery({ Query: `CREATE TABLE IF NOT EXISTS boundaries (id TEXT PRIMARY KEY, type TEXT NOT NULL, state TEXT, name TEXT, geometry TEXT NOT NULL );` });
-      CreateQuery({ Query: `CREATE TABLE IF NOT EXISTS cities ( id TEXT PRIMARY KEY, name TEXT, state TEXT, county TEXT, population TEXT, lat REAL NOT NULL, lon REAL NOT NULL);` });
-      SetWarning({ Message: `Required database tables are currently building, please ${Bootstrap.Colors.Red}DO NOT${Bootstrap.Colors.Reset} close your terminal. The building will not finish and will remain incomplete. If you do mess up, you will need to delete ${settings.Database} and restart the application.` });
-      if (isNeedingCities.length === 0) {
-        await Census();
-      }
-      if (isNeedingBroadcastify.length === 0) {
-        await Broadcastify();
-      }
-      if (isNeedingBoundaries.length === 0) {
-        await Boundaries();
-      }
-      if (isNeedingShapefiles.length === 0) {
-        await Shapefiles();
-      }
-      SetWarning({ Message: `Database initialization complete. You may now close your terminal or continue using the application.` });
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    SetWarning({ Message: `An error occurred while initializing the database: ${message}` });
-  }
-};
-
-// src/components/events/utilities/GetCachedEvents.ts
-var GetCachedEvents = async () => {
-  try {
-    const settings = Bootstrap.Settings;
-    const tick = performance.now();
-    if (settings.NOAAWeatherWireServiceSettings.CacheSettings.Enabled) {
-      const max = settings.NOAAWeatherWireServiceSettings.CacheSettings.MaxRetentionHistory ?? 500;
-      const get = await CreateQuery({
-        Query: `SELECT * FROM stanzas ORDER BY rowid DESC LIMIT ?`,
-        Parameters: [max]
-      });
-      SetWarning({ Message: `Fetched ${get.length} cached stanzas from the database in ${Math.floor(performance.now() - tick)} ms` });
-      let events = get.map((row) => JSON.parse(row.stanza)).filter((stanza) => {
-        if (!stanza) {
-          return;
-        }
-        const isSkippable = stanza.isIgnored || stanza.isCapEvent || stanza.isCapEvent && !stanza.isCapAreaDescription;
-        return !isSkippable;
-      });
-      events = events.sort((a, b2) => b2.issued - a.issued);
-      await Promise.all(events.map((event) => ProcessStanza(event)));
-      SetWarning({ Message: `Processed ${events.length} cached stanzas in ${Math.floor(performance.now() - tick)} ms` });
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    SetWarning({ Message: `An error occurred while fetching cached stanzas: ${message}` });
-  }
-};
-
-// src/components/events/utilities/UpdateEvents.ts
-var UpdateEvents = async (selected) => {
-  const events = Bootstrap.Cache.Events.features;
-  async function update(event) {
-    if (new Date(event.properties.expires) < /* @__PURE__ */ new Date()) {
-      SetEventEmit({ Event: `onExpiredProduct`, Metadata: event });
-      await RemoveEvents({ Event: event, IsTimeBasedExpiration: true });
-    }
-  }
-  if (!selected) {
-    await Promise.all(events.map(async (event) => {
-      await update(event);
-    }));
-  }
-  if (selected) {
-    await update(selected);
-  }
-};
 
 // node_modules/.pnpm/croner@10.0.1/node_modules/croner/dist/croner.js
 function T(s2) {
@@ -25442,50 +18156,134 @@ var E = class {
   }
 };
 
-// src/exports/StartService.ts
-var StartService = async () => {
-  const { DeveloperDisableEvents, EnableWireService } = Bootstrap.Settings;
-  if (Bootstrap.Ready) {
-    return SetWarning({ Message: `Service is already running!` });
+// src/components/classes/DeployService.ts
+var DeployService = class {
+  constructor() {
+    this.pService = `xmpp://nwws-oi.weather.gov`;
+    this.pDomain = `nwws-oi.weather.gov`;
+    this.pAuthentication = Bootstrap.Settings.WeatherWireServiceSettings.Credentials;
+    this.pAuthentication.Nickname ??= `atmosx@event-product-parser-${Bootstrap.Version}-${Math.floor(Math.random() * 1e4)}`;
+    this.DeploySession();
   }
-  await Promise.all([
-    Bootstrap.Ready = true,
-    await InitializeDatabase(),
-    !DeveloperDisableEvents && EnableWireService ? await DeployXMPP() : null,
-    !DeveloperDisableEvents && EnableWireService ? await GetCachedEvents() : null,
-    await EmitThread(),
-    Bootstrap.Job = new E(`*/15 * * * * *`, async () => {
-      await EmitThread();
-    }),
-    Bootstrap.Job = new E(`* * * * * *`, async () => {
-      await SetEventPolygonNodes();
-      await UpdateEvents();
-    })
-  ]);
-  if (DeveloperDisableEvents) {
-    SetWarning({ Message: `DeveloperDisableEvents is enabled, no events will be processed!` });
-  }
-};
-
-// src/exports/StopService.ts
-var StopService = async () => {
-  if (Bootstrap.Ready) {
-    Bootstrap.Ready = false;
-    if (Bootstrap.Session) {
-      try {
-        await Bootstrap.Session.stop();
-      } catch {
-      }
-      Bootstrap.Cache.Connected = false;
-      Bootstrap.Cache.Hault = true;
-      Bootstrap.Session = null;
+  async StartSession() {
+    if (this.pSession) {
+      await this.pSession.start().catch(() => {
+      });
     }
   }
-};
-
-// src/exports/GetVersion.ts
-var GetVersion = () => {
-  return Bootstrap.Version;
+  async KillSession() {
+    if (this.pSession) {
+      Bootstrap.CacheControl.Session.Reconnecting = true;
+      Bootstrap.CacheControl.Session.Connected = false;
+      Bootstrap.CacheControl.Session.ReconnectAttempts++;
+      await this.pSession.stop().catch(() => {
+      });
+    }
+  }
+  async ReconnectSessionCheck() {
+    let { ReconnectionPeriod } = Bootstrap.Settings.WeatherWireServiceSettings;
+    let { LastStanzaReported, Reconnecting, ReconnectAttempts, Connected, HaultConnection } = Bootstrap.CacheControl.Session;
+    const cReportedLastStanza = Date.now() - LastStanzaReported;
+    if (!Connected && !HaultConnection || !this.pSession) {
+      return;
+    }
+    if (ReconnectionPeriod < 15) {
+      Bootstrap.Settings.WeatherWireServiceSettings.ReconnectionPeriod = 15;
+      SetLog({
+        Type: "ERROR",
+        Message: ENUM_STRINGS.SERVICE.RECONNECT_INTERVAL_SMALL.replace(`%s`, ReconnectionPeriod.toString())
+      });
+    }
+    if (cReportedLastStanza > ReconnectionPeriod * 1e3) {
+      if (!Reconnecting) {
+        await this.KillSession();
+        SetLog({
+          Message: ENUM_STRINGS.SERVICE.RECONNECTING.replace(`%s`, ReconnectAttempts.toString()),
+          Metadata: { Status: `reconnecting` },
+          Event: `onServiceStatus`
+        });
+        await this.StartSession();
+      }
+    }
+  }
+  DeploySession() {
+    this.pSession = Bootstrap.Session = client({
+      service: this.pService,
+      domain: this.pDomain,
+      username: this.pAuthentication.Username,
+      password: this.pAuthentication.Password
+    });
+    this.StartSession();
+    this.pSession.on(`online`, () => this.onOnline());
+    this.pSession.on(`stanza`, (stanza) => this.onStanza(stanza));
+    this.pSession.on(`error`, () => this.onError());
+    process.on("SIGINT", async () => {
+      await this.KillSession();
+      process.exit(0);
+    });
+    new E(`* * * * * *`, async () => this.ReconnectSessionCheck());
+  }
+  onOnline() {
+    const { ReconnectAttempts } = Bootstrap.CacheControl.Session;
+    const cNickname = `${this.pAuthentication.Nickname} (x${ReconnectAttempts})`;
+    Bootstrap.CacheControl.Session.Connected = true;
+    Bootstrap.CacheControl.Session.Reconnecting = false;
+    Bootstrap.CacheControl.Session.HaultConnection = false;
+    Bootstrap.CacheControl.Session.LastStanzaReported = Date.now();
+    this.pSession.send(xml("presence", {
+      to: `nwws@conference.nwws-oi.weather.gov/${cNickname}`,
+      xmlns: "http://jabber.org/protocol/muc"
+    }));
+    SetLog({
+      Message: ENUM_STRINGS.SERVICE.CONNECTED.replace(`%s`, cNickname),
+      Metadata: { Status: `online` },
+      Event: `onServiceStatus`
+    });
+  }
+  async onError() {
+    Bootstrap.CacheControl.Session.Connected = true;
+    Bootstrap.CacheControl.Session.HaultConnection = true;
+    SetLog({
+      Message: ENUM_STRINGS.SERVICE.DISCONNECTED,
+      Metadata: { Status: `offline` },
+      Event: `onServiceStatus`
+    });
+    await this.KillSession();
+    await SetSleep({ Timeout: 5e3 });
+    await this.StartSession();
+  }
+  async onStanza(Stanza) {
+    const { Username, Nickname } = this.pAuthentication;
+    const cMsgFrom = Stanza?.attrs?.from ?? ``;
+    const cMsgType = Stanza?.attrs?.type ?? ``;
+    Stanza.attrs.to = Stanza.attrs.to?.replace(Username, Nickname ?? "****");
+    Bootstrap.CacheControl.Session.LastStanzaReported = Date.now();
+    if (Stanza.is(`presence`) && cMsgFrom.startsWith("nwws@conference.nwws-oi.weather.gov/")) {
+      const cOccupant = cMsgFrom.split(`/`).slice(1).join(`/`);
+      const cAvailability = cMsgType === `unavailable`;
+      SetLog({
+        Hidden: true,
+        Message: ENUM_STRINGS.SERVICE.OCCUPANT.replace(`%s`, cOccupant).replace(`%d`, cAvailability ? `left` : `joined`),
+        Metadata: { Status: `occupant`, Occupant: cOccupant, Availability: cAvailability ? `left` : `joined` },
+        Event: `onPresenceMessage`
+      });
+    }
+    if (Stanza.is(`message`)) {
+      const cValidate = ValidateStanza({ Stanza });
+      const cSkippable = !cValidate || cValidate.Ignored;
+      if (cSkippable) {
+        return;
+      }
+      await CreateStanza({ Stanza: JSON.parse(JSON.stringify(cValidate)) });
+      await ProcessStanza({ Stanza: JSON.parse(JSON.stringify(cValidate)) });
+      SetLog({
+        Hidden: true,
+        Message: Stanza,
+        Metadata: { Status: `stanza`, From: cMsgFrom, Type: cMsgType },
+        Event: `onStanzaMessage`
+      });
+    }
+  }
 };
 
 // src/index.ts
@@ -25493,32 +18291,48 @@ var Manager = class {
   constructor(settings) {
     CreateErrorHandler();
     SetSettings(settings);
-    StartService();
   }
-  on(event, callback) {
-    Bootstrap.Listener.on(event, callback);
+  async start() {
+    const { WeatherWireService, WeatherWireServiceSettings, DeveloperSettings } = Bootstrap.Settings;
+    const { DisableEvents } = DeveloperSettings;
+    if (Bootstrap.ServiceReady) {
+      return SetLog({ Message: ENUM_STRINGS.SERVICE.ALREADY_STARTED });
+    }
+    SetLog({ Type: `DEBUG`, Message: `@atmosx/event-product-parser: ${this.version()}` });
+    Bootstrap.ServiceReady = true;
+    await Promise.all([
+      await InitializeDatabase(),
+      await CreatePopulatedDatabase(),
+      WeatherWireService && !DisableEvents ? new DeployService() : null,
+      Bootstrap.Scheduler = new E(`*/15 * * * * *`, async () => {
+      }),
+      // Thread Caller
+      Bootstrap.Scheduler = new E(`* * * * * *`, async () => {
+      })
+      // Event Polygon / Node Updater
+    ]);
+  }
+  async stop() {
+    if (!Bootstrap.ServiceReady) {
+      return SetLog({ Message: ENUM_STRINGS.SERVICE.NOT_STARTED });
+    }
+    Bootstrap.ServiceReady = false;
+    if (Bootstrap.Scheduler) {
+      Bootstrap.Scheduler = null;
+    }
+  }
+  on(Event, Callback) {
+    Bootstrap.Listener.on(Event, Callback);
     return () => {
-      void Bootstrap.Listener.off(event, callback);
+      void Bootstrap.Listener.off(Event, Callback);
     };
+  }
+  version() {
+    return Bootstrap.Version;
   }
 };
 var index_default = Manager;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  ClearEvents,
-  GenerateAudioMessage,
-  GenerateGraphic,
-  GetCleanedEvent,
-  GetEventGeometry,
-  GetEvents,
-  GetNodes,
-  GetRandomEvent,
-  GetVersion,
-  Manager,
-  ManualEvent,
-  QueryStanza,
-  SetNode,
-  SetSettings,
-  StartService,
-  StopService
+  Manager
 });

@@ -6,57 +6,69 @@
       / ____ \ |_| | | | | | (_) \__ \ |_) | | | |  __/ |  | | (__ / . \ 
      /_/    \_\__|_| |_| |_|\___/|___/ .__/|_| |_|\___|_|  |_|\___/_/ \_\
                                      | |                            
-                                     |_|                                                                                                                
-
-    Created with ♥ by the AtmosphericX Team (KiyoWx, StarflightWx, & CJ Ziegler)
-    Discord: https://atmosphericx-discord.scriptkitty.cafe
+                                     |_|    
+                                                        
+    Created with ❤️ by the Project AtmosphericX Team (KiyoWx, CJZiegler, StarflightWx)
     Ko-Fi: https://ko-fi.com/k3yomi
-    Documentation: https://atmosphericx.scriptkitty.cafe/documentation
-
-    Independent Package: @atmosx/event-product-parser
 
 */
 
-import { TypeSettings } from "TypesStandard/Settings"
+import { TYPE_SETTINGS } from "Types/components/Settings"
+import { ENUM_STRINGS } from "@Enums/Strings"
 import { Bootstrap } from "@Bootstrap"
-import { GetEventGeometry } from "@BuilderComponents/GetEventGeometry"
-import { GetCleanedEvent } from "@BuilderComponents/GetCleanedEvent"
-import { SetSettings } from "@Utilities/SetSettings"
-import { CreateErrorHandler } from "@Utilities/CreateErrorHandler"
-import { GenerateAudioMessage } from "@Audio/GenerateAudioMessage"
-import { GenerateGraphic } from "@Image/GenerateGraphic"
-import { SetNode } from "@Exports/SetNode"
-import { GetEvents } from "@Exports/GetEvents"
-import { GetNodes } from "@Exports/GetNodes"
-import { ManualEvent } from "@Exports/ManualEvent"
-import { GetRandomEvent } from "@Exports/GetRandomEvent"
-import { QueryStanza } from "@Exports/QueryStanza"
-import { ClearEvents } from "@Exports/ClearEvents"
-import { StartService } from "@Exports/StartService"
-import { StopService } from "@Exports/StopService"
-import { GetVersion } from "@Exports/GetVersion"
+import { CreateErrorHandler } from "@Components.Utilities/CreateErrorHandler"
+import { SetLog } from "@Components.Utilities/SetLog"
+import { SetSettings } from "@Components.Utilities/SetSettings"
+import { InitializeDatabase } from "@Components.Database/InitializeDatabase"
+import { CreatePopulatedDatabase } from "@Components.Database/CreatePopulatedDatabase"
+import { DeployService } from "@Components.Classes/DeployService"
+import { Cron } from "croner"
 
 export class Manager { 
-    public constructor(settings: TypeSettings) { 
+    public constructor(settings: TYPE_SETTINGS) { 
         CreateErrorHandler();
         SetSettings(settings);
-        StartService();
     }
 
-    public on(event: string, callback: () => void) {
-        Bootstrap.Listener.on(event, callback)
-        return () => { void Bootstrap.Listener.off(event, callback) };
+    public async start(): Promise<void> { 
+        const { WeatherWireService, WeatherWireServiceSettings, DeveloperSettings} = Bootstrap.Settings;
+        const { DisableEvents } = DeveloperSettings;
+
+        if (Bootstrap.ServiceReady) { 
+            return SetLog({ Message: ENUM_STRINGS.SERVICE.ALREADY_STARTED });
+        }
+        SetLog({ Type: `DEBUG`, Message: `@atmosx/event-product-parser: ${this.version()}` }) 
+        Bootstrap.ServiceReady = true;
+        await Promise.all([
+            await InitializeDatabase(),
+            await CreatePopulatedDatabase(),
+            WeatherWireService && !DisableEvents ? new DeployService() : null,
+            Bootstrap.Scheduler = new Cron(`*/15 * * * * *`, async () => {}), // Thread Caller
+            Bootstrap.Scheduler = new Cron(`* * * * * *`, async () => {}) // Event Polygon / Node Updater
+        ])
+    }
+
+    public async stop(): Promise<void> {
+        if (!Bootstrap.ServiceReady) {
+            return SetLog({ Message: ENUM_STRINGS.SERVICE.NOT_STARTED });
+        }
+        Bootstrap.ServiceReady = false;
+        if (Bootstrap.Scheduler) { 
+            Bootstrap.Scheduler = null;
+        }
+    }
+
+    public on(Event: string, Callback: () => void) {
+        Bootstrap.Listener.on(Event, Callback)
+        return () => { void Bootstrap.Listener.off(Event, Callback) };
+    }
+
+    public version(): string { 
+        return Bootstrap.Version;
     }
 }
 
 export default Manager;
-export type { TypeEvent } from "TypesEvent/Event"
-export { 
-    SetSettings, GetEventGeometry, ManualEvent,
-    GetCleanedEvent, StopService, ClearEvents,
-    StartService, SetNode, GetRandomEvent, GetVersion,
-    GetEvents, GetNodes, GenerateAudioMessage, GenerateGraphic,
-    QueryStanza
-}
+export { }
 
 

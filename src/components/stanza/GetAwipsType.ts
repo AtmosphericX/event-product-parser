@@ -6,42 +6,38 @@
       / ____ \ |_| | | | | | (_) \__ \ |_) | | | |  __/ |  | | (__ / . \ 
      /_/    \_\__|_| |_| |_|\___/|___/ .__/|_| |_|\___|_|  |_|\___/_/ \_\
                                      | |                            
-                                     |_|                                                                                                                
-
-    Created with ♥ by the AtmosphericX Team (KiyoWx, StarflightWx, & CJ Ziegler)
-    Discord: https://atmosphericx-discord.scriptkitty.cafe
+                                     |_|    
+                                                        
+    Created with ❤️ by the Project AtmosphericX Team (KiyoWx, CJZiegler, StarflightWx)
     Ko-Fi: https://ko-fi.com/k3yomi
-    Documentation: https://atmosphericx.scriptkitty.cafe/documentation
-
-    Independent Package: @atmosx/event-product-parser
 
 */
 
-import { TypeAttributes } from "TypesEvent/Attributes"
-import { EnumAWIPS } from "@Enums/AWIPS"
+import { TYPE_ATTRIBUTES } from "Types/stanza/StanzaAttributes"
+import { ENUM_AWIP_PRODUCTS } from "@Enums.Products/AWIPProducts"
 
-interface GetAwipsTypeOptions { 
-    Attributes: TypeAttributes
+interface GET_AWIPS_TYPE_OPTIONS { 
+    Attributes: TYPE_ATTRIBUTES
 }
 
-interface GetAwipsTypeResponse { 
-    Type: string
-    Prefix: string
+interface GET_AWIPS_TYPE_RESPONSE { 
+    Name: string
+    ID: string
     Discovered: boolean
 }
 
-export const GetAwipsType = ({ Attributes }: GetAwipsTypeOptions): GetAwipsTypeResponse => {
+export const GetAwipsType = ({ Attributes }: GET_AWIPS_TYPE_OPTIONS): GET_AWIPS_TYPE_RESPONSE => {
     if (!Attributes.awipsid) { 
         return { 
-            Type: null, 
-            Prefix: null,
+            Name: null, 
+            ID: null,
             Discovered: false
         }
     }
-    for (const [prefix, type] of Object.entries(EnumAWIPS)) {
-        if (Attributes.awipsid.startsWith(prefix)) {
-            return { Type: type, Prefix: prefix, Discovered: true }
+    for (const [cPrefix, cName] of Object.entries(ENUM_AWIP_PRODUCTS)) {
+        if (Attributes.awipsid.startsWith(cPrefix)) {
+            return { Name: cName, ID: cPrefix, Discovered: true }
         }
     }
-    return { Type: Attributes.awipsid, Prefix: Attributes.awipsid, Discovered: false }
+    return { Name: Attributes.awipsid, ID: Attributes.awipsid, Discovered: false }
 }

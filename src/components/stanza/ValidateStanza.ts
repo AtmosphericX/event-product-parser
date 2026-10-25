@@ -6,57 +6,47 @@
       / ____ \ |_| | | | | | (_) \__ \ |_) | | | |  __/ |  | | (__ / . \ 
      /_/    \_\__|_| |_| |_|\___/|___/ .__/|_| |_|\___|_|  |_|\___/_/ \_\
                                      | |                            
-                                     |_|                                                                                                                
-
-    Created with ♥ by the AtmosphericX Team (KiyoWx, StarflightWx, & CJ Ziegler)
-    Discord: https://atmosphericx-discord.scriptkitty.cafe
+                                     |_|    
+                                                        
+    Created with ❤️ by the Project AtmosphericX Team (KiyoWx, CJZiegler, StarflightWx)
     Ko-Fi: https://ko-fi.com/k3yomi
-    Documentation: https://atmosphericx.scriptkitty.cafe/documentation
-
-    Independent Package: @atmosx/event-product-parser
 
 */
 
-import { TypeStanza } from "TypesEvent/Stanza"
-import { TypeStanzaCompiled } from "TypesStandard/StanzaCompiled"
-import { EnumExpressions } from "@Enums/Expressions"
-import { GetAwipsType } from "@Stanza/GetAwipsType"
+import { TYPE_STANZA } from "Types/stanza/Stanza"
+import { TYPE_STANZA_COMPILED } from "Types/stanza/StanzaValidated"
+import { ENUM_REGULAR_EXPRESSIONS } from "@Enums/RegularExpressions"
+import { GetAwipsType } from "@Components.Stanza/GetAwipsType"
 
-interface ValidateStanzaOptions { 
-    Stanza: TypeStanza
+interface VALIDATE_OPTIONS { 
+    Stanza: TYPE_STANZA
 }
 
-export const ValidateStanza = ({ Stanza }: ValidateStanzaOptions): TypeStanzaCompiled => {
-    if (Stanza.is(`message`)) {
-        const cb = Stanza.getChild(`x`) as TypeStanza;
-        if (cb && cb.children) {
-            const message = unescape(cb.children[0]);
-            const attributes = cb.attrs;
-            if (attributes.awipsid && attributes.awipsid.length > 1) { 
-                const isCapEvent = message.includes(`<?xml`);
-                const isCapAreaDescription = message.includes(`<areaDesc>`)
-                const isVTEC = message.match(EnumExpressions.vtec) != null;
-                const isUGC = message.match(EnumExpressions.ugc1) != null;
-                const getType = GetAwipsType({ Attributes: attributes})
-                if (getType.Type != null) {
-                    return { 
-                        Message: message, 
-                        Attributes: attributes, 
-                        CapEvent: isCapEvent, 
-                        VTEC: isVTEC, 
-                        UGC: isUGC, 
-                        CapAreaDescription: isCapAreaDescription, 
-                        Ignored: false, 
-                        NWWS: true, 
-                        Type: {
-                            Type: getType.Type, 
-                            Prefix: getType.Prefix,
-                            Discovered: getType.Discovered
-                        }
-                    }
-                }
-            }
+export const ValidateStanza = ({ Stanza }: VALIDATE_OPTIONS): TYPE_STANZA_COMPILED => {
+    if (!Stanza.is(`message`)) return null;
+    const cb = Stanza?.getChild(`x`) as TYPE_STANZA;
+    if ((!cb || !cb.children) || !cb.attrs?.awipsid || !cb.attrs?.awipsid.length) return null;
+    const cAttributes = cb.attrs;
+    const cMessage = unescape(cb.children?.[0]);
+    const cCAP = cMessage.includes(`<?xml`) && cMessage.includes(`<areaDesc>`);
+    const cVTEC = cMessage.match(ENUM_REGULAR_EXPRESSIONS.VTEC) != null;
+    const cUGC = cMessage.match(ENUM_REGULAR_EXPRESSIONS.UGC_PT1) != null;
+    const { Name, ID, Discovered } = GetAwipsType({ Attributes: cAttributes });
+    if (Name == null) return null;
+    return { 
+        Message: cMessage,
+        Attributes: cAttributes,
+        Ignored: false,
+        Metadata: {
+            CAP: cCAP,
+            VTEC: cVTEC,
+            UGC: cUGC,
+            Wire: true,
+        },
+        Product: {
+            Name,
+            ID,
+            Discovered: Discovered
         }
     }
-    return { Ignored: true}
 }

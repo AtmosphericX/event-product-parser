@@ -6,20 +6,16 @@
       / ____ \ |_| | | | | | (_) \__ \ |_) | | | |  __/ |  | | (__ / . \ 
      /_/    \_\__|_| |_| |_|\___/|___/ .__/|_| |_|\___|_|  |_|\___/_/ \_\
                                      | |                            
-                                     |_|                                                                                                                
-
-    Created with ♥ by the AtmosphericX Team (KiyoWx, StarflightWx, & CJ Ziegler)
-    Discord: https://atmosphericx-discord.scriptkitty.cafe
+                                     |_|    
+                                                        
+    Created with ❤️ by the Project AtmosphericX Team (KiyoWx, CJZiegler, StarflightWx)
     Ko-Fi: https://ko-fi.com/k3yomi
-    Documentation: https://atmosphericx.scriptkitty.cafe/documentation
-
-    Independent Package: @atmosx/event-product-parser
 
 */
 
 import { Bootstrap } from "@Bootstrap"
 
-interface SetTimeoutActionOptions {
+interface SET_TIMEOUT_ACTION_OPTIONS {
     Identifier: string
     AddTime?: boolean
     Max?: number
@@ -27,38 +23,30 @@ interface SetTimeoutActionOptions {
     Expire?: boolean
 }
 
-type SetTimeoutActionResponse = {
-    Limited: boolean
-    Remaining?: number
-    Response?: string
-}
+export const SetTimeoutAction = ({ Identifier, AddTime, Max, Interval, Expire }: SET_TIMEOUT_ACTION_OPTIONS): boolean => {
+    const { CacheControl } = Bootstrap;  
+    let lTarget = Bootstrap.CacheControl.Limits?.[Identifier];
 
-export const SetTimeoutAction = ({ Identifier, AddTime, Max, Interval, Expire }: SetTimeoutActionOptions): SetTimeoutActionResponse =>  {
-    let target = Bootstrap?.Ratelimits?.[Identifier];
-    if (!target) {
-        Bootstrap.Ratelimits[Identifier] = [];
-        target = Bootstrap.Ratelimits[Identifier];
+    if (!lTarget) {
+        CacheControl.Limits[Identifier] = [];
+        lTarget = CacheControl.Limits?.[Identifier];
     }
     if (Expire) {
-        delete Bootstrap.Ratelimits[Identifier];
-        return { Limited: false };
+        delete CacheControl.Limits?.[Identifier];
+        return false
     }
-    if (target?.length > 0) {
-       Bootstrap.Ratelimits[Identifier] = target.filter((ts: number) => Date.now() - ts < Interval * 1000);
-       target = Bootstrap.Ratelimits[Identifier];
+    if (lTarget?.length > 0) {
+       CacheControl.Limits[Identifier] = lTarget.filter((ts: number) => Date.now() - ts < Interval * 1000);
+       lTarget = CacheControl.Limits?.[Identifier];
     }
 
-    const oldestTimestamp = target?.[0];
-    const getWait = oldestTimestamp ? Math.ceil((Interval * 1000) - (Date.now() - oldestTimestamp)) : 0;
-    const max = Max ?? 1;
+    const cTimetstamp = lTarget?.[0];
+    const mWait = cTimetstamp ? Math.ceil((Interval * 1000) - (Date.now() - cTimetstamp)) : 0;
+    const cMaxRequests = Max ?? 1;
     
-    if (target?.length >= max && getWait > 0) {
-        return {
-            Limited: true,
-            Remaining: getWait,
-            Response: `You are being rate limited, please wait ${(getWait / 1e3).toFixed(1)} second(s) before performing this action again.`
-        }
+    if (lTarget?.length >= cMaxRequests && mWait > 0) {
+        return true
     }
-    Bootstrap.Ratelimits[Identifier].push(Date.now());
-    return { Limited: false };
+    CacheControl.Limits?.[Identifier].push(Date.now());
+    return false
 }

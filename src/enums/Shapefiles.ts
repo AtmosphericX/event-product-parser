@@ -6,31 +6,27 @@
       / ____ \ |_| | | | | | (_) \__ \ |_) | | | |  __/ |  | | (__ / . \ 
      /_/    \_\__|_| |_| |_|\___/|___/ .__/|_| |_|\___|_|  |_|\___/_/ \_\
                                      | |                            
-                                     |_|                                                                                                                
-
-    Created with ♥ by the AtmosphericX Team (KiyoWx, StarflightWx, & CJ Ziegler)
-    Discord: https://atmosphericx-discord.scriptkitty.cafe
+                                     |_|    
+                                                        
+    Created with ❤️ by the Project AtmosphericX Team (KiyoWx, CJZiegler, StarflightWx)
     Ko-Fi: https://ko-fi.com/k3yomi
-    Documentation: https://atmosphericx.scriptkitty.cafe/documentation
-
-    Independent Package: @atmosx/event-product-parser
 
 */
 
-interface ShapefilesResponse {
-    name: string
-    id: string
-    link: string
+type TYPE_SHAPEFILES= {
+    Name: string
+    Type: string
+    Link: string
 }
 
-export const EnumShapefiles: ShapefilesResponse[] = [
-    {name: "us_counties", id: "C", link: "https://www.weather.gov/source/gis/Shapefiles/County/c_16ap26.zip"},
-    {name: "us_states_territories", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/County/s_16ap26.zip"},
-    {name: "fire_weather_zones", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/fz16ap26.zip"},
-    {name: "costal_marine_zones", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/mz16ap26.zip"},
-    {name: "offshore_marine_zones", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/oz16ap26.zip"},
-    {name: "public_forecast_zones", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/z_16ap26.zip"},
-    {name: "county_warning_areas", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/w_16ap26.zip"},
-    {name: "river_forecast_boundaries", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/Misc/rf05mr24.zip"},
-    {name: "high_seas_marine_zones", id: "Z", link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/hz17fe26.zip"}
+export const ENUM_SHAPEFILES: TYPE_SHAPEFILES[] = [
+    {Name: "us_counties", Type: "C", Link: "https://www.weather.gov/source/gis/Shapefiles/County/c_16ap26.zip"},
+    {Name: "us_states_territories", Type: "Z", Link: "https://www.weather.gov/source/gis/Shapefiles/County/s_16ap26.zip"},
+    {Name: "fire_weather_zones", Type: "Z", Link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/fz16ap26.zip"},
+    {Name: "costal_marine_zones", Type: "Z", Link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/mz16ap26.zip"},
+    {Name: "offshore_marine_zones", Type: "Z", Link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/oz16ap26.zip"},
+    {Name: "public_forecast_zones", Type: "Z", Link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/z_16ap26.zip"},
+    {Name: "county_warning_areas", Type: "Z", Link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/w_16ap26.zip"},
+    {Name: "river_forecast_boundaries", Type: "Z", Link: "https://www.weather.gov/source/gis/Shapefiles/Misc/rf05mr24.zip"},
+    {Name: "high_seas_marine_zones", Type: "Z", Link: "https://www.weather.gov/source/gis/Shapefiles/WSOM/hz17fe26.zip"}
 ]

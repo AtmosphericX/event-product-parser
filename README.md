@@ -5,7 +5,7 @@
              width="800"/>
     </a>
     <p style="font-size: 1.1em; max-width: 700px;">
-        A robust TypeScript/JavaScript library for parsing and ingesting NOAA and NWS Weather Text Products, CAP 1.2, and features an expanded suite of quality‑of‑life tools for faster, cleaner, and more reliable development.
+        A robust TypeScript library for parsing and ingesting NOAA and NWS Weather Products and other related data formats including an expanded suite of quality‑of‑life tools for faster, cleaner, and more reliable development.
     </p>
     <small style="display: block; margin-top: 10px;">
         Built and maintained with ❤️ by the AtmosphericX team<br>
@@ -21,8 +21,9 @@
     </p>
 </div>
 
+
 ## Introduction
-Formally known as *atmosx-nwws-parser*, **@atmosx/event-product-parser** is a TypeScript/JavaScript library designed to parse and ingest NOAA and NWS Weather Text Products, CAP 1.2, and other related data formats. It includes quality of life features such as ingestion tools, graphics generation, audio output, and additional utilities.
+Formally known as *atmosx-nwws-parser*, **@atmosx/event-product-parser** is a TypeScript library designed to parse and ingest National Oceanic and Atmospheric Administration (NOAA) and National Weather Service (NWS) weather products, as well as other related data formats. The library provides a comprehensive suite of tools for developers to efficiently handle weather data, ensuring faster, cleaner, and more reliable development processes. 
 
 
 ### Package Installation
@@ -50,3 +51,11 @@ const manager = new Manager({...settings})
 const { Manager } = require("@atmosx/event-product-parser");
 const manager = new Manager({...settings});
 ```
+
+### Diclaimer
+
+> [!WARNING]
+> This project is currently in **active development** and is not yet ready for production use. The library is undergoing a major rewrite to support the retirement of AWIPS and the transition to a fully cloud-based infrastructure. CIRRUS will become the new standard for ingesting and parsing NOAA and NWS products, and this project is evolving to support that transition. Specifically with CAP v1.2 ingestion.
+
+
+![alt text](.github/assets/migration.png)

@@ -17,7 +17,7 @@ import { TYPE_EVENT } from "Types/event/Event"
 import { TYPE_STANZA_COMPILED } from "Types/stanza/StanzaValidated"
 import { TYPE_PROPERTIES } from "Types/event/Properties"
 import { TYPE_VTEC } from "Types/components/ValidTimeEventCode"
-import { createHash } from "crypto"
+import { createHash } from "node:crypto"
 
 interface GET_EVENT_TRACKING_OPTIONS {
     Type: `CAP` | `VTEC` | `TEXT`

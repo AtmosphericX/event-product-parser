@@ -15,7 +15,7 @@
 
 import { TYPE_STANZA_COMPILED } from "Types/stanza/StanzaValidated"
 import { ENUM_REGEX_EVENTS } from "@Enums.Events/RegexEvents"
-import { GetExpiry } from "@Components.Events.Text/GetExpiry"
+import { TextProductParsing } from "@Components.Events.Parsing.Classes/TextProductParsing"
 
 
 interface GET_TEXT_PRODUCT_EVENT_OPTIONS { 
@@ -38,7 +38,8 @@ export const GetTextProductEvent = ({ Message, Stanza, Issuance, Expiration }: G
     const { Label, Statement } = ENUM_REGEX_EVENTS[ID]
         ?.find(A => A.Match.test(Message)) ?? { Label: `${Discovered ? Name : `${ID} (Unknown)`}`, Statement: false };
     
-    const cGetExpiry = GetExpiry({ Message });
+    const cTextProductParsing = new TextProductParsing({ Message });
+    const cGetExpiry = cTextProductParsing.GetExpiry({});
     const cIssuanceValid = (!isNaN(Issuance.getTime())) ? Issuance.toISOString() : new Date().toISOString();
     const cExpirationValid = (cGetExpiry && !isNaN(cGetExpiry.getTime())) ? cGetExpiry.toISOString() : Expiration.toISOString();
 

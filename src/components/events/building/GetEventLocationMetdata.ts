@@ -14,7 +14,7 @@
 */
 
 import { TYPE_UGC } from "Types/components/UniversalGeographicCode"
-import { GetLocations } from "@Components.Events.UGC/GetLocations"
+import { GeographicalCodeParsing } from "@Components.Events.Parsing.Classes/GeographicalCodeParsing"
 
 interface GET_EVENT_LOCATION_METADATA_OPTIONS {
     Zones: string[],
@@ -27,7 +27,7 @@ interface GET_EVENT_LOCATION_METADATA_RESPONSE {
 }
     
 export const GetEventLocationMetdata = ({ Zones, UGC }: GET_EVENT_LOCATION_METADATA_OPTIONS): GET_EVENT_LOCATION_METADATA_RESPONSE => {
-    const locations = UGC ? UGC?.Locations : GetLocations({ Zones: Zones })
+    const locations = UGC ? UGC?.Locations : new GeographicalCodeParsing({}).GetZoneLocations({ Zones: Zones })
     return {
         locations: locations,
         states: [...new Set(

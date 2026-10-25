@@ -21,94 +21,12 @@
     </p>
 </div>
 
-## Changelogs
+## Changelogs [NOT FOR PRODUCTION USE]
 
-### October 25th, 2026 - b3.1-032
+### October 25th, 2026 - b3.1-04
 
--- Rewriting project for b3.1-04 --
+**Refactoring**
+- ref(parsing): Refactored all parsing into classes to allow for better testing and maintainability.
 
 **Features**
 - feat(enhanced): Snow Squall Warning events now have a `snowsquall_threat` parameter that can be used to determine if the event is `OBSERVED` or `RADAR INDICATED`. This will allow for better filtering of events in the system.
-
-------------------------------------------------------------------------------------------------------------------------
-
-### October 7th, 2026 - b3.1-031
-
--- Rewriting project for b3.1-04 --
-
-**Bug Fixes**
-- fix(audio): Prevented the TTS Engine from saying Megabytes instead of Millibars when reading out the description. lmao
-- fix(tropical): Fixed an issue with tropical products being incorrectly parsed.
-- fix(population): Fixed an issue with population getting was recieving `max calls exceeded` error when trying to get population data. This was due to a missing check for `population` in the `GetPopulationFromUGC` function. Now, if `population` is not set, it will default to 0.
-- fix(descriptions): Fixed an issue with descriptions being set to `undefined` for certain products. This was due to not having a valid description. Any and all descriptions should be defined with a default message if the description is not set.
-
-**Features**
-- feat(text): Fallback Text events to 12 hours instead of 1 hour.
-- feat(ugc): Fallback UGC events to 12 hours instead of 1 hour.
-- feat(vtec): Fallback VTEC events to 12 hours instead of 1 hour.
-
-------------------------------------------------------------------------------------------------------------------------
-
-### October 6th, 2026 - b3.1-03
-
-**Bug Fixes**
-- fix(expiration): Fixed issue with expiration being set to `undefined` for certain products. This was due to a missing check for `expiration` in the `ParseText` function. Now, if `expiration` is not set, it will default to 2 minutes after the issued time.
-
-**Features**
-- feat(awips): Added FHMSUM -> `Meteorological Observations`
-- feat(awips): Added 3HRCON -> `3-Hour Convective Outlook`
-- feat(awips): Added FOPNW -> `National Flood Outlook`
-- feat(awips): Added TSTHEB -> `Redundant Test Message`
-
-------------------------------------------------------------------------------------------------------------------------
-
-### October 5th, 2026 - b3.1-02
-
-**Bug Fixes**
-- fix(polygons): Polygon parsing through text has been updated to handle edge cases with non `MOT`/`LOC` text. This should resolve issues with certain products not being parsed correctly.
-- fix(graphics): Fixed non zoned based images from being skipped.
-- fix(manual): Fixed tracking ids from being the same for every manual event. Will be unique for each event now.
-
-**Features**
-- feat(manual): Added ability to pass a tracking id to the manual event processor. This will allow for better tracking of events in the system.
-- feat(themes): Added Mesoscale Persipitation Discussion (FFG) themes.
-- feat(awips): Updated Flash Flood Guidance -> Mesoscale Precipitation Discussion.
-- feat(expires): Added `GetExpiryFromProduct` function to get `VALID X-X` expiry from text products.
-- feat(themes): Updated `*Special Weather Statement*` theme to a more accurate color.
-- feat(ParseText): Updated expires to use `GetExpiryFromProduct` function to get `VALID X-X` expiry from text products.
-
-------------------------------------------------------------------------------------------------------------------------
-
-### September 23rd, 2026 - b3.1-01
-
-**Documentation**
-- feat(github): Added additional documentation event settings, tasks, and filtering
-- feat(github): Remove `!DANGER` and replace with `!WARNING` due to github markdown rendering issues.
-
-------------------------------------------------------------------------------------------------------------------------
-
-### September 21st, 2026 - b3.1
-
-**Features**
-- add(theme): Ability to overwrite the default themes using `Manager.GlobalSettings.Themes`
-- add(nodes): Adds nearest location metadata.
-
-**Documentation**
-- feat(github): Added `CHANGELOGS.md` file to the repository for better version tracking and release notes for future releases. See [Changelogs](https://raw.githubusercontent.com/AtmosphericX/AtmosphericX/refs/heads/main/.github/CHANGELOG.md) for prior updates and release notes.
-- feat(github): Added `CODE_OF_CONDUCT.md` and `CONTRIBUTING.md` files to the repository for better community engagement and contribution guidelines.
-- feat(github): Added `SECURITY.md` file to the repository to outline security policies and procedures for reporting vulnerabilities.
-- feat(github): Improved the documentation pathing.
-- feat(docuimentation): Added `FUNDING.yaml` file to the repository to provide information on how to support the project financially.
-
-**Updates**
-- update(settings): `DebugDisableAllEvents` -> DeveloperDisableEvents.
-- update(settings): `EnableDebugging` -> DeveloperMode.
-- update(settings): `EnhancedEventJournaling` -> DeveloperEventLogging.
-- update(settings): `NodeTTL` -> NodePolygonTTL.
-
-**Deprecations**
-- deprecate(esm): ESM support is now deprecated. Please use the CJS version of the library instead.
-
-
-------------------------------------------------------------------------------------------------------------------------
-See [Changelogs](https://raw.githubusercontent.com/AtmosphericX/AtmosphericX/refs/heads/main/.github/CHANGELOG.md) for prior updates and release notes.

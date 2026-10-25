@@ -13879,8 +13879,8 @@ var SetLog = ({ Type = "DEFAULT", Message, Event, Metadata, Limited, Hidden }) =
   }
   Bootstrap.Listener.emit(cEvent, { Message: cCleanMessage, Headers: Metadata ?? {} });
   Bootstrap.Listener.emit(`*`, { Event: cEvent, Metadata: cCleanMessage, Headers: Metadata ?? {} });
-  if (DebugMessages && cType.Debug && !Hidden) {
-    const cDebugMatch = cCleanMessage.match(/\[(\d+\.\d+)ms\]/);
+  if (DebugMessages && cType.Debug) {
+    const cDebugMatch = cCleanMessage.match(/^\[(\d+(?:\.\d+)?)ms\]/);
     if (cDebugMatch && parseFloat(cDebugMatch[1]) <= DebugMinimumTime) {
       return;
     }

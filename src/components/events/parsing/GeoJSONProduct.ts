@@ -12,19 +12,3 @@
     Ko-Fi: https://ko-fi.com/k3yomi
 
 */
-
-import { Bootstrap } from "@Bootstrap";
-
-interface SET_CACHE_OPTIONS { 
-    Key: string
-    Value: string[]
-}
-
-export const SetCache = ({ Key, Value }: SET_CACHE_OPTIONS): void => {
-    const { Zones } = Bootstrap.CacheControl.Manager;
-    if (Zones.size >= 5000) { 
-        const cFirstKey = Zones.keys().next().value;
-        Bootstrap.CacheControl.Manager.Zones.delete(cFirstKey);
-    }
-    Bootstrap.CacheControl.Manager.Zones.set(Key, Value);
-}

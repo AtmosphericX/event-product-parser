@@ -37,6 +37,7 @@ export class Manager {
         if (Bootstrap.ServiceReady) { 
             return SetLog({ Message: ENUM_STRINGS.SERVICE.ALREADY_STARTED });
         }
+        
         SetLog({ Type: `DEBUG`, Message: `@atmosx/event-product-parser: ${this.version()}` }) 
         Bootstrap.ServiceReady = true;
         await Promise.all([

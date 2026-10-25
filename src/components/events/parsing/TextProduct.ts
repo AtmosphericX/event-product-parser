@@ -12,15 +12,3 @@
     Ko-Fi: https://ko-fi.com/k3yomi
 
 */
-
-import { Bootstrap } from "@Bootstrap";
-
-interface GET_CACHE_OPTIONS { 
-    UGC: string
-}
-
-export const GetCache = ({ UGC }: GET_CACHE_OPTIONS): string[] => {
-    const { Zones } = Bootstrap.CacheControl.Manager;
-    const cGet = Zones.get(UGC);
-    return cGet
-}

@@ -23,6 +23,15 @@
 
 ## Changelogs
 
+### October 25th, 2026 - b3.1-032
+
+-- Rewriting project for b3.1-04 --
+
+**Features**
+- feat(enhanced): Snow Squall Warning events now have a `snowsquall_threat` parameter that can be used to determine if the event is `OBSERVED` or `RADAR INDICATED`. This will allow for better filtering of events in the system.
+
+------------------------------------------------------------------------------------------------------------------------
+
 ### October 7th, 2026 - b3.1-031
 
 -- Rewriting project for b3.1-04 --

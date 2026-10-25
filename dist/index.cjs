@@ -19541,7 +19541,8 @@ var GetEventProperties = ({ Message, Attributes, UGC, VTEC }) => {
       estimated_hail_size: GetTextFromProduct({ Message, Find: [`MAX HAIL SIZE...`, `HAIL...`], Removal: ["in"] }) ?? null,
       estimated_wind_gusts: GetTextFromProduct({ Message, Find: [`MAX WIND GUST...`, `WIND...`] }) ?? null,
       direction: GetEventDirection(Message) ?? null,
-      damage_threat: GetTextFromProduct({ Message, Find: [`DAMAGE THREAT...`], Removal: [] }) ?? null,
+      damage_threat: GetTextFromProduct({ Message, Find: [`DAMAGE THREAT...`, `SNOW SQUALL IMPACT...`], Removal: [] }) ?? null,
+      snowsquall_threat: GetTextFromProduct({ Message, Find: [`SNOW SQUALL...`] }) ?? null,
       tornado_threat: GetTextFromProduct({ Message, Find: [`TORNADO...`, `WATERSPOUT...`] }) ?? null,
       flood_threat: GetTextFromProduct({ Message, Find: [`FLASH FLOOD...`] }) ?? null,
       wind_threat: GetTextFromProduct({ Message, Find: [`WIND THREAT...`] }) ?? null,
@@ -20181,7 +20182,8 @@ var ParseAPI = async (Stanza) => {
           estimated_hail_size: feature2?.properties?.parameters?.maxHailSize?.[0] ?? null,
           estimated_wind_gusts: feature2?.properties?.parameters?.maxWindGust?.[0] ?? null,
           direction: GetEventDirection(feature2?.properties?.description) ?? null,
-          damage_threat: feature2?.properties?.parameters?.thunderstormDamageThreat?.[0] ?? null,
+          damage_threat: feature2?.properties?.parameters?.thunderstormDamageThreat?.[0] ?? feature2?.properties?.parameters?.snowSquallImpact?.[0] ?? null,
+          snowsquall_threat: feature2?.properties?.parameters?.snowSquallDetection?.[0] ?? null,
           tornado_threat: feature2?.properties?.parameters?.tornadoDetection?.[0] ?? null,
           flood_threat: feature2?.properties?.parameters?.flashFloodDamageThreat?.[0] ?? null,
           wind_threat: feature2?.properties?.parameters?.windThreat?.[0] ?? null,
@@ -20243,6 +20245,10 @@ var EnumEnhanced = {
   "Fire Weather Warning": {
     "PDS Fire Weather Warning": { description: "particularly dangerous situation" }
   },
+  "Snow Squall Warning": {
+    "Observed Snow Squall Warning (SIG)": { damage: `SIGNIFICANT`, snowsquall: `OBSERVED` },
+    "Radar Indicated Snow Squall Warning (SIG)": { damage: `SIGNIFICANT`, snowsquall: `RADAR INDICATED` }
+  },
   "Blizzard Warning": {
     "PDS Blizzard Warning": { description: "particularly dangerous situation" }
   },
@@ -20283,6 +20289,7 @@ var GetEventEnhancedName = (event) => {
   const damage = event?.properties?.parameters?.damage_threat ?? event?.properties?.parameters?.flood_threat;
   const tornado = event?.properties?.parameters?.tornado_threat;
   const pdswatch = event?.properties?.watch_parameters?.pds_watch;
+  const snowsquall = event?.properties?.parameters?.snowsquall_threat;
   const description = event?.properties?.description?.toLowerCase();
   for (const [eventKey, eventConfig] of Object.entries(EnumEnhanced)) {
     if (eventKey !== name) continue;
@@ -20296,6 +20303,9 @@ var GetEventEnhancedName = (event) => {
       }
       if (paramValue?.tornado) {
         if (paramValue.tornado !== tornado) matches = false;
+      }
+      if (paramValue?.snowsquall) {
+        if (paramValue.snowsquall !== snowsquall) matches = false;
       }
       if (paramValue?.pdswatch) {
         if (paramValue.pdswatch !== pdswatch) matches = false;

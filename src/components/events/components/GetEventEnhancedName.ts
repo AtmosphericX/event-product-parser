@@ -25,6 +25,7 @@ export const GetEventEnhancedName = (event: TypeEvent): string => {
     const damage = event?.properties?.parameters?.damage_threat ?? event?.properties?.parameters?.flood_threat
     const tornado = event?.properties?.parameters?.tornado_threat;
     const pdswatch = event?.properties?.watch_parameters?.pds_watch;
+    const snowsquall = event?.properties?.parameters?.snowsquall_threat;
     const description = event?.properties?.description?.toLowerCase()
     for (const [eventKey, eventConfig] of Object.entries(EnumEnhanced)) {
         if (eventKey !== name) continue;
@@ -38,6 +39,9 @@ export const GetEventEnhancedName = (event: TypeEvent): string => {
             }
             if (paramValue?.tornado) {
                 if (paramValue.tornado !== tornado) matches = false;
+            }
+            if (paramValue?.snowsquall) {
+                if (paramValue.snowsquall !== snowsquall) matches = false;
             }
             if (paramValue?.pdswatch) {
                 if (paramValue.pdswatch !== pdswatch) matches = false;

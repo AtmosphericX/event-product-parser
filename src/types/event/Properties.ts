@@ -58,6 +58,7 @@ export type TypeEventProperties = {
         direction: string
         damage_threat: string
         tornado_threat: string
+        snowsquall_threat: string
         flood_threat: string
         wind_threat: string
         hail_threat: string

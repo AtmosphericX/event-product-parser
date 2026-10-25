@@ -22,6 +22,7 @@ type EnhancedEventType = {
     append?: boolean
     tornado?: string
     damage?: string
+    snowsquall?: string
     pdswatch?: boolean
 }
 
@@ -35,6 +36,10 @@ export const EnumEnhanced: Record<string, Record<string, EnhancedEventType>> = {
     },
     "Fire Weather Warning": {
         "PDS Fire Weather Warning": { description: "particularly dangerous situation" },
+    },
+    'Snow Squall Warning': {
+       "Observed Snow Squall Warning (SIG)": { damage: `SIGNIFICANT`, snowsquall: `OBSERVED` },
+       "Radar Indicated Snow Squall Warning (SIG)": { damage: `SIGNIFICANT`, snowsquall: `RADAR INDICATED` },
     },
     "Blizzard Warning": {
         "PDS Blizzard Warning": { description: "particularly dangerous situation" },

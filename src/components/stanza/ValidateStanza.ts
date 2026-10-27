@@ -13,8 +13,8 @@
 
 */
 
-import { TYPE_STANZA } from "Types/stanza/Stanza"
-import { TYPE_STANZA_COMPILED } from "Types/stanza/StanzaValidated"
+import { TYPE_STANZA } from "Types.Stanza/Stanza"
+import { TYPE_STANZA_COMPILED } from "Types.Stanza/StanzaValidated"
 import { ENUM_REGULAR_EXPRESSIONS } from "@Enums/RegularExpressions"
 import { GetAwipsType } from "@Components.Stanza/GetAwipsType"
 

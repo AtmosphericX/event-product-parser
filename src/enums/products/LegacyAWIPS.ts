@@ -13,7 +13,7 @@
 
 */
 
-export const ENUM_AWIP_PRODUCTS: Record<string, string> = {
+export const ENUM_LEGACY_AWIPS: Record<string, string> = {
     ABV: `Rawinsonde Data Above 100 Millibars`,
     ADA: `Alarm Alert Administrative Message`,
     ADM: `Alert Administrative Message`,

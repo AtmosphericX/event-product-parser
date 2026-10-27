@@ -13,7 +13,7 @@
 
 */
 
-import { TYPE_TASK } from "Types/components/Task"
+import { TYPE_TASK } from "Types.Components/Task"
 
 type TYPE_TIMEZONES = string | "CST" | "CDT" | "MDT" | "MST" | "EST" | "EDT" | "HST" | "HDT" | "PDT" | "UTC"
 

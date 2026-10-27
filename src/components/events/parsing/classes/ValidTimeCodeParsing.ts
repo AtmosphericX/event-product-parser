@@ -13,7 +13,7 @@
 
 */
 
-import { TYPE_VTEC } from "Types/components/ValidTimeEventCode"
+import { TYPE_VTEC } from "Types.Components/ValidTimeEventCode"
 import { ENUM_REGULAR_EXPRESSIONS } from "@Enums/RegularExpressions"
 import { ENUM_VTEC_PRODUCTS } from "@Enums.Products/VTECProducts"
 import { ENUM_VTEC_STATUS } from "@Enums.Products/VTECStatus"
@@ -21,8 +21,13 @@ import { ENUM_VTEC_ACTIONS } from "@Enums.Products/VTECActions"
 import { ENUM_VTEC_TYPES } from "@Enums.Products/VTECTypes"
 import { SetLog } from "@Components.Utilities/SetLog";
 
-interface GET_OPTIONS { Message?: string }
-interface GET_EXPIRY_DATE_OPTIONS { VTEC: string }
+interface GET_OPTIONS { 
+    Message?: string 
+}
+
+interface GET_EXPIRY_DATE_OPTIONS { 
+    VTEC: string 
+}
 
 export class ValidTimeCodeParsing { 
     private pMessage: string;

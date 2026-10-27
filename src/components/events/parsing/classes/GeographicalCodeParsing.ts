@@ -22,13 +22,32 @@ import { CreateQuery } from "@Components.Database/CreateQuery";
 import { GetUnionedPolygon } from "@Components.Geometry/GetUnionedPolygon";
 import { createHash } from "node:crypto";
 
-interface GET_OPTIONS { Message?: string }
-interface GET_POLYGON_OPTIONS { Zones: string[], Union: boolean }
-interface GET_POLYGON_RESPONSE { type: `Polygon` | `MultiPolygon`, coordinates: number[][][] | number[][][][] }
-interface GET_HEADER_OPTIONS { Header: string }
-interface GET_ZONES_OPTIONS { Zones: string[] }
-interface GET_CACHED_ZONE_OPTIONS { Zone: string, Location: string[] }
-interface SET_CACHED_ZONES_OPTIONS { Zone: string, Location: string[] }
+interface GET_OPTIONS { 
+    Message?: string 
+}
+
+interface GET_POLYGON_OPTIONS { 
+    Zones: string[]
+    Union: boolean 
+}
+
+interface GET_HEADER_OPTIONS { 
+    Header: string 
+}
+
+interface GET_ZONES_OPTIONS { 
+    Zones: string[] 
+}
+
+interface CACHED_ZONE_OPTIONS { 
+    Zone: string
+    Location: string[] 
+}
+
+interface GET_POLYGON_RESPONSE { 
+    type: `Polygon` | `MultiPolygon`
+    coordinates: number[][][] | number[][][][] 
+}
 
 type TYPE_ROW = { ID: string, Location: string, Geometry: string }
 
@@ -138,7 +157,7 @@ export class GeographicalCodeParsing {
         return cExpires;
     }
 
-    public SetCachedZone({ Zone, Location }: SET_CACHED_ZONES_OPTIONS): void {
+    public SetCachedZone({ Zone, Location }: CACHED_ZONE_OPTIONS): void {
         const { Zones } = Bootstrap.CacheControl.Manager;
         if (Zones.size >= 5000) { 
             const cFirstKey = Zones.keys().next().value;
@@ -147,7 +166,7 @@ export class GeographicalCodeParsing {
         Bootstrap.CacheControl.Manager.Zones.set(Zone, Location);
     }
 
-    public GetCachedZone({ Zone }: GET_CACHED_ZONE_OPTIONS): string[] { 
+    public GetCachedZone({ Zone }: CACHED_ZONE_OPTIONS): string[] { 
         const { Zones } = Bootstrap.CacheControl.Manager;
         return Zones.get(Zone)
     }

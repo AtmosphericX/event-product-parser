@@ -14440,8 +14440,8 @@ var ENUM_REGULAR_EXPRESSIONS = {
   DATE: new RegExp(`\\d{3,4}\\s*(AM|PM)?\\s*[A-Z]{2,4}\\s+[A-Z]{3,}\\s+[A-Z]{3,}\\s+\\d{1,2}\\s+\\d{4}`, "gim")
 };
 
-// src/enums/products/AWIPProducts.ts
-var ENUM_AWIP_PRODUCTS = {
+// src/enums/products/LegacyAWIPS.ts
+var ENUM_LEGACY_AWIPS = {
   ABV: `Rawinsonde Data Above 100 Millibars`,
   ADA: `Alarm Alert Administrative Message`,
   ADM: `Alert Administrative Message`,
@@ -14803,7 +14803,7 @@ var GetAwipsType = ({ Attributes }) => {
       Discovered: false
     };
   }
-  for (const [cPrefix, cName] of Object.entries(ENUM_AWIP_PRODUCTS)) {
+  for (const [cPrefix, cName] of Object.entries(ENUM_LEGACY_AWIPS)) {
     if (Attributes.awipsid.startsWith(cPrefix)) {
       return { Name: cName, ID: cPrefix, Discovered: true };
     }
@@ -18168,6 +18168,7 @@ var DeployService = class {
   async StartSession() {
     if (this.pSession) {
       await this.pSession.start().catch(() => {
+        this.onError();
       });
     }
   }

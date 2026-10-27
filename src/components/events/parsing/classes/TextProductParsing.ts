@@ -16,25 +16,36 @@
 import { ENUM_REGULAR_EXPRESSIONS } from "@Enums/RegularExpressions"
 import { SetLog } from "@Components.Utilities/SetLog";
 
-interface GET_OPTIONS { Message?: string }
-interface GET_POLYGON_OPTIONS { Message?: string, Handle?: string }
-interface GET_TEXT_REFERENCES_OPTIONS { Message?: string, Append?: string, Grep: string[], Exclude?: string[] }
+interface GET_OPTIONS { 
+    Message?: string 
+}
+
+interface GET_POLYGON_OPTIONS {
+    Message?: string
+    Handle?: string 
+}
+
+interface GET_TEXT_REFERENCES_OPTIONS { 
+    Message?: string
+    Append?: string
+    Grep: string[]
+    Exclude?: string[] 
+}
 
 type TYPE_POINT = { lat: number; lon: number };
 type TYPE_POLYGON = number[][];
 
-const ENUM_END_MARKERS: string[] = ['&&', 'LAT...'];
-
 export class TextProductParsing { 
     private pMessage: string;
     private prTickA = performance.now();
+    private ENUM_END_MARKERS: string[] = ['&&', 'LAT...'];
 
     public constructor({ Message }: GET_OPTIONS) { 
         this.pMessage = Message;
         return this;
     }
 
-    public GetTextReferences({ Message = this.pMessage, Grep, Append, Exclude}: GET_TEXT_REFERENCES_OPTIONS): string {
+    public GetTextReference({ Message = this.pMessage, Grep, Append, Exclude}: GET_TEXT_REFERENCES_OPTIONS): string {
         this.prTickA = performance.now();
         const cSplitter = Message.split(`\n`);
         for (const cLine of cSplitter) { 
@@ -47,11 +58,11 @@ export class TextProductParsing {
                     }
                     lResult = lResult.replace(cFind, '').replace('<', '').trim();
                 }
-                this.onFinish(`GetTextReferences -> ${Grep.join(`, `)}`);
+                this.onFinish(`GetTextReference -> ${Grep.join(`, `)}`);
                 return lResult.toUpperCase() + (Append ? ` ${Append}` : ``);
             }
         }
-        this.onFinish(`GetTextReferences (Not found) -> ${Grep.join(`, `)}`);
+        this.onFinish(`GetTextReference (Not found) -> ${Grep.join(`, `)}`);
     }
 
     public GetPolygon({ Message = this.pMessage }: GET_OPTIONS): TYPE_POLYGON {
@@ -115,7 +126,7 @@ export class TextProductParsing {
             return Message.substring(cHeadline >= 0 ? cHeadline : 0, cFallbackIndex).trim();
         }
         const callIndexEnd = (Message: string, Index = 0): number => {
-            const cEndMarkers = ENUM_END_MARKERS
+            const cEndMarkers = this.ENUM_END_MARKERS
                 .map((marker) => Message.indexOf(marker, Index))
                 .filter((idx) => idx !== -1);
             return cEndMarkers.length ? Math.min(...cEndMarkers) : -1;

@@ -23,6 +23,17 @@
 
 ## Changelogs [NOT FOR PRODUCTION USE]
 
+### October 26th, 2026 - b3.1-0401
+
+**Refactoring**
+- ref(types): Refactored all types and corrected pathing for imports.
+- ref(parsing): Refactored types and interfaces for parsing classes.
+
+**Packages**
+- chore(xml2js): Enforce `0.6.2` version of `xml2js` to avoid breaking changes in future versions.
+
+------------------------------------------------------------------------------------------------------------------------
+
 ### October 25th, 2026 - b3.1-04
 
 **Refactoring**

@@ -13,7 +13,7 @@
 
 */
 
-import { TYPE_STANZA } from "Types/stanza/Stanza"
+import { TYPE_STANZA } from "Types.Stanza/Stanza"
 import { ENUM_STRINGS } from "@Enums/Strings"
 import { Bootstrap } from "@Bootstrap"
 import { SetLog } from "@Components.Utilities/SetLog"
@@ -44,7 +44,7 @@ export class DeployService {
 
     private async StartSession(): Promise<void> {
         if (this.pSession) {
-            await this.pSession.start().catch(() => {});
+            await this.pSession.start().catch(() => { this.onError() });
         }
     }
     

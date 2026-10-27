@@ -13,7 +13,7 @@
 
 */
 
-import { TYPE_STANZA_COMPILED } from "Types/stanza/StanzaValidated"
+import { TYPE_STANZA_COMPILED } from "Types.Stanza/StanzaValidated"
 
 interface PROCESS_STANZA_OPTIONS { 
     Stanza: TYPE_STANZA_COMPILED

@@ -14,7 +14,7 @@
 */
 
 import { ENUM_REGULAR_EXPRESSIONS } from "@Enums/RegularExpressions"
-import { ENUM_STATES_FULL_NAMES } from "@Enums/geographic/StateAbreviations"
+import { ENUM_STATES_FULL_NAMES } from "@Enums.Geographic/StateAbreviations"
 import { ENUM_STRINGS } from "@Enums/Strings"
 import { Bootstrap } from "@Bootstrap"
 import { GetLatestIssuance } from "@Components.Events.Building/GetLatestIssuance"

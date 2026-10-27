@@ -13,9 +13,9 @@
 
 */
 
-import { TYPE_SETTINGS } from "Types/components/Settings"
-import { TYPE_EVENT } from "Types/event/Event"
-import { ENUM_THEMES } from "@Enums/properties/Themes"
+import { TYPE_SETTINGS } from "Types.Components/Settings"
+import { TYPE_EVENT } from "Types.Event/Event"
+import { ENUM_THEMES } from "@Enums.Properties/Themes"
 import { client } from "@xmpp/client"
 import { Database } from "better-sqlite3"
 import { EventEmitter } from "node:events"

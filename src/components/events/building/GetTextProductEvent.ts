@@ -13,7 +13,7 @@
 
 */
 
-import { TYPE_STANZA_COMPILED } from "Types/stanza/StanzaValidated"
+import { TYPE_STANZA_COMPILED } from "Types.Stanza/StanzaValidated"
 import { ENUM_REGEX_EVENTS } from "@Enums.Events/RegexEvents"
 import { TextProductParsing } from "@Components.Events.Parsing.Classes/TextProductParsing"
 

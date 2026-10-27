@@ -13,7 +13,7 @@
 
 */
 
-import { TYPE_ATTRIBUTES } from "Types/stanza/StanzaAttributes"
+import { TYPE_ATTRIBUTES } from "Types.Stanza/StanzaAttributes"
 
 export type TYPE_STANZA_COMPILED = {
     Message?: string

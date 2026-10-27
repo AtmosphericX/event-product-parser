@@ -13,7 +13,7 @@
 
 */
 
-import { TYPE_UGC } from "Types/components/UniversalGeographicCode"
+import { TYPE_UGC } from "Types.Components/UniversalGeographicCode"
 import { GeographicalCodeParsing } from "@Components.Events.Parsing.Classes/GeographicalCodeParsing"
 
 interface GET_EVENT_LOCATION_METADATA_OPTIONS {

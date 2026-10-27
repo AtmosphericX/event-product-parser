@@ -13,19 +13,12 @@
 
 */
 
-import { TYPE_VTEC } from "Types/components/ValidTimeEventCode"
-import { TYPE_HVTEC } from "Types/components/HyrdrolicValidTimeEventCode"
-import { TYPE_UGC } from "Types/components/UniversalGeographicCode"
-import { TYPE_PROPERTIES } from "Types/event/Properties"
-import { TYPE_ATTRIBUTES } from "Types/stanza/StanzaAttributes"
-import { TYPE_STANZA_COMPILED } from "Types/stanza/StanzaValidated"
-import { TYPE_EVENT } from "Types/event/Event"
-import { Bootstrap } from "@Bootstrap"
-import { GetEventProperties } from "@Components.Events.Building/GetEventProperties"
-import { GetEventTracking } from "@Components.Events.Building/GetEventTracking"
-import { GetEventHeader } from "@Components.Events.Building/GetEventHeader"
-import { GetEventTheme } from "@Components.Events.Building/GetEventTheme"
-
+import { TYPE_VTEC } from "Types.Components/ValidTimeEventCode"
+import { TYPE_HVTEC } from "Types.Components/HyrdrolicValidTimeEventCode"
+import { TYPE_UGC } from "Types.Components/UniversalGeographicCode"
+import { TYPE_PROPERTIES } from "Types.Event/Properties"
+import { TYPE_ATTRIBUTES } from "Types.Stanza/StanzaAttributes"
+import { TYPE_STANZA_COMPILED } from "Types.Stanza/StanzaValidated"
 
 interface GET_EVE2NT_BUILDING_OPTIONS {
     Stanza: TYPE_STANZA_COMPILED

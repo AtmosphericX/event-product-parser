@@ -20,7 +20,9 @@ import { ENUM_FLOOD_CAUSES } from "@Enums.Flooding/FloodCauses"
 import { ENUM_FLOOD_RECORDS } from "@Enums.Flooding/FloodRecords"
 import { SetLog } from "@Components.Utilities/SetLog";
 
-interface GET_OPTIONS { Message?: string }
+interface GET_OPTIONS { 
+    Message?: string 
+}
 
 export class HydrolicValidTimeCodeParsing { 
     private pMessage: string;

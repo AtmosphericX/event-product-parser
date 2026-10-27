@@ -16,37 +16,41 @@
 import { SetLog } from "@Components.Utilities/SetLog";
 import { Parser } from "xml2js"
 
-interface GET_OPTIONS { Message?: string }
-interface GET_PROPERTY_VALUES { JSON: Record<string, any> }
+interface GET_OPTIONS { 
+    Message?: string 
+}
 
-const ENUM_KEYS = [
-    { Keys: ["identifier"], Value: "temp.id" },
-    { Keys: ["VTEC"], Value: "temp.vtec" },
-    { Keys: ["UGC"], Value: "properties.geography.zones", Array: true },
-    { Keys: ["wmoidentifier"], Value: "properties.geography.wmo" },
-    { Keys: ["areadesc"], Value: "temp.locations" },
-    { Keys: ["expires"], Value: "properties.expires" },
-    { Keys: ["sent"], Value: "properties.issued" },
-    { Keys: ["msgtype"], Value: "properties.status" },
-    { Keys: ["description", "instruction"], Value: "properties.description" },
-    { Keys: ["event"], Value: "properties.event" },
-    { Keys: ["sendername"], Value: "properties.geography.office.name" },
-    { Keys: ["polygon"], Value: "temp.polygon" },
-    { Keys: ["tornadodetection", "waterspoutdetection"], Value: "properties.parameters.tornado_indicator" },
-    { Keys: ["maxhailsize"], Value: "properties.parameters.hail_size" },
-    { Keys: ["maxwindgust"], Value: "properties.parameters.wind_gusts" },
-    { Keys: ["windthreat"], Value: "properties.parameters.wind_indicator" },
-    { Keys: ["hailthreat"], Value: "properties.parameters.hail_indicator" },
-    { Keys: ["thunderstormdamagethreat", "tornadodamagethreat"], Value: "properties.parameters.damage_indicator" },
-    { Keys: ["snowsqualldetection"], Value: "properties.parameters.snow_squall_indicator" },
-    { Keys: ["snowsquallimpact"], Value: "properties.parameters.damage_indicator" },
-    { Keys: ["flashflooddetection"], Value: "properties.parameters.flood_indicator" },
-    { Keys: ["flooddetection"], Value: "properties.parameters.flood_indicator" }
-]
+interface GET_PROPERTY_VALUES { 
+    JSON: Record<string, any> 
+}
 
 export class CommonAlertingProtocolParsing { 
     private pMessage: string;
     private prTickA = performance.now();
+    private ENUM_KEYS = [
+        { Keys: ["identifier"], Value: "temp.id" },
+        { Keys: ["VTEC"], Value: "temp.vtec" },
+        { Keys: ["UGC"], Value: "properties.geography.zones", Array: true },
+        { Keys: ["wmoidentifier"], Value: "properties.geography.wmo" },
+        { Keys: ["areadesc"], Value: "temp.locations" },
+        { Keys: ["expires"], Value: "properties.expires" },
+        { Keys: ["sent"], Value: "properties.issued" },
+        { Keys: ["msgtype"], Value: "properties.status" },
+        { Keys: ["description", "instruction"], Value: "properties.description" },
+        { Keys: ["event"], Value: "properties.event" },
+        { Keys: ["sendername"], Value: "properties.geography.office.name" },
+        { Keys: ["polygon"], Value: "temp.polygon" },
+        { Keys: ["tornadodetection", "waterspoutdetection"], Value: "properties.parameters.tornado_indicator" },
+        { Keys: ["maxhailsize"], Value: "properties.parameters.hail_size" },
+        { Keys: ["maxwindgust"], Value: "properties.parameters.wind_gusts" },
+        { Keys: ["windthreat"], Value: "properties.parameters.wind_indicator" },
+        { Keys: ["hailthreat"], Value: "properties.parameters.hail_indicator" },
+        { Keys: ["thunderstormdamagethreat", "tornadodamagethreat"], Value: "properties.parameters.damage_indicator" },
+        { Keys: ["snowsqualldetection"], Value: "properties.parameters.snow_squall_indicator" },
+        { Keys: ["snowsquallimpact"], Value: "properties.parameters.damage_indicator" },
+        { Keys: ["flashflooddetection"], Value: "properties.parameters.flood_indicator" },
+        { Keys: ["flooddetection"], Value: "properties.parameters.flood_indicator" }
+    ]
 
     public constructor({ Message }: GET_OPTIONS) {
         this.pMessage = Message;
@@ -69,7 +73,7 @@ export class CommonAlertingProtocolParsing {
             const cChildren = Object.values(lObject).flatMap(v => callFindValue(v, lKey));
             return [...cCurrent, ...cChildren];
         };
-        const cMappings = Array.isArray(ENUM_KEYS) ? ENUM_KEYS : Object.entries(ENUM_KEYS).map(([k, v]) => ({ Keys: [k], Value: v, Array: Array.isArray(v) }));
+        const cMappings = Array.isArray(this.ENUM_KEYS) ? this.ENUM_KEYS : Object.entries(this.ENUM_KEYS).map(([k, v]) => ({ Keys: [k], Value: v, Array: Array.isArray(v) }));
         for (const { Keys, Value, Array: isArr } of cMappings) {
             if (typeof Value !== 'string' || !Value) continue;
             const cUnique = [...new Set(Keys.flatMap(k => callFindValue(JSON, k)))];

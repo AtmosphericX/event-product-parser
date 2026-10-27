@@ -13,8 +13,8 @@
 
 */
 
-import { TYPE_PROPERTIES } from "Types/event/Properties"
-import { TYPE_ATTRIBUTES } from "Types/stanza/StanzaAttributes"
+import { TYPE_PROPERTIES } from "Types.Event/Properties"
+import { TYPE_ATTRIBUTES } from "Types.Stanza/StanzaAttributes"
 
 export type TYPE_EVENT = {
     type?: string

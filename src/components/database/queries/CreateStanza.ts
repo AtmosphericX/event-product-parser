@@ -13,7 +13,7 @@
 
 */
 
-import { TYPE_STANZA_COMPILED } from "Types/stanza/StanzaValidated"
+import { TYPE_STANZA_COMPILED } from "Types.Stanza/StanzaValidated"
 import { ENUM_STRINGS } from "@Enums/Strings"
 import { Bootstrap } from "@Bootstrap"
 import { SetLog } from "@Components.Utilities/SetLog"

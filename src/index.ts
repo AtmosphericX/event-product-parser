@@ -13,7 +13,7 @@
 
 */
 
-import { TYPE_SETTINGS } from "Types/components/Settings"
+import { TYPE_SETTINGS } from "Types.Components/Settings"
 import { ENUM_STRINGS } from "@Enums/Strings"
 import { Bootstrap } from "@Bootstrap"
 import { CreateErrorHandler } from "@Components.Utilities/CreateErrorHandler"
@@ -37,7 +37,7 @@ export class Manager {
         if (Bootstrap.ServiceReady) { 
             return SetLog({ Message: ENUM_STRINGS.SERVICE.ALREADY_STARTED });
         }
-        
+
         SetLog({ Type: `DEBUG`, Message: `@atmosx/event-product-parser: ${this.version()}` }) 
         Bootstrap.ServiceReady = true;
         await Promise.all([

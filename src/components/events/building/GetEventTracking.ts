@@ -13,10 +13,10 @@
 
 */
 
-import { TYPE_EVENT } from "Types/event/Event"
-import { TYPE_STANZA_COMPILED } from "Types/stanza/StanzaValidated"
-import { TYPE_PROPERTIES } from "Types/event/Properties"
-import { TYPE_VTEC } from "Types/components/ValidTimeEventCode"
+import { TYPE_EVENT } from "Types.Event/Event"
+import { TYPE_STANZA_COMPILED } from "Types.Stanza/StanzaValidated"
+import { TYPE_PROPERTIES } from "Types.Event/Properties"
+import { TYPE_VTEC } from "Types.Components/ValidTimeEventCode"
 import { createHash } from "node:crypto"
 
 interface GET_EVENT_TRACKING_OPTIONS {

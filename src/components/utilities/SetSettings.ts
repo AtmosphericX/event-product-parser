@@ -13,7 +13,7 @@
 
 */
 
-import { TYPE_SETTINGS } from "Types/components/Settings"
+import { TYPE_SETTINGS } from "Types.Components/Settings"
 import { ENUM_STRINGS } from "@Enums/Strings"
 import { Bootstrap } from "@Bootstrap"
 import { SetLog } from "@Components.Utilities/SetLog";

@@ -13,8 +13,8 @@
 
 */
 
-import { TYPE_ATTRIBUTES } from "Types/stanza/StanzaAttributes"
-import { ENUM_AWIP_PRODUCTS } from "@Enums.Products/AWIPProducts"
+import { TYPE_ATTRIBUTES } from "Types.Stanza/StanzaAttributes"
+import { ENUM_LEGACY_AWIPS } from "@Enums.Products/LegacyAWIPS"
 
 interface GET_AWIPS_TYPE_OPTIONS { 
     Attributes: TYPE_ATTRIBUTES
@@ -34,7 +34,7 @@ export const GetAwipsType = ({ Attributes }: GET_AWIPS_TYPE_OPTIONS): GET_AWIPS_
             Discovered: false
         }
     }
-    for (const [cPrefix, cName] of Object.entries(ENUM_AWIP_PRODUCTS)) {
+    for (const [cPrefix, cName] of Object.entries(ENUM_LEGACY_AWIPS)) {
         if (Attributes.awipsid.startsWith(cPrefix)) {
             return { Name: cName, ID: cPrefix, Discovered: true }
         }

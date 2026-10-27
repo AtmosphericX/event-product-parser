@@ -17,7 +17,7 @@ import { TYPE_UGC } from "Types.Components/UniversalGeographicCode"
 import { ENUM_STRINGS } from "@Enums/Strings";
 import { ENUM_REGULAR_EXPRESSIONS } from "@Enums/RegularExpressions";
 import { Bootstrap } from "@Bootstrap";
-import { SetLog } from "@Components.Utilities/SetLog";
+import { ConstructClassTimer } from "@Components.Utilities/ConstructClassTimer";
 import { CreateQuery } from "@Components.Database/CreateQuery";
 import { GetUnionedPolygon } from "@Components.Geometry/GetUnionedPolygon";
 import { createHash } from "node:crypto";
@@ -44,6 +44,16 @@ interface CACHED_ZONE_OPTIONS {
     Location: string[] 
 }
 
+interface GET_LOCATION_METADATA_OPTIONS {
+    Zones: string[],
+    UGC?: TYPE_UGC
+}
+
+interface GET_LOCATION_METADATA_RESPONSE { 
+    locations: string[]
+    states: string[]
+}
+
 interface GET_POLYGON_RESPONSE { 
     type: `Polygon` | `MultiPolygon`
     coordinates: number[][][] | number[][][][] 
@@ -56,13 +66,13 @@ export class GeographicalCodeParsing {
     private pDiscoveredZones: string[] = [];
     private pMissingZones: string[] = [];
     private pZones: string[] = [];
-    private prTickA = performance.now();
 
     public constructor({ Message }: GET_OPTIONS) {
         this.pMessage = Message;
         return this;
     }
 
+    @ConstructClassTimer
     public GetReferences(): TYPE_UGC | null {
         if (!this.pMessage) return null;
         const cExpires = this.GetExpiry({ Message: this.pMessage });
@@ -70,7 +80,6 @@ export class GeographicalCodeParsing {
         const cZones = this.GetZones({ Header: cHeader ?? `` });
         const cLocations = this.GetZoneLocations({ Zones: cZones ?? [] });
         if (!cHeader || cZones?.length == 0) return null;
-        this.onFinish(`GetReferences -> ${cZones.length} Zones Found`);
         return {
             Zones: cZones,
             Locations: cLocations,
@@ -78,8 +87,8 @@ export class GeographicalCodeParsing {
         }
     }
 
+    @ConstructClassTimer
     public GetZoneLocations({ Zones }: GET_ZONES_OPTIONS): string[] | null {
-        this.prTickA = performance.now();
         const cUnique = Array.from(new Set(Zones));
         for (const cZone of cUnique) {
             const cCached = this.GetCachedZone({ Zone: cZone, Location: [] })
@@ -96,12 +105,11 @@ export class GeographicalCodeParsing {
                 this.SetCachedZone({ Zone: cRow.ID, Location: [cRow.Location] });
             });
         }
-        this.onFinish(`GetZoneLocations -> ${this.pDiscoveredZones.length} Locations Found`);
         return Array.from(new Set(this.pDiscoveredZones));
     }
 
+    @ConstructClassTimer
     public GetZones({ Header }: GET_HEADER_OPTIONS): string[] | null {
-        this.prTickA = performance.now();
         const [cFirstPart, ...cParts] = Header.split('-');
         let lState = cFirstPart.substring(0, 2);
         let lFormat = cFirstPart.substring(2, 3);
@@ -127,24 +135,22 @@ export class GeographicalCodeParsing {
                 this.pZones.push(cDigits === cCleanPart ? `${lState}${lFormat}${cCleanPart.padStart(3, '0')}` : cPart);
             }
         }
-        this.onFinish(`GetZones -> ${this.pZones.length} Zones Found`);
         return Array.from(new Set(this.pZones));
     }
 
+    @ConstructClassTimer
     public GetHeader({ Message }: GET_OPTIONS): string | null {
-        this.prTickA = performance.now();
         const cStart = Message.search(ENUM_REGULAR_EXPRESSIONS.UGC_PT1);
         const cSub = Message.substring(cStart);
         const cEnd = cSub.search(ENUM_REGULAR_EXPRESSIONS.UGC_PT2);
         const cFinal = cSub.substring(0, cEnd)
             .replace(/\s+/g, '')
             .slice(0, -1);
-        this.onFinish(`GetHeader -> ${cFinal}`);
         return cFinal ?? null;
     }
 
+    @ConstructClassTimer
     public GetExpiry({ Message }: GET_OPTIONS): Date | null {
-        this.prTickA = performance.now();
         const cRegex = Message.match(ENUM_REGULAR_EXPRESSIONS.UGC_PT3);
         if (!cRegex) return null;
         const [, cExpiry] = cRegex;
@@ -153,10 +159,10 @@ export class GeographicalCodeParsing {
         const dHour = Number(cExpiry.slice(2, 4));
         const cMinute = Number(cExpiry.slice(4, 6));
         const cExpires = new Date(Date.UTC(cTimestamp.getUTCFullYear(), cTimestamp.getUTCMonth(), cDay, dHour, cMinute));
-        this.onFinish(`GetExpiry -> ${cExpires.toISOString()}`);
         return cExpires;
     }
 
+    @ConstructClassTimer
     public SetCachedZone({ Zone, Location }: CACHED_ZONE_OPTIONS): void {
         const { Zones } = Bootstrap.CacheControl.Manager;
         if (Zones.size >= 5000) { 
@@ -166,13 +172,14 @@ export class GeographicalCodeParsing {
         Bootstrap.CacheControl.Manager.Zones.set(Zone, Location);
     }
 
+    @ConstructClassTimer
     public GetCachedZone({ Zone }: CACHED_ZONE_OPTIONS): string[] { 
         const { Zones } = Bootstrap.CacheControl.Manager;
         return Zones.get(Zone)
     }
 
+    @ConstructClassTimer
     public GetPolygon({ Zones, Union }: GET_POLYGON_OPTIONS): GET_POLYGON_RESPONSE | null {
-        this.prTickA = performance.now();
         const cPolygons: number[][][][] = [];
         const cGeometryHashes: Set<string> = new Set();
         const cUnique = [...new Set(Zones.map(z => z.trim()))]
@@ -201,7 +208,6 @@ export class GeographicalCodeParsing {
         }
         if (cPolygons.length == 0) return null;
         if (Union) { 
-            this.onFinish(`GetPolygon -> ${cPolygons.length} Polygons Found (Unioned)`);
             return GetUnionedPolygon({ Polygons: cPolygons });
         } else { 
             const cMultiPolygon: number[][][][] = [];
@@ -211,14 +217,20 @@ export class GeographicalCodeParsing {
                 }
             }
             if (cMultiPolygon.length == 0) return null;
-            this.onFinish(`GetPolygon -> ${cPolygons.length} Polygons Found`);
             return { type: `MultiPolygon`, coordinates: cMultiPolygon };
         }
     }
 
-    private onFinish(Context: string): void { 
-        const cTickB = performance.now();
-        const cTickC = cTickB - this.prTickA;
-        SetLog({ Type: `DEBUG`, Message: `[${(Math.round((cTickC) * 100) / 100).toFixed(1)}ms] ${Context}` });
+    @ConstructClassTimer
+    public GetLocationMetadata({ Zones, UGC }: GET_LOCATION_METADATA_OPTIONS): GET_LOCATION_METADATA_RESPONSE {
+        const locations = UGC ? UGC?.Locations : this.GetZoneLocations({ Zones: Zones })
+        return { 
+            locations: locations,
+            states: [...new Set(
+                Zones
+                ?.map((lLocation: string) => lLocation.match(/^([A-Z]{2})[CZ](\d{3})$/)?.[1])
+                ?.filter(Boolean) ?? []
+            )]
+        }
     }
 }

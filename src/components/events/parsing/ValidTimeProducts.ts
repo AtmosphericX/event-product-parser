@@ -13,27 +13,21 @@
 
 */
 
-import { TYPE_UGC } from "Types.Components/UniversalGeographicCode"
+import { TYPE_STANZA_COMPILED } from "Types.Stanza/StanzaValidated"
 import { GeographicalCodeParsing } from "@Components.Events.Parsing.Classes/GeographicalCodeParsing"
+import { ValidTimeCodeParsing } from "@Components.Events.Parsing.Classes/ValidTimeCodeParsing"
 
-interface GET_EVENT_LOCATION_METADATA_OPTIONS {
-    Zones: string[],
-    UGC?: TYPE_UGC
-}
-
-interface GET_EVENT_LOCATION_METADATA_RESPONSE { 
-    locations: string[]
-    states: string[]
-}
-    
-export const GetEventLocationMetdata = ({ Zones, UGC }: GET_EVENT_LOCATION_METADATA_OPTIONS): GET_EVENT_LOCATION_METADATA_RESPONSE => {
-    const locations = UGC ? UGC?.Locations : new GeographicalCodeParsing({}).GetZoneLocations({ Zones: Zones })
-    return {
-        locations: locations,
-        states: [...new Set(
-            Zones
-            ?.map((lLocation: string) => lLocation.match(/^([A-Z]{2})[CZ](\d{3})$/)?.[1])
-            ?.filter(Boolean) ?? []
-        )]
+export const IngestProduct = async (Stanza: TYPE_STANZA_COMPILED): Promise<void> => {
+    const { Message } = Stanza;
+    const cMessages = Message
+        ?.split(/(?=\$\$)/g)
+        ?.map(lMsg => lMsg.trim())
+        ?.filter(lMsg => lMsg && lMsg !== "$$")
+        ?.filter(lMsg => lMsg.length > 25)
+    if (!cMessages?.length || cMessages?.length == 0) return;
+    for (const cMessage of cMessages) { 
+        const cGeoParser = new GeographicalCodeParsing({ Message: cMessage }).GetReferences();
+        const cTimeParser = new ValidTimeCodeParsing({ Message: cMessage }).GetReferences();
+        if (cGeoParser != null && cTimeParser != null) { }
     }
 }

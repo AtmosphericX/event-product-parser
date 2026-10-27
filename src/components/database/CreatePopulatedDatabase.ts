@@ -52,6 +52,7 @@ export const CreatePopulatedDatabase = async (): Promise<void> => {
             await CreateQuery({ Query: DB_STRINGS.CREATE.SHAPEFILE_INDEX }),
         ])
     }
+    
     await Promise.all([
         await BuildShapefiles(),
         await BuildPopulation(),

@@ -28,6 +28,8 @@
 **Refactoring**
 - ref(types): Refactored all types and corrected pathing for imports.
 - ref(parsing): Refactored types and interfaces for parsing classes.
+- ref(products): Changed file name `CAPProduct` -> `CommonAlertingProtocolProduct`.
+- ref(products): Changed file name `VTECProduct` -> `ValidTimeProduct`.
 
 **Packages**
 - chore(xml2js): Enforce `0.6.2` version of `xml2js` to avoid breaking changes in future versions.

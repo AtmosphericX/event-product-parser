@@ -13,8 +13,12 @@
 
 */
 
-import { SetLog } from "@Components.Utilities/SetLog";
+import { TYPE_CAP_PRODUCT_PROPERTIES } from "Types.Components/CapProductProperties"
+import { TYPE_STANZA_COMPILED } from "Types.Stanza/StanzaValidated";
+import { ConstructClassTimer } from "@Components.Utilities/ConstructClassTimer";
+import { GeographicalCodeParsing } from "@Components.Events.Parsing.Classes/GeographicalCodeParsing"
 import { Parser } from "xml2js"
+
 
 interface GET_OPTIONS { 
     Message?: string 
@@ -26,7 +30,6 @@ interface GET_PROPERTY_VALUES {
 
 export class CommonAlertingProtocolParsing { 
     private pMessage: string;
-    private prTickA = performance.now();
     private ENUM_KEYS = [
         { Keys: ["identifier"], Value: "temp.id" },
         { Keys: ["VTEC"], Value: "temp.vtec" },
@@ -57,13 +60,22 @@ export class CommonAlertingProtocolParsing {
         return this;
     }
 
+    @ConstructClassTimer
     public async GetJSON ({ Message = this.pMessage }: GET_OPTIONS): Promise<unknown> { 
         const cParser =  new Parser({ explicitArray: false, mergeAttrs: false, trim: true });
         const cPromise = await cParser.parseStringPromise(Message);
-        this.onFinish(`GetJSON -> ${Message.length} bytes`);
         return cPromise;
     }
 
+    @ConstructClassTimer
+    public GetFilteredMessage({ Message = this.pMessage }: GET_OPTIONS): string {
+        const cXMLIndex = Message.indexOf(`<?xml version="1.0"`);
+        const cXMLLastIndex = Message.lastIndexOf(`>`);
+        const cFilter = Message.substring(cXMLIndex, cXMLLastIndex + 1);
+        return cFilter;
+    }
+
+    @ConstructClassTimer
     public GetPropertyValues({ JSON }: GET_PROPERTY_VALUES): Record<string, unknown> {
         const cExtracted: Record<string, any> = {};
         const callFindValue = (lObject: any, lKey: string): unknown[] => {
@@ -89,10 +101,5 @@ export class CommonAlertingProtocolParsing {
         }
         return cExtracted;
     }
-
-    private onFinish(Context: string): void { 
-        const cTickB = performance.now();
-        const cTickC = cTickB - this.prTickA;
-        SetLog({ Type: `DEBUG`, Message: `[${(Math.round((cTickC) * 100) / 100).toFixed(1)}ms] ${Context}` });
-    }
+    
 }

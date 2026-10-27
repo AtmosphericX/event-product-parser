@@ -22,6 +22,7 @@ import { SetSettings } from "@Components.Utilities/SetSettings"
 import { InitializeDatabase } from "@Components.Database/InitializeDatabase"
 import { CreatePopulatedDatabase } from "@Components.Database/CreatePopulatedDatabase"
 import { DeployService } from "@Components.Classes/DeployService"
+import { ConstructClassTimer } from "@Components.Utilities/ConstructClassTimer";
 import { Cron } from "croner"
 
 export class Manager { 
@@ -30,6 +31,7 @@ export class Manager {
         SetSettings(settings);
     }
 
+    @ConstructClassTimer
     public async start(): Promise<void> { 
         const { WeatherWireService, WeatherWireServiceSettings, DeveloperSettings} = Bootstrap.Settings;
         const { DisableEvents } = DeveloperSettings;
@@ -37,8 +39,8 @@ export class Manager {
         if (Bootstrap.ServiceReady) { 
             return SetLog({ Message: ENUM_STRINGS.SERVICE.ALREADY_STARTED });
         }
-
-        SetLog({ Type: `DEBUG`, Message: `@atmosx/event-product-parser: ${this.version()}` }) 
+   
+        SetLog({ Type: `DEBUG`, Message: `@atmosx/event-product-parser: ${this.version()}` });
         Bootstrap.ServiceReady = true;
         await Promise.all([
             await InitializeDatabase(),
@@ -47,8 +49,10 @@ export class Manager {
             Bootstrap.Scheduler = new Cron(`*/15 * * * * *`, async () => {}), // Thread Caller
             Bootstrap.Scheduler = new Cron(`* * * * * *`, async () => {}) // Event Polygon / Node Updater
         ])
+
     }
 
+    @ConstructClassTimer
     public async stop(): Promise<void> {
         if (!Bootstrap.ServiceReady) {
             return SetLog({ Message: ENUM_STRINGS.SERVICE.NOT_STARTED });

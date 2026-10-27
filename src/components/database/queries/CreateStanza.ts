@@ -26,9 +26,9 @@ interface CREATE_STANZA_OPTIONS {
 
 export const CreateStanza = ({ Stanza }: CREATE_STANZA_OPTIONS): void => {
     const dbgTickA = performance.now();
+    
     const { MaxStanzas } = Bootstrap.Settings.WeatherWireServiceSettings.CacheControl
     const { count } = CreateQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.STANZA })[0] as TYPE_COUNT_RESULT;
-    
     const { Name } = Stanza.Product;
     const { issue } = Stanza.Attributes;
 

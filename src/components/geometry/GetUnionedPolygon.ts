@@ -22,14 +22,10 @@ interface GET_UNIONED_POLYGON_OPTIONS {
 
 export const GetUnionedPolygon = ({ Polygons }: GET_UNIONED_POLYGON_OPTIONS): GeoJSON.MultiPolygon | null => {
     const dbgTickA = performance.now();
-
     if (!Polygons || Polygons.length == 0) return null;
-
     const cUnionFN = union as unknown as (...polygons: number[][][][]) => number[][][][];
     const cUnioned = cUnionFN(...Polygons);
-    
     SetLog({ Type: `DEBUG`, Message: `[${(Math.round((performance.now() - dbgTickA) * 100) / 100).toFixed(1)}ms] GetUnionedPolygon` });
-
     return { 
         type: `MultiPolygon`,
         coordinates: cUnioned

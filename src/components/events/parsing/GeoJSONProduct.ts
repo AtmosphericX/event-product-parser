@@ -12,3 +12,7 @@
     Ko-Fi: https://ko-fi.com/k3yomi
 
 */
+
+import { TYPE_STANZA_COMPILED } from "Types.Stanza/StanzaValidated"
+
+export const IngestProduct = async (Stanza: TYPE_STANZA_COMPILED): Promise<void> => {}

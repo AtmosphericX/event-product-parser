@@ -31,7 +31,7 @@ interface GET_EVENT_TRACKING_OPTIONS {
 export const GetEventTracking = ({ Type, Stanza, Properties, Office, VTEC, ID }: GET_EVENT_TRACKING_OPTIONS): string => {
     if (Type === `CAP`) { 
         if (VTEC) { 
-            const cArray = Array.isArray(VTEC) ? VTEC[0]?.Raw : VTEC?.Raw;
+            const cArray = Array.isArray(VTEC) ? VTEC[0]?.Raw : VTEC
             const cSplit = cArray.split(`.`);
             return `${cSplit[2]}.${cSplit[3]}.${cSplit[4]}.${cSplit[5]}`;
         }

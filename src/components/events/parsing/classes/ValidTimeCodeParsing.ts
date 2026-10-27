@@ -19,7 +19,7 @@ import { ENUM_VTEC_PRODUCTS } from "@Enums.Products/VTECProducts"
 import { ENUM_VTEC_STATUS } from "@Enums.Products/VTECStatus"
 import { ENUM_VTEC_ACTIONS } from "@Enums.Products/VTECActions"
 import { ENUM_VTEC_TYPES } from "@Enums.Products/VTECTypes"
-import { SetLog } from "@Components.Utilities/SetLog";
+import { ConstructClassTimer } from "@Components.Utilities/ConstructClassTimer";
 
 interface GET_OPTIONS { 
     Message?: string 
@@ -32,16 +32,15 @@ interface GET_EXPIRY_DATE_OPTIONS {
 export class ValidTimeCodeParsing { 
     private pMessage: string;
     private pCollection: TYPE_VTEC[] = [];
-    private prTickA = performance.now();
 
     public constructor({ Message }: GET_OPTIONS) {
         this.pMessage = Message;
         return this;
     }
 
+    @ConstructClassTimer
     public GetReferences(): TYPE_VTEC[] | null {
         if (!this.pMessage) return null;
-        this.prTickA = performance.now();
         const cRegex = this.pMessage.match(ENUM_REGULAR_EXPRESSIONS.VTEC) ?? [];
         for (const cVTEC of cRegex) { 
             const cExpiryDate = this.GetExpiryDate({ VTEC: cVTEC });
@@ -61,12 +60,11 @@ export class ValidTimeCodeParsing {
                 Tracking: `${cOffice}.${cProduct}.${cAction}.${cCode}`,
             });
         }
-        this.onFinish(`GetReferences -> ${cRegex.length} VTEC Codes Found`);
         return this.pCollection;
     }
 
+    @ConstructClassTimer
     public GetExpiryDate({ VTEC }: GET_EXPIRY_DATE_OPTIONS): string {
-        this.prTickA = performance.now();
         const cSub = VTEC.split(`.`);
         const cDates = cSub[6]?.split(`-`);
         const isInvalid = cDates?.[1] == `000000T0000Z`;
@@ -78,8 +76,6 @@ export class ValidTimeCodeParsing {
         const cGetTime = `${cDates[1].substring(7, 9)}:${cDates[1].substring(9, 11)}:00`
         const cGetDate = new Date(`${cGetYear}${cGetDayMonth}T${cGetTime}`);
         const cLocalTime = new Date(new Date(cGetDate).getTime() - 4 * 60 * 60000);
-
-        this.onFinish(`GetExpiryDate -> ${VTEC}`);
         return [
             `${cLocalTime.getFullYear()}-`,
             `${this.CreatePadding(cLocalTime.getMonth() + 1)}-`,
@@ -89,13 +85,9 @@ export class ValidTimeCodeParsing {
         ].join(``);  
     }
 
+    @ConstructClassTimer
     private CreatePadding(cNumber: number): string { 
         return cNumber.toString().padStart(2, `0`);
     }
 
-    private onFinish(Context: string): void { 
-        const cTickB = performance.now();
-        const cTickC = cTickB - this.prTickA;
-        SetLog({ Type: `DEBUG`, Message: `[${(Math.round((cTickC) * 100) / 100).toFixed(1)}ms] ${Context}` });
-    }
 }

@@ -20,10 +20,10 @@ import { TYPE_VTEC } from "Types.Components/ValidTimeEventCode"
 import { TYPE_HVTEC } from "Types.Components/HyrdrolicValidTimeEventCode"
 import { ENUM_FORECAST_OFFICES } from "@Enums.Properties/Offices"
 import { ENUM_REGULAR_EXPRESSIONS } from "@Enums/RegularExpressions"
-import { GetEventLocationMetdata } from "@Components.Events.Building/GetEventLocationMetdata"
 import { GetEventTags } from "@Components.Events.Building/GetEventTags"
 import { GetStormMotion } from "@Components.Events.Building/GetStormMotion"
 import { TextProductParsing } from "@Components.Events.Parsing.Classes/TextProductParsing"
+import { GeographicalCodeParsing } from "@Components.Events.Parsing.Classes/GeographicalCodeParsing"
 
 interface GET_EVENT_PROPERTIES_OPTIONS {
     Message: string
@@ -35,11 +35,12 @@ interface GET_EVENT_PROPERTIES_OPTIONS {
     
 export const GetEventProperties = ({ Message, Attributes, VTEC, HVTEC, UGC }: GET_EVENT_PROPERTIES_OPTIONS): TYPE_PROPERTIES => {
     const cTextProductParsing = new TextProductParsing({ Message });
+    const cGeoParser = new GeographicalCodeParsing({ Message });
     const cPolygons = cTextProductParsing.GetPolygon({});
     const { Severity, Cause, Record } = HVTEC ?? {};
     const cOffice = VTEC?.Office ?? Attributes?.cccc ?? null;
     const cProperties: TYPE_PROPERTIES = { 
-        ...GetEventLocationMetdata({ Zones: UGC?.Zones, UGC }),
+        ...cGeoParser.GetLocationMetadata({ Zones: UGC?.Zones, UGC }),
         description: cTextProductParsing.GetDescription({}),
         geography: {
             office: {

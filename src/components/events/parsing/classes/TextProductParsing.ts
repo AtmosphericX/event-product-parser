@@ -13,8 +13,10 @@
 
 */
 
+import { TYPE_STANZA_COMPILED } from "Types.Stanza/StanzaValidated"
 import { ENUM_REGULAR_EXPRESSIONS } from "@Enums/RegularExpressions"
-import { SetLog } from "@Components.Utilities/SetLog";
+import { ENUM_REGEX_EVENTS } from "@Enums.Events/RegexEvents";
+import { ConstructClassTimer } from "@Components.Utilities/ConstructClassTimer";
 
 interface GET_OPTIONS { 
     Message?: string 
@@ -32,12 +34,25 @@ interface GET_TEXT_REFERENCES_OPTIONS {
     Exclude?: string[] 
 }
 
+interface GET_TEXT_PRODUCT_EVENT_OPTIONS { 
+    Message?: string
+    Stanza: TYPE_STANZA_COMPILED
+    Issuance: Date
+    Expiration: Date
+}
+
+interface GET_TEXT_PRODUCT_EVENT_RESPONSE { 
+    Label: string
+    Status?: string
+    Issuance?: Date
+    Expiry?: Date
+}
+
 type TYPE_POINT = { lat: number; lon: number };
 type TYPE_POLYGON = number[][];
 
 export class TextProductParsing { 
     private pMessage: string;
-    private prTickA = performance.now();
     private ENUM_END_MARKERS: string[] = ['&&', 'LAT...'];
 
     public constructor({ Message }: GET_OPTIONS) { 
@@ -45,8 +60,8 @@ export class TextProductParsing {
         return this;
     }
 
+    @ConstructClassTimer
     public GetTextReference({ Message = this.pMessage, Grep, Append, Exclude}: GET_TEXT_REFERENCES_OPTIONS): string {
-        this.prTickA = performance.now();
         const cSplitter = Message.split(`\n`);
         for (const cLine of cSplitter) { 
             const cFind = Grep.find((s: string) => cLine.includes(s));
@@ -58,15 +73,13 @@ export class TextProductParsing {
                     }
                     lResult = lResult.replace(cFind, '').replace('<', '').trim();
                 }
-                this.onFinish(`GetTextReference -> ${Grep.join(`, `)}`);
                 return lResult.toUpperCase() + (Append ? ` ${Append}` : ``);
             }
         }
-        this.onFinish(`GetTextReference (Not found) -> ${Grep.join(`, `)}`);
     }
 
+    @ConstructClassTimer
     public GetPolygon({ Message = this.pMessage }: GET_OPTIONS): TYPE_POLYGON {
-        this.prTickA = performance.now();
         const cCoordinates: TYPE_POLYGON = [];
         const cPoints: TYPE_POINT[] = [];
         const cMatch = Message.match(ENUM_REGULAR_EXPRESSIONS.POLYGON_INDEX);
@@ -110,12 +123,11 @@ export class TextProductParsing {
         if (cCoordinates.length > 2 && (cCoordinates[0][0] !== cCoordinates[cCoordinates.length - 1][0] || cCoordinates[0][1] !== cCoordinates[cCoordinates.length - 1][1])) {
             cCoordinates.push([...cCoordinates[0]]);
         }
-        this.onFinish(`GetPolygon -> ${cCoordinates.length} Coordinates Found`);
         return cCoordinates;
     }
 
+    @ConstructClassTimer
     public GetDescription({ Message = this.pMessage, Handle}: GET_POLYGON_OPTIONS): string | null {
-        this.prTickA = performance.now();
         const cMessage = Message;
         if (cMessage == "" || cMessage == null) return `This product did not contain a valid description. Please check the product for more information`;
         const cDates = Array.from(Message.matchAll(ENUM_REGULAR_EXPRESSIONS.DATE));
@@ -162,12 +174,11 @@ export class TextProductParsing {
                 } 
             }
         }
-        this.onFinish(`GetDescription -> ${Message}`);
         return Message.trim();
     }
 
+    @ConstructClassTimer
     public GetExpiry({ Message = this.pMessage }: GET_OPTIONS): Date | null {
-        this.prTickA = performance.now();
         const cMatch = Message.match(ENUM_REGULAR_EXPRESSIONS.TEXT_EXPIRY);
         if (!cMatch) return null;
         const [, cExpiry] = cMatch;
@@ -176,13 +187,25 @@ export class TextProductParsing {
         const dHour = Number(cExpiry.slice(2, 4));
         const cMinute = Number(cExpiry.slice(4, 6));
         const cExpires = new Date(Date.UTC(cTimestamp.getUTCFullYear(), cTimestamp.getUTCMonth(), cDay, dHour, cMinute));
-        this.onFinish(`GetExpiry -> ${cExpires.toISOString()}`);
         return cExpires;
     }
 
-    private onFinish(Context: string): void { 
-        const cTickB = performance.now();
-        const cTickC = cTickB - this.prTickA;
-        SetLog({ Type: `DEBUG`, Message: `[${(Math.round((cTickC) * 100) / 100).toFixed(1)}ms] ${Context}` });
+    @ConstructClassTimer
+    public GetTextProductEvent({ Message = this.pMessage, Stanza, Issuance, Expiration }: GET_TEXT_PRODUCT_EVENT_OPTIONS): GET_TEXT_PRODUCT_EVENT_RESPONSE {
+        const { Product } = Stanza
+        const { ID, Name, Discovered } = Product;
+        const { Label, Statement } = ENUM_REGEX_EVENTS[ID]
+            ?.find(A => A.Match.test(Message)) ?? { Label: `${Discovered ? Name : `${ID} (Unknown)`}`, Statement: true };
+        
+        const cGetExpiry = this.GetExpiry({ Message });
+        const cIssuanceValid = (!isNaN(Issuance.getTime())) ? Issuance.toISOString() : new Date().toISOString();
+        const cExpirationValid = (cGetExpiry && !isNaN(cGetExpiry.getTime())) ? cGetExpiry.toISOString() : Expiration.toISOString();
+    
+        return { 
+            Label: Label,
+            Status: !Statement ? `Issued` : `Statement`,
+            Issuance: new Date(cIssuanceValid),
+            Expiry: Statement ? new Date(Issuance.getTime() + 120 * 1e3) : new Date(cExpirationValid)
+        }
     }
 }

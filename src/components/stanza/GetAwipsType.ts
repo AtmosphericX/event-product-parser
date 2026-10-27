@@ -21,6 +21,7 @@ interface GET_AWIPS_TYPE_OPTIONS {
 }
 
 interface GET_AWIPS_TYPE_RESPONSE { 
+    Raw: string
     Name: string
     ID: string
     Discovered: boolean
@@ -29,6 +30,7 @@ interface GET_AWIPS_TYPE_RESPONSE {
 export const GetAwipsType = ({ Attributes }: GET_AWIPS_TYPE_OPTIONS): GET_AWIPS_TYPE_RESPONSE => {
     if (!Attributes.awipsid) { 
         return { 
+            Raw: Attributes.awipsid,
             Name: null, 
             ID: null,
             Discovered: false
@@ -36,8 +38,8 @@ export const GetAwipsType = ({ Attributes }: GET_AWIPS_TYPE_OPTIONS): GET_AWIPS_
     }
     for (const [cPrefix, cName] of Object.entries(ENUM_LEGACY_AWIPS)) {
         if (Attributes.awipsid.startsWith(cPrefix)) {
-            return { Name: cName, ID: cPrefix, Discovered: true }
+            return { Raw: Attributes.awipsid, Name: cName, ID: cPrefix, Discovered: true }
         }
     }
-    return { Name: Attributes.awipsid, ID: Attributes.awipsid, Discovered: false }
+    return { Raw: Attributes.awipsid, Name: Attributes.awipsid, ID: Attributes.awipsid, Discovered: false }
 }

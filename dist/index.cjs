@@ -5,6 +5,12 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __knownSymbol = (name, symbol) => (symbol = Symbol[name]) ? symbol : /* @__PURE__ */ Symbol.for("Symbol." + name);
+var __typeError = (msg) => {
+  throw TypeError(msg);
+};
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 var __commonJS = (cb, mod) => function __require() {
   try {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
@@ -33,6 +39,44 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __decoratorStart = (base) => [, , , __create(base?.[__knownSymbol("metadata")] ?? null)];
+var __decoratorStrings = ["class", "method", "getter", "setter", "accessor", "field", "value", "get", "set"];
+var __expectFn = (fn) => fn !== void 0 && typeof fn !== "function" ? __typeError("Function expected") : fn;
+var __decoratorContext = (kind, name, done, metadata, fns) => ({ kind: __decoratorStrings[kind], name, metadata, addInitializer: (fn) => done._ ? __typeError("Already initialized") : fns.push(__expectFn(fn || null)) });
+var __decoratorMetadata = (array, target) => __defNormalProp(target, __knownSymbol("metadata"), array[3]);
+var __runInitializers = (array, flags, self2, value) => {
+  for (var i = 0, fns = array[flags >> 1], n = fns && fns.length; i < n; i++) flags & 1 ? fns[i].call(self2) : value = fns[i].call(self2, value);
+  return value;
+};
+var __decorateElement = (array, flags, name, decorators, target, extra) => {
+  var fn, it, done, ctx, access, k2 = flags & 7, s2 = !!(flags & 8), p2 = !!(flags & 16);
+  var j2 = k2 > 3 ? array.length + 1 : k2 ? s2 ? 1 : 2 : 0, key = __decoratorStrings[k2 + 5];
+  var initializers = k2 > 3 && (array[j2 - 1] = []), extraInitializers = array[j2] || (array[j2] = []);
+  var desc = k2 && (!p2 && !s2 && (target = target.prototype), k2 < 5 && (k2 > 3 || !p2) && __getOwnPropDesc(k2 < 4 ? target : { get [name]() {
+    return __privateGet(this, extra);
+  }, set [name](x2) {
+    return __privateSet(this, extra, x2);
+  } }, name));
+  k2 ? p2 && k2 < 4 && __name(extra, (k2 > 2 ? "set " : k2 > 1 ? "get " : "") + name) : __name(target, name);
+  for (var i = decorators.length - 1; i >= 0; i--) {
+    ctx = __decoratorContext(k2, name, done = {}, array[3], extraInitializers);
+    if (k2) {
+      ctx.static = s2, ctx.private = p2, access = ctx.access = { has: p2 ? (x2) => __privateIn(target, x2) : (x2) => name in x2 };
+      if (k2 ^ 3) access.get = p2 ? (x2) => (k2 ^ 1 ? __privateGet : __privateMethod)(x2, target, k2 ^ 4 ? extra : desc.get) : (x2) => x2[name];
+      if (k2 > 2) access.set = p2 ? (x2, y) => __privateSet(x2, target, y, k2 ^ 4 ? extra : desc.set) : (x2, y) => x2[name] = y;
+    }
+    it = (0, decorators[i])(k2 ? k2 < 4 ? p2 ? extra : desc[key] : k2 > 4 ? void 0 : { get: desc.get, set: desc.set } : target, ctx), done._ = 1;
+    if (k2 ^ 4 || it === void 0) __expectFn(it) && (k2 > 4 ? initializers.unshift(it) : k2 ? p2 ? extra = it : desc[key] = it : target = it);
+    else if (typeof it !== "object" || it === null) __typeError("Object expected");
+    else __expectFn(fn = it.get) && (desc.get = fn), __expectFn(fn = it.set) && (desc.set = fn), __expectFn(fn = it.init) && initializers.unshift(fn);
+  }
+  return k2 || __decoratorMetadata(array, target), desc && __defProp(target, name, desc), p2 ? k2 ^ 4 ? extra : desc : target;
+};
+var __accessCheck = (obj, member, msg) => member.has(obj) || __typeError("Cannot " + msg);
+var __privateIn = (member, obj) => Object(obj) !== obj ? __typeError('Cannot use the "in" operator on this value') : member.has(obj);
+var __privateGet = (obj, member, getter) => (__accessCheck(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
+var __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), setter ? setter.call(obj, value) : member.set(obj, value), value);
+var __privateMethod = (obj, member, method) => (__accessCheck(obj, member, "access private method"), method);
 
 // node_modules/.pnpm/process-nextick-args@2.0.1/node_modules/process-nextick-args/index.js
 var require_process_nextick_args = __commonJS({
@@ -10524,8 +10568,8 @@ var require_encoding = __commonJS({
       }
       var big5_index_no_hkscs;
       var DEFAULT_ENCODING = "utf-8";
-      function TextDecoder(label, options) {
-        if (!(this instanceof TextDecoder))
+      function TextDecoder2(label, options) {
+        if (!(this instanceof TextDecoder2))
           throw TypeError("Called as a function. Did you forget 'new'?");
         label = label !== void 0 ? String(label) : DEFAULT_ENCODING;
         options = ToDictionary(options);
@@ -10555,26 +10599,26 @@ var require_encoding = __commonJS({
         return dec;
       }
       if (Object.defineProperty) {
-        Object.defineProperty(TextDecoder.prototype, "encoding", {
+        Object.defineProperty(TextDecoder2.prototype, "encoding", {
           /** @this {TextDecoder} */
           get: function() {
             return this._encoding.name.toLowerCase();
           }
         });
-        Object.defineProperty(TextDecoder.prototype, "fatal", {
+        Object.defineProperty(TextDecoder2.prototype, "fatal", {
           /** @this {TextDecoder} */
           get: function() {
             return this._error_mode === "fatal";
           }
         });
-        Object.defineProperty(TextDecoder.prototype, "ignoreBOM", {
+        Object.defineProperty(TextDecoder2.prototype, "ignoreBOM", {
           /** @this {TextDecoder} */
           get: function() {
             return this._ignoreBOM;
           }
         });
       }
-      TextDecoder.prototype.decode = function decode2(input, options) {
+      TextDecoder2.prototype.decode = function decode2(input, options) {
         var bytes;
         if (typeof input === "object" && input instanceof ArrayBuffer) {
           bytes = new Uint8Array(input);
@@ -11542,7 +11586,7 @@ var require_encoding = __commonJS({
       if (!global2["TextEncoder"])
         global2["TextEncoder"] = TextEncoder2;
       if (!global2["TextDecoder"])
-        global2["TextDecoder"] = TextDecoder;
+        global2["TextDecoder"] = TextDecoder2;
       if (typeof module2 !== "undefined" && module2.exports) {
         module2.exports = {
           TextEncoder: global2["TextEncoder"],
@@ -11783,7 +11827,7 @@ var require_slice_source = __commonJS({
 var require_shapefile_node = __commonJS({
   "node_modules/.pnpm/shapefile@0.6.6/node_modules/shapefile/dist/shapefile.node.js"(exports2) {
     "use strict";
-    var TextDecoder = require_text_encoding().TextDecoder;
+    var TextDecoder2 = require_text_encoding().TextDecoder;
     Object.defineProperty(exports2, "__esModule", { value: true });
     function _interopDefault(ex) {
       return ex && typeof ex === "object" && "default" in ex ? ex["default"] : ex;
@@ -12063,7 +12107,7 @@ var require_shapefile_node = __commonJS({
       return Promise.all([shp$$1, dbf$$1]).then(function(sources) {
         var shp$$12 = sources[0], dbf$$12 = sources[1], encoding = "windows-1252";
         if (options && options.encoding != null) encoding = options.encoding;
-        return shapefile(shp$$12, dbf$$12, dbf$$12 && new TextDecoder(encoding));
+        return shapefile(shp$$12, dbf$$12, dbf$$12 && new TextDecoder2(encoding));
       });
     }
     function openShp(source, options) {
@@ -12080,7 +12124,7 @@ var require_shapefile_node = __commonJS({
     function openDbf(source, options) {
       var encoding = "windows-1252";
       if (options && options.encoding != null) encoding = options.encoding;
-      encoding = new TextDecoder(encoding);
+      encoding = new TextDecoder2(encoding);
       if (typeof source === "string") {
         if (!/\.dbf$/.test(source)) source += ".dbf";
         source = path(source, options);
@@ -12569,6 +12613,7763 @@ var require_topojson_client = __commonJS({
   }
 });
 
+// node_modules/.pnpm/xml2js@0.6.2/node_modules/xml2js/lib/defaults.js
+var require_defaults2 = __commonJS({
+  "node_modules/.pnpm/xml2js@0.6.2/node_modules/xml2js/lib/defaults.js"(exports2) {
+    (function() {
+      exports2.defaults = {
+        "0.1": {
+          explicitCharkey: false,
+          trim: true,
+          normalize: true,
+          normalizeTags: false,
+          attrkey: "@",
+          charkey: "#",
+          explicitArray: false,
+          ignoreAttrs: false,
+          mergeAttrs: false,
+          explicitRoot: false,
+          validator: null,
+          xmlns: false,
+          explicitChildren: false,
+          childkey: "@@",
+          charsAsChildren: false,
+          includeWhiteChars: false,
+          async: false,
+          strict: true,
+          attrNameProcessors: null,
+          attrValueProcessors: null,
+          tagNameProcessors: null,
+          valueProcessors: null,
+          emptyTag: ""
+        },
+        "0.2": {
+          explicitCharkey: false,
+          trim: false,
+          normalize: false,
+          normalizeTags: false,
+          attrkey: "$",
+          charkey: "_",
+          explicitArray: true,
+          ignoreAttrs: false,
+          mergeAttrs: false,
+          explicitRoot: true,
+          validator: null,
+          xmlns: false,
+          explicitChildren: false,
+          preserveChildrenOrder: false,
+          childkey: "$$",
+          charsAsChildren: false,
+          includeWhiteChars: false,
+          async: false,
+          strict: true,
+          attrNameProcessors: null,
+          attrValueProcessors: null,
+          tagNameProcessors: null,
+          valueProcessors: null,
+          rootName: "root",
+          xmldec: {
+            "version": "1.0",
+            "encoding": "UTF-8",
+            "standalone": true
+          },
+          doctype: null,
+          renderOpts: {
+            "pretty": true,
+            "indent": "  ",
+            "newline": "\n"
+          },
+          headless: false,
+          chunkSize: 1e4,
+          emptyTag: "",
+          cdata: false
+        }
+      };
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/Utility.js
+var require_Utility = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/Utility.js"(exports2, module2) {
+    (function() {
+      var assign, getValue, isArray, isEmpty, isFunction, isObject, isPlainObject, slice = [].slice, hasProp = {}.hasOwnProperty;
+      assign = function() {
+        var i, key, len, source, sources, target;
+        target = arguments[0], sources = 2 <= arguments.length ? slice.call(arguments, 1) : [];
+        if (isFunction(Object.assign)) {
+          Object.assign.apply(null, arguments);
+        } else {
+          for (i = 0, len = sources.length; i < len; i++) {
+            source = sources[i];
+            if (source != null) {
+              for (key in source) {
+                if (!hasProp.call(source, key)) continue;
+                target[key] = source[key];
+              }
+            }
+          }
+        }
+        return target;
+      };
+      isFunction = function(val) {
+        return !!val && Object.prototype.toString.call(val) === "[object Function]";
+      };
+      isObject = function(val) {
+        var ref;
+        return !!val && ((ref = typeof val) === "function" || ref === "object");
+      };
+      isArray = function(val) {
+        if (isFunction(Array.isArray)) {
+          return Array.isArray(val);
+        } else {
+          return Object.prototype.toString.call(val) === "[object Array]";
+        }
+      };
+      isEmpty = function(val) {
+        var key;
+        if (isArray(val)) {
+          return !val.length;
+        } else {
+          for (key in val) {
+            if (!hasProp.call(val, key)) continue;
+            return false;
+          }
+          return true;
+        }
+      };
+      isPlainObject = function(val) {
+        var ctor, proto;
+        return isObject(val) && (proto = Object.getPrototypeOf(val)) && (ctor = proto.constructor) && typeof ctor === "function" && ctor instanceof ctor && Function.prototype.toString.call(ctor) === Function.prototype.toString.call(Object);
+      };
+      getValue = function(obj) {
+        if (isFunction(obj.valueOf)) {
+          return obj.valueOf();
+        } else {
+          return obj;
+        }
+      };
+      module2.exports.assign = assign;
+      module2.exports.isFunction = isFunction;
+      module2.exports.isObject = isObject;
+      module2.exports.isArray = isArray;
+      module2.exports.isEmpty = isEmpty;
+      module2.exports.isPlainObject = isPlainObject;
+      module2.exports.getValue = getValue;
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDOMImplementation.js
+var require_XMLDOMImplementation = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDOMImplementation.js"(exports2, module2) {
+    (function() {
+      var XMLDOMImplementation;
+      module2.exports = XMLDOMImplementation = (function() {
+        function XMLDOMImplementation2() {
+        }
+        XMLDOMImplementation2.prototype.hasFeature = function(feature2, version) {
+          return true;
+        };
+        XMLDOMImplementation2.prototype.createDocumentType = function(qualifiedName, publicId, systemId) {
+          throw new Error("This DOM method is not implemented.");
+        };
+        XMLDOMImplementation2.prototype.createDocument = function(namespaceURI, qualifiedName, doctype) {
+          throw new Error("This DOM method is not implemented.");
+        };
+        XMLDOMImplementation2.prototype.createHTMLDocument = function(title) {
+          throw new Error("This DOM method is not implemented.");
+        };
+        XMLDOMImplementation2.prototype.getFeature = function(feature2, version) {
+          throw new Error("This DOM method is not implemented.");
+        };
+        return XMLDOMImplementation2;
+      })();
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDOMErrorHandler.js
+var require_XMLDOMErrorHandler = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDOMErrorHandler.js"(exports2, module2) {
+    (function() {
+      var XMLDOMErrorHandler;
+      module2.exports = XMLDOMErrorHandler = (function() {
+        function XMLDOMErrorHandler2() {
+        }
+        XMLDOMErrorHandler2.prototype.handleError = function(error) {
+          throw new Error(error);
+        };
+        return XMLDOMErrorHandler2;
+      })();
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDOMStringList.js
+var require_XMLDOMStringList = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDOMStringList.js"(exports2, module2) {
+    (function() {
+      var XMLDOMStringList;
+      module2.exports = XMLDOMStringList = (function() {
+        function XMLDOMStringList2(arr) {
+          this.arr = arr || [];
+        }
+        Object.defineProperty(XMLDOMStringList2.prototype, "length", {
+          get: function() {
+            return this.arr.length;
+          }
+        });
+        XMLDOMStringList2.prototype.item = function(index) {
+          return this.arr[index] || null;
+        };
+        XMLDOMStringList2.prototype.contains = function(str) {
+          return this.arr.indexOf(str) !== -1;
+        };
+        return XMLDOMStringList2;
+      })();
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDOMConfiguration.js
+var require_XMLDOMConfiguration = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDOMConfiguration.js"(exports2, module2) {
+    (function() {
+      var XMLDOMConfiguration, XMLDOMErrorHandler, XMLDOMStringList;
+      XMLDOMErrorHandler = require_XMLDOMErrorHandler();
+      XMLDOMStringList = require_XMLDOMStringList();
+      module2.exports = XMLDOMConfiguration = (function() {
+        function XMLDOMConfiguration2() {
+          var clonedSelf;
+          this.defaultParams = {
+            "canonical-form": false,
+            "cdata-sections": false,
+            "comments": false,
+            "datatype-normalization": false,
+            "element-content-whitespace": true,
+            "entities": true,
+            "error-handler": new XMLDOMErrorHandler(),
+            "infoset": true,
+            "validate-if-schema": false,
+            "namespaces": true,
+            "namespace-declarations": true,
+            "normalize-characters": false,
+            "schema-location": "",
+            "schema-type": "",
+            "split-cdata-sections": true,
+            "validate": false,
+            "well-formed": true
+          };
+          this.params = clonedSelf = Object.create(this.defaultParams);
+        }
+        Object.defineProperty(XMLDOMConfiguration2.prototype, "parameterNames", {
+          get: function() {
+            return new XMLDOMStringList(Object.keys(this.defaultParams));
+          }
+        });
+        XMLDOMConfiguration2.prototype.getParameter = function(name) {
+          if (this.params.hasOwnProperty(name)) {
+            return this.params[name];
+          } else {
+            return null;
+          }
+        };
+        XMLDOMConfiguration2.prototype.canSetParameter = function(name, value) {
+          return true;
+        };
+        XMLDOMConfiguration2.prototype.setParameter = function(name, value) {
+          if (value != null) {
+            return this.params[name] = value;
+          } else {
+            return delete this.params[name];
+          }
+        };
+        return XMLDOMConfiguration2;
+      })();
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/NodeType.js
+var require_NodeType = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/NodeType.js"(exports2, module2) {
+    (function() {
+      module2.exports = {
+        Element: 1,
+        Attribute: 2,
+        Text: 3,
+        CData: 4,
+        EntityReference: 5,
+        EntityDeclaration: 6,
+        ProcessingInstruction: 7,
+        Comment: 8,
+        Document: 9,
+        DocType: 10,
+        DocumentFragment: 11,
+        NotationDeclaration: 12,
+        Declaration: 201,
+        Raw: 202,
+        AttributeDeclaration: 203,
+        ElementDeclaration: 204,
+        Dummy: 205
+      };
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLAttribute.js
+var require_XMLAttribute = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLAttribute.js"(exports2, module2) {
+    (function() {
+      var NodeType, XMLAttribute, XMLNode;
+      NodeType = require_NodeType();
+      XMLNode = require_XMLNode();
+      module2.exports = XMLAttribute = (function() {
+        function XMLAttribute2(parent, name, value) {
+          this.parent = parent;
+          if (this.parent) {
+            this.options = this.parent.options;
+            this.stringify = this.parent.stringify;
+          }
+          if (name == null) {
+            throw new Error("Missing attribute name. " + this.debugInfo(name));
+          }
+          this.name = this.stringify.name(name);
+          this.value = this.stringify.attValue(value);
+          this.type = NodeType.Attribute;
+          this.isId = false;
+          this.schemaTypeInfo = null;
+        }
+        Object.defineProperty(XMLAttribute2.prototype, "nodeType", {
+          get: function() {
+            return this.type;
+          }
+        });
+        Object.defineProperty(XMLAttribute2.prototype, "ownerElement", {
+          get: function() {
+            return this.parent;
+          }
+        });
+        Object.defineProperty(XMLAttribute2.prototype, "textContent", {
+          get: function() {
+            return this.value;
+          },
+          set: function(value) {
+            return this.value = value || "";
+          }
+        });
+        Object.defineProperty(XMLAttribute2.prototype, "namespaceURI", {
+          get: function() {
+            return "";
+          }
+        });
+        Object.defineProperty(XMLAttribute2.prototype, "prefix", {
+          get: function() {
+            return "";
+          }
+        });
+        Object.defineProperty(XMLAttribute2.prototype, "localName", {
+          get: function() {
+            return this.name;
+          }
+        });
+        Object.defineProperty(XMLAttribute2.prototype, "specified", {
+          get: function() {
+            return true;
+          }
+        });
+        XMLAttribute2.prototype.clone = function() {
+          return Object.create(this);
+        };
+        XMLAttribute2.prototype.toString = function(options) {
+          return this.options.writer.attribute(this, this.options.writer.filterOptions(options));
+        };
+        XMLAttribute2.prototype.debugInfo = function(name) {
+          name = name || this.name;
+          if (name == null) {
+            return "parent: <" + this.parent.name + ">";
+          } else {
+            return "attribute: {" + name + "}, parent: <" + this.parent.name + ">";
+          }
+        };
+        XMLAttribute2.prototype.isEqualNode = function(node) {
+          if (node.namespaceURI !== this.namespaceURI) {
+            return false;
+          }
+          if (node.prefix !== this.prefix) {
+            return false;
+          }
+          if (node.localName !== this.localName) {
+            return false;
+          }
+          if (node.value !== this.value) {
+            return false;
+          }
+          return true;
+        };
+        return XMLAttribute2;
+      })();
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLNamedNodeMap.js
+var require_XMLNamedNodeMap = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLNamedNodeMap.js"(exports2, module2) {
+    (function() {
+      var XMLNamedNodeMap;
+      module2.exports = XMLNamedNodeMap = (function() {
+        function XMLNamedNodeMap2(nodes) {
+          this.nodes = nodes;
+        }
+        Object.defineProperty(XMLNamedNodeMap2.prototype, "length", {
+          get: function() {
+            return Object.keys(this.nodes).length || 0;
+          }
+        });
+        XMLNamedNodeMap2.prototype.clone = function() {
+          return this.nodes = null;
+        };
+        XMLNamedNodeMap2.prototype.getNamedItem = function(name) {
+          return this.nodes[name];
+        };
+        XMLNamedNodeMap2.prototype.setNamedItem = function(node) {
+          var oldNode;
+          oldNode = this.nodes[node.nodeName];
+          this.nodes[node.nodeName] = node;
+          return oldNode || null;
+        };
+        XMLNamedNodeMap2.prototype.removeNamedItem = function(name) {
+          var oldNode;
+          oldNode = this.nodes[name];
+          delete this.nodes[name];
+          return oldNode || null;
+        };
+        XMLNamedNodeMap2.prototype.item = function(index) {
+          return this.nodes[Object.keys(this.nodes)[index]] || null;
+        };
+        XMLNamedNodeMap2.prototype.getNamedItemNS = function(namespaceURI, localName) {
+          throw new Error("This DOM method is not implemented.");
+        };
+        XMLNamedNodeMap2.prototype.setNamedItemNS = function(node) {
+          throw new Error("This DOM method is not implemented.");
+        };
+        XMLNamedNodeMap2.prototype.removeNamedItemNS = function(namespaceURI, localName) {
+          throw new Error("This DOM method is not implemented.");
+        };
+        return XMLNamedNodeMap2;
+      })();
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLElement.js
+var require_XMLElement = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLElement.js"(exports2, module2) {
+    (function() {
+      var NodeType, XMLAttribute, XMLElement, XMLNamedNodeMap, XMLNode, getValue, isFunction, isObject, ref, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      ref = require_Utility(), isObject = ref.isObject, isFunction = ref.isFunction, getValue = ref.getValue;
+      XMLNode = require_XMLNode();
+      NodeType = require_NodeType();
+      XMLAttribute = require_XMLAttribute();
+      XMLNamedNodeMap = require_XMLNamedNodeMap();
+      module2.exports = XMLElement = (function(superClass) {
+        extend(XMLElement2, superClass);
+        function XMLElement2(parent, name, attributes) {
+          var child, j2, len, ref1;
+          XMLElement2.__super__.constructor.call(this, parent);
+          if (name == null) {
+            throw new Error("Missing element name. " + this.debugInfo());
+          }
+          this.name = this.stringify.name(name);
+          this.type = NodeType.Element;
+          this.attribs = {};
+          this.schemaTypeInfo = null;
+          if (attributes != null) {
+            this.attribute(attributes);
+          }
+          if (parent.type === NodeType.Document) {
+            this.isRoot = true;
+            this.documentObject = parent;
+            parent.rootObject = this;
+            if (parent.children) {
+              ref1 = parent.children;
+              for (j2 = 0, len = ref1.length; j2 < len; j2++) {
+                child = ref1[j2];
+                if (child.type === NodeType.DocType) {
+                  child.name = this.name;
+                  break;
+                }
+              }
+            }
+          }
+        }
+        Object.defineProperty(XMLElement2.prototype, "tagName", {
+          get: function() {
+            return this.name;
+          }
+        });
+        Object.defineProperty(XMLElement2.prototype, "namespaceURI", {
+          get: function() {
+            return "";
+          }
+        });
+        Object.defineProperty(XMLElement2.prototype, "prefix", {
+          get: function() {
+            return "";
+          }
+        });
+        Object.defineProperty(XMLElement2.prototype, "localName", {
+          get: function() {
+            return this.name;
+          }
+        });
+        Object.defineProperty(XMLElement2.prototype, "id", {
+          get: function() {
+            throw new Error("This DOM method is not implemented." + this.debugInfo());
+          }
+        });
+        Object.defineProperty(XMLElement2.prototype, "className", {
+          get: function() {
+            throw new Error("This DOM method is not implemented." + this.debugInfo());
+          }
+        });
+        Object.defineProperty(XMLElement2.prototype, "classList", {
+          get: function() {
+            throw new Error("This DOM method is not implemented." + this.debugInfo());
+          }
+        });
+        Object.defineProperty(XMLElement2.prototype, "attributes", {
+          get: function() {
+            if (!this.attributeMap || !this.attributeMap.nodes) {
+              this.attributeMap = new XMLNamedNodeMap(this.attribs);
+            }
+            return this.attributeMap;
+          }
+        });
+        XMLElement2.prototype.clone = function() {
+          var att, attName, clonedSelf, ref1;
+          clonedSelf = Object.create(this);
+          if (clonedSelf.isRoot) {
+            clonedSelf.documentObject = null;
+          }
+          clonedSelf.attribs = {};
+          ref1 = this.attribs;
+          for (attName in ref1) {
+            if (!hasProp.call(ref1, attName)) continue;
+            att = ref1[attName];
+            clonedSelf.attribs[attName] = att.clone();
+          }
+          clonedSelf.children = [];
+          this.children.forEach(function(child) {
+            var clonedChild;
+            clonedChild = child.clone();
+            clonedChild.parent = clonedSelf;
+            return clonedSelf.children.push(clonedChild);
+          });
+          return clonedSelf;
+        };
+        XMLElement2.prototype.attribute = function(name, value) {
+          var attName, attValue;
+          if (name != null) {
+            name = getValue(name);
+          }
+          if (isObject(name)) {
+            for (attName in name) {
+              if (!hasProp.call(name, attName)) continue;
+              attValue = name[attName];
+              this.attribute(attName, attValue);
+            }
+          } else {
+            if (isFunction(value)) {
+              value = value.apply();
+            }
+            if (this.options.keepNullAttributes && value == null) {
+              this.attribs[name] = new XMLAttribute(this, name, "");
+            } else if (value != null) {
+              this.attribs[name] = new XMLAttribute(this, name, value);
+            }
+          }
+          return this;
+        };
+        XMLElement2.prototype.removeAttribute = function(name) {
+          var attName, j2, len;
+          if (name == null) {
+            throw new Error("Missing attribute name. " + this.debugInfo());
+          }
+          name = getValue(name);
+          if (Array.isArray(name)) {
+            for (j2 = 0, len = name.length; j2 < len; j2++) {
+              attName = name[j2];
+              delete this.attribs[attName];
+            }
+          } else {
+            delete this.attribs[name];
+          }
+          return this;
+        };
+        XMLElement2.prototype.toString = function(options) {
+          return this.options.writer.element(this, this.options.writer.filterOptions(options));
+        };
+        XMLElement2.prototype.att = function(name, value) {
+          return this.attribute(name, value);
+        };
+        XMLElement2.prototype.a = function(name, value) {
+          return this.attribute(name, value);
+        };
+        XMLElement2.prototype.getAttribute = function(name) {
+          if (this.attribs.hasOwnProperty(name)) {
+            return this.attribs[name].value;
+          } else {
+            return null;
+          }
+        };
+        XMLElement2.prototype.setAttribute = function(name, value) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLElement2.prototype.getAttributeNode = function(name) {
+          if (this.attribs.hasOwnProperty(name)) {
+            return this.attribs[name];
+          } else {
+            return null;
+          }
+        };
+        XMLElement2.prototype.setAttributeNode = function(newAttr) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLElement2.prototype.removeAttributeNode = function(oldAttr) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLElement2.prototype.getElementsByTagName = function(name) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLElement2.prototype.getAttributeNS = function(namespaceURI, localName) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLElement2.prototype.setAttributeNS = function(namespaceURI, qualifiedName, value) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLElement2.prototype.removeAttributeNS = function(namespaceURI, localName) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLElement2.prototype.getAttributeNodeNS = function(namespaceURI, localName) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLElement2.prototype.setAttributeNodeNS = function(newAttr) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLElement2.prototype.getElementsByTagNameNS = function(namespaceURI, localName) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLElement2.prototype.hasAttribute = function(name) {
+          return this.attribs.hasOwnProperty(name);
+        };
+        XMLElement2.prototype.hasAttributeNS = function(namespaceURI, localName) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLElement2.prototype.setIdAttribute = function(name, isId) {
+          if (this.attribs.hasOwnProperty(name)) {
+            return this.attribs[name].isId;
+          } else {
+            return isId;
+          }
+        };
+        XMLElement2.prototype.setIdAttributeNS = function(namespaceURI, localName, isId) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLElement2.prototype.setIdAttributeNode = function(idAttr, isId) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLElement2.prototype.getElementsByTagName = function(tagname) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLElement2.prototype.getElementsByTagNameNS = function(namespaceURI, localName) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLElement2.prototype.getElementsByClassName = function(classNames) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLElement2.prototype.isEqualNode = function(node) {
+          var i, j2, ref1;
+          if (!XMLElement2.__super__.isEqualNode.apply(this, arguments).isEqualNode(node)) {
+            return false;
+          }
+          if (node.namespaceURI !== this.namespaceURI) {
+            return false;
+          }
+          if (node.prefix !== this.prefix) {
+            return false;
+          }
+          if (node.localName !== this.localName) {
+            return false;
+          }
+          if (node.attribs.length !== this.attribs.length) {
+            return false;
+          }
+          for (i = j2 = 0, ref1 = this.attribs.length - 1; 0 <= ref1 ? j2 <= ref1 : j2 >= ref1; i = 0 <= ref1 ? ++j2 : --j2) {
+            if (!this.attribs[i].isEqualNode(node.attribs[i])) {
+              return false;
+            }
+          }
+          return true;
+        };
+        return XMLElement2;
+      })(XMLNode);
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLCharacterData.js
+var require_XMLCharacterData = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLCharacterData.js"(exports2, module2) {
+    (function() {
+      var XMLCharacterData, XMLNode, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      XMLNode = require_XMLNode();
+      module2.exports = XMLCharacterData = (function(superClass) {
+        extend(XMLCharacterData2, superClass);
+        function XMLCharacterData2(parent) {
+          XMLCharacterData2.__super__.constructor.call(this, parent);
+          this.value = "";
+        }
+        Object.defineProperty(XMLCharacterData2.prototype, "data", {
+          get: function() {
+            return this.value;
+          },
+          set: function(value) {
+            return this.value = value || "";
+          }
+        });
+        Object.defineProperty(XMLCharacterData2.prototype, "length", {
+          get: function() {
+            return this.value.length;
+          }
+        });
+        Object.defineProperty(XMLCharacterData2.prototype, "textContent", {
+          get: function() {
+            return this.value;
+          },
+          set: function(value) {
+            return this.value = value || "";
+          }
+        });
+        XMLCharacterData2.prototype.clone = function() {
+          return Object.create(this);
+        };
+        XMLCharacterData2.prototype.substringData = function(offset, count) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLCharacterData2.prototype.appendData = function(arg) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLCharacterData2.prototype.insertData = function(offset, arg) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLCharacterData2.prototype.deleteData = function(offset, count) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLCharacterData2.prototype.replaceData = function(offset, count, arg) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLCharacterData2.prototype.isEqualNode = function(node) {
+          if (!XMLCharacterData2.__super__.isEqualNode.apply(this, arguments).isEqualNode(node)) {
+            return false;
+          }
+          if (node.data !== this.data) {
+            return false;
+          }
+          return true;
+        };
+        return XMLCharacterData2;
+      })(XMLNode);
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLCData.js
+var require_XMLCData = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLCData.js"(exports2, module2) {
+    (function() {
+      var NodeType, XMLCData, XMLCharacterData, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      NodeType = require_NodeType();
+      XMLCharacterData = require_XMLCharacterData();
+      module2.exports = XMLCData = (function(superClass) {
+        extend(XMLCData2, superClass);
+        function XMLCData2(parent, text) {
+          XMLCData2.__super__.constructor.call(this, parent);
+          if (text == null) {
+            throw new Error("Missing CDATA text. " + this.debugInfo());
+          }
+          this.name = "#cdata-section";
+          this.type = NodeType.CData;
+          this.value = this.stringify.cdata(text);
+        }
+        XMLCData2.prototype.clone = function() {
+          return Object.create(this);
+        };
+        XMLCData2.prototype.toString = function(options) {
+          return this.options.writer.cdata(this, this.options.writer.filterOptions(options));
+        };
+        return XMLCData2;
+      })(XMLCharacterData);
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLComment.js
+var require_XMLComment = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLComment.js"(exports2, module2) {
+    (function() {
+      var NodeType, XMLCharacterData, XMLComment, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      NodeType = require_NodeType();
+      XMLCharacterData = require_XMLCharacterData();
+      module2.exports = XMLComment = (function(superClass) {
+        extend(XMLComment2, superClass);
+        function XMLComment2(parent, text) {
+          XMLComment2.__super__.constructor.call(this, parent);
+          if (text == null) {
+            throw new Error("Missing comment text. " + this.debugInfo());
+          }
+          this.name = "#comment";
+          this.type = NodeType.Comment;
+          this.value = this.stringify.comment(text);
+        }
+        XMLComment2.prototype.clone = function() {
+          return Object.create(this);
+        };
+        XMLComment2.prototype.toString = function(options) {
+          return this.options.writer.comment(this, this.options.writer.filterOptions(options));
+        };
+        return XMLComment2;
+      })(XMLCharacterData);
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDeclaration.js
+var require_XMLDeclaration = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDeclaration.js"(exports2, module2) {
+    (function() {
+      var NodeType, XMLDeclaration, XMLNode, isObject, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      isObject = require_Utility().isObject;
+      XMLNode = require_XMLNode();
+      NodeType = require_NodeType();
+      module2.exports = XMLDeclaration = (function(superClass) {
+        extend(XMLDeclaration2, superClass);
+        function XMLDeclaration2(parent, version, encoding, standalone) {
+          var ref;
+          XMLDeclaration2.__super__.constructor.call(this, parent);
+          if (isObject(version)) {
+            ref = version, version = ref.version, encoding = ref.encoding, standalone = ref.standalone;
+          }
+          if (!version) {
+            version = "1.0";
+          }
+          this.type = NodeType.Declaration;
+          this.version = this.stringify.xmlVersion(version);
+          if (encoding != null) {
+            this.encoding = this.stringify.xmlEncoding(encoding);
+          }
+          if (standalone != null) {
+            this.standalone = this.stringify.xmlStandalone(standalone);
+          }
+        }
+        XMLDeclaration2.prototype.toString = function(options) {
+          return this.options.writer.declaration(this, this.options.writer.filterOptions(options));
+        };
+        return XMLDeclaration2;
+      })(XMLNode);
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDTDAttList.js
+var require_XMLDTDAttList = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDTDAttList.js"(exports2, module2) {
+    (function() {
+      var NodeType, XMLDTDAttList, XMLNode, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      XMLNode = require_XMLNode();
+      NodeType = require_NodeType();
+      module2.exports = XMLDTDAttList = (function(superClass) {
+        extend(XMLDTDAttList2, superClass);
+        function XMLDTDAttList2(parent, elementName, attributeName, attributeType, defaultValueType, defaultValue) {
+          XMLDTDAttList2.__super__.constructor.call(this, parent);
+          if (elementName == null) {
+            throw new Error("Missing DTD element name. " + this.debugInfo());
+          }
+          if (attributeName == null) {
+            throw new Error("Missing DTD attribute name. " + this.debugInfo(elementName));
+          }
+          if (!attributeType) {
+            throw new Error("Missing DTD attribute type. " + this.debugInfo(elementName));
+          }
+          if (!defaultValueType) {
+            throw new Error("Missing DTD attribute default. " + this.debugInfo(elementName));
+          }
+          if (defaultValueType.indexOf("#") !== 0) {
+            defaultValueType = "#" + defaultValueType;
+          }
+          if (!defaultValueType.match(/^(#REQUIRED|#IMPLIED|#FIXED|#DEFAULT)$/)) {
+            throw new Error("Invalid default value type; expected: #REQUIRED, #IMPLIED, #FIXED or #DEFAULT. " + this.debugInfo(elementName));
+          }
+          if (defaultValue && !defaultValueType.match(/^(#FIXED|#DEFAULT)$/)) {
+            throw new Error("Default value only applies to #FIXED or #DEFAULT. " + this.debugInfo(elementName));
+          }
+          this.elementName = this.stringify.name(elementName);
+          this.type = NodeType.AttributeDeclaration;
+          this.attributeName = this.stringify.name(attributeName);
+          this.attributeType = this.stringify.dtdAttType(attributeType);
+          if (defaultValue) {
+            this.defaultValue = this.stringify.dtdAttDefault(defaultValue);
+          }
+          this.defaultValueType = defaultValueType;
+        }
+        XMLDTDAttList2.prototype.toString = function(options) {
+          return this.options.writer.dtdAttList(this, this.options.writer.filterOptions(options));
+        };
+        return XMLDTDAttList2;
+      })(XMLNode);
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDTDEntity.js
+var require_XMLDTDEntity = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDTDEntity.js"(exports2, module2) {
+    (function() {
+      var NodeType, XMLDTDEntity, XMLNode, isObject, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      isObject = require_Utility().isObject;
+      XMLNode = require_XMLNode();
+      NodeType = require_NodeType();
+      module2.exports = XMLDTDEntity = (function(superClass) {
+        extend(XMLDTDEntity2, superClass);
+        function XMLDTDEntity2(parent, pe, name, value) {
+          XMLDTDEntity2.__super__.constructor.call(this, parent);
+          if (name == null) {
+            throw new Error("Missing DTD entity name. " + this.debugInfo(name));
+          }
+          if (value == null) {
+            throw new Error("Missing DTD entity value. " + this.debugInfo(name));
+          }
+          this.pe = !!pe;
+          this.name = this.stringify.name(name);
+          this.type = NodeType.EntityDeclaration;
+          if (!isObject(value)) {
+            this.value = this.stringify.dtdEntityValue(value);
+            this.internal = true;
+          } else {
+            if (!value.pubID && !value.sysID) {
+              throw new Error("Public and/or system identifiers are required for an external entity. " + this.debugInfo(name));
+            }
+            if (value.pubID && !value.sysID) {
+              throw new Error("System identifier is required for a public external entity. " + this.debugInfo(name));
+            }
+            this.internal = false;
+            if (value.pubID != null) {
+              this.pubID = this.stringify.dtdPubID(value.pubID);
+            }
+            if (value.sysID != null) {
+              this.sysID = this.stringify.dtdSysID(value.sysID);
+            }
+            if (value.nData != null) {
+              this.nData = this.stringify.dtdNData(value.nData);
+            }
+            if (this.pe && this.nData) {
+              throw new Error("Notation declaration is not allowed in a parameter entity. " + this.debugInfo(name));
+            }
+          }
+        }
+        Object.defineProperty(XMLDTDEntity2.prototype, "publicId", {
+          get: function() {
+            return this.pubID;
+          }
+        });
+        Object.defineProperty(XMLDTDEntity2.prototype, "systemId", {
+          get: function() {
+            return this.sysID;
+          }
+        });
+        Object.defineProperty(XMLDTDEntity2.prototype, "notationName", {
+          get: function() {
+            return this.nData || null;
+          }
+        });
+        Object.defineProperty(XMLDTDEntity2.prototype, "inputEncoding", {
+          get: function() {
+            return null;
+          }
+        });
+        Object.defineProperty(XMLDTDEntity2.prototype, "xmlEncoding", {
+          get: function() {
+            return null;
+          }
+        });
+        Object.defineProperty(XMLDTDEntity2.prototype, "xmlVersion", {
+          get: function() {
+            return null;
+          }
+        });
+        XMLDTDEntity2.prototype.toString = function(options) {
+          return this.options.writer.dtdEntity(this, this.options.writer.filterOptions(options));
+        };
+        return XMLDTDEntity2;
+      })(XMLNode);
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDTDElement.js
+var require_XMLDTDElement = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDTDElement.js"(exports2, module2) {
+    (function() {
+      var NodeType, XMLDTDElement, XMLNode, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      XMLNode = require_XMLNode();
+      NodeType = require_NodeType();
+      module2.exports = XMLDTDElement = (function(superClass) {
+        extend(XMLDTDElement2, superClass);
+        function XMLDTDElement2(parent, name, value) {
+          XMLDTDElement2.__super__.constructor.call(this, parent);
+          if (name == null) {
+            throw new Error("Missing DTD element name. " + this.debugInfo());
+          }
+          if (!value) {
+            value = "(#PCDATA)";
+          }
+          if (Array.isArray(value)) {
+            value = "(" + value.join(",") + ")";
+          }
+          this.name = this.stringify.name(name);
+          this.type = NodeType.ElementDeclaration;
+          this.value = this.stringify.dtdElementValue(value);
+        }
+        XMLDTDElement2.prototype.toString = function(options) {
+          return this.options.writer.dtdElement(this, this.options.writer.filterOptions(options));
+        };
+        return XMLDTDElement2;
+      })(XMLNode);
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDTDNotation.js
+var require_XMLDTDNotation = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDTDNotation.js"(exports2, module2) {
+    (function() {
+      var NodeType, XMLDTDNotation, XMLNode, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      XMLNode = require_XMLNode();
+      NodeType = require_NodeType();
+      module2.exports = XMLDTDNotation = (function(superClass) {
+        extend(XMLDTDNotation2, superClass);
+        function XMLDTDNotation2(parent, name, value) {
+          XMLDTDNotation2.__super__.constructor.call(this, parent);
+          if (name == null) {
+            throw new Error("Missing DTD notation name. " + this.debugInfo(name));
+          }
+          if (!value.pubID && !value.sysID) {
+            throw new Error("Public or system identifiers are required for an external entity. " + this.debugInfo(name));
+          }
+          this.name = this.stringify.name(name);
+          this.type = NodeType.NotationDeclaration;
+          if (value.pubID != null) {
+            this.pubID = this.stringify.dtdPubID(value.pubID);
+          }
+          if (value.sysID != null) {
+            this.sysID = this.stringify.dtdSysID(value.sysID);
+          }
+        }
+        Object.defineProperty(XMLDTDNotation2.prototype, "publicId", {
+          get: function() {
+            return this.pubID;
+          }
+        });
+        Object.defineProperty(XMLDTDNotation2.prototype, "systemId", {
+          get: function() {
+            return this.sysID;
+          }
+        });
+        XMLDTDNotation2.prototype.toString = function(options) {
+          return this.options.writer.dtdNotation(this, this.options.writer.filterOptions(options));
+        };
+        return XMLDTDNotation2;
+      })(XMLNode);
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDocType.js
+var require_XMLDocType = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDocType.js"(exports2, module2) {
+    (function() {
+      var NodeType, XMLDTDAttList, XMLDTDElement, XMLDTDEntity, XMLDTDNotation, XMLDocType, XMLNamedNodeMap, XMLNode, isObject, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      isObject = require_Utility().isObject;
+      XMLNode = require_XMLNode();
+      NodeType = require_NodeType();
+      XMLDTDAttList = require_XMLDTDAttList();
+      XMLDTDEntity = require_XMLDTDEntity();
+      XMLDTDElement = require_XMLDTDElement();
+      XMLDTDNotation = require_XMLDTDNotation();
+      XMLNamedNodeMap = require_XMLNamedNodeMap();
+      module2.exports = XMLDocType = (function(superClass) {
+        extend(XMLDocType2, superClass);
+        function XMLDocType2(parent, pubID, sysID) {
+          var child, i, len, ref, ref1, ref2;
+          XMLDocType2.__super__.constructor.call(this, parent);
+          this.type = NodeType.DocType;
+          if (parent.children) {
+            ref = parent.children;
+            for (i = 0, len = ref.length; i < len; i++) {
+              child = ref[i];
+              if (child.type === NodeType.Element) {
+                this.name = child.name;
+                break;
+              }
+            }
+          }
+          this.documentObject = parent;
+          if (isObject(pubID)) {
+            ref1 = pubID, pubID = ref1.pubID, sysID = ref1.sysID;
+          }
+          if (sysID == null) {
+            ref2 = [pubID, sysID], sysID = ref2[0], pubID = ref2[1];
+          }
+          if (pubID != null) {
+            this.pubID = this.stringify.dtdPubID(pubID);
+          }
+          if (sysID != null) {
+            this.sysID = this.stringify.dtdSysID(sysID);
+          }
+        }
+        Object.defineProperty(XMLDocType2.prototype, "entities", {
+          get: function() {
+            var child, i, len, nodes, ref;
+            nodes = {};
+            ref = this.children;
+            for (i = 0, len = ref.length; i < len; i++) {
+              child = ref[i];
+              if (child.type === NodeType.EntityDeclaration && !child.pe) {
+                nodes[child.name] = child;
+              }
+            }
+            return new XMLNamedNodeMap(nodes);
+          }
+        });
+        Object.defineProperty(XMLDocType2.prototype, "notations", {
+          get: function() {
+            var child, i, len, nodes, ref;
+            nodes = {};
+            ref = this.children;
+            for (i = 0, len = ref.length; i < len; i++) {
+              child = ref[i];
+              if (child.type === NodeType.NotationDeclaration) {
+                nodes[child.name] = child;
+              }
+            }
+            return new XMLNamedNodeMap(nodes);
+          }
+        });
+        Object.defineProperty(XMLDocType2.prototype, "publicId", {
+          get: function() {
+            return this.pubID;
+          }
+        });
+        Object.defineProperty(XMLDocType2.prototype, "systemId", {
+          get: function() {
+            return this.sysID;
+          }
+        });
+        Object.defineProperty(XMLDocType2.prototype, "internalSubset", {
+          get: function() {
+            throw new Error("This DOM method is not implemented." + this.debugInfo());
+          }
+        });
+        XMLDocType2.prototype.element = function(name, value) {
+          var child;
+          child = new XMLDTDElement(this, name, value);
+          this.children.push(child);
+          return this;
+        };
+        XMLDocType2.prototype.attList = function(elementName, attributeName, attributeType, defaultValueType, defaultValue) {
+          var child;
+          child = new XMLDTDAttList(this, elementName, attributeName, attributeType, defaultValueType, defaultValue);
+          this.children.push(child);
+          return this;
+        };
+        XMLDocType2.prototype.entity = function(name, value) {
+          var child;
+          child = new XMLDTDEntity(this, false, name, value);
+          this.children.push(child);
+          return this;
+        };
+        XMLDocType2.prototype.pEntity = function(name, value) {
+          var child;
+          child = new XMLDTDEntity(this, true, name, value);
+          this.children.push(child);
+          return this;
+        };
+        XMLDocType2.prototype.notation = function(name, value) {
+          var child;
+          child = new XMLDTDNotation(this, name, value);
+          this.children.push(child);
+          return this;
+        };
+        XMLDocType2.prototype.toString = function(options) {
+          return this.options.writer.docType(this, this.options.writer.filterOptions(options));
+        };
+        XMLDocType2.prototype.ele = function(name, value) {
+          return this.element(name, value);
+        };
+        XMLDocType2.prototype.att = function(elementName, attributeName, attributeType, defaultValueType, defaultValue) {
+          return this.attList(elementName, attributeName, attributeType, defaultValueType, defaultValue);
+        };
+        XMLDocType2.prototype.ent = function(name, value) {
+          return this.entity(name, value);
+        };
+        XMLDocType2.prototype.pent = function(name, value) {
+          return this.pEntity(name, value);
+        };
+        XMLDocType2.prototype.not = function(name, value) {
+          return this.notation(name, value);
+        };
+        XMLDocType2.prototype.up = function() {
+          return this.root() || this.documentObject;
+        };
+        XMLDocType2.prototype.isEqualNode = function(node) {
+          if (!XMLDocType2.__super__.isEqualNode.apply(this, arguments).isEqualNode(node)) {
+            return false;
+          }
+          if (node.name !== this.name) {
+            return false;
+          }
+          if (node.publicId !== this.publicId) {
+            return false;
+          }
+          if (node.systemId !== this.systemId) {
+            return false;
+          }
+          return true;
+        };
+        return XMLDocType2;
+      })(XMLNode);
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLRaw.js
+var require_XMLRaw = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLRaw.js"(exports2, module2) {
+    (function() {
+      var NodeType, XMLNode, XMLRaw, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      NodeType = require_NodeType();
+      XMLNode = require_XMLNode();
+      module2.exports = XMLRaw = (function(superClass) {
+        extend(XMLRaw2, superClass);
+        function XMLRaw2(parent, text) {
+          XMLRaw2.__super__.constructor.call(this, parent);
+          if (text == null) {
+            throw new Error("Missing raw text. " + this.debugInfo());
+          }
+          this.type = NodeType.Raw;
+          this.value = this.stringify.raw(text);
+        }
+        XMLRaw2.prototype.clone = function() {
+          return Object.create(this);
+        };
+        XMLRaw2.prototype.toString = function(options) {
+          return this.options.writer.raw(this, this.options.writer.filterOptions(options));
+        };
+        return XMLRaw2;
+      })(XMLNode);
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLText.js
+var require_XMLText = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLText.js"(exports2, module2) {
+    (function() {
+      var NodeType, XMLCharacterData, XMLText, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      NodeType = require_NodeType();
+      XMLCharacterData = require_XMLCharacterData();
+      module2.exports = XMLText = (function(superClass) {
+        extend(XMLText2, superClass);
+        function XMLText2(parent, text) {
+          XMLText2.__super__.constructor.call(this, parent);
+          if (text == null) {
+            throw new Error("Missing element text. " + this.debugInfo());
+          }
+          this.name = "#text";
+          this.type = NodeType.Text;
+          this.value = this.stringify.text(text);
+        }
+        Object.defineProperty(XMLText2.prototype, "isElementContentWhitespace", {
+          get: function() {
+            throw new Error("This DOM method is not implemented." + this.debugInfo());
+          }
+        });
+        Object.defineProperty(XMLText2.prototype, "wholeText", {
+          get: function() {
+            var next, prev, str;
+            str = "";
+            prev = this.previousSibling;
+            while (prev) {
+              str = prev.data + str;
+              prev = prev.previousSibling;
+            }
+            str += this.data;
+            next = this.nextSibling;
+            while (next) {
+              str = str + next.data;
+              next = next.nextSibling;
+            }
+            return str;
+          }
+        });
+        XMLText2.prototype.clone = function() {
+          return Object.create(this);
+        };
+        XMLText2.prototype.toString = function(options) {
+          return this.options.writer.text(this, this.options.writer.filterOptions(options));
+        };
+        XMLText2.prototype.splitText = function(offset) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLText2.prototype.replaceWholeText = function(content) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        return XMLText2;
+      })(XMLCharacterData);
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLProcessingInstruction.js
+var require_XMLProcessingInstruction = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLProcessingInstruction.js"(exports2, module2) {
+    (function() {
+      var NodeType, XMLCharacterData, XMLProcessingInstruction, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      NodeType = require_NodeType();
+      XMLCharacterData = require_XMLCharacterData();
+      module2.exports = XMLProcessingInstruction = (function(superClass) {
+        extend(XMLProcessingInstruction2, superClass);
+        function XMLProcessingInstruction2(parent, target, value) {
+          XMLProcessingInstruction2.__super__.constructor.call(this, parent);
+          if (target == null) {
+            throw new Error("Missing instruction target. " + this.debugInfo());
+          }
+          this.type = NodeType.ProcessingInstruction;
+          this.target = this.stringify.insTarget(target);
+          this.name = this.target;
+          if (value) {
+            this.value = this.stringify.insValue(value);
+          }
+        }
+        XMLProcessingInstruction2.prototype.clone = function() {
+          return Object.create(this);
+        };
+        XMLProcessingInstruction2.prototype.toString = function(options) {
+          return this.options.writer.processingInstruction(this, this.options.writer.filterOptions(options));
+        };
+        XMLProcessingInstruction2.prototype.isEqualNode = function(node) {
+          if (!XMLProcessingInstruction2.__super__.isEqualNode.apply(this, arguments).isEqualNode(node)) {
+            return false;
+          }
+          if (node.target !== this.target) {
+            return false;
+          }
+          return true;
+        };
+        return XMLProcessingInstruction2;
+      })(XMLCharacterData);
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDummy.js
+var require_XMLDummy = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDummy.js"(exports2, module2) {
+    (function() {
+      var NodeType, XMLDummy, XMLNode, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      XMLNode = require_XMLNode();
+      NodeType = require_NodeType();
+      module2.exports = XMLDummy = (function(superClass) {
+        extend(XMLDummy2, superClass);
+        function XMLDummy2(parent) {
+          XMLDummy2.__super__.constructor.call(this, parent);
+          this.type = NodeType.Dummy;
+        }
+        XMLDummy2.prototype.clone = function() {
+          return Object.create(this);
+        };
+        XMLDummy2.prototype.toString = function(options) {
+          return "";
+        };
+        return XMLDummy2;
+      })(XMLNode);
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLNodeList.js
+var require_XMLNodeList = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLNodeList.js"(exports2, module2) {
+    (function() {
+      var XMLNodeList;
+      module2.exports = XMLNodeList = (function() {
+        function XMLNodeList2(nodes) {
+          this.nodes = nodes;
+        }
+        Object.defineProperty(XMLNodeList2.prototype, "length", {
+          get: function() {
+            return this.nodes.length || 0;
+          }
+        });
+        XMLNodeList2.prototype.clone = function() {
+          return this.nodes = null;
+        };
+        XMLNodeList2.prototype.item = function(index) {
+          return this.nodes[index] || null;
+        };
+        return XMLNodeList2;
+      })();
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/DocumentPosition.js
+var require_DocumentPosition = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/DocumentPosition.js"(exports2, module2) {
+    (function() {
+      module2.exports = {
+        Disconnected: 1,
+        Preceding: 2,
+        Following: 4,
+        Contains: 8,
+        ContainedBy: 16,
+        ImplementationSpecific: 32
+      };
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLNode.js
+var require_XMLNode = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLNode.js"(exports2, module2) {
+    (function() {
+      var DocumentPosition, NodeType, XMLCData, XMLComment, XMLDeclaration, XMLDocType, XMLDummy, XMLElement, XMLNamedNodeMap, XMLNode, XMLNodeList, XMLProcessingInstruction, XMLRaw, XMLText, getValue, isEmpty, isFunction, isObject, ref1, hasProp = {}.hasOwnProperty;
+      ref1 = require_Utility(), isObject = ref1.isObject, isFunction = ref1.isFunction, isEmpty = ref1.isEmpty, getValue = ref1.getValue;
+      XMLElement = null;
+      XMLCData = null;
+      XMLComment = null;
+      XMLDeclaration = null;
+      XMLDocType = null;
+      XMLRaw = null;
+      XMLText = null;
+      XMLProcessingInstruction = null;
+      XMLDummy = null;
+      NodeType = null;
+      XMLNodeList = null;
+      XMLNamedNodeMap = null;
+      DocumentPosition = null;
+      module2.exports = XMLNode = (function() {
+        function XMLNode2(parent1) {
+          this.parent = parent1;
+          if (this.parent) {
+            this.options = this.parent.options;
+            this.stringify = this.parent.stringify;
+          }
+          this.value = null;
+          this.children = [];
+          this.baseURI = null;
+          if (!XMLElement) {
+            XMLElement = require_XMLElement();
+            XMLCData = require_XMLCData();
+            XMLComment = require_XMLComment();
+            XMLDeclaration = require_XMLDeclaration();
+            XMLDocType = require_XMLDocType();
+            XMLRaw = require_XMLRaw();
+            XMLText = require_XMLText();
+            XMLProcessingInstruction = require_XMLProcessingInstruction();
+            XMLDummy = require_XMLDummy();
+            NodeType = require_NodeType();
+            XMLNodeList = require_XMLNodeList();
+            XMLNamedNodeMap = require_XMLNamedNodeMap();
+            DocumentPosition = require_DocumentPosition();
+          }
+        }
+        Object.defineProperty(XMLNode2.prototype, "nodeName", {
+          get: function() {
+            return this.name;
+          }
+        });
+        Object.defineProperty(XMLNode2.prototype, "nodeType", {
+          get: function() {
+            return this.type;
+          }
+        });
+        Object.defineProperty(XMLNode2.prototype, "nodeValue", {
+          get: function() {
+            return this.value;
+          }
+        });
+        Object.defineProperty(XMLNode2.prototype, "parentNode", {
+          get: function() {
+            return this.parent;
+          }
+        });
+        Object.defineProperty(XMLNode2.prototype, "childNodes", {
+          get: function() {
+            if (!this.childNodeList || !this.childNodeList.nodes) {
+              this.childNodeList = new XMLNodeList(this.children);
+            }
+            return this.childNodeList;
+          }
+        });
+        Object.defineProperty(XMLNode2.prototype, "firstChild", {
+          get: function() {
+            return this.children[0] || null;
+          }
+        });
+        Object.defineProperty(XMLNode2.prototype, "lastChild", {
+          get: function() {
+            return this.children[this.children.length - 1] || null;
+          }
+        });
+        Object.defineProperty(XMLNode2.prototype, "previousSibling", {
+          get: function() {
+            var i;
+            i = this.parent.children.indexOf(this);
+            return this.parent.children[i - 1] || null;
+          }
+        });
+        Object.defineProperty(XMLNode2.prototype, "nextSibling", {
+          get: function() {
+            var i;
+            i = this.parent.children.indexOf(this);
+            return this.parent.children[i + 1] || null;
+          }
+        });
+        Object.defineProperty(XMLNode2.prototype, "ownerDocument", {
+          get: function() {
+            return this.document() || null;
+          }
+        });
+        Object.defineProperty(XMLNode2.prototype, "textContent", {
+          get: function() {
+            var child, j2, len, ref2, str;
+            if (this.nodeType === NodeType.Element || this.nodeType === NodeType.DocumentFragment) {
+              str = "";
+              ref2 = this.children;
+              for (j2 = 0, len = ref2.length; j2 < len; j2++) {
+                child = ref2[j2];
+                if (child.textContent) {
+                  str += child.textContent;
+                }
+              }
+              return str;
+            } else {
+              return null;
+            }
+          },
+          set: function(value) {
+            throw new Error("This DOM method is not implemented." + this.debugInfo());
+          }
+        });
+        XMLNode2.prototype.setParent = function(parent) {
+          var child, j2, len, ref2, results;
+          this.parent = parent;
+          if (parent) {
+            this.options = parent.options;
+            this.stringify = parent.stringify;
+          }
+          ref2 = this.children;
+          results = [];
+          for (j2 = 0, len = ref2.length; j2 < len; j2++) {
+            child = ref2[j2];
+            results.push(child.setParent(this));
+          }
+          return results;
+        };
+        XMLNode2.prototype.element = function(name, attributes, text) {
+          var childNode, item, j2, k2, key, lastChild, len, len1, ref2, ref3, val;
+          lastChild = null;
+          if (attributes === null && text == null) {
+            ref2 = [{}, null], attributes = ref2[0], text = ref2[1];
+          }
+          if (attributes == null) {
+            attributes = {};
+          }
+          attributes = getValue(attributes);
+          if (!isObject(attributes)) {
+            ref3 = [attributes, text], text = ref3[0], attributes = ref3[1];
+          }
+          if (name != null) {
+            name = getValue(name);
+          }
+          if (Array.isArray(name)) {
+            for (j2 = 0, len = name.length; j2 < len; j2++) {
+              item = name[j2];
+              lastChild = this.element(item);
+            }
+          } else if (isFunction(name)) {
+            lastChild = this.element(name.apply());
+          } else if (isObject(name)) {
+            for (key in name) {
+              if (!hasProp.call(name, key)) continue;
+              val = name[key];
+              if (isFunction(val)) {
+                val = val.apply();
+              }
+              if (!this.options.ignoreDecorators && this.stringify.convertAttKey && key.indexOf(this.stringify.convertAttKey) === 0) {
+                lastChild = this.attribute(key.substr(this.stringify.convertAttKey.length), val);
+              } else if (!this.options.separateArrayItems && Array.isArray(val) && isEmpty(val)) {
+                lastChild = this.dummy();
+              } else if (isObject(val) && isEmpty(val)) {
+                lastChild = this.element(key);
+              } else if (!this.options.keepNullNodes && val == null) {
+                lastChild = this.dummy();
+              } else if (!this.options.separateArrayItems && Array.isArray(val)) {
+                for (k2 = 0, len1 = val.length; k2 < len1; k2++) {
+                  item = val[k2];
+                  childNode = {};
+                  childNode[key] = item;
+                  lastChild = this.element(childNode);
+                }
+              } else if (isObject(val)) {
+                if (!this.options.ignoreDecorators && this.stringify.convertTextKey && key.indexOf(this.stringify.convertTextKey) === 0) {
+                  lastChild = this.element(val);
+                } else {
+                  lastChild = this.element(key);
+                  lastChild.element(val);
+                }
+              } else {
+                lastChild = this.element(key, val);
+              }
+            }
+          } else if (!this.options.keepNullNodes && text === null) {
+            lastChild = this.dummy();
+          } else {
+            if (!this.options.ignoreDecorators && this.stringify.convertTextKey && name.indexOf(this.stringify.convertTextKey) === 0) {
+              lastChild = this.text(text);
+            } else if (!this.options.ignoreDecorators && this.stringify.convertCDataKey && name.indexOf(this.stringify.convertCDataKey) === 0) {
+              lastChild = this.cdata(text);
+            } else if (!this.options.ignoreDecorators && this.stringify.convertCommentKey && name.indexOf(this.stringify.convertCommentKey) === 0) {
+              lastChild = this.comment(text);
+            } else if (!this.options.ignoreDecorators && this.stringify.convertRawKey && name.indexOf(this.stringify.convertRawKey) === 0) {
+              lastChild = this.raw(text);
+            } else if (!this.options.ignoreDecorators && this.stringify.convertPIKey && name.indexOf(this.stringify.convertPIKey) === 0) {
+              lastChild = this.instruction(name.substr(this.stringify.convertPIKey.length), text);
+            } else {
+              lastChild = this.node(name, attributes, text);
+            }
+          }
+          if (lastChild == null) {
+            throw new Error("Could not create any elements with: " + name + ". " + this.debugInfo());
+          }
+          return lastChild;
+        };
+        XMLNode2.prototype.insertBefore = function(name, attributes, text) {
+          var child, i, newChild, refChild, removed;
+          if (name != null ? name.type : void 0) {
+            newChild = name;
+            refChild = attributes;
+            newChild.setParent(this);
+            if (refChild) {
+              i = children.indexOf(refChild);
+              removed = children.splice(i);
+              children.push(newChild);
+              Array.prototype.push.apply(children, removed);
+            } else {
+              children.push(newChild);
+            }
+            return newChild;
+          } else {
+            if (this.isRoot) {
+              throw new Error("Cannot insert elements at root level. " + this.debugInfo(name));
+            }
+            i = this.parent.children.indexOf(this);
+            removed = this.parent.children.splice(i);
+            child = this.parent.element(name, attributes, text);
+            Array.prototype.push.apply(this.parent.children, removed);
+            return child;
+          }
+        };
+        XMLNode2.prototype.insertAfter = function(name, attributes, text) {
+          var child, i, removed;
+          if (this.isRoot) {
+            throw new Error("Cannot insert elements at root level. " + this.debugInfo(name));
+          }
+          i = this.parent.children.indexOf(this);
+          removed = this.parent.children.splice(i + 1);
+          child = this.parent.element(name, attributes, text);
+          Array.prototype.push.apply(this.parent.children, removed);
+          return child;
+        };
+        XMLNode2.prototype.remove = function() {
+          var i, ref2;
+          if (this.isRoot) {
+            throw new Error("Cannot remove the root element. " + this.debugInfo());
+          }
+          i = this.parent.children.indexOf(this);
+          [].splice.apply(this.parent.children, [i, i - i + 1].concat(ref2 = [])), ref2;
+          return this.parent;
+        };
+        XMLNode2.prototype.node = function(name, attributes, text) {
+          var child, ref2;
+          if (name != null) {
+            name = getValue(name);
+          }
+          attributes || (attributes = {});
+          attributes = getValue(attributes);
+          if (!isObject(attributes)) {
+            ref2 = [attributes, text], text = ref2[0], attributes = ref2[1];
+          }
+          child = new XMLElement(this, name, attributes);
+          if (text != null) {
+            child.text(text);
+          }
+          this.children.push(child);
+          return child;
+        };
+        XMLNode2.prototype.text = function(value) {
+          var child;
+          if (isObject(value)) {
+            this.element(value);
+          }
+          child = new XMLText(this, value);
+          this.children.push(child);
+          return this;
+        };
+        XMLNode2.prototype.cdata = function(value) {
+          var child;
+          child = new XMLCData(this, value);
+          this.children.push(child);
+          return this;
+        };
+        XMLNode2.prototype.comment = function(value) {
+          var child;
+          child = new XMLComment(this, value);
+          this.children.push(child);
+          return this;
+        };
+        XMLNode2.prototype.commentBefore = function(value) {
+          var child, i, removed;
+          i = this.parent.children.indexOf(this);
+          removed = this.parent.children.splice(i);
+          child = this.parent.comment(value);
+          Array.prototype.push.apply(this.parent.children, removed);
+          return this;
+        };
+        XMLNode2.prototype.commentAfter = function(value) {
+          var child, i, removed;
+          i = this.parent.children.indexOf(this);
+          removed = this.parent.children.splice(i + 1);
+          child = this.parent.comment(value);
+          Array.prototype.push.apply(this.parent.children, removed);
+          return this;
+        };
+        XMLNode2.prototype.raw = function(value) {
+          var child;
+          child = new XMLRaw(this, value);
+          this.children.push(child);
+          return this;
+        };
+        XMLNode2.prototype.dummy = function() {
+          var child;
+          child = new XMLDummy(this);
+          return child;
+        };
+        XMLNode2.prototype.instruction = function(target, value) {
+          var insTarget, insValue, instruction, j2, len;
+          if (target != null) {
+            target = getValue(target);
+          }
+          if (value != null) {
+            value = getValue(value);
+          }
+          if (Array.isArray(target)) {
+            for (j2 = 0, len = target.length; j2 < len; j2++) {
+              insTarget = target[j2];
+              this.instruction(insTarget);
+            }
+          } else if (isObject(target)) {
+            for (insTarget in target) {
+              if (!hasProp.call(target, insTarget)) continue;
+              insValue = target[insTarget];
+              this.instruction(insTarget, insValue);
+            }
+          } else {
+            if (isFunction(value)) {
+              value = value.apply();
+            }
+            instruction = new XMLProcessingInstruction(this, target, value);
+            this.children.push(instruction);
+          }
+          return this;
+        };
+        XMLNode2.prototype.instructionBefore = function(target, value) {
+          var child, i, removed;
+          i = this.parent.children.indexOf(this);
+          removed = this.parent.children.splice(i);
+          child = this.parent.instruction(target, value);
+          Array.prototype.push.apply(this.parent.children, removed);
+          return this;
+        };
+        XMLNode2.prototype.instructionAfter = function(target, value) {
+          var child, i, removed;
+          i = this.parent.children.indexOf(this);
+          removed = this.parent.children.splice(i + 1);
+          child = this.parent.instruction(target, value);
+          Array.prototype.push.apply(this.parent.children, removed);
+          return this;
+        };
+        XMLNode2.prototype.declaration = function(version, encoding, standalone) {
+          var doc, xmldec;
+          doc = this.document();
+          xmldec = new XMLDeclaration(doc, version, encoding, standalone);
+          if (doc.children.length === 0) {
+            doc.children.unshift(xmldec);
+          } else if (doc.children[0].type === NodeType.Declaration) {
+            doc.children[0] = xmldec;
+          } else {
+            doc.children.unshift(xmldec);
+          }
+          return doc.root() || doc;
+        };
+        XMLNode2.prototype.dtd = function(pubID, sysID) {
+          var child, doc, doctype, i, j2, k2, len, len1, ref2, ref3;
+          doc = this.document();
+          doctype = new XMLDocType(doc, pubID, sysID);
+          ref2 = doc.children;
+          for (i = j2 = 0, len = ref2.length; j2 < len; i = ++j2) {
+            child = ref2[i];
+            if (child.type === NodeType.DocType) {
+              doc.children[i] = doctype;
+              return doctype;
+            }
+          }
+          ref3 = doc.children;
+          for (i = k2 = 0, len1 = ref3.length; k2 < len1; i = ++k2) {
+            child = ref3[i];
+            if (child.isRoot) {
+              doc.children.splice(i, 0, doctype);
+              return doctype;
+            }
+          }
+          doc.children.push(doctype);
+          return doctype;
+        };
+        XMLNode2.prototype.up = function() {
+          if (this.isRoot) {
+            throw new Error("The root node has no parent. Use doc() if you need to get the document object.");
+          }
+          return this.parent;
+        };
+        XMLNode2.prototype.root = function() {
+          var node;
+          node = this;
+          while (node) {
+            if (node.type === NodeType.Document) {
+              return node.rootObject;
+            } else if (node.isRoot) {
+              return node;
+            } else {
+              node = node.parent;
+            }
+          }
+        };
+        XMLNode2.prototype.document = function() {
+          var node;
+          node = this;
+          while (node) {
+            if (node.type === NodeType.Document) {
+              return node;
+            } else {
+              node = node.parent;
+            }
+          }
+        };
+        XMLNode2.prototype.end = function(options) {
+          return this.document().end(options);
+        };
+        XMLNode2.prototype.prev = function() {
+          var i;
+          i = this.parent.children.indexOf(this);
+          if (i < 1) {
+            throw new Error("Already at the first node. " + this.debugInfo());
+          }
+          return this.parent.children[i - 1];
+        };
+        XMLNode2.prototype.next = function() {
+          var i;
+          i = this.parent.children.indexOf(this);
+          if (i === -1 || i === this.parent.children.length - 1) {
+            throw new Error("Already at the last node. " + this.debugInfo());
+          }
+          return this.parent.children[i + 1];
+        };
+        XMLNode2.prototype.importDocument = function(doc) {
+          var clonedRoot;
+          clonedRoot = doc.root().clone();
+          clonedRoot.parent = this;
+          clonedRoot.isRoot = false;
+          this.children.push(clonedRoot);
+          return this;
+        };
+        XMLNode2.prototype.debugInfo = function(name) {
+          var ref2, ref3;
+          name = name || this.name;
+          if (name == null && !((ref2 = this.parent) != null ? ref2.name : void 0)) {
+            return "";
+          } else if (name == null) {
+            return "parent: <" + this.parent.name + ">";
+          } else if (!((ref3 = this.parent) != null ? ref3.name : void 0)) {
+            return "node: <" + name + ">";
+          } else {
+            return "node: <" + name + ">, parent: <" + this.parent.name + ">";
+          }
+        };
+        XMLNode2.prototype.ele = function(name, attributes, text) {
+          return this.element(name, attributes, text);
+        };
+        XMLNode2.prototype.nod = function(name, attributes, text) {
+          return this.node(name, attributes, text);
+        };
+        XMLNode2.prototype.txt = function(value) {
+          return this.text(value);
+        };
+        XMLNode2.prototype.dat = function(value) {
+          return this.cdata(value);
+        };
+        XMLNode2.prototype.com = function(value) {
+          return this.comment(value);
+        };
+        XMLNode2.prototype.ins = function(target, value) {
+          return this.instruction(target, value);
+        };
+        XMLNode2.prototype.doc = function() {
+          return this.document();
+        };
+        XMLNode2.prototype.dec = function(version, encoding, standalone) {
+          return this.declaration(version, encoding, standalone);
+        };
+        XMLNode2.prototype.e = function(name, attributes, text) {
+          return this.element(name, attributes, text);
+        };
+        XMLNode2.prototype.n = function(name, attributes, text) {
+          return this.node(name, attributes, text);
+        };
+        XMLNode2.prototype.t = function(value) {
+          return this.text(value);
+        };
+        XMLNode2.prototype.d = function(value) {
+          return this.cdata(value);
+        };
+        XMLNode2.prototype.c = function(value) {
+          return this.comment(value);
+        };
+        XMLNode2.prototype.r = function(value) {
+          return this.raw(value);
+        };
+        XMLNode2.prototype.i = function(target, value) {
+          return this.instruction(target, value);
+        };
+        XMLNode2.prototype.u = function() {
+          return this.up();
+        };
+        XMLNode2.prototype.importXMLBuilder = function(doc) {
+          return this.importDocument(doc);
+        };
+        XMLNode2.prototype.replaceChild = function(newChild, oldChild) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLNode2.prototype.removeChild = function(oldChild) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLNode2.prototype.appendChild = function(newChild) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLNode2.prototype.hasChildNodes = function() {
+          return this.children.length !== 0;
+        };
+        XMLNode2.prototype.cloneNode = function(deep) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLNode2.prototype.normalize = function() {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLNode2.prototype.isSupported = function(feature2, version) {
+          return true;
+        };
+        XMLNode2.prototype.hasAttributes = function() {
+          return this.attribs.length !== 0;
+        };
+        XMLNode2.prototype.compareDocumentPosition = function(other) {
+          var ref, res;
+          ref = this;
+          if (ref === other) {
+            return 0;
+          } else if (this.document() !== other.document()) {
+            res = DocumentPosition.Disconnected | DocumentPosition.ImplementationSpecific;
+            if (Math.random() < 0.5) {
+              res |= DocumentPosition.Preceding;
+            } else {
+              res |= DocumentPosition.Following;
+            }
+            return res;
+          } else if (ref.isAncestor(other)) {
+            return DocumentPosition.Contains | DocumentPosition.Preceding;
+          } else if (ref.isDescendant(other)) {
+            return DocumentPosition.Contains | DocumentPosition.Following;
+          } else if (ref.isPreceding(other)) {
+            return DocumentPosition.Preceding;
+          } else {
+            return DocumentPosition.Following;
+          }
+        };
+        XMLNode2.prototype.isSameNode = function(other) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLNode2.prototype.lookupPrefix = function(namespaceURI) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLNode2.prototype.isDefaultNamespace = function(namespaceURI) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLNode2.prototype.lookupNamespaceURI = function(prefix) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLNode2.prototype.isEqualNode = function(node) {
+          var i, j2, ref2;
+          if (node.nodeType !== this.nodeType) {
+            return false;
+          }
+          if (node.children.length !== this.children.length) {
+            return false;
+          }
+          for (i = j2 = 0, ref2 = this.children.length - 1; 0 <= ref2 ? j2 <= ref2 : j2 >= ref2; i = 0 <= ref2 ? ++j2 : --j2) {
+            if (!this.children[i].isEqualNode(node.children[i])) {
+              return false;
+            }
+          }
+          return true;
+        };
+        XMLNode2.prototype.getFeature = function(feature2, version) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLNode2.prototype.setUserData = function(key, data, handler) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLNode2.prototype.getUserData = function(key) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLNode2.prototype.contains = function(other) {
+          if (!other) {
+            return false;
+          }
+          return other === this || this.isDescendant(other);
+        };
+        XMLNode2.prototype.isDescendant = function(node) {
+          var child, isDescendantChild, j2, len, ref2;
+          ref2 = this.children;
+          for (j2 = 0, len = ref2.length; j2 < len; j2++) {
+            child = ref2[j2];
+            if (node === child) {
+              return true;
+            }
+            isDescendantChild = child.isDescendant(node);
+            if (isDescendantChild) {
+              return true;
+            }
+          }
+          return false;
+        };
+        XMLNode2.prototype.isAncestor = function(node) {
+          return node.isDescendant(this);
+        };
+        XMLNode2.prototype.isPreceding = function(node) {
+          var nodePos, thisPos;
+          nodePos = this.treePosition(node);
+          thisPos = this.treePosition(this);
+          if (nodePos === -1 || thisPos === -1) {
+            return false;
+          } else {
+            return nodePos < thisPos;
+          }
+        };
+        XMLNode2.prototype.isFollowing = function(node) {
+          var nodePos, thisPos;
+          nodePos = this.treePosition(node);
+          thisPos = this.treePosition(this);
+          if (nodePos === -1 || thisPos === -1) {
+            return false;
+          } else {
+            return nodePos > thisPos;
+          }
+        };
+        XMLNode2.prototype.treePosition = function(node) {
+          var found, pos;
+          pos = 0;
+          found = false;
+          this.foreachTreeNode(this.document(), function(childNode) {
+            pos++;
+            if (!found && childNode === node) {
+              return found = true;
+            }
+          });
+          if (found) {
+            return pos;
+          } else {
+            return -1;
+          }
+        };
+        XMLNode2.prototype.foreachTreeNode = function(node, func) {
+          var child, j2, len, ref2, res;
+          node || (node = this.document());
+          ref2 = node.children;
+          for (j2 = 0, len = ref2.length; j2 < len; j2++) {
+            child = ref2[j2];
+            if (res = func(child)) {
+              return res;
+            } else {
+              res = this.foreachTreeNode(child, func);
+              if (res) {
+                return res;
+              }
+            }
+          }
+        };
+        return XMLNode2;
+      })();
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLStringifier.js
+var require_XMLStringifier = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLStringifier.js"(exports2, module2) {
+    (function() {
+      var XMLStringifier, bind3 = function(fn, me) {
+        return function() {
+          return fn.apply(me, arguments);
+        };
+      }, hasProp = {}.hasOwnProperty;
+      module2.exports = XMLStringifier = (function() {
+        function XMLStringifier2(options) {
+          this.assertLegalName = bind3(this.assertLegalName, this);
+          this.assertLegalChar = bind3(this.assertLegalChar, this);
+          var key, ref, value;
+          options || (options = {});
+          this.options = options;
+          if (!this.options.version) {
+            this.options.version = "1.0";
+          }
+          ref = options.stringify || {};
+          for (key in ref) {
+            if (!hasProp.call(ref, key)) continue;
+            value = ref[key];
+            this[key] = value;
+          }
+        }
+        XMLStringifier2.prototype.name = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          return this.assertLegalName("" + val || "");
+        };
+        XMLStringifier2.prototype.text = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          return this.assertLegalChar(this.textEscape("" + val || ""));
+        };
+        XMLStringifier2.prototype.cdata = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          val = "" + val || "";
+          val = val.replace("]]>", "]]]]><![CDATA[>");
+          return this.assertLegalChar(val);
+        };
+        XMLStringifier2.prototype.comment = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          val = "" + val || "";
+          if (val.match(/--/)) {
+            throw new Error("Comment text cannot contain double-hypen: " + val);
+          }
+          return this.assertLegalChar(val);
+        };
+        XMLStringifier2.prototype.raw = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          return "" + val || "";
+        };
+        XMLStringifier2.prototype.attValue = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          return this.assertLegalChar(this.attEscape(val = "" + val || ""));
+        };
+        XMLStringifier2.prototype.insTarget = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          return this.assertLegalChar("" + val || "");
+        };
+        XMLStringifier2.prototype.insValue = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          val = "" + val || "";
+          if (val.match(/\?>/)) {
+            throw new Error("Invalid processing instruction value: " + val);
+          }
+          return this.assertLegalChar(val);
+        };
+        XMLStringifier2.prototype.xmlVersion = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          val = "" + val || "";
+          if (!val.match(/1\.[0-9]+/)) {
+            throw new Error("Invalid version number: " + val);
+          }
+          return val;
+        };
+        XMLStringifier2.prototype.xmlEncoding = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          val = "" + val || "";
+          if (!val.match(/^[A-Za-z](?:[A-Za-z0-9._-])*$/)) {
+            throw new Error("Invalid encoding: " + val);
+          }
+          return this.assertLegalChar(val);
+        };
+        XMLStringifier2.prototype.xmlStandalone = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          if (val) {
+            return "yes";
+          } else {
+            return "no";
+          }
+        };
+        XMLStringifier2.prototype.dtdPubID = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          return this.assertLegalChar("" + val || "");
+        };
+        XMLStringifier2.prototype.dtdSysID = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          return this.assertLegalChar("" + val || "");
+        };
+        XMLStringifier2.prototype.dtdElementValue = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          return this.assertLegalChar("" + val || "");
+        };
+        XMLStringifier2.prototype.dtdAttType = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          return this.assertLegalChar("" + val || "");
+        };
+        XMLStringifier2.prototype.dtdAttDefault = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          return this.assertLegalChar("" + val || "");
+        };
+        XMLStringifier2.prototype.dtdEntityValue = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          return this.assertLegalChar("" + val || "");
+        };
+        XMLStringifier2.prototype.dtdNData = function(val) {
+          if (this.options.noValidation) {
+            return val;
+          }
+          return this.assertLegalChar("" + val || "");
+        };
+        XMLStringifier2.prototype.convertAttKey = "@";
+        XMLStringifier2.prototype.convertPIKey = "?";
+        XMLStringifier2.prototype.convertTextKey = "#text";
+        XMLStringifier2.prototype.convertCDataKey = "#cdata";
+        XMLStringifier2.prototype.convertCommentKey = "#comment";
+        XMLStringifier2.prototype.convertRawKey = "#raw";
+        XMLStringifier2.prototype.assertLegalChar = function(str) {
+          var regex, res;
+          if (this.options.noValidation) {
+            return str;
+          }
+          regex = "";
+          if (this.options.version === "1.0") {
+            regex = /[\0-\x08\x0B\f\x0E-\x1F\uFFFE\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/;
+            if (res = str.match(regex)) {
+              throw new Error("Invalid character in string: " + str + " at index " + res.index);
+            }
+          } else if (this.options.version === "1.1") {
+            regex = /[\0\uFFFE\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/;
+            if (res = str.match(regex)) {
+              throw new Error("Invalid character in string: " + str + " at index " + res.index);
+            }
+          }
+          return str;
+        };
+        XMLStringifier2.prototype.assertLegalName = function(str) {
+          var regex;
+          if (this.options.noValidation) {
+            return str;
+          }
+          this.assertLegalChar(str);
+          regex = /^([:A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]|[\uD800-\uDB7F][\uDC00-\uDFFF])([\x2D\.0-:A-Z_a-z\xB7\xC0-\xD6\xD8-\xF6\xF8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]|[\uD800-\uDB7F][\uDC00-\uDFFF])*$/;
+          if (!str.match(regex)) {
+            throw new Error("Invalid character in name");
+          }
+          return str;
+        };
+        XMLStringifier2.prototype.textEscape = function(str) {
+          var ampregex;
+          if (this.options.noValidation) {
+            return str;
+          }
+          ampregex = this.options.noDoubleEncoding ? /(?!&\S+;)&/g : /&/g;
+          return str.replace(ampregex, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\r/g, "&#xD;");
+        };
+        XMLStringifier2.prototype.attEscape = function(str) {
+          var ampregex;
+          if (this.options.noValidation) {
+            return str;
+          }
+          ampregex = this.options.noDoubleEncoding ? /(?!&\S+;)&/g : /&/g;
+          return str.replace(ampregex, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;").replace(/\t/g, "&#x9;").replace(/\n/g, "&#xA;").replace(/\r/g, "&#xD;");
+        };
+        return XMLStringifier2;
+      })();
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/WriterState.js
+var require_WriterState = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/WriterState.js"(exports2, module2) {
+    (function() {
+      module2.exports = {
+        None: 0,
+        OpenTag: 1,
+        InsideTag: 2,
+        CloseTag: 3
+      };
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLWriterBase.js
+var require_XMLWriterBase = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLWriterBase.js"(exports2, module2) {
+    (function() {
+      var NodeType, WriterState, XMLCData, XMLComment, XMLDTDAttList, XMLDTDElement, XMLDTDEntity, XMLDTDNotation, XMLDeclaration, XMLDocType, XMLDummy, XMLElement, XMLProcessingInstruction, XMLRaw, XMLText, XMLWriterBase, assign, hasProp = {}.hasOwnProperty;
+      assign = require_Utility().assign;
+      NodeType = require_NodeType();
+      XMLDeclaration = require_XMLDeclaration();
+      XMLDocType = require_XMLDocType();
+      XMLCData = require_XMLCData();
+      XMLComment = require_XMLComment();
+      XMLElement = require_XMLElement();
+      XMLRaw = require_XMLRaw();
+      XMLText = require_XMLText();
+      XMLProcessingInstruction = require_XMLProcessingInstruction();
+      XMLDummy = require_XMLDummy();
+      XMLDTDAttList = require_XMLDTDAttList();
+      XMLDTDElement = require_XMLDTDElement();
+      XMLDTDEntity = require_XMLDTDEntity();
+      XMLDTDNotation = require_XMLDTDNotation();
+      WriterState = require_WriterState();
+      module2.exports = XMLWriterBase = (function() {
+        function XMLWriterBase2(options) {
+          var key, ref, value;
+          options || (options = {});
+          this.options = options;
+          ref = options.writer || {};
+          for (key in ref) {
+            if (!hasProp.call(ref, key)) continue;
+            value = ref[key];
+            this["_" + key] = this[key];
+            this[key] = value;
+          }
+        }
+        XMLWriterBase2.prototype.filterOptions = function(options) {
+          var filteredOptions, ref, ref1, ref2, ref3, ref4, ref5, ref6;
+          options || (options = {});
+          options = assign({}, this.options, options);
+          filteredOptions = {
+            writer: this
+          };
+          filteredOptions.pretty = options.pretty || false;
+          filteredOptions.allowEmpty = options.allowEmpty || false;
+          filteredOptions.indent = (ref = options.indent) != null ? ref : "  ";
+          filteredOptions.newline = (ref1 = options.newline) != null ? ref1 : "\n";
+          filteredOptions.offset = (ref2 = options.offset) != null ? ref2 : 0;
+          filteredOptions.dontPrettyTextNodes = (ref3 = (ref4 = options.dontPrettyTextNodes) != null ? ref4 : options.dontprettytextnodes) != null ? ref3 : 0;
+          filteredOptions.spaceBeforeSlash = (ref5 = (ref6 = options.spaceBeforeSlash) != null ? ref6 : options.spacebeforeslash) != null ? ref5 : "";
+          if (filteredOptions.spaceBeforeSlash === true) {
+            filteredOptions.spaceBeforeSlash = " ";
+          }
+          filteredOptions.suppressPrettyCount = 0;
+          filteredOptions.user = {};
+          filteredOptions.state = WriterState.None;
+          return filteredOptions;
+        };
+        XMLWriterBase2.prototype.indent = function(node, options, level) {
+          var indentLevel;
+          if (!options.pretty || options.suppressPrettyCount) {
+            return "";
+          } else if (options.pretty) {
+            indentLevel = (level || 0) + options.offset + 1;
+            if (indentLevel > 0) {
+              return new Array(indentLevel).join(options.indent);
+            }
+          }
+          return "";
+        };
+        XMLWriterBase2.prototype.endline = function(node, options, level) {
+          if (!options.pretty || options.suppressPrettyCount) {
+            return "";
+          } else {
+            return options.newline;
+          }
+        };
+        XMLWriterBase2.prototype.attribute = function(att, options, level) {
+          var r;
+          this.openAttribute(att, options, level);
+          r = " " + att.name + '="' + att.value + '"';
+          this.closeAttribute(att, options, level);
+          return r;
+        };
+        XMLWriterBase2.prototype.cdata = function(node, options, level) {
+          var r;
+          this.openNode(node, options, level);
+          options.state = WriterState.OpenTag;
+          r = this.indent(node, options, level) + "<![CDATA[";
+          options.state = WriterState.InsideTag;
+          r += node.value;
+          options.state = WriterState.CloseTag;
+          r += "]]>" + this.endline(node, options, level);
+          options.state = WriterState.None;
+          this.closeNode(node, options, level);
+          return r;
+        };
+        XMLWriterBase2.prototype.comment = function(node, options, level) {
+          var r;
+          this.openNode(node, options, level);
+          options.state = WriterState.OpenTag;
+          r = this.indent(node, options, level) + "<!-- ";
+          options.state = WriterState.InsideTag;
+          r += node.value;
+          options.state = WriterState.CloseTag;
+          r += " -->" + this.endline(node, options, level);
+          options.state = WriterState.None;
+          this.closeNode(node, options, level);
+          return r;
+        };
+        XMLWriterBase2.prototype.declaration = function(node, options, level) {
+          var r;
+          this.openNode(node, options, level);
+          options.state = WriterState.OpenTag;
+          r = this.indent(node, options, level) + "<?xml";
+          options.state = WriterState.InsideTag;
+          r += ' version="' + node.version + '"';
+          if (node.encoding != null) {
+            r += ' encoding="' + node.encoding + '"';
+          }
+          if (node.standalone != null) {
+            r += ' standalone="' + node.standalone + '"';
+          }
+          options.state = WriterState.CloseTag;
+          r += options.spaceBeforeSlash + "?>";
+          r += this.endline(node, options, level);
+          options.state = WriterState.None;
+          this.closeNode(node, options, level);
+          return r;
+        };
+        XMLWriterBase2.prototype.docType = function(node, options, level) {
+          var child, i, len, r, ref;
+          level || (level = 0);
+          this.openNode(node, options, level);
+          options.state = WriterState.OpenTag;
+          r = this.indent(node, options, level);
+          r += "<!DOCTYPE " + node.root().name;
+          if (node.pubID && node.sysID) {
+            r += ' PUBLIC "' + node.pubID + '" "' + node.sysID + '"';
+          } else if (node.sysID) {
+            r += ' SYSTEM "' + node.sysID + '"';
+          }
+          if (node.children.length > 0) {
+            r += " [";
+            r += this.endline(node, options, level);
+            options.state = WriterState.InsideTag;
+            ref = node.children;
+            for (i = 0, len = ref.length; i < len; i++) {
+              child = ref[i];
+              r += this.writeChildNode(child, options, level + 1);
+            }
+            options.state = WriterState.CloseTag;
+            r += "]";
+          }
+          options.state = WriterState.CloseTag;
+          r += options.spaceBeforeSlash + ">";
+          r += this.endline(node, options, level);
+          options.state = WriterState.None;
+          this.closeNode(node, options, level);
+          return r;
+        };
+        XMLWriterBase2.prototype.element = function(node, options, level) {
+          var att, child, childNodeCount, firstChildNode, i, j2, len, len1, name, prettySuppressed, r, ref, ref1, ref2;
+          level || (level = 0);
+          prettySuppressed = false;
+          r = "";
+          this.openNode(node, options, level);
+          options.state = WriterState.OpenTag;
+          r += this.indent(node, options, level) + "<" + node.name;
+          ref = node.attribs;
+          for (name in ref) {
+            if (!hasProp.call(ref, name)) continue;
+            att = ref[name];
+            r += this.attribute(att, options, level);
+          }
+          childNodeCount = node.children.length;
+          firstChildNode = childNodeCount === 0 ? null : node.children[0];
+          if (childNodeCount === 0 || node.children.every(function(e) {
+            return (e.type === NodeType.Text || e.type === NodeType.Raw) && e.value === "";
+          })) {
+            if (options.allowEmpty) {
+              r += ">";
+              options.state = WriterState.CloseTag;
+              r += "</" + node.name + ">" + this.endline(node, options, level);
+            } else {
+              options.state = WriterState.CloseTag;
+              r += options.spaceBeforeSlash + "/>" + this.endline(node, options, level);
+            }
+          } else if (options.pretty && childNodeCount === 1 && (firstChildNode.type === NodeType.Text || firstChildNode.type === NodeType.Raw) && firstChildNode.value != null) {
+            r += ">";
+            options.state = WriterState.InsideTag;
+            options.suppressPrettyCount++;
+            prettySuppressed = true;
+            r += this.writeChildNode(firstChildNode, options, level + 1);
+            options.suppressPrettyCount--;
+            prettySuppressed = false;
+            options.state = WriterState.CloseTag;
+            r += "</" + node.name + ">" + this.endline(node, options, level);
+          } else {
+            if (options.dontPrettyTextNodes) {
+              ref1 = node.children;
+              for (i = 0, len = ref1.length; i < len; i++) {
+                child = ref1[i];
+                if ((child.type === NodeType.Text || child.type === NodeType.Raw) && child.value != null) {
+                  options.suppressPrettyCount++;
+                  prettySuppressed = true;
+                  break;
+                }
+              }
+            }
+            r += ">" + this.endline(node, options, level);
+            options.state = WriterState.InsideTag;
+            ref2 = node.children;
+            for (j2 = 0, len1 = ref2.length; j2 < len1; j2++) {
+              child = ref2[j2];
+              r += this.writeChildNode(child, options, level + 1);
+            }
+            options.state = WriterState.CloseTag;
+            r += this.indent(node, options, level) + "</" + node.name + ">";
+            if (prettySuppressed) {
+              options.suppressPrettyCount--;
+            }
+            r += this.endline(node, options, level);
+            options.state = WriterState.None;
+          }
+          this.closeNode(node, options, level);
+          return r;
+        };
+        XMLWriterBase2.prototype.writeChildNode = function(node, options, level) {
+          switch (node.type) {
+            case NodeType.CData:
+              return this.cdata(node, options, level);
+            case NodeType.Comment:
+              return this.comment(node, options, level);
+            case NodeType.Element:
+              return this.element(node, options, level);
+            case NodeType.Raw:
+              return this.raw(node, options, level);
+            case NodeType.Text:
+              return this.text(node, options, level);
+            case NodeType.ProcessingInstruction:
+              return this.processingInstruction(node, options, level);
+            case NodeType.Dummy:
+              return "";
+            case NodeType.Declaration:
+              return this.declaration(node, options, level);
+            case NodeType.DocType:
+              return this.docType(node, options, level);
+            case NodeType.AttributeDeclaration:
+              return this.dtdAttList(node, options, level);
+            case NodeType.ElementDeclaration:
+              return this.dtdElement(node, options, level);
+            case NodeType.EntityDeclaration:
+              return this.dtdEntity(node, options, level);
+            case NodeType.NotationDeclaration:
+              return this.dtdNotation(node, options, level);
+            default:
+              throw new Error("Unknown XML node type: " + node.constructor.name);
+          }
+        };
+        XMLWriterBase2.prototype.processingInstruction = function(node, options, level) {
+          var r;
+          this.openNode(node, options, level);
+          options.state = WriterState.OpenTag;
+          r = this.indent(node, options, level) + "<?";
+          options.state = WriterState.InsideTag;
+          r += node.target;
+          if (node.value) {
+            r += " " + node.value;
+          }
+          options.state = WriterState.CloseTag;
+          r += options.spaceBeforeSlash + "?>";
+          r += this.endline(node, options, level);
+          options.state = WriterState.None;
+          this.closeNode(node, options, level);
+          return r;
+        };
+        XMLWriterBase2.prototype.raw = function(node, options, level) {
+          var r;
+          this.openNode(node, options, level);
+          options.state = WriterState.OpenTag;
+          r = this.indent(node, options, level);
+          options.state = WriterState.InsideTag;
+          r += node.value;
+          options.state = WriterState.CloseTag;
+          r += this.endline(node, options, level);
+          options.state = WriterState.None;
+          this.closeNode(node, options, level);
+          return r;
+        };
+        XMLWriterBase2.prototype.text = function(node, options, level) {
+          var r;
+          this.openNode(node, options, level);
+          options.state = WriterState.OpenTag;
+          r = this.indent(node, options, level);
+          options.state = WriterState.InsideTag;
+          r += node.value;
+          options.state = WriterState.CloseTag;
+          r += this.endline(node, options, level);
+          options.state = WriterState.None;
+          this.closeNode(node, options, level);
+          return r;
+        };
+        XMLWriterBase2.prototype.dtdAttList = function(node, options, level) {
+          var r;
+          this.openNode(node, options, level);
+          options.state = WriterState.OpenTag;
+          r = this.indent(node, options, level) + "<!ATTLIST";
+          options.state = WriterState.InsideTag;
+          r += " " + node.elementName + " " + node.attributeName + " " + node.attributeType;
+          if (node.defaultValueType !== "#DEFAULT") {
+            r += " " + node.defaultValueType;
+          }
+          if (node.defaultValue) {
+            r += ' "' + node.defaultValue + '"';
+          }
+          options.state = WriterState.CloseTag;
+          r += options.spaceBeforeSlash + ">" + this.endline(node, options, level);
+          options.state = WriterState.None;
+          this.closeNode(node, options, level);
+          return r;
+        };
+        XMLWriterBase2.prototype.dtdElement = function(node, options, level) {
+          var r;
+          this.openNode(node, options, level);
+          options.state = WriterState.OpenTag;
+          r = this.indent(node, options, level) + "<!ELEMENT";
+          options.state = WriterState.InsideTag;
+          r += " " + node.name + " " + node.value;
+          options.state = WriterState.CloseTag;
+          r += options.spaceBeforeSlash + ">" + this.endline(node, options, level);
+          options.state = WriterState.None;
+          this.closeNode(node, options, level);
+          return r;
+        };
+        XMLWriterBase2.prototype.dtdEntity = function(node, options, level) {
+          var r;
+          this.openNode(node, options, level);
+          options.state = WriterState.OpenTag;
+          r = this.indent(node, options, level) + "<!ENTITY";
+          options.state = WriterState.InsideTag;
+          if (node.pe) {
+            r += " %";
+          }
+          r += " " + node.name;
+          if (node.value) {
+            r += ' "' + node.value + '"';
+          } else {
+            if (node.pubID && node.sysID) {
+              r += ' PUBLIC "' + node.pubID + '" "' + node.sysID + '"';
+            } else if (node.sysID) {
+              r += ' SYSTEM "' + node.sysID + '"';
+            }
+            if (node.nData) {
+              r += " NDATA " + node.nData;
+            }
+          }
+          options.state = WriterState.CloseTag;
+          r += options.spaceBeforeSlash + ">" + this.endline(node, options, level);
+          options.state = WriterState.None;
+          this.closeNode(node, options, level);
+          return r;
+        };
+        XMLWriterBase2.prototype.dtdNotation = function(node, options, level) {
+          var r;
+          this.openNode(node, options, level);
+          options.state = WriterState.OpenTag;
+          r = this.indent(node, options, level) + "<!NOTATION";
+          options.state = WriterState.InsideTag;
+          r += " " + node.name;
+          if (node.pubID && node.sysID) {
+            r += ' PUBLIC "' + node.pubID + '" "' + node.sysID + '"';
+          } else if (node.pubID) {
+            r += ' PUBLIC "' + node.pubID + '"';
+          } else if (node.sysID) {
+            r += ' SYSTEM "' + node.sysID + '"';
+          }
+          options.state = WriterState.CloseTag;
+          r += options.spaceBeforeSlash + ">" + this.endline(node, options, level);
+          options.state = WriterState.None;
+          this.closeNode(node, options, level);
+          return r;
+        };
+        XMLWriterBase2.prototype.openNode = function(node, options, level) {
+        };
+        XMLWriterBase2.prototype.closeNode = function(node, options, level) {
+        };
+        XMLWriterBase2.prototype.openAttribute = function(att, options, level) {
+        };
+        XMLWriterBase2.prototype.closeAttribute = function(att, options, level) {
+        };
+        return XMLWriterBase2;
+      })();
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLStringWriter.js
+var require_XMLStringWriter = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLStringWriter.js"(exports2, module2) {
+    (function() {
+      var XMLStringWriter, XMLWriterBase, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      XMLWriterBase = require_XMLWriterBase();
+      module2.exports = XMLStringWriter = (function(superClass) {
+        extend(XMLStringWriter2, superClass);
+        function XMLStringWriter2(options) {
+          XMLStringWriter2.__super__.constructor.call(this, options);
+        }
+        XMLStringWriter2.prototype.document = function(doc, options) {
+          var child, i, len, r, ref;
+          options = this.filterOptions(options);
+          r = "";
+          ref = doc.children;
+          for (i = 0, len = ref.length; i < len; i++) {
+            child = ref[i];
+            r += this.writeChildNode(child, options, 0);
+          }
+          if (options.pretty && r.slice(-options.newline.length) === options.newline) {
+            r = r.slice(0, -options.newline.length);
+          }
+          return r;
+        };
+        return XMLStringWriter2;
+      })(XMLWriterBase);
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDocument.js
+var require_XMLDocument = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDocument.js"(exports2, module2) {
+    (function() {
+      var NodeType, XMLDOMConfiguration, XMLDOMImplementation, XMLDocument, XMLNode, XMLStringWriter, XMLStringifier, isPlainObject, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      isPlainObject = require_Utility().isPlainObject;
+      XMLDOMImplementation = require_XMLDOMImplementation();
+      XMLDOMConfiguration = require_XMLDOMConfiguration();
+      XMLNode = require_XMLNode();
+      NodeType = require_NodeType();
+      XMLStringifier = require_XMLStringifier();
+      XMLStringWriter = require_XMLStringWriter();
+      module2.exports = XMLDocument = (function(superClass) {
+        extend(XMLDocument2, superClass);
+        function XMLDocument2(options) {
+          XMLDocument2.__super__.constructor.call(this, null);
+          this.name = "#document";
+          this.type = NodeType.Document;
+          this.documentURI = null;
+          this.domConfig = new XMLDOMConfiguration();
+          options || (options = {});
+          if (!options.writer) {
+            options.writer = new XMLStringWriter();
+          }
+          this.options = options;
+          this.stringify = new XMLStringifier(options);
+        }
+        Object.defineProperty(XMLDocument2.prototype, "implementation", {
+          value: new XMLDOMImplementation()
+        });
+        Object.defineProperty(XMLDocument2.prototype, "doctype", {
+          get: function() {
+            var child, i, len, ref;
+            ref = this.children;
+            for (i = 0, len = ref.length; i < len; i++) {
+              child = ref[i];
+              if (child.type === NodeType.DocType) {
+                return child;
+              }
+            }
+            return null;
+          }
+        });
+        Object.defineProperty(XMLDocument2.prototype, "documentElement", {
+          get: function() {
+            return this.rootObject || null;
+          }
+        });
+        Object.defineProperty(XMLDocument2.prototype, "inputEncoding", {
+          get: function() {
+            return null;
+          }
+        });
+        Object.defineProperty(XMLDocument2.prototype, "strictErrorChecking", {
+          get: function() {
+            return false;
+          }
+        });
+        Object.defineProperty(XMLDocument2.prototype, "xmlEncoding", {
+          get: function() {
+            if (this.children.length !== 0 && this.children[0].type === NodeType.Declaration) {
+              return this.children[0].encoding;
+            } else {
+              return null;
+            }
+          }
+        });
+        Object.defineProperty(XMLDocument2.prototype, "xmlStandalone", {
+          get: function() {
+            if (this.children.length !== 0 && this.children[0].type === NodeType.Declaration) {
+              return this.children[0].standalone === "yes";
+            } else {
+              return false;
+            }
+          }
+        });
+        Object.defineProperty(XMLDocument2.prototype, "xmlVersion", {
+          get: function() {
+            if (this.children.length !== 0 && this.children[0].type === NodeType.Declaration) {
+              return this.children[0].version;
+            } else {
+              return "1.0";
+            }
+          }
+        });
+        Object.defineProperty(XMLDocument2.prototype, "URL", {
+          get: function() {
+            return this.documentURI;
+          }
+        });
+        Object.defineProperty(XMLDocument2.prototype, "origin", {
+          get: function() {
+            return null;
+          }
+        });
+        Object.defineProperty(XMLDocument2.prototype, "compatMode", {
+          get: function() {
+            return null;
+          }
+        });
+        Object.defineProperty(XMLDocument2.prototype, "characterSet", {
+          get: function() {
+            return null;
+          }
+        });
+        Object.defineProperty(XMLDocument2.prototype, "contentType", {
+          get: function() {
+            return null;
+          }
+        });
+        XMLDocument2.prototype.end = function(writer) {
+          var writerOptions;
+          writerOptions = {};
+          if (!writer) {
+            writer = this.options.writer;
+          } else if (isPlainObject(writer)) {
+            writerOptions = writer;
+            writer = this.options.writer;
+          }
+          return writer.document(this, writer.filterOptions(writerOptions));
+        };
+        XMLDocument2.prototype.toString = function(options) {
+          return this.options.writer.document(this, this.options.writer.filterOptions(options));
+        };
+        XMLDocument2.prototype.createElement = function(tagName) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.createDocumentFragment = function() {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.createTextNode = function(data) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.createComment = function(data) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.createCDATASection = function(data) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.createProcessingInstruction = function(target, data) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.createAttribute = function(name) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.createEntityReference = function(name) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.getElementsByTagName = function(tagname) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.importNode = function(importedNode, deep) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.createElementNS = function(namespaceURI, qualifiedName) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.createAttributeNS = function(namespaceURI, qualifiedName) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.getElementsByTagNameNS = function(namespaceURI, localName) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.getElementById = function(elementId) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.adoptNode = function(source) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.normalizeDocument = function() {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.renameNode = function(node, namespaceURI, qualifiedName) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.getElementsByClassName = function(classNames) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.createEvent = function(eventInterface) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.createRange = function() {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.createNodeIterator = function(root, whatToShow, filter) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        XMLDocument2.prototype.createTreeWalker = function(root, whatToShow, filter) {
+          throw new Error("This DOM method is not implemented." + this.debugInfo());
+        };
+        return XMLDocument2;
+      })(XMLNode);
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDocumentCB.js
+var require_XMLDocumentCB = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDocumentCB.js"(exports2, module2) {
+    (function() {
+      var NodeType, WriterState, XMLAttribute, XMLCData, XMLComment, XMLDTDAttList, XMLDTDElement, XMLDTDEntity, XMLDTDNotation, XMLDeclaration, XMLDocType, XMLDocument, XMLDocumentCB, XMLElement, XMLProcessingInstruction, XMLRaw, XMLStringWriter, XMLStringifier, XMLText, getValue, isFunction, isObject, isPlainObject, ref, hasProp = {}.hasOwnProperty;
+      ref = require_Utility(), isObject = ref.isObject, isFunction = ref.isFunction, isPlainObject = ref.isPlainObject, getValue = ref.getValue;
+      NodeType = require_NodeType();
+      XMLDocument = require_XMLDocument();
+      XMLElement = require_XMLElement();
+      XMLCData = require_XMLCData();
+      XMLComment = require_XMLComment();
+      XMLRaw = require_XMLRaw();
+      XMLText = require_XMLText();
+      XMLProcessingInstruction = require_XMLProcessingInstruction();
+      XMLDeclaration = require_XMLDeclaration();
+      XMLDocType = require_XMLDocType();
+      XMLDTDAttList = require_XMLDTDAttList();
+      XMLDTDEntity = require_XMLDTDEntity();
+      XMLDTDElement = require_XMLDTDElement();
+      XMLDTDNotation = require_XMLDTDNotation();
+      XMLAttribute = require_XMLAttribute();
+      XMLStringifier = require_XMLStringifier();
+      XMLStringWriter = require_XMLStringWriter();
+      WriterState = require_WriterState();
+      module2.exports = XMLDocumentCB = (function() {
+        function XMLDocumentCB2(options, onData, onEnd) {
+          var writerOptions;
+          this.name = "?xml";
+          this.type = NodeType.Document;
+          options || (options = {});
+          writerOptions = {};
+          if (!options.writer) {
+            options.writer = new XMLStringWriter();
+          } else if (isPlainObject(options.writer)) {
+            writerOptions = options.writer;
+            options.writer = new XMLStringWriter();
+          }
+          this.options = options;
+          this.writer = options.writer;
+          this.writerOptions = this.writer.filterOptions(writerOptions);
+          this.stringify = new XMLStringifier(options);
+          this.onDataCallback = onData || function() {
+          };
+          this.onEndCallback = onEnd || function() {
+          };
+          this.currentNode = null;
+          this.currentLevel = -1;
+          this.openTags = {};
+          this.documentStarted = false;
+          this.documentCompleted = false;
+          this.root = null;
+        }
+        XMLDocumentCB2.prototype.createChildNode = function(node) {
+          var att, attName, attributes, child, i, len, ref1, ref2;
+          switch (node.type) {
+            case NodeType.CData:
+              this.cdata(node.value);
+              break;
+            case NodeType.Comment:
+              this.comment(node.value);
+              break;
+            case NodeType.Element:
+              attributes = {};
+              ref1 = node.attribs;
+              for (attName in ref1) {
+                if (!hasProp.call(ref1, attName)) continue;
+                att = ref1[attName];
+                attributes[attName] = att.value;
+              }
+              this.node(node.name, attributes);
+              break;
+            case NodeType.Dummy:
+              this.dummy();
+              break;
+            case NodeType.Raw:
+              this.raw(node.value);
+              break;
+            case NodeType.Text:
+              this.text(node.value);
+              break;
+            case NodeType.ProcessingInstruction:
+              this.instruction(node.target, node.value);
+              break;
+            default:
+              throw new Error("This XML node type is not supported in a JS object: " + node.constructor.name);
+          }
+          ref2 = node.children;
+          for (i = 0, len = ref2.length; i < len; i++) {
+            child = ref2[i];
+            this.createChildNode(child);
+            if (child.type === NodeType.Element) {
+              this.up();
+            }
+          }
+          return this;
+        };
+        XMLDocumentCB2.prototype.dummy = function() {
+          return this;
+        };
+        XMLDocumentCB2.prototype.node = function(name, attributes, text) {
+          var ref1;
+          if (name == null) {
+            throw new Error("Missing node name.");
+          }
+          if (this.root && this.currentLevel === -1) {
+            throw new Error("Document can only have one root node. " + this.debugInfo(name));
+          }
+          this.openCurrent();
+          name = getValue(name);
+          if (attributes == null) {
+            attributes = {};
+          }
+          attributes = getValue(attributes);
+          if (!isObject(attributes)) {
+            ref1 = [attributes, text], text = ref1[0], attributes = ref1[1];
+          }
+          this.currentNode = new XMLElement(this, name, attributes);
+          this.currentNode.children = false;
+          this.currentLevel++;
+          this.openTags[this.currentLevel] = this.currentNode;
+          if (text != null) {
+            this.text(text);
+          }
+          return this;
+        };
+        XMLDocumentCB2.prototype.element = function(name, attributes, text) {
+          var child, i, len, oldValidationFlag, ref1, root;
+          if (this.currentNode && this.currentNode.type === NodeType.DocType) {
+            this.dtdElement.apply(this, arguments);
+          } else {
+            if (Array.isArray(name) || isObject(name) || isFunction(name)) {
+              oldValidationFlag = this.options.noValidation;
+              this.options.noValidation = true;
+              root = new XMLDocument(this.options).element("TEMP_ROOT");
+              root.element(name);
+              this.options.noValidation = oldValidationFlag;
+              ref1 = root.children;
+              for (i = 0, len = ref1.length; i < len; i++) {
+                child = ref1[i];
+                this.createChildNode(child);
+                if (child.type === NodeType.Element) {
+                  this.up();
+                }
+              }
+            } else {
+              this.node(name, attributes, text);
+            }
+          }
+          return this;
+        };
+        XMLDocumentCB2.prototype.attribute = function(name, value) {
+          var attName, attValue;
+          if (!this.currentNode || this.currentNode.children) {
+            throw new Error("att() can only be used immediately after an ele() call in callback mode. " + this.debugInfo(name));
+          }
+          if (name != null) {
+            name = getValue(name);
+          }
+          if (isObject(name)) {
+            for (attName in name) {
+              if (!hasProp.call(name, attName)) continue;
+              attValue = name[attName];
+              this.attribute(attName, attValue);
+            }
+          } else {
+            if (isFunction(value)) {
+              value = value.apply();
+            }
+            if (this.options.keepNullAttributes && value == null) {
+              this.currentNode.attribs[name] = new XMLAttribute(this, name, "");
+            } else if (value != null) {
+              this.currentNode.attribs[name] = new XMLAttribute(this, name, value);
+            }
+          }
+          return this;
+        };
+        XMLDocumentCB2.prototype.text = function(value) {
+          var node;
+          this.openCurrent();
+          node = new XMLText(this, value);
+          this.onData(this.writer.text(node, this.writerOptions, this.currentLevel + 1), this.currentLevel + 1);
+          return this;
+        };
+        XMLDocumentCB2.prototype.cdata = function(value) {
+          var node;
+          this.openCurrent();
+          node = new XMLCData(this, value);
+          this.onData(this.writer.cdata(node, this.writerOptions, this.currentLevel + 1), this.currentLevel + 1);
+          return this;
+        };
+        XMLDocumentCB2.prototype.comment = function(value) {
+          var node;
+          this.openCurrent();
+          node = new XMLComment(this, value);
+          this.onData(this.writer.comment(node, this.writerOptions, this.currentLevel + 1), this.currentLevel + 1);
+          return this;
+        };
+        XMLDocumentCB2.prototype.raw = function(value) {
+          var node;
+          this.openCurrent();
+          node = new XMLRaw(this, value);
+          this.onData(this.writer.raw(node, this.writerOptions, this.currentLevel + 1), this.currentLevel + 1);
+          return this;
+        };
+        XMLDocumentCB2.prototype.instruction = function(target, value) {
+          var i, insTarget, insValue, len, node;
+          this.openCurrent();
+          if (target != null) {
+            target = getValue(target);
+          }
+          if (value != null) {
+            value = getValue(value);
+          }
+          if (Array.isArray(target)) {
+            for (i = 0, len = target.length; i < len; i++) {
+              insTarget = target[i];
+              this.instruction(insTarget);
+            }
+          } else if (isObject(target)) {
+            for (insTarget in target) {
+              if (!hasProp.call(target, insTarget)) continue;
+              insValue = target[insTarget];
+              this.instruction(insTarget, insValue);
+            }
+          } else {
+            if (isFunction(value)) {
+              value = value.apply();
+            }
+            node = new XMLProcessingInstruction(this, target, value);
+            this.onData(this.writer.processingInstruction(node, this.writerOptions, this.currentLevel + 1), this.currentLevel + 1);
+          }
+          return this;
+        };
+        XMLDocumentCB2.prototype.declaration = function(version, encoding, standalone) {
+          var node;
+          this.openCurrent();
+          if (this.documentStarted) {
+            throw new Error("declaration() must be the first node.");
+          }
+          node = new XMLDeclaration(this, version, encoding, standalone);
+          this.onData(this.writer.declaration(node, this.writerOptions, this.currentLevel + 1), this.currentLevel + 1);
+          return this;
+        };
+        XMLDocumentCB2.prototype.doctype = function(root, pubID, sysID) {
+          this.openCurrent();
+          if (root == null) {
+            throw new Error("Missing root node name.");
+          }
+          if (this.root) {
+            throw new Error("dtd() must come before the root node.");
+          }
+          this.currentNode = new XMLDocType(this, pubID, sysID);
+          this.currentNode.rootNodeName = root;
+          this.currentNode.children = false;
+          this.currentLevel++;
+          this.openTags[this.currentLevel] = this.currentNode;
+          return this;
+        };
+        XMLDocumentCB2.prototype.dtdElement = function(name, value) {
+          var node;
+          this.openCurrent();
+          node = new XMLDTDElement(this, name, value);
+          this.onData(this.writer.dtdElement(node, this.writerOptions, this.currentLevel + 1), this.currentLevel + 1);
+          return this;
+        };
+        XMLDocumentCB2.prototype.attList = function(elementName, attributeName, attributeType, defaultValueType, defaultValue) {
+          var node;
+          this.openCurrent();
+          node = new XMLDTDAttList(this, elementName, attributeName, attributeType, defaultValueType, defaultValue);
+          this.onData(this.writer.dtdAttList(node, this.writerOptions, this.currentLevel + 1), this.currentLevel + 1);
+          return this;
+        };
+        XMLDocumentCB2.prototype.entity = function(name, value) {
+          var node;
+          this.openCurrent();
+          node = new XMLDTDEntity(this, false, name, value);
+          this.onData(this.writer.dtdEntity(node, this.writerOptions, this.currentLevel + 1), this.currentLevel + 1);
+          return this;
+        };
+        XMLDocumentCB2.prototype.pEntity = function(name, value) {
+          var node;
+          this.openCurrent();
+          node = new XMLDTDEntity(this, true, name, value);
+          this.onData(this.writer.dtdEntity(node, this.writerOptions, this.currentLevel + 1), this.currentLevel + 1);
+          return this;
+        };
+        XMLDocumentCB2.prototype.notation = function(name, value) {
+          var node;
+          this.openCurrent();
+          node = new XMLDTDNotation(this, name, value);
+          this.onData(this.writer.dtdNotation(node, this.writerOptions, this.currentLevel + 1), this.currentLevel + 1);
+          return this;
+        };
+        XMLDocumentCB2.prototype.up = function() {
+          if (this.currentLevel < 0) {
+            throw new Error("The document node has no parent.");
+          }
+          if (this.currentNode) {
+            if (this.currentNode.children) {
+              this.closeNode(this.currentNode);
+            } else {
+              this.openNode(this.currentNode);
+            }
+            this.currentNode = null;
+          } else {
+            this.closeNode(this.openTags[this.currentLevel]);
+          }
+          delete this.openTags[this.currentLevel];
+          this.currentLevel--;
+          return this;
+        };
+        XMLDocumentCB2.prototype.end = function() {
+          while (this.currentLevel >= 0) {
+            this.up();
+          }
+          return this.onEnd();
+        };
+        XMLDocumentCB2.prototype.openCurrent = function() {
+          if (this.currentNode) {
+            this.currentNode.children = true;
+            return this.openNode(this.currentNode);
+          }
+        };
+        XMLDocumentCB2.prototype.openNode = function(node) {
+          var att, chunk, name, ref1;
+          if (!node.isOpen) {
+            if (!this.root && this.currentLevel === 0 && node.type === NodeType.Element) {
+              this.root = node;
+            }
+            chunk = "";
+            if (node.type === NodeType.Element) {
+              this.writerOptions.state = WriterState.OpenTag;
+              chunk = this.writer.indent(node, this.writerOptions, this.currentLevel) + "<" + node.name;
+              ref1 = node.attribs;
+              for (name in ref1) {
+                if (!hasProp.call(ref1, name)) continue;
+                att = ref1[name];
+                chunk += this.writer.attribute(att, this.writerOptions, this.currentLevel);
+              }
+              chunk += (node.children ? ">" : "/>") + this.writer.endline(node, this.writerOptions, this.currentLevel);
+              this.writerOptions.state = WriterState.InsideTag;
+            } else {
+              this.writerOptions.state = WriterState.OpenTag;
+              chunk = this.writer.indent(node, this.writerOptions, this.currentLevel) + "<!DOCTYPE " + node.rootNodeName;
+              if (node.pubID && node.sysID) {
+                chunk += ' PUBLIC "' + node.pubID + '" "' + node.sysID + '"';
+              } else if (node.sysID) {
+                chunk += ' SYSTEM "' + node.sysID + '"';
+              }
+              if (node.children) {
+                chunk += " [";
+                this.writerOptions.state = WriterState.InsideTag;
+              } else {
+                this.writerOptions.state = WriterState.CloseTag;
+                chunk += ">";
+              }
+              chunk += this.writer.endline(node, this.writerOptions, this.currentLevel);
+            }
+            this.onData(chunk, this.currentLevel);
+            return node.isOpen = true;
+          }
+        };
+        XMLDocumentCB2.prototype.closeNode = function(node) {
+          var chunk;
+          if (!node.isClosed) {
+            chunk = "";
+            this.writerOptions.state = WriterState.CloseTag;
+            if (node.type === NodeType.Element) {
+              chunk = this.writer.indent(node, this.writerOptions, this.currentLevel) + "</" + node.name + ">" + this.writer.endline(node, this.writerOptions, this.currentLevel);
+            } else {
+              chunk = this.writer.indent(node, this.writerOptions, this.currentLevel) + "]>" + this.writer.endline(node, this.writerOptions, this.currentLevel);
+            }
+            this.writerOptions.state = WriterState.None;
+            this.onData(chunk, this.currentLevel);
+            return node.isClosed = true;
+          }
+        };
+        XMLDocumentCB2.prototype.onData = function(chunk, level) {
+          this.documentStarted = true;
+          return this.onDataCallback(chunk, level + 1);
+        };
+        XMLDocumentCB2.prototype.onEnd = function() {
+          this.documentCompleted = true;
+          return this.onEndCallback();
+        };
+        XMLDocumentCB2.prototype.debugInfo = function(name) {
+          if (name == null) {
+            return "";
+          } else {
+            return "node: <" + name + ">";
+          }
+        };
+        XMLDocumentCB2.prototype.ele = function() {
+          return this.element.apply(this, arguments);
+        };
+        XMLDocumentCB2.prototype.nod = function(name, attributes, text) {
+          return this.node(name, attributes, text);
+        };
+        XMLDocumentCB2.prototype.txt = function(value) {
+          return this.text(value);
+        };
+        XMLDocumentCB2.prototype.dat = function(value) {
+          return this.cdata(value);
+        };
+        XMLDocumentCB2.prototype.com = function(value) {
+          return this.comment(value);
+        };
+        XMLDocumentCB2.prototype.ins = function(target, value) {
+          return this.instruction(target, value);
+        };
+        XMLDocumentCB2.prototype.dec = function(version, encoding, standalone) {
+          return this.declaration(version, encoding, standalone);
+        };
+        XMLDocumentCB2.prototype.dtd = function(root, pubID, sysID) {
+          return this.doctype(root, pubID, sysID);
+        };
+        XMLDocumentCB2.prototype.e = function(name, attributes, text) {
+          return this.element(name, attributes, text);
+        };
+        XMLDocumentCB2.prototype.n = function(name, attributes, text) {
+          return this.node(name, attributes, text);
+        };
+        XMLDocumentCB2.prototype.t = function(value) {
+          return this.text(value);
+        };
+        XMLDocumentCB2.prototype.d = function(value) {
+          return this.cdata(value);
+        };
+        XMLDocumentCB2.prototype.c = function(value) {
+          return this.comment(value);
+        };
+        XMLDocumentCB2.prototype.r = function(value) {
+          return this.raw(value);
+        };
+        XMLDocumentCB2.prototype.i = function(target, value) {
+          return this.instruction(target, value);
+        };
+        XMLDocumentCB2.prototype.att = function() {
+          if (this.currentNode && this.currentNode.type === NodeType.DocType) {
+            return this.attList.apply(this, arguments);
+          } else {
+            return this.attribute.apply(this, arguments);
+          }
+        };
+        XMLDocumentCB2.prototype.a = function() {
+          if (this.currentNode && this.currentNode.type === NodeType.DocType) {
+            return this.attList.apply(this, arguments);
+          } else {
+            return this.attribute.apply(this, arguments);
+          }
+        };
+        XMLDocumentCB2.prototype.ent = function(name, value) {
+          return this.entity(name, value);
+        };
+        XMLDocumentCB2.prototype.pent = function(name, value) {
+          return this.pEntity(name, value);
+        };
+        XMLDocumentCB2.prototype.not = function(name, value) {
+          return this.notation(name, value);
+        };
+        return XMLDocumentCB2;
+      })();
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLStreamWriter.js
+var require_XMLStreamWriter = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLStreamWriter.js"(exports2, module2) {
+    (function() {
+      var NodeType, WriterState, XMLStreamWriter, XMLWriterBase, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      NodeType = require_NodeType();
+      XMLWriterBase = require_XMLWriterBase();
+      WriterState = require_WriterState();
+      module2.exports = XMLStreamWriter = (function(superClass) {
+        extend(XMLStreamWriter2, superClass);
+        function XMLStreamWriter2(stream, options) {
+          this.stream = stream;
+          XMLStreamWriter2.__super__.constructor.call(this, options);
+        }
+        XMLStreamWriter2.prototype.endline = function(node, options, level) {
+          if (node.isLastRootNode && options.state === WriterState.CloseTag) {
+            return "";
+          } else {
+            return XMLStreamWriter2.__super__.endline.call(this, node, options, level);
+          }
+        };
+        XMLStreamWriter2.prototype.document = function(doc, options) {
+          var child, i, j2, k2, len, len1, ref, ref1, results;
+          ref = doc.children;
+          for (i = j2 = 0, len = ref.length; j2 < len; i = ++j2) {
+            child = ref[i];
+            child.isLastRootNode = i === doc.children.length - 1;
+          }
+          options = this.filterOptions(options);
+          ref1 = doc.children;
+          results = [];
+          for (k2 = 0, len1 = ref1.length; k2 < len1; k2++) {
+            child = ref1[k2];
+            results.push(this.writeChildNode(child, options, 0));
+          }
+          return results;
+        };
+        XMLStreamWriter2.prototype.attribute = function(att, options, level) {
+          return this.stream.write(XMLStreamWriter2.__super__.attribute.call(this, att, options, level));
+        };
+        XMLStreamWriter2.prototype.cdata = function(node, options, level) {
+          return this.stream.write(XMLStreamWriter2.__super__.cdata.call(this, node, options, level));
+        };
+        XMLStreamWriter2.prototype.comment = function(node, options, level) {
+          return this.stream.write(XMLStreamWriter2.__super__.comment.call(this, node, options, level));
+        };
+        XMLStreamWriter2.prototype.declaration = function(node, options, level) {
+          return this.stream.write(XMLStreamWriter2.__super__.declaration.call(this, node, options, level));
+        };
+        XMLStreamWriter2.prototype.docType = function(node, options, level) {
+          var child, j2, len, ref;
+          level || (level = 0);
+          this.openNode(node, options, level);
+          options.state = WriterState.OpenTag;
+          this.stream.write(this.indent(node, options, level));
+          this.stream.write("<!DOCTYPE " + node.root().name);
+          if (node.pubID && node.sysID) {
+            this.stream.write(' PUBLIC "' + node.pubID + '" "' + node.sysID + '"');
+          } else if (node.sysID) {
+            this.stream.write(' SYSTEM "' + node.sysID + '"');
+          }
+          if (node.children.length > 0) {
+            this.stream.write(" [");
+            this.stream.write(this.endline(node, options, level));
+            options.state = WriterState.InsideTag;
+            ref = node.children;
+            for (j2 = 0, len = ref.length; j2 < len; j2++) {
+              child = ref[j2];
+              this.writeChildNode(child, options, level + 1);
+            }
+            options.state = WriterState.CloseTag;
+            this.stream.write("]");
+          }
+          options.state = WriterState.CloseTag;
+          this.stream.write(options.spaceBeforeSlash + ">");
+          this.stream.write(this.endline(node, options, level));
+          options.state = WriterState.None;
+          return this.closeNode(node, options, level);
+        };
+        XMLStreamWriter2.prototype.element = function(node, options, level) {
+          var att, child, childNodeCount, firstChildNode, j2, len, name, prettySuppressed, ref, ref1;
+          level || (level = 0);
+          this.openNode(node, options, level);
+          options.state = WriterState.OpenTag;
+          this.stream.write(this.indent(node, options, level) + "<" + node.name);
+          ref = node.attribs;
+          for (name in ref) {
+            if (!hasProp.call(ref, name)) continue;
+            att = ref[name];
+            this.attribute(att, options, level);
+          }
+          childNodeCount = node.children.length;
+          firstChildNode = childNodeCount === 0 ? null : node.children[0];
+          if (childNodeCount === 0 || node.children.every(function(e) {
+            return (e.type === NodeType.Text || e.type === NodeType.Raw) && e.value === "";
+          })) {
+            if (options.allowEmpty) {
+              this.stream.write(">");
+              options.state = WriterState.CloseTag;
+              this.stream.write("</" + node.name + ">");
+            } else {
+              options.state = WriterState.CloseTag;
+              this.stream.write(options.spaceBeforeSlash + "/>");
+            }
+          } else if (options.pretty && childNodeCount === 1 && (firstChildNode.type === NodeType.Text || firstChildNode.type === NodeType.Raw) && firstChildNode.value != null) {
+            this.stream.write(">");
+            options.state = WriterState.InsideTag;
+            options.suppressPrettyCount++;
+            prettySuppressed = true;
+            this.writeChildNode(firstChildNode, options, level + 1);
+            options.suppressPrettyCount--;
+            prettySuppressed = false;
+            options.state = WriterState.CloseTag;
+            this.stream.write("</" + node.name + ">");
+          } else {
+            this.stream.write(">" + this.endline(node, options, level));
+            options.state = WriterState.InsideTag;
+            ref1 = node.children;
+            for (j2 = 0, len = ref1.length; j2 < len; j2++) {
+              child = ref1[j2];
+              this.writeChildNode(child, options, level + 1);
+            }
+            options.state = WriterState.CloseTag;
+            this.stream.write(this.indent(node, options, level) + "</" + node.name + ">");
+          }
+          this.stream.write(this.endline(node, options, level));
+          options.state = WriterState.None;
+          return this.closeNode(node, options, level);
+        };
+        XMLStreamWriter2.prototype.processingInstruction = function(node, options, level) {
+          return this.stream.write(XMLStreamWriter2.__super__.processingInstruction.call(this, node, options, level));
+        };
+        XMLStreamWriter2.prototype.raw = function(node, options, level) {
+          return this.stream.write(XMLStreamWriter2.__super__.raw.call(this, node, options, level));
+        };
+        XMLStreamWriter2.prototype.text = function(node, options, level) {
+          return this.stream.write(XMLStreamWriter2.__super__.text.call(this, node, options, level));
+        };
+        XMLStreamWriter2.prototype.dtdAttList = function(node, options, level) {
+          return this.stream.write(XMLStreamWriter2.__super__.dtdAttList.call(this, node, options, level));
+        };
+        XMLStreamWriter2.prototype.dtdElement = function(node, options, level) {
+          return this.stream.write(XMLStreamWriter2.__super__.dtdElement.call(this, node, options, level));
+        };
+        XMLStreamWriter2.prototype.dtdEntity = function(node, options, level) {
+          return this.stream.write(XMLStreamWriter2.__super__.dtdEntity.call(this, node, options, level));
+        };
+        XMLStreamWriter2.prototype.dtdNotation = function(node, options, level) {
+          return this.stream.write(XMLStreamWriter2.__super__.dtdNotation.call(this, node, options, level));
+        };
+        return XMLStreamWriter2;
+      })(XMLWriterBase);
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/index.js
+var require_lib4 = __commonJS({
+  "node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/index.js"(exports2, module2) {
+    (function() {
+      var NodeType, WriterState, XMLDOMImplementation, XMLDocument, XMLDocumentCB, XMLStreamWriter, XMLStringWriter, assign, isFunction, ref;
+      ref = require_Utility(), assign = ref.assign, isFunction = ref.isFunction;
+      XMLDOMImplementation = require_XMLDOMImplementation();
+      XMLDocument = require_XMLDocument();
+      XMLDocumentCB = require_XMLDocumentCB();
+      XMLStringWriter = require_XMLStringWriter();
+      XMLStreamWriter = require_XMLStreamWriter();
+      NodeType = require_NodeType();
+      WriterState = require_WriterState();
+      module2.exports.create = function(name, xmldec, doctype, options) {
+        var doc, root;
+        if (name == null) {
+          throw new Error("Root element needs a name.");
+        }
+        options = assign({}, xmldec, doctype, options);
+        doc = new XMLDocument(options);
+        root = doc.element(name);
+        if (!options.headless) {
+          doc.declaration(options);
+          if (options.pubID != null || options.sysID != null) {
+            doc.dtd(options);
+          }
+        }
+        return root;
+      };
+      module2.exports.begin = function(options, onData, onEnd) {
+        var ref1;
+        if (isFunction(options)) {
+          ref1 = [options, onData], onData = ref1[0], onEnd = ref1[1];
+          options = {};
+        }
+        if (onData) {
+          return new XMLDocumentCB(options, onData, onEnd);
+        } else {
+          return new XMLDocument(options);
+        }
+      };
+      module2.exports.stringWriter = function(options) {
+        return new XMLStringWriter(options);
+      };
+      module2.exports.streamWriter = function(stream, options) {
+        return new XMLStreamWriter(stream, options);
+      };
+      module2.exports.implementation = new XMLDOMImplementation();
+      module2.exports.nodeType = NodeType;
+      module2.exports.writerState = WriterState;
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xml2js@0.6.2/node_modules/xml2js/lib/builder.js
+var require_builder = __commonJS({
+  "node_modules/.pnpm/xml2js@0.6.2/node_modules/xml2js/lib/builder.js"(exports2) {
+    (function() {
+      "use strict";
+      var builder, defaults, escapeCDATA, requiresCDATA, wrapCDATA, hasProp = {}.hasOwnProperty;
+      builder = require_lib4();
+      defaults = require_defaults2().defaults;
+      requiresCDATA = function(entry) {
+        return typeof entry === "string" && (entry.indexOf("&") >= 0 || entry.indexOf(">") >= 0 || entry.indexOf("<") >= 0);
+      };
+      wrapCDATA = function(entry) {
+        return "<![CDATA[" + escapeCDATA(entry) + "]]>";
+      };
+      escapeCDATA = function(entry) {
+        return entry.replace("]]>", "]]]]><![CDATA[>");
+      };
+      exports2.Builder = (function() {
+        function Builder(opts) {
+          var key, ref, value;
+          this.options = {};
+          ref = defaults["0.2"];
+          for (key in ref) {
+            if (!hasProp.call(ref, key)) continue;
+            value = ref[key];
+            this.options[key] = value;
+          }
+          for (key in opts) {
+            if (!hasProp.call(opts, key)) continue;
+            value = opts[key];
+            this.options[key] = value;
+          }
+        }
+        Builder.prototype.buildObject = function(rootObj) {
+          var attrkey, charkey, render, rootElement, rootName;
+          attrkey = this.options.attrkey;
+          charkey = this.options.charkey;
+          if (Object.keys(rootObj).length === 1 && this.options.rootName === defaults["0.2"].rootName) {
+            rootName = Object.keys(rootObj)[0];
+            rootObj = rootObj[rootName];
+          } else {
+            rootName = this.options.rootName;
+          }
+          render = /* @__PURE__ */ (function(_this) {
+            return function(element, obj) {
+              var attr, child, entry, index, key, value;
+              if (typeof obj !== "object") {
+                if (_this.options.cdata && requiresCDATA(obj)) {
+                  element.raw(wrapCDATA(obj));
+                } else {
+                  element.txt(obj);
+                }
+              } else if (Array.isArray(obj)) {
+                for (index in obj) {
+                  if (!hasProp.call(obj, index)) continue;
+                  child = obj[index];
+                  for (key in child) {
+                    entry = child[key];
+                    element = render(element.ele(key), entry).up();
+                  }
+                }
+              } else {
+                for (key in obj) {
+                  if (!hasProp.call(obj, key)) continue;
+                  child = obj[key];
+                  if (key === attrkey) {
+                    if (typeof child === "object") {
+                      for (attr in child) {
+                        value = child[attr];
+                        element = element.att(attr, value);
+                      }
+                    }
+                  } else if (key === charkey) {
+                    if (_this.options.cdata && requiresCDATA(child)) {
+                      element = element.raw(wrapCDATA(child));
+                    } else {
+                      element = element.txt(child);
+                    }
+                  } else if (Array.isArray(child)) {
+                    for (index in child) {
+                      if (!hasProp.call(child, index)) continue;
+                      entry = child[index];
+                      if (typeof entry === "string") {
+                        if (_this.options.cdata && requiresCDATA(entry)) {
+                          element = element.ele(key).raw(wrapCDATA(entry)).up();
+                        } else {
+                          element = element.ele(key, entry).up();
+                        }
+                      } else {
+                        element = render(element.ele(key), entry).up();
+                      }
+                    }
+                  } else if (typeof child === "object") {
+                    element = render(element.ele(key), child).up();
+                  } else {
+                    if (typeof child === "string" && _this.options.cdata && requiresCDATA(child)) {
+                      element = element.ele(key).raw(wrapCDATA(child)).up();
+                    } else {
+                      if (child == null) {
+                        child = "";
+                      }
+                      element = element.ele(key, child.toString()).up();
+                    }
+                  }
+                }
+              }
+              return element;
+            };
+          })(this);
+          rootElement = builder.create(rootName, this.options.xmldec, this.options.doctype, {
+            headless: this.options.headless,
+            allowSurrogateChars: this.options.allowSurrogateChars
+          });
+          return render(rootElement, rootObj).end(this.options.renderOpts);
+        };
+        return Builder;
+      })();
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/sax@1.6.1/node_modules/sax/lib/sax.js
+var require_sax = __commonJS({
+  "node_modules/.pnpm/sax@1.6.1/node_modules/sax/lib/sax.js"(exports2) {
+    (function(sax) {
+      sax.parser = function(strict, opt) {
+        return new SAXParser(strict, opt);
+      };
+      sax.SAXParser = SAXParser;
+      sax.SAXStream = SAXStream;
+      sax.createStream = createStream;
+      sax.MAX_BUFFER_LENGTH = 64 * 1024;
+      var buffers = [
+        "comment",
+        "sgmlDecl",
+        "textNode",
+        "tagName",
+        "doctype",
+        "procInstName",
+        "procInstBody",
+        "entity",
+        "attribName",
+        "attribValue",
+        "cdata",
+        "script"
+      ];
+      sax.EVENTS = [
+        "text",
+        "processinginstruction",
+        "sgmldeclaration",
+        "doctype",
+        "comment",
+        "opentagstart",
+        "attribute",
+        "opentag",
+        "closetag",
+        "opencdata",
+        "cdata",
+        "closecdata",
+        "error",
+        "end",
+        "ready",
+        "script",
+        "opennamespace",
+        "closenamespace"
+      ];
+      function SAXParser(strict, opt) {
+        if (!(this instanceof SAXParser)) {
+          return new SAXParser(strict, opt);
+        }
+        var parser = this;
+        clearBuffers(parser);
+        parser.q = parser.c = "";
+        parser.bufferCheckPosition = sax.MAX_BUFFER_LENGTH;
+        parser.encoding = null;
+        parser.opt = opt || {};
+        parser.opt.lowercase = parser.opt.lowercase || parser.opt.lowercasetags;
+        parser.looseCase = parser.opt.lowercase ? "toLowerCase" : "toUpperCase";
+        parser.opt.maxEntityCount = parser.opt.maxEntityCount || 512;
+        parser.opt.maxEntityDepth = parser.opt.maxEntityDepth || 4;
+        parser.entityCount = parser.entityDepth = 0;
+        parser.tags = [];
+        parser.closed = parser.closedRoot = parser.sawRoot = false;
+        parser.tag = parser.error = null;
+        parser.strict = !!strict;
+        parser.noscript = !!(strict || parser.opt.noscript);
+        parser.state = S.BEGIN;
+        parser.strictEntities = parser.opt.strictEntities;
+        parser.ENTITIES = parser.strictEntities ? Object.create(sax.XML_ENTITIES) : Object.create(sax.ENTITIES);
+        parser.attribList = [];
+        if (parser.opt.xmlns) {
+          parser.ns = Object.create(rootNS);
+        }
+        if (parser.opt.unquotedAttributeValues === void 0) {
+          parser.opt.unquotedAttributeValues = !strict;
+        }
+        parser.trackPosition = parser.opt.position !== false;
+        if (parser.trackPosition) {
+          parser.position = parser.line = parser.column = 0;
+        }
+        emit(parser, "onready");
+      }
+      if (!Object.create) {
+        Object.create = function(o) {
+          function F() {
+          }
+          F.prototype = o;
+          var newf = new F();
+          return newf;
+        };
+      }
+      if (!Object.keys) {
+        Object.keys = function(o) {
+          var a = [];
+          for (var i in o) if (o.hasOwnProperty(i)) a.push(i);
+          return a;
+        };
+      }
+      function checkBufferLength(parser) {
+        var maxAllowed = Math.max(sax.MAX_BUFFER_LENGTH, 10);
+        var maxActual = 0;
+        for (var i = 0, l = buffers.length; i < l; i++) {
+          var len = parser[buffers[i]].length;
+          if (len > maxAllowed) {
+            switch (buffers[i]) {
+              case "textNode":
+                closeText(parser);
+                break;
+              case "cdata":
+                emitNode(parser, "oncdata", parser.cdata);
+                parser.cdata = "";
+                break;
+              case "script":
+                emitNode(parser, "onscript", parser.script);
+                parser.script = "";
+                break;
+              default:
+                error(parser, "Max buffer length exceeded: " + buffers[i]);
+            }
+          }
+          maxActual = Math.max(maxActual, len);
+        }
+        var m2 = sax.MAX_BUFFER_LENGTH - maxActual;
+        parser.bufferCheckPosition = m2 + parser.position;
+      }
+      function clearBuffers(parser) {
+        for (var i = 0, l = buffers.length; i < l; i++) {
+          parser[buffers[i]] = "";
+        }
+      }
+      function flushBuffers(parser) {
+        closeText(parser);
+        if (parser.cdata !== "") {
+          emitNode(parser, "oncdata", parser.cdata);
+          parser.cdata = "";
+        }
+        if (parser.script !== "") {
+          emitNode(parser, "onscript", parser.script);
+          parser.script = "";
+        }
+      }
+      SAXParser.prototype = {
+        end: function() {
+          end(this);
+        },
+        write,
+        resume: function() {
+          this.error = null;
+          return this;
+        },
+        close: function() {
+          return this.write(null);
+        },
+        flush: function() {
+          flushBuffers(this);
+        }
+      };
+      var Stream;
+      try {
+        Stream = require("stream").Stream;
+      } catch (ex) {
+        Stream = function() {
+        };
+      }
+      if (!Stream) Stream = function() {
+      };
+      var streamWraps = sax.EVENTS.filter(function(ev) {
+        return ev !== "error" && ev !== "end";
+      });
+      function createStream(strict, opt) {
+        return new SAXStream(strict, opt);
+      }
+      function determineBufferEncoding(data, isEnd) {
+        if (data.length >= 2) {
+          if (data[0] === 255 && data[1] === 254) {
+            return "utf-16le";
+          }
+          if (data[0] === 254 && data[1] === 255) {
+            return "utf-16be";
+          }
+        }
+        if (data.length >= 3 && data[0] === 239 && data[1] === 187 && data[2] === 191) {
+          return "utf8";
+        }
+        if (data.length >= 4) {
+          if (data[0] === 60 && data[1] === 0 && data[2] === 63 && data[3] === 0) {
+            return "utf-16le";
+          }
+          if (data[0] === 0 && data[1] === 60 && data[2] === 0 && data[3] === 63) {
+            return "utf-16be";
+          }
+          return "utf8";
+        }
+        return isEnd ? "utf8" : null;
+      }
+      function SAXStream(strict, opt) {
+        if (!(this instanceof SAXStream)) {
+          return new SAXStream(strict, opt);
+        }
+        Stream.apply(this);
+        this._parser = new SAXParser(strict, opt);
+        this.writable = true;
+        this.readable = true;
+        var me = this;
+        this._parser.onend = function() {
+          me.emit("end");
+        };
+        this._parser.onerror = function(er) {
+          me.emit("error", er);
+          me._parser.error = null;
+        };
+        this._decoder = null;
+        this._decoderBuffer = null;
+        streamWraps.forEach(function(ev) {
+          Object.defineProperty(me, "on" + ev, {
+            get: function() {
+              return me._parser["on" + ev];
+            },
+            set: function(h) {
+              if (!h) {
+                me.removeAllListeners(ev);
+                me._parser["on" + ev] = h;
+                return h;
+              }
+              me.on(ev, h);
+            },
+            enumerable: true,
+            configurable: false
+          });
+        });
+      }
+      SAXStream.prototype = Object.create(Stream.prototype, {
+        constructor: {
+          value: SAXStream
+        }
+      });
+      SAXStream.prototype._decodeBuffer = function(data, isEnd) {
+        if (this._decoderBuffer) {
+          data = Buffer.concat([this._decoderBuffer, data]);
+          this._decoderBuffer = null;
+        }
+        if (!this._decoder) {
+          var encoding = determineBufferEncoding(data, isEnd);
+          if (!encoding) {
+            this._decoderBuffer = data;
+            return "";
+          }
+          this._parser.encoding = encoding;
+          this._decoder = new TextDecoder(encoding);
+        }
+        return this._decoder.decode(data, { stream: !isEnd });
+      };
+      SAXStream.prototype.write = function(data) {
+        if (typeof Buffer === "function" && typeof Buffer.isBuffer === "function" && Buffer.isBuffer(data)) {
+          data = this._decodeBuffer(data, false);
+        } else if (this._decoderBuffer) {
+          var remaining = this._decodeBuffer(Buffer.alloc(0), true);
+          if (remaining) {
+            this._parser.write(remaining);
+            this.emit("data", remaining);
+          }
+        }
+        this._parser.write(data.toString());
+        this.emit("data", data);
+        return true;
+      };
+      SAXStream.prototype.end = function(chunk) {
+        if (chunk && chunk.length) {
+          this.write(chunk);
+        }
+        if (this._decoderBuffer) {
+          var finalChunk = this._decodeBuffer(Buffer.alloc(0), true);
+          if (finalChunk) {
+            this._parser.write(finalChunk);
+            this.emit("data", finalChunk);
+          }
+        } else if (this._decoder) {
+          var remaining = this._decoder.decode();
+          if (remaining) {
+            this._parser.write(remaining);
+            this.emit("data", remaining);
+          }
+        }
+        this._parser.end();
+        return true;
+      };
+      SAXStream.prototype.on = function(ev, handler) {
+        var me = this;
+        if (!me._parser["on" + ev] && streamWraps.indexOf(ev) !== -1) {
+          me._parser["on" + ev] = function() {
+            var args = arguments.length === 1 ? [arguments[0]] : Array.apply(null, arguments);
+            args.splice(0, 0, ev);
+            me.emit.apply(me, args);
+          };
+        }
+        return Stream.prototype.on.call(me, ev, handler);
+      };
+      var CDATAre = /^\[CDATA\[$/i;
+      var DOCTYPEre = /^DOCTYPE$/i;
+      var XML_NAMESPACE = "http://www.w3.org/XML/1998/namespace";
+      var XMLNS_NAMESPACE = "http://www.w3.org/2000/xmlns/";
+      var rootNS = { xml: XML_NAMESPACE, xmlns: XMLNS_NAMESPACE };
+      var nameStart = /[:_A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/;
+      var nameBody = /[:_A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u00B7\u0300-\u036F\u203F-\u2040.\d-]/;
+      var entityStart = /[#:_A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/;
+      var entityBody = /[#:_A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u00B7\u0300-\u036F\u203F-\u2040.\d-]/;
+      function isWhitespace(c) {
+        return c === " " || c === "\n" || c === "\r" || c === "	";
+      }
+      function isQuote(c) {
+        return c === '"' || c === "'";
+      }
+      function isAttribEnd(c) {
+        return c === ">" || isWhitespace(c);
+      }
+      function isMatch(regex, c) {
+        return regex.test(c);
+      }
+      function notMatch(regex, c) {
+        return !isMatch(regex, c);
+      }
+      var S = 0;
+      sax.STATE = {
+        BEGIN: S++,
+        // leading byte order mark or whitespace
+        BEGIN_WHITESPACE: S++,
+        // leading whitespace
+        TEXT: S++,
+        // general stuff
+        TEXT_ENTITY: S++,
+        // &amp and such.
+        OPEN_WAKA: S++,
+        // <
+        SGML_DECL: S++,
+        // <!BLARG
+        SGML_DECL_QUOTED: S++,
+        // <!BLARG foo "bar
+        DOCTYPE: S++,
+        // <!DOCTYPE
+        DOCTYPE_QUOTED: S++,
+        // <!DOCTYPE "//blah
+        DOCTYPE_DTD: S++,
+        // <!DOCTYPE "//blah" [ ...
+        DOCTYPE_DTD_QUOTED: S++,
+        // <!DOCTYPE "//blah" [ "foo
+        COMMENT_STARTING: S++,
+        // <!-
+        COMMENT: S++,
+        // <!--
+        COMMENT_ENDING: S++,
+        // <!-- blah -
+        COMMENT_ENDED: S++,
+        // <!-- blah --
+        CDATA: S++,
+        // <![CDATA[ something
+        CDATA_ENDING: S++,
+        // ]
+        CDATA_ENDING_2: S++,
+        // ]]
+        PROC_INST: S++,
+        // <?hi
+        PROC_INST_BODY: S++,
+        // <?hi there
+        PROC_INST_ENDING: S++,
+        // <?hi "there" ?
+        OPEN_TAG: S++,
+        // <strong
+        OPEN_TAG_SLASH: S++,
+        // <strong /
+        ATTRIB: S++,
+        // <a
+        ATTRIB_NAME: S++,
+        // <a foo
+        ATTRIB_NAME_SAW_WHITE: S++,
+        // <a foo _
+        ATTRIB_VALUE: S++,
+        // <a foo=
+        ATTRIB_VALUE_QUOTED: S++,
+        // <a foo="bar
+        ATTRIB_VALUE_CLOSED: S++,
+        // <a foo="bar"
+        ATTRIB_VALUE_UNQUOTED: S++,
+        // <a foo=bar
+        ATTRIB_VALUE_ENTITY_Q: S++,
+        // <foo bar="&quot;"
+        ATTRIB_VALUE_ENTITY_U: S++,
+        // <foo bar=&quot
+        CLOSE_TAG: S++,
+        // </a
+        CLOSE_TAG_SAW_WHITE: S++,
+        // </a   >
+        SCRIPT: S++,
+        // <script> ...
+        SCRIPT_ENDING: S++
+        // <script> ... <
+      };
+      sax.XML_ENTITIES = Object.assign(/* @__PURE__ */ Object.create(null), {
+        amp: "&",
+        gt: ">",
+        lt: "<",
+        quot: '"',
+        apos: "'"
+      });
+      sax.ENTITIES = Object.assign(/* @__PURE__ */ Object.create(null), {
+        amp: "&",
+        gt: ">",
+        lt: "<",
+        quot: '"',
+        apos: "'",
+        AElig: 198,
+        Aacute: 193,
+        Acirc: 194,
+        Agrave: 192,
+        Aring: 197,
+        Atilde: 195,
+        Auml: 196,
+        Ccedil: 199,
+        ETH: 208,
+        Eacute: 201,
+        Ecirc: 202,
+        Egrave: 200,
+        Euml: 203,
+        Iacute: 205,
+        Icirc: 206,
+        Igrave: 204,
+        Iuml: 207,
+        Ntilde: 209,
+        Oacute: 211,
+        Ocirc: 212,
+        Ograve: 210,
+        Oslash: 216,
+        Otilde: 213,
+        Ouml: 214,
+        THORN: 222,
+        Uacute: 218,
+        Ucirc: 219,
+        Ugrave: 217,
+        Uuml: 220,
+        Yacute: 221,
+        aacute: 225,
+        acirc: 226,
+        aelig: 230,
+        agrave: 224,
+        aring: 229,
+        atilde: 227,
+        auml: 228,
+        ccedil: 231,
+        eacute: 233,
+        ecirc: 234,
+        egrave: 232,
+        eth: 240,
+        euml: 235,
+        iacute: 237,
+        icirc: 238,
+        igrave: 236,
+        iuml: 239,
+        ntilde: 241,
+        oacute: 243,
+        ocirc: 244,
+        ograve: 242,
+        oslash: 248,
+        otilde: 245,
+        ouml: 246,
+        szlig: 223,
+        thorn: 254,
+        uacute: 250,
+        ucirc: 251,
+        ugrave: 249,
+        uuml: 252,
+        yacute: 253,
+        yuml: 255,
+        copy: 169,
+        reg: 174,
+        nbsp: 160,
+        iexcl: 161,
+        cent: 162,
+        pound: 163,
+        curren: 164,
+        yen: 165,
+        brvbar: 166,
+        sect: 167,
+        uml: 168,
+        ordf: 170,
+        laquo: 171,
+        not: 172,
+        shy: 173,
+        macr: 175,
+        deg: 176,
+        plusmn: 177,
+        sup1: 185,
+        sup2: 178,
+        sup3: 179,
+        acute: 180,
+        micro: 181,
+        para: 182,
+        middot: 183,
+        cedil: 184,
+        ordm: 186,
+        raquo: 187,
+        frac14: 188,
+        frac12: 189,
+        frac34: 190,
+        iquest: 191,
+        times: 215,
+        divide: 247,
+        OElig: 338,
+        oelig: 339,
+        Scaron: 352,
+        scaron: 353,
+        Yuml: 376,
+        fnof: 402,
+        circ: 710,
+        tilde: 732,
+        Alpha: 913,
+        Beta: 914,
+        Gamma: 915,
+        Delta: 916,
+        Epsilon: 917,
+        Zeta: 918,
+        Eta: 919,
+        Theta: 920,
+        Iota: 921,
+        Kappa: 922,
+        Lambda: 923,
+        Mu: 924,
+        Nu: 925,
+        Xi: 926,
+        Omicron: 927,
+        Pi: 928,
+        Rho: 929,
+        Sigma: 931,
+        Tau: 932,
+        Upsilon: 933,
+        Phi: 934,
+        Chi: 935,
+        Psi: 936,
+        Omega: 937,
+        alpha: 945,
+        beta: 946,
+        gamma: 947,
+        delta: 948,
+        epsilon: 949,
+        zeta: 950,
+        eta: 951,
+        theta: 952,
+        iota: 953,
+        kappa: 954,
+        lambda: 955,
+        mu: 956,
+        nu: 957,
+        xi: 958,
+        omicron: 959,
+        pi: 960,
+        rho: 961,
+        sigmaf: 962,
+        sigma: 963,
+        tau: 964,
+        upsilon: 965,
+        phi: 966,
+        chi: 967,
+        psi: 968,
+        omega: 969,
+        thetasym: 977,
+        upsih: 978,
+        piv: 982,
+        ensp: 8194,
+        emsp: 8195,
+        thinsp: 8201,
+        zwnj: 8204,
+        zwj: 8205,
+        lrm: 8206,
+        rlm: 8207,
+        ndash: 8211,
+        mdash: 8212,
+        lsquo: 8216,
+        rsquo: 8217,
+        sbquo: 8218,
+        ldquo: 8220,
+        rdquo: 8221,
+        bdquo: 8222,
+        dagger: 8224,
+        Dagger: 8225,
+        bull: 8226,
+        hellip: 8230,
+        permil: 8240,
+        prime: 8242,
+        Prime: 8243,
+        lsaquo: 8249,
+        rsaquo: 8250,
+        oline: 8254,
+        frasl: 8260,
+        euro: 8364,
+        image: 8465,
+        weierp: 8472,
+        real: 8476,
+        trade: 8482,
+        alefsym: 8501,
+        larr: 8592,
+        uarr: 8593,
+        rarr: 8594,
+        darr: 8595,
+        harr: 8596,
+        crarr: 8629,
+        lArr: 8656,
+        uArr: 8657,
+        rArr: 8658,
+        dArr: 8659,
+        hArr: 8660,
+        forall: 8704,
+        part: 8706,
+        exist: 8707,
+        empty: 8709,
+        nabla: 8711,
+        isin: 8712,
+        notin: 8713,
+        ni: 8715,
+        prod: 8719,
+        sum: 8721,
+        minus: 8722,
+        lowast: 8727,
+        radic: 8730,
+        prop: 8733,
+        infin: 8734,
+        ang: 8736,
+        and: 8743,
+        or: 8744,
+        cap: 8745,
+        cup: 8746,
+        int: 8747,
+        there4: 8756,
+        sim: 8764,
+        cong: 8773,
+        asymp: 8776,
+        ne: 8800,
+        equiv: 8801,
+        le: 8804,
+        ge: 8805,
+        sub: 8834,
+        sup: 8835,
+        nsub: 8836,
+        sube: 8838,
+        supe: 8839,
+        oplus: 8853,
+        otimes: 8855,
+        perp: 8869,
+        sdot: 8901,
+        lceil: 8968,
+        rceil: 8969,
+        lfloor: 8970,
+        rfloor: 8971,
+        lang: 9001,
+        rang: 9002,
+        loz: 9674,
+        spades: 9824,
+        clubs: 9827,
+        hearts: 9829,
+        diams: 9830
+      });
+      Object.keys(sax.ENTITIES).forEach(function(key) {
+        var e = sax.ENTITIES[key];
+        var s3 = typeof e === "number" ? String.fromCharCode(e) : e;
+        sax.ENTITIES[key] = s3;
+      });
+      for (var s2 in sax.STATE) {
+        sax.STATE[sax.STATE[s2]] = s2;
+      }
+      S = sax.STATE;
+      function emit(parser, event, data) {
+        parser[event] && parser[event](data);
+      }
+      function getDeclaredEncoding(body) {
+        var match = body && body.match(/(?:^|\s)encoding\s*=\s*(['"])([^'"]+)\1/i);
+        return match ? match[2] : null;
+      }
+      function normalizeEncodingName(encoding) {
+        if (!encoding) {
+          return null;
+        }
+        return encoding.toLowerCase().replace(/[^a-z0-9]/g, "");
+      }
+      function encodingsMatch(detectedEncoding, declaredEncoding) {
+        const detected = normalizeEncodingName(detectedEncoding);
+        const declared = normalizeEncodingName(declaredEncoding);
+        if (!detected || !declared) {
+          return true;
+        }
+        if (declared === "utf16") {
+          return detected === "utf16le" || detected === "utf16be";
+        }
+        return detected === declared;
+      }
+      function validateXmlDeclarationEncoding(parser, data) {
+        if (!parser.strict || !parser.encoding || !data || data.name !== "xml") {
+          return;
+        }
+        var declaredEncoding = getDeclaredEncoding(data.body);
+        if (declaredEncoding && !encodingsMatch(parser.encoding, declaredEncoding)) {
+          strictFail(
+            parser,
+            "XML declaration encoding " + declaredEncoding + " does not match detected stream encoding " + parser.encoding.toUpperCase()
+          );
+        }
+      }
+      function emitNode(parser, nodeType, data) {
+        if (parser.textNode) closeText(parser);
+        emit(parser, nodeType, data);
+      }
+      function closeText(parser) {
+        parser.textNode = textopts(parser.opt, parser.textNode);
+        if (parser.textNode) emit(parser, "ontext", parser.textNode);
+        parser.textNode = "";
+      }
+      function textopts(opt, text) {
+        if (opt.trim) text = text.trim();
+        if (opt.normalize) text = text.replace(/\s+/g, " ");
+        return text;
+      }
+      function error(parser, er) {
+        closeText(parser);
+        if (parser.trackPosition) {
+          er += "\nLine: " + parser.line + "\nColumn: " + parser.column + "\nChar: " + parser.c;
+        }
+        er = new Error(er);
+        parser.error = er;
+        emit(parser, "onerror", er);
+        return parser;
+      }
+      function end(parser) {
+        if (parser.sawRoot && !parser.closedRoot)
+          strictFail(parser, "Unclosed root tag");
+        if (parser.state !== S.BEGIN && parser.state !== S.BEGIN_WHITESPACE && parser.state !== S.TEXT) {
+          error(parser, "Unexpected end");
+        }
+        closeText(parser);
+        parser.c = "";
+        parser.closed = true;
+        emit(parser, "onend");
+        SAXParser.call(parser, parser.strict, parser.opt);
+        return parser;
+      }
+      function strictFail(parser, message) {
+        if (typeof parser !== "object" || !(parser instanceof SAXParser)) {
+          throw new Error("bad call to strictFail");
+        }
+        if (parser.strict) {
+          error(parser, message);
+        }
+      }
+      function newTag(parser) {
+        if (!parser.strict) parser.tagName = parser.tagName[parser.looseCase]();
+        var parent = parser.tags[parser.tags.length - 1] || parser;
+        var tag = parser.tag = { name: parser.tagName, attributes: {} };
+        if (parser.opt.xmlns) {
+          tag.ns = parent.ns;
+        }
+        parser.attribList.length = 0;
+        emitNode(parser, "onopentagstart", tag);
+      }
+      function qname(name, attribute) {
+        var i = name.indexOf(":");
+        var qualName = i < 0 ? ["", name] : name.split(":");
+        var prefix = qualName[0];
+        var local = qualName[1];
+        if (attribute && name === "xmlns") {
+          prefix = "xmlns";
+          local = "";
+        }
+        return { prefix, local };
+      }
+      function attrib(parser) {
+        if (!parser.strict) {
+          parser.attribName = parser.attribName[parser.looseCase]();
+        }
+        if (parser.attribList.indexOf(parser.attribName) !== -1 || parser.tag.attributes.hasOwnProperty(parser.attribName)) {
+          parser.attribName = parser.attribValue = "";
+          return;
+        }
+        if (parser.opt.xmlns) {
+          var qn = qname(parser.attribName, true);
+          var prefix = qn.prefix;
+          var local = qn.local;
+          if (prefix === "xmlns") {
+            if (local === "xml" && parser.attribValue !== XML_NAMESPACE) {
+              strictFail(
+                parser,
+                "xml: prefix must be bound to " + XML_NAMESPACE + "\nActual: " + parser.attribValue
+              );
+            } else if (local === "xmlns" && parser.attribValue !== XMLNS_NAMESPACE) {
+              strictFail(
+                parser,
+                "xmlns: prefix must be bound to " + XMLNS_NAMESPACE + "\nActual: " + parser.attribValue
+              );
+            } else {
+              var tag = parser.tag;
+              var parent = parser.tags[parser.tags.length - 1] || parser;
+              if (tag.ns === parent.ns) {
+                tag.ns = Object.create(parent.ns);
+              }
+              tag.ns[local] = parser.attribValue;
+            }
+          }
+          parser.attribList.push([parser.attribName, parser.attribValue]);
+        } else {
+          parser.tag.attributes[parser.attribName] = parser.attribValue;
+          emitNode(parser, "onattribute", {
+            name: parser.attribName,
+            value: parser.attribValue
+          });
+        }
+        parser.attribName = parser.attribValue = "";
+      }
+      function openTag(parser, selfClosing) {
+        if (parser.opt.xmlns) {
+          var tag = parser.tag;
+          var qn = qname(parser.tagName);
+          tag.prefix = qn.prefix;
+          tag.local = qn.local;
+          tag.uri = tag.ns[qn.prefix] || "";
+          if (tag.prefix && !tag.uri) {
+            strictFail(
+              parser,
+              "Unbound namespace prefix: " + JSON.stringify(parser.tagName)
+            );
+            tag.uri = qn.prefix;
+          }
+          var parent = parser.tags[parser.tags.length - 1] || parser;
+          if (tag.ns && parent.ns !== tag.ns) {
+            Object.keys(tag.ns).forEach(function(p2) {
+              emitNode(parser, "onopennamespace", {
+                prefix: p2,
+                uri: tag.ns[p2]
+              });
+            });
+          }
+          for (var i = 0, l = parser.attribList.length; i < l; i++) {
+            var nv = parser.attribList[i];
+            var name = nv[0];
+            var value = nv[1];
+            var qualName = qname(name, true);
+            var prefix = qualName.prefix;
+            var local = qualName.local;
+            var uri = prefix === "" ? "" : tag.ns[prefix] || "";
+            var a = {
+              name,
+              value,
+              prefix,
+              local,
+              uri
+            };
+            if (prefix && prefix !== "xmlns" && !uri) {
+              strictFail(
+                parser,
+                "Unbound namespace prefix: " + JSON.stringify(prefix)
+              );
+              a.uri = prefix;
+            }
+            parser.tag.attributes[name] = a;
+            emitNode(parser, "onattribute", a);
+          }
+          parser.attribList.length = 0;
+        }
+        parser.tag.isSelfClosing = !!selfClosing;
+        parser.sawRoot = true;
+        parser.tags.push(parser.tag);
+        emitNode(parser, "onopentag", parser.tag);
+        if (!selfClosing) {
+          if (!parser.noscript && parser.tagName.toLowerCase() === "script") {
+            parser.state = S.SCRIPT;
+          } else {
+            parser.state = S.TEXT;
+          }
+          parser.tag = null;
+          parser.tagName = "";
+        }
+        parser.attribName = parser.attribValue = "";
+        parser.attribList.length = 0;
+      }
+      function closeTag(parser) {
+        if (!parser.tagName) {
+          strictFail(parser, "Weird empty close tag.");
+          parser.textNode += "</>";
+          parser.state = S.TEXT;
+          return;
+        }
+        if (parser.script) {
+          if (parser.tagName !== "script") {
+            parser.script += "</" + parser.tagName + ">";
+            parser.tagName = "";
+            parser.state = S.SCRIPT;
+            return;
+          }
+          emitNode(parser, "onscript", parser.script);
+          parser.script = "";
+        }
+        var t = parser.tags.length;
+        var tagName = parser.tagName;
+        if (!parser.strict) {
+          tagName = tagName[parser.looseCase]();
+        }
+        var closeTo = tagName;
+        while (t--) {
+          var close = parser.tags[t];
+          if (close.name !== closeTo) {
+            strictFail(parser, "Unexpected close tag");
+          } else {
+            break;
+          }
+        }
+        if (t < 0) {
+          strictFail(parser, "Unmatched closing tag: " + parser.tagName);
+          parser.textNode += "</" + parser.tagName + ">";
+          parser.state = S.TEXT;
+          return;
+        }
+        parser.tagName = tagName;
+        var s3 = parser.tags.length;
+        while (s3-- > t) {
+          var tag = parser.tag = parser.tags.pop();
+          parser.tagName = parser.tag.name;
+          emitNode(parser, "onclosetag", parser.tagName);
+          var x2 = {};
+          for (var i in tag.ns) {
+            x2[i] = tag.ns[i];
+          }
+          var parent = parser.tags[parser.tags.length - 1] || parser;
+          if (parser.opt.xmlns && tag.ns !== parent.ns) {
+            Object.keys(tag.ns).forEach(function(p2) {
+              var n = tag.ns[p2];
+              emitNode(parser, "onclosenamespace", { prefix: p2, uri: n });
+            });
+          }
+        }
+        if (t === 0) parser.closedRoot = true;
+        parser.tagName = parser.attribValue = parser.attribName = "";
+        parser.attribList.length = 0;
+        parser.state = S.TEXT;
+      }
+      function parseEntity(parser) {
+        var entity = parser.entity;
+        var entityLC = entity.toLowerCase();
+        var num;
+        var numStr = "";
+        if (parser.ENTITIES[entity]) {
+          return parser.ENTITIES[entity];
+        }
+        if (parser.ENTITIES[entityLC]) {
+          return parser.ENTITIES[entityLC];
+        }
+        entity = entityLC;
+        if (entity.charAt(0) === "#") {
+          if (entity.charAt(1) === "x") {
+            entity = entity.slice(2);
+            num = parseInt(entity, 16);
+            numStr = num.toString(16);
+          } else {
+            entity = entity.slice(1);
+            num = parseInt(entity, 10);
+            numStr = num.toString(10);
+          }
+        }
+        entity = entity.replace(/^0+/, "");
+        if (isNaN(num) || numStr.toLowerCase() !== entity || num < 0 || num > 1114111 || !isXmlChar(num)) {
+          strictFail(parser, "Invalid character entity");
+          return "&" + parser.entity + ";";
+        }
+        return String.fromCodePoint(num);
+      }
+      function isXmlChar(num) {
+        return num === 9 || num === 10 || num === 13 || num >= 32 && num <= 55295 || num >= 57344 && num <= 65533 || num >= 65536 && num <= 1114111;
+      }
+      function beginWhiteSpace(parser, c) {
+        if (c === "<") {
+          parser.state = S.OPEN_WAKA;
+          parser.startTagPosition = parser.position;
+        } else if (!isWhitespace(c)) {
+          strictFail(parser, "Non-whitespace before first tag.");
+          parser.textNode = c;
+          parser.state = S.TEXT;
+        }
+      }
+      function charAt(chunk, i) {
+        var result = "";
+        if (i < chunk.length) {
+          result = chunk.charAt(i);
+        }
+        return result;
+      }
+      function write(chunk) {
+        var parser = this;
+        if (this.error) {
+          throw this.error;
+        }
+        if (parser.closed) {
+          return error(
+            parser,
+            "Cannot write after close. Assign an onready handler."
+          );
+        }
+        if (chunk === null) {
+          return end(parser);
+        }
+        if (typeof chunk === "object") {
+          chunk = chunk.toString();
+        }
+        var i = 0;
+        var c = "";
+        while (true) {
+          c = charAt(chunk, i++);
+          parser.c = c;
+          if (!c) {
+            break;
+          }
+          if (parser.trackPosition) {
+            parser.position++;
+            if (c === "\n") {
+              parser.line++;
+              parser.column = 0;
+            } else {
+              parser.column++;
+            }
+          }
+          switch (parser.state) {
+            case S.BEGIN:
+              parser.state = S.BEGIN_WHITESPACE;
+              if (c === "\uFEFF") {
+                continue;
+              }
+              beginWhiteSpace(parser, c);
+              continue;
+            case S.BEGIN_WHITESPACE:
+              beginWhiteSpace(parser, c);
+              continue;
+            case S.TEXT:
+              if (parser.sawRoot && !parser.closedRoot) {
+                var starti = i - 1;
+                while (c && c !== "<" && c !== "&") {
+                  c = charAt(chunk, i++);
+                  if (c && parser.trackPosition) {
+                    parser.position++;
+                    if (c === "\n") {
+                      parser.line++;
+                      parser.column = 0;
+                    } else {
+                      parser.column++;
+                    }
+                  }
+                }
+                parser.textNode += chunk.substring(starti, i - 1);
+              }
+              if (c === "<" && !(parser.sawRoot && parser.closedRoot && !parser.strict)) {
+                parser.state = S.OPEN_WAKA;
+                parser.startTagPosition = parser.position;
+              } else {
+                if (!isWhitespace(c) && (!parser.sawRoot || parser.closedRoot)) {
+                  strictFail(parser, "Text data outside of root node.");
+                }
+                if (c === "&") {
+                  parser.state = S.TEXT_ENTITY;
+                } else {
+                  parser.textNode += c;
+                }
+              }
+              continue;
+            case S.SCRIPT:
+              if (c === "<") {
+                parser.state = S.SCRIPT_ENDING;
+              } else {
+                parser.script += c;
+              }
+              continue;
+            case S.SCRIPT_ENDING:
+              if (c === "/") {
+                parser.state = S.CLOSE_TAG;
+              } else {
+                parser.script += "<" + c;
+                parser.state = S.SCRIPT;
+              }
+              continue;
+            case S.OPEN_WAKA:
+              if (c === "!") {
+                parser.state = S.SGML_DECL;
+                parser.sgmlDecl = "";
+              } else if (isWhitespace(c)) {
+              } else if (isMatch(nameStart, c)) {
+                parser.state = S.OPEN_TAG;
+                parser.tagName = c;
+              } else if (c === "/") {
+                parser.state = S.CLOSE_TAG;
+                parser.tagName = "";
+              } else if (c === "?") {
+                parser.state = S.PROC_INST;
+                parser.procInstName = parser.procInstBody = "";
+              } else {
+                strictFail(parser, "Unencoded <");
+                if (parser.startTagPosition + 1 < parser.position) {
+                  var pad = parser.position - parser.startTagPosition;
+                  c = new Array(pad).join(" ") + c;
+                }
+                parser.textNode += "<" + c;
+                parser.state = S.TEXT;
+              }
+              continue;
+            case S.SGML_DECL:
+              if (parser.sgmlDecl + c === "--") {
+                parser.state = S.COMMENT;
+                parser.comment = "";
+                parser.sgmlDecl = "";
+                continue;
+              }
+              if (parser.doctype && parser.doctype !== true && parser.sgmlDecl) {
+                parser.state = S.DOCTYPE_DTD;
+                parser.doctype += "<!" + parser.sgmlDecl + c;
+                parser.sgmlDecl = "";
+              } else if (CDATAre.test(parser.sgmlDecl + c)) {
+                emitNode(parser, "onopencdata");
+                parser.state = S.CDATA;
+                parser.sgmlDecl = "";
+                parser.cdata = "";
+              } else if (DOCTYPEre.test(parser.sgmlDecl + c)) {
+                parser.state = S.DOCTYPE;
+                if (parser.doctype || parser.sawRoot) {
+                  strictFail(
+                    parser,
+                    "Inappropriately located doctype declaration"
+                  );
+                }
+                parser.doctype = "";
+                parser.sgmlDecl = "";
+              } else if (c === ">") {
+                emitNode(parser, "onsgmldeclaration", parser.sgmlDecl);
+                parser.sgmlDecl = "";
+                parser.state = S.TEXT;
+              } else if (isQuote(c)) {
+                parser.state = S.SGML_DECL_QUOTED;
+                parser.sgmlDecl += c;
+              } else {
+                parser.sgmlDecl += c;
+              }
+              continue;
+            case S.SGML_DECL_QUOTED:
+              if (c === parser.q) {
+                parser.state = S.SGML_DECL;
+                parser.q = "";
+              }
+              parser.sgmlDecl += c;
+              continue;
+            case S.DOCTYPE:
+              if (c === ">") {
+                parser.state = S.TEXT;
+                emitNode(parser, "ondoctype", parser.doctype);
+                parser.doctype = true;
+              } else {
+                parser.doctype += c;
+                if (c === "[") {
+                  parser.state = S.DOCTYPE_DTD;
+                } else if (isQuote(c)) {
+                  parser.state = S.DOCTYPE_QUOTED;
+                  parser.q = c;
+                }
+              }
+              continue;
+            case S.DOCTYPE_QUOTED:
+              parser.doctype += c;
+              if (c === parser.q) {
+                parser.q = "";
+                parser.state = S.DOCTYPE;
+              }
+              continue;
+            case S.DOCTYPE_DTD:
+              if (c === "]") {
+                parser.doctype += c;
+                parser.state = S.DOCTYPE;
+              } else if (c === "<") {
+                parser.state = S.OPEN_WAKA;
+                parser.startTagPosition = parser.position;
+              } else if (isQuote(c)) {
+                parser.doctype += c;
+                parser.state = S.DOCTYPE_DTD_QUOTED;
+                parser.q = c;
+              } else {
+                parser.doctype += c;
+              }
+              continue;
+            case S.DOCTYPE_DTD_QUOTED:
+              parser.doctype += c;
+              if (c === parser.q) {
+                parser.state = S.DOCTYPE_DTD;
+                parser.q = "";
+              }
+              continue;
+            case S.COMMENT:
+              if (c === "-") {
+                parser.state = S.COMMENT_ENDING;
+              } else {
+                parser.comment += c;
+              }
+              continue;
+            case S.COMMENT_ENDING:
+              if (c === "-") {
+                parser.state = S.COMMENT_ENDED;
+                parser.comment = textopts(parser.opt, parser.comment);
+                if (parser.comment) {
+                  emitNode(parser, "oncomment", parser.comment);
+                }
+                parser.comment = "";
+              } else {
+                parser.comment += "-" + c;
+                parser.state = S.COMMENT;
+              }
+              continue;
+            case S.COMMENT_ENDED:
+              if (c !== ">") {
+                strictFail(parser, "Malformed comment");
+                parser.comment += "--" + c;
+                parser.state = S.COMMENT;
+              } else if (parser.doctype && parser.doctype !== true) {
+                parser.state = S.DOCTYPE_DTD;
+              } else {
+                parser.state = S.TEXT;
+              }
+              continue;
+            case S.CDATA:
+              var starti = i - 1;
+              while (c && c !== "]") {
+                c = charAt(chunk, i++);
+                if (c && parser.trackPosition) {
+                  parser.position++;
+                  if (c === "\n") {
+                    parser.line++;
+                    parser.column = 0;
+                  } else {
+                    parser.column++;
+                  }
+                }
+              }
+              parser.cdata += chunk.substring(starti, i - 1);
+              if (c === "]") {
+                parser.state = S.CDATA_ENDING;
+              }
+              continue;
+            case S.CDATA_ENDING:
+              if (c === "]") {
+                parser.state = S.CDATA_ENDING_2;
+              } else {
+                parser.cdata += "]" + c;
+                parser.state = S.CDATA;
+              }
+              continue;
+            case S.CDATA_ENDING_2:
+              if (c === ">") {
+                if (parser.cdata) {
+                  emitNode(parser, "oncdata", parser.cdata);
+                }
+                emitNode(parser, "onclosecdata");
+                parser.cdata = "";
+                parser.state = S.TEXT;
+              } else if (c === "]") {
+                parser.cdata += "]";
+              } else {
+                parser.cdata += "]]" + c;
+                parser.state = S.CDATA;
+              }
+              continue;
+            case S.PROC_INST:
+              if (c === "?") {
+                parser.state = S.PROC_INST_ENDING;
+              } else if (isWhitespace(c)) {
+                parser.state = S.PROC_INST_BODY;
+              } else {
+                parser.procInstName += c;
+              }
+              continue;
+            case S.PROC_INST_BODY:
+              if (!parser.procInstBody && isWhitespace(c)) {
+                continue;
+              } else if (c === "?") {
+                parser.state = S.PROC_INST_ENDING;
+              } else {
+                parser.procInstBody += c;
+              }
+              continue;
+            case S.PROC_INST_ENDING:
+              if (c === ">") {
+                const procInstEndData = {
+                  name: parser.procInstName,
+                  body: parser.procInstBody
+                };
+                validateXmlDeclarationEncoding(parser, procInstEndData);
+                emitNode(parser, "onprocessinginstruction", procInstEndData);
+                parser.procInstName = parser.procInstBody = "";
+                parser.state = S.TEXT;
+              } else {
+                parser.procInstBody += "?" + c;
+                parser.state = S.PROC_INST_BODY;
+              }
+              continue;
+            case S.OPEN_TAG:
+              if (isMatch(nameBody, c)) {
+                parser.tagName += c;
+              } else {
+                newTag(parser);
+                if (c === ">") {
+                  openTag(parser);
+                } else if (c === "/") {
+                  parser.state = S.OPEN_TAG_SLASH;
+                } else {
+                  if (!isWhitespace(c)) {
+                    strictFail(parser, "Invalid character in tag name");
+                  }
+                  parser.state = S.ATTRIB;
+                }
+              }
+              continue;
+            case S.OPEN_TAG_SLASH:
+              if (c === ">") {
+                openTag(parser, true);
+                closeTag(parser);
+              } else {
+                strictFail(
+                  parser,
+                  "Forward-slash in opening tag not followed by >"
+                );
+                parser.state = S.ATTRIB;
+              }
+              continue;
+            case S.ATTRIB:
+              if (isWhitespace(c)) {
+                continue;
+              } else if (c === ">") {
+                openTag(parser);
+              } else if (c === "/") {
+                parser.state = S.OPEN_TAG_SLASH;
+              } else if (isMatch(nameStart, c)) {
+                parser.attribName = c;
+                parser.attribValue = "";
+                parser.state = S.ATTRIB_NAME;
+              } else {
+                strictFail(parser, "Invalid attribute name");
+              }
+              continue;
+            case S.ATTRIB_NAME:
+              if (c === "=") {
+                parser.state = S.ATTRIB_VALUE;
+              } else if (c === ">") {
+                strictFail(parser, "Attribute without value");
+                parser.attribValue = parser.attribName;
+                attrib(parser);
+                openTag(parser);
+              } else if (isWhitespace(c)) {
+                parser.state = S.ATTRIB_NAME_SAW_WHITE;
+              } else if (isMatch(nameBody, c)) {
+                parser.attribName += c;
+              } else {
+                strictFail(parser, "Invalid attribute name");
+              }
+              continue;
+            case S.ATTRIB_NAME_SAW_WHITE:
+              if (c === "=") {
+                parser.state = S.ATTRIB_VALUE;
+              } else if (isWhitespace(c)) {
+                continue;
+              } else {
+                strictFail(parser, "Attribute without value");
+                parser.tag.attributes[parser.attribName] = "";
+                parser.attribValue = "";
+                emitNode(parser, "onattribute", {
+                  name: parser.attribName,
+                  value: ""
+                });
+                parser.attribName = "";
+                if (c === ">") {
+                  openTag(parser);
+                } else if (isMatch(nameStart, c)) {
+                  parser.attribName = c;
+                  parser.state = S.ATTRIB_NAME;
+                } else {
+                  strictFail(parser, "Invalid attribute name");
+                  parser.state = S.ATTRIB;
+                }
+              }
+              continue;
+            case S.ATTRIB_VALUE:
+              if (isWhitespace(c)) {
+                continue;
+              } else if (isQuote(c)) {
+                parser.q = c;
+                parser.state = S.ATTRIB_VALUE_QUOTED;
+              } else {
+                if (!parser.opt.unquotedAttributeValues) {
+                  error(parser, "Unquoted attribute value");
+                }
+                parser.state = S.ATTRIB_VALUE_UNQUOTED;
+                parser.attribValue = c;
+              }
+              continue;
+            case S.ATTRIB_VALUE_QUOTED:
+              if (c !== parser.q) {
+                if (c === "&") {
+                  parser.state = S.ATTRIB_VALUE_ENTITY_Q;
+                } else {
+                  parser.attribValue += c;
+                }
+                continue;
+              }
+              attrib(parser);
+              parser.q = "";
+              parser.state = S.ATTRIB_VALUE_CLOSED;
+              continue;
+            case S.ATTRIB_VALUE_CLOSED:
+              if (isWhitespace(c)) {
+                parser.state = S.ATTRIB;
+              } else if (c === ">") {
+                openTag(parser);
+              } else if (c === "/") {
+                parser.state = S.OPEN_TAG_SLASH;
+              } else if (isMatch(nameStart, c)) {
+                strictFail(parser, "No whitespace between attributes");
+                parser.attribName = c;
+                parser.attribValue = "";
+                parser.state = S.ATTRIB_NAME;
+              } else {
+                strictFail(parser, "Invalid attribute name");
+              }
+              continue;
+            case S.ATTRIB_VALUE_UNQUOTED:
+              if (!isAttribEnd(c)) {
+                if (c === "&") {
+                  parser.state = S.ATTRIB_VALUE_ENTITY_U;
+                } else {
+                  parser.attribValue += c;
+                }
+                continue;
+              }
+              attrib(parser);
+              if (c === ">") {
+                openTag(parser);
+              } else {
+                parser.state = S.ATTRIB;
+              }
+              continue;
+            case S.CLOSE_TAG:
+              if (!parser.tagName) {
+                if (isWhitespace(c)) {
+                  continue;
+                } else if (notMatch(nameStart, c)) {
+                  if (parser.script) {
+                    parser.script += "</" + c;
+                    parser.state = S.SCRIPT;
+                  } else {
+                    strictFail(parser, "Invalid tagname in closing tag.");
+                  }
+                } else {
+                  parser.tagName = c;
+                }
+              } else if (c === ">") {
+                closeTag(parser);
+              } else if (isMatch(nameBody, c)) {
+                parser.tagName += c;
+              } else if (parser.script) {
+                parser.script += "</" + parser.tagName + c;
+                parser.tagName = "";
+                parser.state = S.SCRIPT;
+              } else {
+                if (!isWhitespace(c)) {
+                  strictFail(parser, "Invalid tagname in closing tag");
+                }
+                parser.state = S.CLOSE_TAG_SAW_WHITE;
+              }
+              continue;
+            case S.CLOSE_TAG_SAW_WHITE:
+              if (isWhitespace(c)) {
+                continue;
+              }
+              if (c === ">") {
+                closeTag(parser);
+              } else {
+                strictFail(parser, "Invalid characters in closing tag");
+              }
+              continue;
+            case S.TEXT_ENTITY:
+            case S.ATTRIB_VALUE_ENTITY_Q:
+            case S.ATTRIB_VALUE_ENTITY_U:
+              var returnState;
+              var buffer;
+              switch (parser.state) {
+                case S.TEXT_ENTITY:
+                  returnState = S.TEXT;
+                  buffer = "textNode";
+                  break;
+                case S.ATTRIB_VALUE_ENTITY_Q:
+                  returnState = S.ATTRIB_VALUE_QUOTED;
+                  buffer = "attribValue";
+                  break;
+                case S.ATTRIB_VALUE_ENTITY_U:
+                  returnState = S.ATTRIB_VALUE_UNQUOTED;
+                  buffer = "attribValue";
+                  break;
+              }
+              if (c === ";") {
+                var parsedEntity = parseEntity(parser);
+                if (parser.opt.unparsedEntities && !Object.values(sax.XML_ENTITIES).includes(parsedEntity)) {
+                  if ((parser.entityCount += 1) > parser.opt.maxEntityCount) {
+                    error(
+                      parser,
+                      "Parsed entity count exceeds max entity count"
+                    );
+                  }
+                  if ((parser.entityDepth += 1) > parser.opt.maxEntityDepth) {
+                    error(
+                      parser,
+                      "Parsed entity depth exceeds max entity depth"
+                    );
+                  }
+                  parser.entity = "";
+                  parser.state = returnState;
+                  parser.write(parsedEntity);
+                  parser.entityDepth -= 1;
+                } else {
+                  parser[buffer] += parsedEntity;
+                  parser.entity = "";
+                  parser.state = returnState;
+                }
+              } else if (isMatch(parser.entity.length ? entityBody : entityStart, c)) {
+                parser.entity += c;
+              } else {
+                strictFail(parser, "Invalid character in entity name");
+                parser[buffer] += "&" + parser.entity + c;
+                parser.entity = "";
+                parser.state = returnState;
+              }
+              continue;
+            default: {
+              throw new Error(parser, "Unknown state: " + parser.state);
+            }
+          }
+        }
+        if (parser.position >= parser.bufferCheckPosition) {
+          checkBufferLength(parser);
+        }
+        return parser;
+      }
+      if (!String.fromCodePoint) {
+        ;
+        (function() {
+          var stringFromCharCode = String.fromCharCode;
+          var floor = Math.floor;
+          var fromCodePoint = function() {
+            var MAX_SIZE = 16384;
+            var codeUnits = [];
+            var highSurrogate;
+            var lowSurrogate;
+            var index = -1;
+            var length = arguments.length;
+            if (!length) {
+              return "";
+            }
+            var result = "";
+            while (++index < length) {
+              var codePoint = Number(arguments[index]);
+              if (!isFinite(codePoint) || // `NaN`, `+Infinity`, or `-Infinity`
+              codePoint < 0 || // not a valid Unicode code point
+              codePoint > 1114111 || // not a valid Unicode code point
+              floor(codePoint) !== codePoint) {
+                throw RangeError("Invalid code point: " + codePoint);
+              }
+              if (codePoint <= 65535) {
+                codeUnits.push(codePoint);
+              } else {
+                codePoint -= 65536;
+                highSurrogate = (codePoint >> 10) + 55296;
+                lowSurrogate = codePoint % 1024 + 56320;
+                codeUnits.push(highSurrogate, lowSurrogate);
+              }
+              if (index + 1 === length || codeUnits.length > MAX_SIZE) {
+                result += stringFromCharCode.apply(null, codeUnits);
+                codeUnits.length = 0;
+              }
+            }
+            return result;
+          };
+          if (Object.defineProperty) {
+            Object.defineProperty(String, "fromCodePoint", {
+              value: fromCodePoint,
+              configurable: true,
+              writable: true
+            });
+          } else {
+            String.fromCodePoint = fromCodePoint;
+          }
+        })();
+      }
+    })(typeof exports2 === "undefined" ? exports2.sax = {} : exports2);
+  }
+});
+
+// node_modules/.pnpm/xml2js@0.6.2/node_modules/xml2js/lib/bom.js
+var require_bom = __commonJS({
+  "node_modules/.pnpm/xml2js@0.6.2/node_modules/xml2js/lib/bom.js"(exports2) {
+    (function() {
+      "use strict";
+      exports2.stripBOM = function(str) {
+        if (str[0] === "\uFEFF") {
+          return str.substring(1);
+        } else {
+          return str;
+        }
+      };
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xml2js@0.6.2/node_modules/xml2js/lib/processors.js
+var require_processors = __commonJS({
+  "node_modules/.pnpm/xml2js@0.6.2/node_modules/xml2js/lib/processors.js"(exports2) {
+    (function() {
+      "use strict";
+      var prefixMatch;
+      prefixMatch = new RegExp(/(?!xmlns)^.*:/);
+      exports2.normalize = function(str) {
+        return str.toLowerCase();
+      };
+      exports2.firstCharLowerCase = function(str) {
+        return str.charAt(0).toLowerCase() + str.slice(1);
+      };
+      exports2.stripPrefix = function(str) {
+        return str.replace(prefixMatch, "");
+      };
+      exports2.parseNumbers = function(str) {
+        if (!isNaN(str)) {
+          str = str % 1 === 0 ? parseInt(str, 10) : parseFloat(str);
+        }
+        return str;
+      };
+      exports2.parseBooleans = function(str) {
+        if (/^(?:true|false)$/i.test(str)) {
+          str = str.toLowerCase() === "true";
+        }
+        return str;
+      };
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xml2js@0.6.2/node_modules/xml2js/lib/parser.js
+var require_parser = __commonJS({
+  "node_modules/.pnpm/xml2js@0.6.2/node_modules/xml2js/lib/parser.js"(exports2) {
+    (function() {
+      "use strict";
+      var bom, defaults, defineProperty, events, isEmpty, processItem, processors, sax, setImmediate2, bind3 = function(fn, me) {
+        return function() {
+          return fn.apply(me, arguments);
+        };
+      }, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      sax = require_sax();
+      events = require("events");
+      bom = require_bom();
+      processors = require_processors();
+      setImmediate2 = require("timers").setImmediate;
+      defaults = require_defaults2().defaults;
+      isEmpty = function(thing) {
+        return typeof thing === "object" && thing != null && Object.keys(thing).length === 0;
+      };
+      processItem = function(processors2, item, key) {
+        var i, len, process2;
+        for (i = 0, len = processors2.length; i < len; i++) {
+          process2 = processors2[i];
+          item = process2(item, key);
+        }
+        return item;
+      };
+      defineProperty = function(obj, key, value) {
+        var descriptor;
+        descriptor = /* @__PURE__ */ Object.create(null);
+        descriptor.value = value;
+        descriptor.writable = true;
+        descriptor.enumerable = true;
+        descriptor.configurable = true;
+        return Object.defineProperty(obj, key, descriptor);
+      };
+      exports2.Parser = (function(superClass) {
+        extend(Parser3, superClass);
+        function Parser3(opts) {
+          this.parseStringPromise = bind3(this.parseStringPromise, this);
+          this.parseString = bind3(this.parseString, this);
+          this.reset = bind3(this.reset, this);
+          this.assignOrPush = bind3(this.assignOrPush, this);
+          this.processAsync = bind3(this.processAsync, this);
+          var key, ref, value;
+          if (!(this instanceof exports2.Parser)) {
+            return new exports2.Parser(opts);
+          }
+          this.options = {};
+          ref = defaults["0.2"];
+          for (key in ref) {
+            if (!hasProp.call(ref, key)) continue;
+            value = ref[key];
+            this.options[key] = value;
+          }
+          for (key in opts) {
+            if (!hasProp.call(opts, key)) continue;
+            value = opts[key];
+            this.options[key] = value;
+          }
+          if (this.options.xmlns) {
+            this.options.xmlnskey = this.options.attrkey + "ns";
+          }
+          if (this.options.normalizeTags) {
+            if (!this.options.tagNameProcessors) {
+              this.options.tagNameProcessors = [];
+            }
+            this.options.tagNameProcessors.unshift(processors.normalize);
+          }
+          this.reset();
+        }
+        Parser3.prototype.processAsync = function() {
+          var chunk, err;
+          try {
+            if (this.remaining.length <= this.options.chunkSize) {
+              chunk = this.remaining;
+              this.remaining = "";
+              this.saxParser = this.saxParser.write(chunk);
+              return this.saxParser.close();
+            } else {
+              chunk = this.remaining.substr(0, this.options.chunkSize);
+              this.remaining = this.remaining.substr(this.options.chunkSize, this.remaining.length);
+              this.saxParser = this.saxParser.write(chunk);
+              return setImmediate2(this.processAsync);
+            }
+          } catch (error1) {
+            err = error1;
+            if (!this.saxParser.errThrown) {
+              this.saxParser.errThrown = true;
+              return this.emit(err);
+            }
+          }
+        };
+        Parser3.prototype.assignOrPush = function(obj, key, newValue) {
+          if (!(key in obj)) {
+            if (!this.options.explicitArray) {
+              return defineProperty(obj, key, newValue);
+            } else {
+              return defineProperty(obj, key, [newValue]);
+            }
+          } else {
+            if (!(obj[key] instanceof Array)) {
+              defineProperty(obj, key, [obj[key]]);
+            }
+            return obj[key].push(newValue);
+          }
+        };
+        Parser3.prototype.reset = function() {
+          var attrkey, charkey, ontext, stack;
+          this.removeAllListeners();
+          this.saxParser = sax.parser(this.options.strict, {
+            trim: false,
+            normalize: false,
+            xmlns: this.options.xmlns
+          });
+          this.saxParser.errThrown = false;
+          this.saxParser.onerror = /* @__PURE__ */ (function(_this) {
+            return function(error) {
+              _this.saxParser.resume();
+              if (!_this.saxParser.errThrown) {
+                _this.saxParser.errThrown = true;
+                return _this.emit("error", error);
+              }
+            };
+          })(this);
+          this.saxParser.onend = /* @__PURE__ */ (function(_this) {
+            return function() {
+              if (!_this.saxParser.ended) {
+                _this.saxParser.ended = true;
+                return _this.emit("end", _this.resultObject);
+              }
+            };
+          })(this);
+          this.saxParser.ended = false;
+          this.EXPLICIT_CHARKEY = this.options.explicitCharkey;
+          this.resultObject = null;
+          stack = [];
+          attrkey = this.options.attrkey;
+          charkey = this.options.charkey;
+          this.saxParser.onopentag = /* @__PURE__ */ (function(_this) {
+            return function(node) {
+              var key, newValue, obj, processedKey, ref;
+              obj = {};
+              obj[charkey] = "";
+              if (!_this.options.ignoreAttrs) {
+                ref = node.attributes;
+                for (key in ref) {
+                  if (!hasProp.call(ref, key)) continue;
+                  if (!(attrkey in obj) && !_this.options.mergeAttrs) {
+                    obj[attrkey] = {};
+                  }
+                  newValue = _this.options.attrValueProcessors ? processItem(_this.options.attrValueProcessors, node.attributes[key], key) : node.attributes[key];
+                  processedKey = _this.options.attrNameProcessors ? processItem(_this.options.attrNameProcessors, key) : key;
+                  if (_this.options.mergeAttrs) {
+                    _this.assignOrPush(obj, processedKey, newValue);
+                  } else {
+                    defineProperty(obj[attrkey], processedKey, newValue);
+                  }
+                }
+              }
+              obj["#name"] = _this.options.tagNameProcessors ? processItem(_this.options.tagNameProcessors, node.name) : node.name;
+              if (_this.options.xmlns) {
+                obj[_this.options.xmlnskey] = {
+                  uri: node.uri,
+                  local: node.local
+                };
+              }
+              return stack.push(obj);
+            };
+          })(this);
+          this.saxParser.onclosetag = /* @__PURE__ */ (function(_this) {
+            return function() {
+              var cdata, emptyStr, key, node, nodeName, obj, objClone, old, s2, xpath;
+              obj = stack.pop();
+              nodeName = obj["#name"];
+              if (!_this.options.explicitChildren || !_this.options.preserveChildrenOrder) {
+                delete obj["#name"];
+              }
+              if (obj.cdata === true) {
+                cdata = obj.cdata;
+                delete obj.cdata;
+              }
+              s2 = stack[stack.length - 1];
+              if (obj[charkey].match(/^\s*$/) && !cdata) {
+                emptyStr = obj[charkey];
+                delete obj[charkey];
+              } else {
+                if (_this.options.trim) {
+                  obj[charkey] = obj[charkey].trim();
+                }
+                if (_this.options.normalize) {
+                  obj[charkey] = obj[charkey].replace(/\s{2,}/g, " ").trim();
+                }
+                obj[charkey] = _this.options.valueProcessors ? processItem(_this.options.valueProcessors, obj[charkey], nodeName) : obj[charkey];
+                if (Object.keys(obj).length === 1 && charkey in obj && !_this.EXPLICIT_CHARKEY) {
+                  obj = obj[charkey];
+                }
+              }
+              if (isEmpty(obj)) {
+                if (typeof _this.options.emptyTag === "function") {
+                  obj = _this.options.emptyTag();
+                } else {
+                  obj = _this.options.emptyTag !== "" ? _this.options.emptyTag : emptyStr;
+                }
+              }
+              if (_this.options.validator != null) {
+                xpath = "/" + (function() {
+                  var i, len, results;
+                  results = [];
+                  for (i = 0, len = stack.length; i < len; i++) {
+                    node = stack[i];
+                    results.push(node["#name"]);
+                  }
+                  return results;
+                })().concat(nodeName).join("/");
+                (function() {
+                  var err;
+                  try {
+                    return obj = _this.options.validator(xpath, s2 && s2[nodeName], obj);
+                  } catch (error1) {
+                    err = error1;
+                    return _this.emit("error", err);
+                  }
+                })();
+              }
+              if (_this.options.explicitChildren && !_this.options.mergeAttrs && typeof obj === "object") {
+                if (!_this.options.preserveChildrenOrder) {
+                  node = {};
+                  if (_this.options.attrkey in obj) {
+                    node[_this.options.attrkey] = obj[_this.options.attrkey];
+                    delete obj[_this.options.attrkey];
+                  }
+                  if (!_this.options.charsAsChildren && _this.options.charkey in obj) {
+                    node[_this.options.charkey] = obj[_this.options.charkey];
+                    delete obj[_this.options.charkey];
+                  }
+                  if (Object.getOwnPropertyNames(obj).length > 0) {
+                    node[_this.options.childkey] = obj;
+                  }
+                  obj = node;
+                } else if (s2) {
+                  s2[_this.options.childkey] = s2[_this.options.childkey] || [];
+                  objClone = {};
+                  for (key in obj) {
+                    if (!hasProp.call(obj, key)) continue;
+                    defineProperty(objClone, key, obj[key]);
+                  }
+                  s2[_this.options.childkey].push(objClone);
+                  delete obj["#name"];
+                  if (Object.keys(obj).length === 1 && charkey in obj && !_this.EXPLICIT_CHARKEY) {
+                    obj = obj[charkey];
+                  }
+                }
+              }
+              if (stack.length > 0) {
+                return _this.assignOrPush(s2, nodeName, obj);
+              } else {
+                if (_this.options.explicitRoot) {
+                  old = obj;
+                  obj = {};
+                  defineProperty(obj, nodeName, old);
+                }
+                _this.resultObject = obj;
+                _this.saxParser.ended = true;
+                return _this.emit("end", _this.resultObject);
+              }
+            };
+          })(this);
+          ontext = /* @__PURE__ */ (function(_this) {
+            return function(text) {
+              var charChild, s2;
+              s2 = stack[stack.length - 1];
+              if (s2) {
+                s2[charkey] += text;
+                if (_this.options.explicitChildren && _this.options.preserveChildrenOrder && _this.options.charsAsChildren && (_this.options.includeWhiteChars || text.replace(/\\n/g, "").trim() !== "")) {
+                  s2[_this.options.childkey] = s2[_this.options.childkey] || [];
+                  charChild = {
+                    "#name": "__text__"
+                  };
+                  charChild[charkey] = text;
+                  if (_this.options.normalize) {
+                    charChild[charkey] = charChild[charkey].replace(/\s{2,}/g, " ").trim();
+                  }
+                  s2[_this.options.childkey].push(charChild);
+                }
+                return s2;
+              }
+            };
+          })(this);
+          this.saxParser.ontext = ontext;
+          return this.saxParser.oncdata = /* @__PURE__ */ (function(_this) {
+            return function(text) {
+              var s2;
+              s2 = ontext(text);
+              if (s2) {
+                return s2.cdata = true;
+              }
+            };
+          })(this);
+        };
+        Parser3.prototype.parseString = function(str, cb) {
+          var err;
+          if (cb != null && typeof cb === "function") {
+            this.on("end", function(result) {
+              this.reset();
+              return cb(null, result);
+            });
+            this.on("error", function(err2) {
+              this.reset();
+              return cb(err2);
+            });
+          }
+          try {
+            str = str.toString();
+            if (str.trim() === "") {
+              this.emit("end", null);
+              return true;
+            }
+            str = bom.stripBOM(str);
+            if (this.options.async) {
+              this.remaining = str;
+              setImmediate2(this.processAsync);
+              return this.saxParser;
+            }
+            return this.saxParser.write(str).close();
+          } catch (error1) {
+            err = error1;
+            if (!(this.saxParser.errThrown || this.saxParser.ended)) {
+              this.emit("error", err);
+              return this.saxParser.errThrown = true;
+            } else if (this.saxParser.ended) {
+              throw err;
+            }
+          }
+        };
+        Parser3.prototype.parseStringPromise = function(str) {
+          return new Promise(/* @__PURE__ */ (function(_this) {
+            return function(resolve6, reject) {
+              return _this.parseString(str, function(err, value) {
+                if (err) {
+                  return reject(err);
+                } else {
+                  return resolve6(value);
+                }
+              });
+            };
+          })(this));
+        };
+        return Parser3;
+      })(events);
+      exports2.parseString = function(str, a, b2) {
+        var cb, options, parser;
+        if (b2 != null) {
+          if (typeof b2 === "function") {
+            cb = b2;
+          }
+          if (typeof a === "object") {
+            options = a;
+          }
+        } else {
+          if (typeof a === "function") {
+            cb = a;
+          }
+          options = {};
+        }
+        parser = new exports2.Parser(options);
+        return parser.parseString(str, cb);
+      };
+      exports2.parseStringPromise = function(str, a) {
+        var options, parser;
+        if (typeof a === "object") {
+          options = a;
+        }
+        parser = new exports2.Parser(options);
+        return parser.parseStringPromise(str);
+      };
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/xml2js@0.6.2/node_modules/xml2js/lib/xml2js.js
+var require_xml2js = __commonJS({
+  "node_modules/.pnpm/xml2js@0.6.2/node_modules/xml2js/lib/xml2js.js"(exports2) {
+    (function() {
+      "use strict";
+      var builder, defaults, parser, processors, extend = function(child, parent) {
+        for (var key in parent) {
+          if (hasProp.call(parent, key)) child[key] = parent[key];
+        }
+        function ctor() {
+          this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+      }, hasProp = {}.hasOwnProperty;
+      defaults = require_defaults2();
+      builder = require_builder();
+      parser = require_parser();
+      processors = require_processors();
+      exports2.defaults = defaults.defaults;
+      exports2.processors = processors;
+      exports2.ValidationError = (function(superClass) {
+        extend(ValidationError, superClass);
+        function ValidationError(message) {
+          this.message = message;
+        }
+        return ValidationError;
+      })(Error);
+      exports2.Builder = builder.Builder;
+      exports2.Parser = parser.Parser;
+      exports2.parseString = parser.parseString;
+      exports2.parseStringPromise = parser.parseStringPromise;
+    }).call(exports2);
+  }
+});
+
+// node_modules/.pnpm/splaytree@3.2.3/node_modules/splaytree/dist/splaytree.umd.cjs
+var require_splaytree_umd = __commonJS({
+  "node_modules/.pnpm/splaytree@3.2.3/node_modules/splaytree/dist/splaytree.umd.cjs"(exports2, module2) {
+    (function(h, c) {
+      typeof exports2 == "object" && typeof module2 < "u" ? module2.exports = c() : typeof define == "function" && define.amd ? define(c) : (h = typeof globalThis < "u" ? globalThis : h || self, h.SplayTree = c());
+    })(exports2, (function() {
+      "use strict";
+      class h {
+        constructor(t, e) {
+          this.next = null, this.key = t, this.data = e, this.left = null, this.right = null;
+        }
+      }
+      function c(n, t) {
+        return n > t ? 1 : n < t ? -1 : 0;
+      }
+      function u(n, t, e) {
+        const r = new h(null, null);
+        let i = r, l = r;
+        for (; ; ) {
+          const o = e(n, t.key);
+          if (o < 0) {
+            if (t.left === null) break;
+            if (e(n, t.left.key) < 0) {
+              const s2 = t.left;
+              if (t.left = s2.right, s2.right = t, t = s2, t.left === null) break;
+            }
+            l.left = t, l = t, t = t.left;
+          } else if (o > 0) {
+            if (t.right === null) break;
+            if (e(n, t.right.key) > 0) {
+              const s2 = t.right;
+              if (t.right = s2.left, s2.left = t, t = s2, t.right === null) break;
+            }
+            i.right = t, i = t, t = t.right;
+          } else break;
+        }
+        return i.right = t.left, l.left = t.right, t.left = r.right, t.right = r.left, t;
+      }
+      function _2(n, t, e, r) {
+        const i = new h(n, t);
+        if (e === null) return i.left = i.right = null, i;
+        e = u(n, e, r);
+        const l = r(n, e.key);
+        return l < 0 ? (i.left = e.left, i.right = e, e.left = null) : l >= 0 && (i.right = e.right, i.left = e, e.right = null), i;
+      }
+      function d(n, t, e) {
+        let r = null, i = null;
+        if (t) {
+          t = u(n, t, e);
+          const l = e(t.key, n);
+          l === 0 ? (r = t.left, i = t.right) : l < 0 ? (i = t.right, t.right = null, r = t) : (r = t.left, t.left = null, i = t);
+        }
+        return { left: r, right: i };
+      }
+      function w2(n, t, e) {
+        return t === null ? n : (n === null || (t = u(n.key, t, e), t.left = n), t);
+      }
+      function a(n, t, e, r, i) {
+        if (n) {
+          r(`${t}${e ? "\u2514\u2500\u2500 " : "\u251C\u2500\u2500 "}${i(n)}
+`);
+          const l = t + (e ? "    " : "\u2502   ");
+          n.left && a(n.left, l, false, r, i), n.right && a(n.right, l, true, r, i);
+        }
+      }
+      class x2 {
+        constructor(t = c) {
+          this._root = null, this._size = 0, this._comparator = t;
+        }
+        insert(t, e) {
+          return this._size++, this._root = _2(t, e, this._root, this._comparator);
+        }
+        add(t, e) {
+          const r = new h(t, e);
+          this._root === null && (r.left = r.right = null, this._size++, this._root = r);
+          const i = this._comparator, l = u(t, this._root, i), o = i(t, l.key);
+          return o === 0 ? this._root = l : (o < 0 ? (r.left = l.left, r.right = l, l.left = null) : o > 0 && (r.right = l.right, r.left = l, l.right = null), this._size++, this._root = r), this._root;
+        }
+        remove(t) {
+          this._root = this._remove(t, this._root, this._comparator);
+        }
+        _remove(t, e, r) {
+          let i;
+          return e === null ? null : (e = u(t, e, r), r(t, e.key) === 0 ? (e.left === null ? i = e.right : (i = u(t, e.left, r), i.right = e.right), this._size--, i) : e);
+        }
+        pop() {
+          let t = this._root;
+          if (t) {
+            for (; t.left; ) t = t.left;
+            return this._root = u(t.key, this._root, this._comparator), this._root = this._remove(t.key, this._root, this._comparator), { key: t.key, data: t.data };
+          }
+          return null;
+        }
+        findStatic(t) {
+          let e = this._root;
+          const r = this._comparator;
+          for (; e; ) {
+            const i = r(t, e.key);
+            if (i === 0) return e;
+            i < 0 ? e = e.left : e = e.right;
+          }
+          return null;
+        }
+        find(t) {
+          return this._root && (this._root = u(t, this._root, this._comparator), this._comparator(t, this._root.key) !== 0) ? null : this._root;
+        }
+        contains(t) {
+          let e = this._root;
+          const r = this._comparator;
+          for (; e; ) {
+            const i = r(t, e.key);
+            if (i === 0) return true;
+            i < 0 ? e = e.left : e = e.right;
+          }
+          return false;
+        }
+        forEach(t, e) {
+          let r = this._root;
+          const i = [];
+          let l = false;
+          for (; !l; ) r !== null ? (i.push(r), r = r.left) : i.length !== 0 ? (r = i.pop(), t.call(e, r), r = r.right) : l = true;
+          return this;
+        }
+        range(t, e, r, i) {
+          const l = [], o = this._comparator;
+          let s2 = this._root, f2;
+          for (; l.length !== 0 || s2; ) if (s2) l.push(s2), s2 = s2.left;
+          else {
+            if (s2 = l.pop(), f2 = o(s2.key, e), f2 > 0) break;
+            if (o(s2.key, t) >= 0 && r.call(i, s2)) return this;
+            s2 = s2.right;
+          }
+          return this;
+        }
+        keys() {
+          const t = [];
+          return this.forEach(({ key: e }) => {
+            t.push(e);
+          }), t;
+        }
+        values() {
+          const t = [];
+          return this.forEach(({ data: e }) => {
+            t.push(e);
+          }), t;
+        }
+        min() {
+          return this._root ? this.minNode(this._root).key : null;
+        }
+        max() {
+          return this._root ? this.maxNode(this._root).key : null;
+        }
+        minNode(t = this._root) {
+          if (t) for (; t.left; ) t = t.left;
+          return t;
+        }
+        maxNode(t = this._root) {
+          if (t) for (; t.right; ) t = t.right;
+          return t;
+        }
+        at(t) {
+          let e = this._root, r = false, i = 0;
+          const l = [];
+          for (; !r; ) if (e) l.push(e), e = e.left;
+          else if (l.length > 0) {
+            if (e = l.pop(), i === t) return e;
+            i++, e = e.right;
+          } else r = true;
+          return null;
+        }
+        next(t) {
+          let e = this._root, r = null;
+          if (t.right) {
+            for (r = t.right; r.left; ) r = r.left;
+            return r;
+          }
+          const i = this._comparator;
+          for (; e; ) {
+            const l = i(t.key, e.key);
+            if (l === 0) break;
+            l < 0 ? (r = e, e = e.left) : e = e.right;
+          }
+          return r;
+        }
+        prev(t) {
+          let e = this._root, r = null;
+          if (t.left !== null) {
+            for (r = t.left; r.right; ) r = r.right;
+            return r;
+          }
+          const i = this._comparator;
+          for (; e; ) {
+            const l = i(t.key, e.key);
+            if (l === 0) break;
+            l < 0 ? e = e.left : (r = e, e = e.right);
+          }
+          return r;
+        }
+        clear() {
+          return this._root = null, this._size = 0, this;
+        }
+        toList() {
+          return y(this._root);
+        }
+        load(t, e = [], r = false) {
+          let i = t.length;
+          const l = this._comparator;
+          if (r && m2(t, e, 0, i - 1, l), this._root === null) this._root = p2(t, e, 0, i), this._size = i;
+          else {
+            const o = z(this.toList(), k2(t, e), l);
+            i = this._size + i, this._root = g2({ head: o }, 0, i);
+          }
+          return this;
+        }
+        isEmpty() {
+          return this._root === null;
+        }
+        get size() {
+          return this._size;
+        }
+        get root() {
+          return this._root;
+        }
+        toString(t = (e) => String(e.key)) {
+          const e = [];
+          return a(this._root, "", true, (r) => e.push(r), t), e.join("");
+        }
+        update(t, e, r) {
+          const i = this._comparator;
+          let { left: l, right: o } = d(t, this._root, i);
+          i(t, e) < 0 ? o = _2(e, r, o, i) : l = _2(e, r, l, i), this._root = w2(l, o, i);
+        }
+        split(t) {
+          return d(t, this._root, this._comparator);
+        }
+        *[Symbol.iterator]() {
+          let t = this._root;
+          const e = [];
+          let r = false;
+          for (; !r; ) t !== null ? (e.push(t), t = t.left) : e.length !== 0 ? (t = e.pop(), yield t, t = t.right) : r = true;
+        }
+      }
+      function p2(n, t, e, r) {
+        const i = r - e;
+        if (i > 0) {
+          const l = e + Math.floor(i / 2), o = n[l], s2 = t[l], f2 = new h(o, s2);
+          return f2.left = p2(n, t, e, l), f2.right = p2(n, t, l + 1, r), f2;
+        }
+        return null;
+      }
+      function k2(n, t) {
+        const e = new h(null, null);
+        let r = e;
+        for (let i = 0; i < n.length; i++) r = r.next = new h(n[i], t[i]);
+        return r.next = null, e.next;
+      }
+      function y(n) {
+        let t = n;
+        const e = [];
+        let r = false;
+        const i = new h(null, null);
+        let l = i;
+        for (; !r; ) t ? (e.push(t), t = t.left) : e.length > 0 ? (t = l = l.next = e.pop(), t = t.right) : r = true;
+        return l.next = null, i.next;
+      }
+      function g2(n, t, e) {
+        const r = e - t;
+        if (r > 0) {
+          const i = t + Math.floor(r / 2), l = g2(n, t, i), o = n.head;
+          return o.left = l, n.head = n.head.next, o.right = g2(n, i + 1, e), o;
+        }
+        return null;
+      }
+      function z(n, t, e) {
+        const r = new h(null, null);
+        let i = r, l = n, o = t;
+        for (; l !== null && o !== null; ) e(l.key, o.key) < 0 ? (i.next = l, l = l.next) : (i.next = o, o = o.next), i = i.next;
+        return l !== null ? i.next = l : o !== null && (i.next = o), r.next;
+      }
+      function m2(n, t, e, r, i) {
+        if (e >= r) return;
+        const l = n[e + r >> 1];
+        let o = e - 1, s2 = r + 1;
+        for (; ; ) {
+          do
+            o++;
+          while (i(n[o], l) < 0);
+          do
+            s2--;
+          while (i(n[s2], l) > 0);
+          if (o >= s2) break;
+          let f2 = n[o];
+          n[o] = n[s2], n[s2] = f2, f2 = t[o], t[o] = t[s2], t[s2] = f2;
+        }
+        m2(n, t, e, s2, i), m2(n, t, s2 + 1, r, i);
+      }
+      return x2;
+    }));
+  }
+});
+
+// node_modules/.pnpm/polygon-clipping@0.15.7/node_modules/polygon-clipping/dist/polygon-clipping.cjs.js
+var require_polygon_clipping_cjs = __commonJS({
+  "node_modules/.pnpm/polygon-clipping@0.15.7/node_modules/polygon-clipping/dist/polygon-clipping.cjs.js"(exports2, module2) {
+    "use strict";
+    var SplayTree = require_splaytree_umd();
+    function _interopDefaultLegacy(e) {
+      return e && typeof e === "object" && "default" in e ? e : { "default": e };
+    }
+    var SplayTree__default = /* @__PURE__ */ _interopDefaultLegacy(SplayTree);
+    var isInBbox = (bbox, point) => {
+      return bbox.ll.x <= point.x && point.x <= bbox.ur.x && bbox.ll.y <= point.y && point.y <= bbox.ur.y;
+    };
+    var getBboxOverlap = (b1, b2) => {
+      if (b2.ur.x < b1.ll.x || b1.ur.x < b2.ll.x || b2.ur.y < b1.ll.y || b1.ur.y < b2.ll.y) return null;
+      const lowerX = b1.ll.x < b2.ll.x ? b2.ll.x : b1.ll.x;
+      const upperX = b1.ur.x < b2.ur.x ? b1.ur.x : b2.ur.x;
+      const lowerY = b1.ll.y < b2.ll.y ? b2.ll.y : b1.ll.y;
+      const upperY = b1.ur.y < b2.ur.y ? b1.ur.y : b2.ur.y;
+      return {
+        ll: {
+          x: lowerX,
+          y: lowerY
+        },
+        ur: {
+          x: upperX,
+          y: upperY
+        }
+      };
+    };
+    var epsilon$1 = Number.EPSILON;
+    if (epsilon$1 === void 0) epsilon$1 = Math.pow(2, -52);
+    var EPSILON_SQ = epsilon$1 * epsilon$1;
+    var cmp = (a, b2) => {
+      if (-epsilon$1 < a && a < epsilon$1) {
+        if (-epsilon$1 < b2 && b2 < epsilon$1) {
+          return 0;
+        }
+      }
+      const ab = a - b2;
+      if (ab * ab < EPSILON_SQ * a * b2) {
+        return 0;
+      }
+      return a < b2 ? -1 : 1;
+    };
+    var PtRounder = class {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.xRounder = new CoordRounder();
+        this.yRounder = new CoordRounder();
+      }
+      round(x2, y) {
+        return {
+          x: this.xRounder.round(x2),
+          y: this.yRounder.round(y)
+        };
+      }
+    };
+    var CoordRounder = class {
+      constructor() {
+        this.tree = new SplayTree__default["default"]();
+        this.round(0);
+      }
+      // Note: this can rounds input values backwards or forwards.
+      //       You might ask, why not restrict this to just rounding
+      //       forwards? Wouldn't that allow left endpoints to always
+      //       remain left endpoints during splitting (never change to
+      //       right). No - it wouldn't, because we snap intersections
+      //       to endpoints (to establish independence from the segment
+      //       angle for t-intersections).
+      round(coord) {
+        const node = this.tree.add(coord);
+        const prevNode = this.tree.prev(node);
+        if (prevNode !== null && cmp(node.key, prevNode.key) === 0) {
+          this.tree.remove(coord);
+          return prevNode.key;
+        }
+        const nextNode = this.tree.next(node);
+        if (nextNode !== null && cmp(node.key, nextNode.key) === 0) {
+          this.tree.remove(coord);
+          return nextNode.key;
+        }
+        return coord;
+      }
+    };
+    var rounder = new PtRounder();
+    var epsilon = 11102230246251565e-32;
+    var splitter = 134217729;
+    var resulterrbound = (3 + 8 * epsilon) * epsilon;
+    function sum(elen, e, flen, f2, h) {
+      let Q, Qnew, hh, bvirt;
+      let enow = e[0];
+      let fnow = f2[0];
+      let eindex = 0;
+      let findex = 0;
+      if (fnow > enow === fnow > -enow) {
+        Q = enow;
+        enow = e[++eindex];
+      } else {
+        Q = fnow;
+        fnow = f2[++findex];
+      }
+      let hindex = 0;
+      if (eindex < elen && findex < flen) {
+        if (fnow > enow === fnow > -enow) {
+          Qnew = enow + Q;
+          hh = Q - (Qnew - enow);
+          enow = e[++eindex];
+        } else {
+          Qnew = fnow + Q;
+          hh = Q - (Qnew - fnow);
+          fnow = f2[++findex];
+        }
+        Q = Qnew;
+        if (hh !== 0) {
+          h[hindex++] = hh;
+        }
+        while (eindex < elen && findex < flen) {
+          if (fnow > enow === fnow > -enow) {
+            Qnew = Q + enow;
+            bvirt = Qnew - Q;
+            hh = Q - (Qnew - bvirt) + (enow - bvirt);
+            enow = e[++eindex];
+          } else {
+            Qnew = Q + fnow;
+            bvirt = Qnew - Q;
+            hh = Q - (Qnew - bvirt) + (fnow - bvirt);
+            fnow = f2[++findex];
+          }
+          Q = Qnew;
+          if (hh !== 0) {
+            h[hindex++] = hh;
+          }
+        }
+      }
+      while (eindex < elen) {
+        Qnew = Q + enow;
+        bvirt = Qnew - Q;
+        hh = Q - (Qnew - bvirt) + (enow - bvirt);
+        enow = e[++eindex];
+        Q = Qnew;
+        if (hh !== 0) {
+          h[hindex++] = hh;
+        }
+      }
+      while (findex < flen) {
+        Qnew = Q + fnow;
+        bvirt = Qnew - Q;
+        hh = Q - (Qnew - bvirt) + (fnow - bvirt);
+        fnow = f2[++findex];
+        Q = Qnew;
+        if (hh !== 0) {
+          h[hindex++] = hh;
+        }
+      }
+      if (Q !== 0 || hindex === 0) {
+        h[hindex++] = Q;
+      }
+      return hindex;
+    }
+    function estimate(elen, e) {
+      let Q = e[0];
+      for (let i = 1; i < elen; i++) Q += e[i];
+      return Q;
+    }
+    function vec(n) {
+      return new Float64Array(n);
+    }
+    var ccwerrboundA = (3 + 16 * epsilon) * epsilon;
+    var ccwerrboundB = (2 + 12 * epsilon) * epsilon;
+    var ccwerrboundC = (9 + 64 * epsilon) * epsilon * epsilon;
+    var B = vec(4);
+    var C1 = vec(8);
+    var C2 = vec(12);
+    var D2 = vec(16);
+    var u = vec(4);
+    function orient2dadapt(ax, ay, bx, by, cx, cy, detsum) {
+      let acxtail, acytail, bcxtail, bcytail;
+      let bvirt, c, ahi, alo, bhi, blo, _i, _j, _0, s1, s0, t1, t0, u3;
+      const acx = ax - cx;
+      const bcx = bx - cx;
+      const acy = ay - cy;
+      const bcy = by - cy;
+      s1 = acx * bcy;
+      c = splitter * acx;
+      ahi = c - (c - acx);
+      alo = acx - ahi;
+      c = splitter * bcy;
+      bhi = c - (c - bcy);
+      blo = bcy - bhi;
+      s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+      t1 = acy * bcx;
+      c = splitter * acy;
+      ahi = c - (c - acy);
+      alo = acy - ahi;
+      c = splitter * bcx;
+      bhi = c - (c - bcx);
+      blo = bcx - bhi;
+      t0 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
+      _i = s0 - t0;
+      bvirt = s0 - _i;
+      B[0] = s0 - (_i + bvirt) + (bvirt - t0);
+      _j = s1 + _i;
+      bvirt = _j - s1;
+      _0 = s1 - (_j - bvirt) + (_i - bvirt);
+      _i = _0 - t1;
+      bvirt = _0 - _i;
+      B[1] = _0 - (_i + bvirt) + (bvirt - t1);
+      u3 = _j + _i;
+      bvirt = u3 - _j;
+      B[2] = _j - (u3 - bvirt) + (_i - bvirt);
+      B[3] = u3;
+      let det = estimate(4, B);
+      let errbound = ccwerrboundB * detsum;
+      if (det >= errbound || -det >= errbound) {
+        return det;
+      }
+      bvirt = ax - acx;
+      acxtail = ax - (acx + bvirt) + (bvirt - cx);
+      bvirt = bx - bcx;
+      bcxtail = bx - (bcx + bvirt) + (bvirt - cx);
+      bvirt = ay - acy;
+      acytail = ay - (acy + bvirt) + (bvirt - cy);
+      bvirt = by - bcy;
+      bcytail = by - (bcy + bvirt) + (bvirt - cy);
+      if (acxtail === 0 && acytail === 0 && bcxtail === 0 && bcytail === 0) {
+        return det;
+      }
+      errbound = ccwerrboundC * detsum + resulterrbound * Math.abs(det);
+      det += acx * bcytail + bcy * acxtail - (acy * bcxtail + bcx * acytail);
+      if (det >= errbound || -det >= errbound) return det;
+      s1 = acxtail * bcy;
+      c = splitter * acxtail;
+      ahi = c - (c - acxtail);
+      alo = acxtail - ahi;
+      c = splitter * bcy;
+      bhi = c - (c - bcy);
+      blo = bcy - bhi;
+      s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+      t1 = acytail * bcx;
+      c = splitter * acytail;
+      ahi = c - (c - acytail);
+      alo = acytail - ahi;
+      c = splitter * bcx;
+      bhi = c - (c - bcx);
+      blo = bcx - bhi;
+      t0 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
+      _i = s0 - t0;
+      bvirt = s0 - _i;
+      u[0] = s0 - (_i + bvirt) + (bvirt - t0);
+      _j = s1 + _i;
+      bvirt = _j - s1;
+      _0 = s1 - (_j - bvirt) + (_i - bvirt);
+      _i = _0 - t1;
+      bvirt = _0 - _i;
+      u[1] = _0 - (_i + bvirt) + (bvirt - t1);
+      u3 = _j + _i;
+      bvirt = u3 - _j;
+      u[2] = _j - (u3 - bvirt) + (_i - bvirt);
+      u[3] = u3;
+      const C1len = sum(4, B, 4, u, C1);
+      s1 = acx * bcytail;
+      c = splitter * acx;
+      ahi = c - (c - acx);
+      alo = acx - ahi;
+      c = splitter * bcytail;
+      bhi = c - (c - bcytail);
+      blo = bcytail - bhi;
+      s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+      t1 = acy * bcxtail;
+      c = splitter * acy;
+      ahi = c - (c - acy);
+      alo = acy - ahi;
+      c = splitter * bcxtail;
+      bhi = c - (c - bcxtail);
+      blo = bcxtail - bhi;
+      t0 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
+      _i = s0 - t0;
+      bvirt = s0 - _i;
+      u[0] = s0 - (_i + bvirt) + (bvirt - t0);
+      _j = s1 + _i;
+      bvirt = _j - s1;
+      _0 = s1 - (_j - bvirt) + (_i - bvirt);
+      _i = _0 - t1;
+      bvirt = _0 - _i;
+      u[1] = _0 - (_i + bvirt) + (bvirt - t1);
+      u3 = _j + _i;
+      bvirt = u3 - _j;
+      u[2] = _j - (u3 - bvirt) + (_i - bvirt);
+      u[3] = u3;
+      const C2len = sum(C1len, C1, 4, u, C2);
+      s1 = acxtail * bcytail;
+      c = splitter * acxtail;
+      ahi = c - (c - acxtail);
+      alo = acxtail - ahi;
+      c = splitter * bcytail;
+      bhi = c - (c - bcytail);
+      blo = bcytail - bhi;
+      s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+      t1 = acytail * bcxtail;
+      c = splitter * acytail;
+      ahi = c - (c - acytail);
+      alo = acytail - ahi;
+      c = splitter * bcxtail;
+      bhi = c - (c - bcxtail);
+      blo = bcxtail - bhi;
+      t0 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
+      _i = s0 - t0;
+      bvirt = s0 - _i;
+      u[0] = s0 - (_i + bvirt) + (bvirt - t0);
+      _j = s1 + _i;
+      bvirt = _j - s1;
+      _0 = s1 - (_j - bvirt) + (_i - bvirt);
+      _i = _0 - t1;
+      bvirt = _0 - _i;
+      u[1] = _0 - (_i + bvirt) + (bvirt - t1);
+      u3 = _j + _i;
+      bvirt = u3 - _j;
+      u[2] = _j - (u3 - bvirt) + (_i - bvirt);
+      u[3] = u3;
+      const Dlen = sum(C2len, C2, 4, u, D2);
+      return D2[Dlen - 1];
+    }
+    function orient2d(ax, ay, bx, by, cx, cy) {
+      const detleft = (ay - cy) * (bx - cx);
+      const detright = (ax - cx) * (by - cy);
+      const det = detleft - detright;
+      const detsum = Math.abs(detleft + detright);
+      if (Math.abs(det) >= ccwerrboundA * detsum) return det;
+      return -orient2dadapt(ax, ay, bx, by, cx, cy, detsum);
+    }
+    var crossProduct = (a, b2) => a.x * b2.y - a.y * b2.x;
+    var dotProduct = (a, b2) => a.x * b2.x + a.y * b2.y;
+    var compareVectorAngles = (basePt, endPt1, endPt2) => {
+      const res = orient2d(basePt.x, basePt.y, endPt1.x, endPt1.y, endPt2.x, endPt2.y);
+      if (res > 0) return -1;
+      if (res < 0) return 1;
+      return 0;
+    };
+    var length = (v2) => Math.sqrt(dotProduct(v2, v2));
+    var sineOfAngle = (pShared, pBase, pAngle) => {
+      const vBase = {
+        x: pBase.x - pShared.x,
+        y: pBase.y - pShared.y
+      };
+      const vAngle = {
+        x: pAngle.x - pShared.x,
+        y: pAngle.y - pShared.y
+      };
+      return crossProduct(vAngle, vBase) / length(vAngle) / length(vBase);
+    };
+    var cosineOfAngle = (pShared, pBase, pAngle) => {
+      const vBase = {
+        x: pBase.x - pShared.x,
+        y: pBase.y - pShared.y
+      };
+      const vAngle = {
+        x: pAngle.x - pShared.x,
+        y: pAngle.y - pShared.y
+      };
+      return dotProduct(vAngle, vBase) / length(vAngle) / length(vBase);
+    };
+    var horizontalIntersection = (pt, v2, y) => {
+      if (v2.y === 0) return null;
+      return {
+        x: pt.x + v2.x / v2.y * (y - pt.y),
+        y
+      };
+    };
+    var verticalIntersection = (pt, v2, x2) => {
+      if (v2.x === 0) return null;
+      return {
+        x: x2,
+        y: pt.y + v2.y / v2.x * (x2 - pt.x)
+      };
+    };
+    var intersection$1 = (pt1, v1, pt2, v2) => {
+      if (v1.x === 0) return verticalIntersection(pt2, v2, pt1.x);
+      if (v2.x === 0) return verticalIntersection(pt1, v1, pt2.x);
+      if (v1.y === 0) return horizontalIntersection(pt2, v2, pt1.y);
+      if (v2.y === 0) return horizontalIntersection(pt1, v1, pt2.y);
+      const kross = crossProduct(v1, v2);
+      if (kross == 0) return null;
+      const ve = {
+        x: pt2.x - pt1.x,
+        y: pt2.y - pt1.y
+      };
+      const d1 = crossProduct(ve, v1) / kross;
+      const d2 = crossProduct(ve, v2) / kross;
+      const x1 = pt1.x + d2 * v1.x, x2 = pt2.x + d1 * v2.x;
+      const y1 = pt1.y + d2 * v1.y, y2 = pt2.y + d1 * v2.y;
+      const x3 = (x1 + x2) / 2;
+      const y = (y1 + y2) / 2;
+      return {
+        x: x3,
+        y
+      };
+    };
+    var SweepEvent = class _SweepEvent {
+      // for ordering sweep events in the sweep event queue
+      static compare(a, b2) {
+        const ptCmp = _SweepEvent.comparePoints(a.point, b2.point);
+        if (ptCmp !== 0) return ptCmp;
+        if (a.point !== b2.point) a.link(b2);
+        if (a.isLeft !== b2.isLeft) return a.isLeft ? 1 : -1;
+        return Segment.compare(a.segment, b2.segment);
+      }
+      // for ordering points in sweep line order
+      static comparePoints(aPt, bPt) {
+        if (aPt.x < bPt.x) return -1;
+        if (aPt.x > bPt.x) return 1;
+        if (aPt.y < bPt.y) return -1;
+        if (aPt.y > bPt.y) return 1;
+        return 0;
+      }
+      // Warning: 'point' input will be modified and re-used (for performance)
+      constructor(point, isLeft) {
+        if (point.events === void 0) point.events = [this];
+        else point.events.push(this);
+        this.point = point;
+        this.isLeft = isLeft;
+      }
+      link(other) {
+        if (other.point === this.point) {
+          throw new Error("Tried to link already linked events");
+        }
+        const otherEvents = other.point.events;
+        for (let i = 0, iMax = otherEvents.length; i < iMax; i++) {
+          const evt = otherEvents[i];
+          this.point.events.push(evt);
+          evt.point = this.point;
+        }
+        this.checkForConsuming();
+      }
+      /* Do a pass over our linked events and check to see if any pair
+       * of segments match, and should be consumed. */
+      checkForConsuming() {
+        const numEvents = this.point.events.length;
+        for (let i = 0; i < numEvents; i++) {
+          const evt1 = this.point.events[i];
+          if (evt1.segment.consumedBy !== void 0) continue;
+          for (let j2 = i + 1; j2 < numEvents; j2++) {
+            const evt2 = this.point.events[j2];
+            if (evt2.consumedBy !== void 0) continue;
+            if (evt1.otherSE.point.events !== evt2.otherSE.point.events) continue;
+            evt1.segment.consume(evt2.segment);
+          }
+        }
+      }
+      getAvailableLinkedEvents() {
+        const events = [];
+        for (let i = 0, iMax = this.point.events.length; i < iMax; i++) {
+          const evt = this.point.events[i];
+          if (evt !== this && !evt.segment.ringOut && evt.segment.isInResult()) {
+            events.push(evt);
+          }
+        }
+        return events;
+      }
+      /**
+       * Returns a comparator function for sorting linked events that will
+       * favor the event that will give us the smallest left-side angle.
+       * All ring construction starts as low as possible heading to the right,
+       * so by always turning left as sharp as possible we'll get polygons
+       * without uncessary loops & holes.
+       *
+       * The comparator function has a compute cache such that it avoids
+       * re-computing already-computed values.
+       */
+      getLeftmostComparator(baseEvent) {
+        const cache = /* @__PURE__ */ new Map();
+        const fillCache = (linkedEvent) => {
+          const nextEvent = linkedEvent.otherSE;
+          cache.set(linkedEvent, {
+            sine: sineOfAngle(this.point, baseEvent.point, nextEvent.point),
+            cosine: cosineOfAngle(this.point, baseEvent.point, nextEvent.point)
+          });
+        };
+        return (a, b2) => {
+          if (!cache.has(a)) fillCache(a);
+          if (!cache.has(b2)) fillCache(b2);
+          const {
+            sine: asine,
+            cosine: acosine
+          } = cache.get(a);
+          const {
+            sine: bsine,
+            cosine: bcosine
+          } = cache.get(b2);
+          if (asine >= 0 && bsine >= 0) {
+            if (acosine < bcosine) return 1;
+            if (acosine > bcosine) return -1;
+            return 0;
+          }
+          if (asine < 0 && bsine < 0) {
+            if (acosine < bcosine) return -1;
+            if (acosine > bcosine) return 1;
+            return 0;
+          }
+          if (bsine < asine) return -1;
+          if (bsine > asine) return 1;
+          return 0;
+        };
+      }
+    };
+    var segmentId = 0;
+    var Segment = class _Segment {
+      /* This compare() function is for ordering segments in the sweep
+       * line tree, and does so according to the following criteria:
+       *
+       * Consider the vertical line that lies an infinestimal step to the
+       * right of the right-more of the two left endpoints of the input
+       * segments. Imagine slowly moving a point up from negative infinity
+       * in the increasing y direction. Which of the two segments will that
+       * point intersect first? That segment comes 'before' the other one.
+       *
+       * If neither segment would be intersected by such a line, (if one
+       * or more of the segments are vertical) then the line to be considered
+       * is directly on the right-more of the two left inputs.
+       */
+      static compare(a, b2) {
+        const alx = a.leftSE.point.x;
+        const blx = b2.leftSE.point.x;
+        const arx = a.rightSE.point.x;
+        const brx = b2.rightSE.point.x;
+        if (brx < alx) return 1;
+        if (arx < blx) return -1;
+        const aly = a.leftSE.point.y;
+        const bly = b2.leftSE.point.y;
+        const ary = a.rightSE.point.y;
+        const bry = b2.rightSE.point.y;
+        if (alx < blx) {
+          if (bly < aly && bly < ary) return 1;
+          if (bly > aly && bly > ary) return -1;
+          const aCmpBLeft = a.comparePoint(b2.leftSE.point);
+          if (aCmpBLeft < 0) return 1;
+          if (aCmpBLeft > 0) return -1;
+          const bCmpARight = b2.comparePoint(a.rightSE.point);
+          if (bCmpARight !== 0) return bCmpARight;
+          return -1;
+        }
+        if (alx > blx) {
+          if (aly < bly && aly < bry) return -1;
+          if (aly > bly && aly > bry) return 1;
+          const bCmpALeft = b2.comparePoint(a.leftSE.point);
+          if (bCmpALeft !== 0) return bCmpALeft;
+          const aCmpBRight = a.comparePoint(b2.rightSE.point);
+          if (aCmpBRight < 0) return 1;
+          if (aCmpBRight > 0) return -1;
+          return 1;
+        }
+        if (aly < bly) return -1;
+        if (aly > bly) return 1;
+        if (arx < brx) {
+          const bCmpARight = b2.comparePoint(a.rightSE.point);
+          if (bCmpARight !== 0) return bCmpARight;
+        }
+        if (arx > brx) {
+          const aCmpBRight = a.comparePoint(b2.rightSE.point);
+          if (aCmpBRight < 0) return 1;
+          if (aCmpBRight > 0) return -1;
+        }
+        if (arx !== brx) {
+          const ay = ary - aly;
+          const ax = arx - alx;
+          const by = bry - bly;
+          const bx = brx - blx;
+          if (ay > ax && by < bx) return 1;
+          if (ay < ax && by > bx) return -1;
+        }
+        if (arx > brx) return 1;
+        if (arx < brx) return -1;
+        if (ary < bry) return -1;
+        if (ary > bry) return 1;
+        if (a.id < b2.id) return -1;
+        if (a.id > b2.id) return 1;
+        return 0;
+      }
+      /* Warning: a reference to ringWindings input will be stored,
+       *  and possibly will be later modified */
+      constructor(leftSE, rightSE, rings, windings) {
+        this.id = ++segmentId;
+        this.leftSE = leftSE;
+        leftSE.segment = this;
+        leftSE.otherSE = rightSE;
+        this.rightSE = rightSE;
+        rightSE.segment = this;
+        rightSE.otherSE = leftSE;
+        this.rings = rings;
+        this.windings = windings;
+      }
+      static fromRing(pt1, pt2, ring) {
+        let leftPt, rightPt, winding;
+        const cmpPts = SweepEvent.comparePoints(pt1, pt2);
+        if (cmpPts < 0) {
+          leftPt = pt1;
+          rightPt = pt2;
+          winding = 1;
+        } else if (cmpPts > 0) {
+          leftPt = pt2;
+          rightPt = pt1;
+          winding = -1;
+        } else throw new Error(`Tried to create degenerate segment at [${pt1.x}, ${pt1.y}]`);
+        const leftSE = new SweepEvent(leftPt, true);
+        const rightSE = new SweepEvent(rightPt, false);
+        return new _Segment(leftSE, rightSE, [ring], [winding]);
+      }
+      /* When a segment is split, the rightSE is replaced with a new sweep event */
+      replaceRightSE(newRightSE) {
+        this.rightSE = newRightSE;
+        this.rightSE.segment = this;
+        this.rightSE.otherSE = this.leftSE;
+        this.leftSE.otherSE = this.rightSE;
+      }
+      bbox() {
+        const y1 = this.leftSE.point.y;
+        const y2 = this.rightSE.point.y;
+        return {
+          ll: {
+            x: this.leftSE.point.x,
+            y: y1 < y2 ? y1 : y2
+          },
+          ur: {
+            x: this.rightSE.point.x,
+            y: y1 > y2 ? y1 : y2
+          }
+        };
+      }
+      /* A vector from the left point to the right */
+      vector() {
+        return {
+          x: this.rightSE.point.x - this.leftSE.point.x,
+          y: this.rightSE.point.y - this.leftSE.point.y
+        };
+      }
+      isAnEndpoint(pt) {
+        return pt.x === this.leftSE.point.x && pt.y === this.leftSE.point.y || pt.x === this.rightSE.point.x && pt.y === this.rightSE.point.y;
+      }
+      /* Compare this segment with a point.
+       *
+       * A point P is considered to be colinear to a segment if there
+       * exists a distance D such that if we travel along the segment
+       * from one * endpoint towards the other a distance D, we find
+       * ourselves at point P.
+       *
+       * Return value indicates:
+       *
+       *   1: point lies above the segment (to the left of vertical)
+       *   0: point is colinear to segment
+       *  -1: point lies below the segment (to the right of vertical)
+       */
+      comparePoint(point) {
+        if (this.isAnEndpoint(point)) return 0;
+        const lPt = this.leftSE.point;
+        const rPt = this.rightSE.point;
+        const v2 = this.vector();
+        if (lPt.x === rPt.x) {
+          if (point.x === lPt.x) return 0;
+          return point.x < lPt.x ? 1 : -1;
+        }
+        const yDist = (point.y - lPt.y) / v2.y;
+        const xFromYDist = lPt.x + yDist * v2.x;
+        if (point.x === xFromYDist) return 0;
+        const xDist = (point.x - lPt.x) / v2.x;
+        const yFromXDist = lPt.y + xDist * v2.y;
+        if (point.y === yFromXDist) return 0;
+        return point.y < yFromXDist ? -1 : 1;
+      }
+      /**
+       * Given another segment, returns the first non-trivial intersection
+       * between the two segments (in terms of sweep line ordering), if it exists.
+       *
+       * A 'non-trivial' intersection is one that will cause one or both of the
+       * segments to be split(). As such, 'trivial' vs. 'non-trivial' intersection:
+       *
+       *   * endpoint of segA with endpoint of segB --> trivial
+       *   * endpoint of segA with point along segB --> non-trivial
+       *   * endpoint of segB with point along segA --> non-trivial
+       *   * point along segA with point along segB --> non-trivial
+       *
+       * If no non-trivial intersection exists, return null
+       * Else, return null.
+       */
+      getIntersection(other) {
+        const tBbox = this.bbox();
+        const oBbox = other.bbox();
+        const bboxOverlap = getBboxOverlap(tBbox, oBbox);
+        if (bboxOverlap === null) return null;
+        const tlp = this.leftSE.point;
+        const trp = this.rightSE.point;
+        const olp = other.leftSE.point;
+        const orp = other.rightSE.point;
+        const touchesOtherLSE = isInBbox(tBbox, olp) && this.comparePoint(olp) === 0;
+        const touchesThisLSE = isInBbox(oBbox, tlp) && other.comparePoint(tlp) === 0;
+        const touchesOtherRSE = isInBbox(tBbox, orp) && this.comparePoint(orp) === 0;
+        const touchesThisRSE = isInBbox(oBbox, trp) && other.comparePoint(trp) === 0;
+        if (touchesThisLSE && touchesOtherLSE) {
+          if (touchesThisRSE && !touchesOtherRSE) return trp;
+          if (!touchesThisRSE && touchesOtherRSE) return orp;
+          return null;
+        }
+        if (touchesThisLSE) {
+          if (touchesOtherRSE) {
+            if (tlp.x === orp.x && tlp.y === orp.y) return null;
+          }
+          return tlp;
+        }
+        if (touchesOtherLSE) {
+          if (touchesThisRSE) {
+            if (trp.x === olp.x && trp.y === olp.y) return null;
+          }
+          return olp;
+        }
+        if (touchesThisRSE && touchesOtherRSE) return null;
+        if (touchesThisRSE) return trp;
+        if (touchesOtherRSE) return orp;
+        const pt = intersection$1(tlp, this.vector(), olp, other.vector());
+        if (pt === null) return null;
+        if (!isInBbox(bboxOverlap, pt)) return null;
+        return rounder.round(pt.x, pt.y);
+      }
+      /**
+       * Split the given segment into multiple segments on the given points.
+       *  * Each existing segment will retain its leftSE and a new rightSE will be
+       *    generated for it.
+       *  * A new segment will be generated which will adopt the original segment's
+       *    rightSE, and a new leftSE will be generated for it.
+       *  * If there are more than two points given to split on, new segments
+       *    in the middle will be generated with new leftSE and rightSE's.
+       *  * An array of the newly generated SweepEvents will be returned.
+       *
+       * Warning: input array of points is modified
+       */
+      split(point) {
+        const newEvents = [];
+        const alreadyLinked = point.events !== void 0;
+        const newLeftSE = new SweepEvent(point, true);
+        const newRightSE = new SweepEvent(point, false);
+        const oldRightSE = this.rightSE;
+        this.replaceRightSE(newRightSE);
+        newEvents.push(newRightSE);
+        newEvents.push(newLeftSE);
+        const newSeg = new _Segment(newLeftSE, oldRightSE, this.rings.slice(), this.windings.slice());
+        if (SweepEvent.comparePoints(newSeg.leftSE.point, newSeg.rightSE.point) > 0) {
+          newSeg.swapEvents();
+        }
+        if (SweepEvent.comparePoints(this.leftSE.point, this.rightSE.point) > 0) {
+          this.swapEvents();
+        }
+        if (alreadyLinked) {
+          newLeftSE.checkForConsuming();
+          newRightSE.checkForConsuming();
+        }
+        return newEvents;
+      }
+      /* Swap which event is left and right */
+      swapEvents() {
+        const tmpEvt = this.rightSE;
+        this.rightSE = this.leftSE;
+        this.leftSE = tmpEvt;
+        this.leftSE.isLeft = true;
+        this.rightSE.isLeft = false;
+        for (let i = 0, iMax = this.windings.length; i < iMax; i++) {
+          this.windings[i] *= -1;
+        }
+      }
+      /* Consume another segment. We take their rings under our wing
+       * and mark them as consumed. Use for perfectly overlapping segments */
+      consume(other) {
+        let consumer = this;
+        let consumee = other;
+        while (consumer.consumedBy) consumer = consumer.consumedBy;
+        while (consumee.consumedBy) consumee = consumee.consumedBy;
+        const cmp2 = _Segment.compare(consumer, consumee);
+        if (cmp2 === 0) return;
+        if (cmp2 > 0) {
+          const tmp = consumer;
+          consumer = consumee;
+          consumee = tmp;
+        }
+        if (consumer.prev === consumee) {
+          const tmp = consumer;
+          consumer = consumee;
+          consumee = tmp;
+        }
+        for (let i = 0, iMax = consumee.rings.length; i < iMax; i++) {
+          const ring = consumee.rings[i];
+          const winding = consumee.windings[i];
+          const index2 = consumer.rings.indexOf(ring);
+          if (index2 === -1) {
+            consumer.rings.push(ring);
+            consumer.windings.push(winding);
+          } else consumer.windings[index2] += winding;
+        }
+        consumee.rings = null;
+        consumee.windings = null;
+        consumee.consumedBy = consumer;
+        consumee.leftSE.consumedBy = consumer.leftSE;
+        consumee.rightSE.consumedBy = consumer.rightSE;
+      }
+      /* The first segment previous segment chain that is in the result */
+      prevInResult() {
+        if (this._prevInResult !== void 0) return this._prevInResult;
+        if (!this.prev) this._prevInResult = null;
+        else if (this.prev.isInResult()) this._prevInResult = this.prev;
+        else this._prevInResult = this.prev.prevInResult();
+        return this._prevInResult;
+      }
+      beforeState() {
+        if (this._beforeState !== void 0) return this._beforeState;
+        if (!this.prev) this._beforeState = {
+          rings: [],
+          windings: [],
+          multiPolys: []
+        };
+        else {
+          const seg = this.prev.consumedBy || this.prev;
+          this._beforeState = seg.afterState();
+        }
+        return this._beforeState;
+      }
+      afterState() {
+        if (this._afterState !== void 0) return this._afterState;
+        const beforeState = this.beforeState();
+        this._afterState = {
+          rings: beforeState.rings.slice(0),
+          windings: beforeState.windings.slice(0),
+          multiPolys: []
+        };
+        const ringsAfter = this._afterState.rings;
+        const windingsAfter = this._afterState.windings;
+        const mpsAfter = this._afterState.multiPolys;
+        for (let i = 0, iMax = this.rings.length; i < iMax; i++) {
+          const ring = this.rings[i];
+          const winding = this.windings[i];
+          const index2 = ringsAfter.indexOf(ring);
+          if (index2 === -1) {
+            ringsAfter.push(ring);
+            windingsAfter.push(winding);
+          } else windingsAfter[index2] += winding;
+        }
+        const polysAfter = [];
+        const polysExclude = [];
+        for (let i = 0, iMax = ringsAfter.length; i < iMax; i++) {
+          if (windingsAfter[i] === 0) continue;
+          const ring = ringsAfter[i];
+          const poly = ring.poly;
+          if (polysExclude.indexOf(poly) !== -1) continue;
+          if (ring.isExterior) polysAfter.push(poly);
+          else {
+            if (polysExclude.indexOf(poly) === -1) polysExclude.push(poly);
+            const index2 = polysAfter.indexOf(ring.poly);
+            if (index2 !== -1) polysAfter.splice(index2, 1);
+          }
+        }
+        for (let i = 0, iMax = polysAfter.length; i < iMax; i++) {
+          const mp = polysAfter[i].multiPoly;
+          if (mpsAfter.indexOf(mp) === -1) mpsAfter.push(mp);
+        }
+        return this._afterState;
+      }
+      /* Is this segment part of the final result? */
+      isInResult() {
+        if (this.consumedBy) return false;
+        if (this._isInResult !== void 0) return this._isInResult;
+        const mpsBefore = this.beforeState().multiPolys;
+        const mpsAfter = this.afterState().multiPolys;
+        switch (operation.type) {
+          case "union": {
+            const noBefores = mpsBefore.length === 0;
+            const noAfters = mpsAfter.length === 0;
+            this._isInResult = noBefores !== noAfters;
+            break;
+          }
+          case "intersection": {
+            let least;
+            let most;
+            if (mpsBefore.length < mpsAfter.length) {
+              least = mpsBefore.length;
+              most = mpsAfter.length;
+            } else {
+              least = mpsAfter.length;
+              most = mpsBefore.length;
+            }
+            this._isInResult = most === operation.numMultiPolys && least < most;
+            break;
+          }
+          case "xor": {
+            const diff = Math.abs(mpsBefore.length - mpsAfter.length);
+            this._isInResult = diff % 2 === 1;
+            break;
+          }
+          case "difference": {
+            const isJustSubject = (mps) => mps.length === 1 && mps[0].isSubject;
+            this._isInResult = isJustSubject(mpsBefore) !== isJustSubject(mpsAfter);
+            break;
+          }
+          default:
+            throw new Error(`Unrecognized operation type found ${operation.type}`);
+        }
+        return this._isInResult;
+      }
+    };
+    var RingIn = class {
+      constructor(geomRing, poly, isExterior) {
+        if (!Array.isArray(geomRing) || geomRing.length === 0) {
+          throw new Error("Input geometry is not a valid Polygon or MultiPolygon");
+        }
+        this.poly = poly;
+        this.isExterior = isExterior;
+        this.segments = [];
+        if (typeof geomRing[0][0] !== "number" || typeof geomRing[0][1] !== "number") {
+          throw new Error("Input geometry is not a valid Polygon or MultiPolygon");
+        }
+        const firstPoint = rounder.round(geomRing[0][0], geomRing[0][1]);
+        this.bbox = {
+          ll: {
+            x: firstPoint.x,
+            y: firstPoint.y
+          },
+          ur: {
+            x: firstPoint.x,
+            y: firstPoint.y
+          }
+        };
+        let prevPoint = firstPoint;
+        for (let i = 1, iMax = geomRing.length; i < iMax; i++) {
+          if (typeof geomRing[i][0] !== "number" || typeof geomRing[i][1] !== "number") {
+            throw new Error("Input geometry is not a valid Polygon or MultiPolygon");
+          }
+          let point = rounder.round(geomRing[i][0], geomRing[i][1]);
+          if (point.x === prevPoint.x && point.y === prevPoint.y) continue;
+          this.segments.push(Segment.fromRing(prevPoint, point, this));
+          if (point.x < this.bbox.ll.x) this.bbox.ll.x = point.x;
+          if (point.y < this.bbox.ll.y) this.bbox.ll.y = point.y;
+          if (point.x > this.bbox.ur.x) this.bbox.ur.x = point.x;
+          if (point.y > this.bbox.ur.y) this.bbox.ur.y = point.y;
+          prevPoint = point;
+        }
+        if (firstPoint.x !== prevPoint.x || firstPoint.y !== prevPoint.y) {
+          this.segments.push(Segment.fromRing(prevPoint, firstPoint, this));
+        }
+      }
+      getSweepEvents() {
+        const sweepEvents = [];
+        for (let i = 0, iMax = this.segments.length; i < iMax; i++) {
+          const segment = this.segments[i];
+          sweepEvents.push(segment.leftSE);
+          sweepEvents.push(segment.rightSE);
+        }
+        return sweepEvents;
+      }
+    };
+    var PolyIn = class {
+      constructor(geomPoly, multiPoly) {
+        if (!Array.isArray(geomPoly)) {
+          throw new Error("Input geometry is not a valid Polygon or MultiPolygon");
+        }
+        this.exteriorRing = new RingIn(geomPoly[0], this, true);
+        this.bbox = {
+          ll: {
+            x: this.exteriorRing.bbox.ll.x,
+            y: this.exteriorRing.bbox.ll.y
+          },
+          ur: {
+            x: this.exteriorRing.bbox.ur.x,
+            y: this.exteriorRing.bbox.ur.y
+          }
+        };
+        this.interiorRings = [];
+        for (let i = 1, iMax = geomPoly.length; i < iMax; i++) {
+          const ring = new RingIn(geomPoly[i], this, false);
+          if (ring.bbox.ll.x < this.bbox.ll.x) this.bbox.ll.x = ring.bbox.ll.x;
+          if (ring.bbox.ll.y < this.bbox.ll.y) this.bbox.ll.y = ring.bbox.ll.y;
+          if (ring.bbox.ur.x > this.bbox.ur.x) this.bbox.ur.x = ring.bbox.ur.x;
+          if (ring.bbox.ur.y > this.bbox.ur.y) this.bbox.ur.y = ring.bbox.ur.y;
+          this.interiorRings.push(ring);
+        }
+        this.multiPoly = multiPoly;
+      }
+      getSweepEvents() {
+        const sweepEvents = this.exteriorRing.getSweepEvents();
+        for (let i = 0, iMax = this.interiorRings.length; i < iMax; i++) {
+          const ringSweepEvents = this.interiorRings[i].getSweepEvents();
+          for (let j2 = 0, jMax = ringSweepEvents.length; j2 < jMax; j2++) {
+            sweepEvents.push(ringSweepEvents[j2]);
+          }
+        }
+        return sweepEvents;
+      }
+    };
+    var MultiPolyIn = class {
+      constructor(geom, isSubject) {
+        if (!Array.isArray(geom)) {
+          throw new Error("Input geometry is not a valid Polygon or MultiPolygon");
+        }
+        try {
+          if (typeof geom[0][0][0] === "number") geom = [geom];
+        } catch (ex) {
+        }
+        this.polys = [];
+        this.bbox = {
+          ll: {
+            x: Number.POSITIVE_INFINITY,
+            y: Number.POSITIVE_INFINITY
+          },
+          ur: {
+            x: Number.NEGATIVE_INFINITY,
+            y: Number.NEGATIVE_INFINITY
+          }
+        };
+        for (let i = 0, iMax = geom.length; i < iMax; i++) {
+          const poly = new PolyIn(geom[i], this);
+          if (poly.bbox.ll.x < this.bbox.ll.x) this.bbox.ll.x = poly.bbox.ll.x;
+          if (poly.bbox.ll.y < this.bbox.ll.y) this.bbox.ll.y = poly.bbox.ll.y;
+          if (poly.bbox.ur.x > this.bbox.ur.x) this.bbox.ur.x = poly.bbox.ur.x;
+          if (poly.bbox.ur.y > this.bbox.ur.y) this.bbox.ur.y = poly.bbox.ur.y;
+          this.polys.push(poly);
+        }
+        this.isSubject = isSubject;
+      }
+      getSweepEvents() {
+        const sweepEvents = [];
+        for (let i = 0, iMax = this.polys.length; i < iMax; i++) {
+          const polySweepEvents = this.polys[i].getSweepEvents();
+          for (let j2 = 0, jMax = polySweepEvents.length; j2 < jMax; j2++) {
+            sweepEvents.push(polySweepEvents[j2]);
+          }
+        }
+        return sweepEvents;
+      }
+    };
+    var RingOut = class _RingOut {
+      /* Given the segments from the sweep line pass, compute & return a series
+       * of closed rings from all the segments marked to be part of the result */
+      static factory(allSegments) {
+        const ringsOut = [];
+        for (let i = 0, iMax = allSegments.length; i < iMax; i++) {
+          const segment = allSegments[i];
+          if (!segment.isInResult() || segment.ringOut) continue;
+          let prevEvent = null;
+          let event = segment.leftSE;
+          let nextEvent = segment.rightSE;
+          const events = [event];
+          const startingPoint = event.point;
+          const intersectionLEs = [];
+          while (true) {
+            prevEvent = event;
+            event = nextEvent;
+            events.push(event);
+            if (event.point === startingPoint) break;
+            while (true) {
+              const availableLEs = event.getAvailableLinkedEvents();
+              if (availableLEs.length === 0) {
+                const firstPt = events[0].point;
+                const lastPt = events[events.length - 1].point;
+                throw new Error(`Unable to complete output ring starting at [${firstPt.x}, ${firstPt.y}]. Last matching segment found ends at [${lastPt.x}, ${lastPt.y}].`);
+              }
+              if (availableLEs.length === 1) {
+                nextEvent = availableLEs[0].otherSE;
+                break;
+              }
+              let indexLE = null;
+              for (let j2 = 0, jMax = intersectionLEs.length; j2 < jMax; j2++) {
+                if (intersectionLEs[j2].point === event.point) {
+                  indexLE = j2;
+                  break;
+                }
+              }
+              if (indexLE !== null) {
+                const intersectionLE = intersectionLEs.splice(indexLE)[0];
+                const ringEvents = events.splice(intersectionLE.index);
+                ringEvents.unshift(ringEvents[0].otherSE);
+                ringsOut.push(new _RingOut(ringEvents.reverse()));
+                continue;
+              }
+              intersectionLEs.push({
+                index: events.length,
+                point: event.point
+              });
+              const comparator = event.getLeftmostComparator(prevEvent);
+              nextEvent = availableLEs.sort(comparator)[0].otherSE;
+              break;
+            }
+          }
+          ringsOut.push(new _RingOut(events));
+        }
+        return ringsOut;
+      }
+      constructor(events) {
+        this.events = events;
+        for (let i = 0, iMax = events.length; i < iMax; i++) {
+          events[i].segment.ringOut = this;
+        }
+        this.poly = null;
+      }
+      getGeom() {
+        let prevPt = this.events[0].point;
+        const points = [prevPt];
+        for (let i = 1, iMax = this.events.length - 1; i < iMax; i++) {
+          const pt2 = this.events[i].point;
+          const nextPt2 = this.events[i + 1].point;
+          if (compareVectorAngles(pt2, prevPt, nextPt2) === 0) continue;
+          points.push(pt2);
+          prevPt = pt2;
+        }
+        if (points.length === 1) return null;
+        const pt = points[0];
+        const nextPt = points[1];
+        if (compareVectorAngles(pt, prevPt, nextPt) === 0) points.shift();
+        points.push(points[0]);
+        const step = this.isExteriorRing() ? 1 : -1;
+        const iStart = this.isExteriorRing() ? 0 : points.length - 1;
+        const iEnd = this.isExteriorRing() ? points.length : -1;
+        const orderedPoints = [];
+        for (let i = iStart; i != iEnd; i += step) orderedPoints.push([points[i].x, points[i].y]);
+        return orderedPoints;
+      }
+      isExteriorRing() {
+        if (this._isExteriorRing === void 0) {
+          const enclosing = this.enclosingRing();
+          this._isExteriorRing = enclosing ? !enclosing.isExteriorRing() : true;
+        }
+        return this._isExteriorRing;
+      }
+      enclosingRing() {
+        if (this._enclosingRing === void 0) {
+          this._enclosingRing = this._calcEnclosingRing();
+        }
+        return this._enclosingRing;
+      }
+      /* Returns the ring that encloses this one, if any */
+      _calcEnclosingRing() {
+        let leftMostEvt = this.events[0];
+        for (let i = 1, iMax = this.events.length; i < iMax; i++) {
+          const evt = this.events[i];
+          if (SweepEvent.compare(leftMostEvt, evt) > 0) leftMostEvt = evt;
+        }
+        let prevSeg = leftMostEvt.segment.prevInResult();
+        let prevPrevSeg = prevSeg ? prevSeg.prevInResult() : null;
+        while (true) {
+          if (!prevSeg) return null;
+          if (!prevPrevSeg) return prevSeg.ringOut;
+          if (prevPrevSeg.ringOut !== prevSeg.ringOut) {
+            if (prevPrevSeg.ringOut.enclosingRing() !== prevSeg.ringOut) {
+              return prevSeg.ringOut;
+            } else return prevSeg.ringOut.enclosingRing();
+          }
+          prevSeg = prevPrevSeg.prevInResult();
+          prevPrevSeg = prevSeg ? prevSeg.prevInResult() : null;
+        }
+      }
+    };
+    var PolyOut = class {
+      constructor(exteriorRing) {
+        this.exteriorRing = exteriorRing;
+        exteriorRing.poly = this;
+        this.interiorRings = [];
+      }
+      addInterior(ring) {
+        this.interiorRings.push(ring);
+        ring.poly = this;
+      }
+      getGeom() {
+        const geom = [this.exteriorRing.getGeom()];
+        if (geom[0] === null) return null;
+        for (let i = 0, iMax = this.interiorRings.length; i < iMax; i++) {
+          const ringGeom = this.interiorRings[i].getGeom();
+          if (ringGeom === null) continue;
+          geom.push(ringGeom);
+        }
+        return geom;
+      }
+    };
+    var MultiPolyOut = class {
+      constructor(rings) {
+        this.rings = rings;
+        this.polys = this._composePolys(rings);
+      }
+      getGeom() {
+        const geom = [];
+        for (let i = 0, iMax = this.polys.length; i < iMax; i++) {
+          const polyGeom = this.polys[i].getGeom();
+          if (polyGeom === null) continue;
+          geom.push(polyGeom);
+        }
+        return geom;
+      }
+      _composePolys(rings) {
+        const polys = [];
+        for (let i = 0, iMax = rings.length; i < iMax; i++) {
+          const ring = rings[i];
+          if (ring.poly) continue;
+          if (ring.isExteriorRing()) polys.push(new PolyOut(ring));
+          else {
+            const enclosingRing = ring.enclosingRing();
+            if (!enclosingRing.poly) polys.push(new PolyOut(enclosingRing));
+            enclosingRing.poly.addInterior(ring);
+          }
+        }
+        return polys;
+      }
+    };
+    var SweepLine = class {
+      constructor(queue) {
+        let comparator = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : Segment.compare;
+        this.queue = queue;
+        this.tree = new SplayTree__default["default"](comparator);
+        this.segments = [];
+      }
+      process(event) {
+        const segment = event.segment;
+        const newEvents = [];
+        if (event.consumedBy) {
+          if (event.isLeft) this.queue.remove(event.otherSE);
+          else this.tree.remove(segment);
+          return newEvents;
+        }
+        const node = event.isLeft ? this.tree.add(segment) : this.tree.find(segment);
+        if (!node) throw new Error(`Unable to find segment #${segment.id} [${segment.leftSE.point.x}, ${segment.leftSE.point.y}] -> [${segment.rightSE.point.x}, ${segment.rightSE.point.y}] in SweepLine tree.`);
+        let prevNode = node;
+        let nextNode = node;
+        let prevSeg = void 0;
+        let nextSeg = void 0;
+        while (prevSeg === void 0) {
+          prevNode = this.tree.prev(prevNode);
+          if (prevNode === null) prevSeg = null;
+          else if (prevNode.key.consumedBy === void 0) prevSeg = prevNode.key;
+        }
+        while (nextSeg === void 0) {
+          nextNode = this.tree.next(nextNode);
+          if (nextNode === null) nextSeg = null;
+          else if (nextNode.key.consumedBy === void 0) nextSeg = nextNode.key;
+        }
+        if (event.isLeft) {
+          let prevMySplitter = null;
+          if (prevSeg) {
+            const prevInter = prevSeg.getIntersection(segment);
+            if (prevInter !== null) {
+              if (!segment.isAnEndpoint(prevInter)) prevMySplitter = prevInter;
+              if (!prevSeg.isAnEndpoint(prevInter)) {
+                const newEventsFromSplit = this._splitSafely(prevSeg, prevInter);
+                for (let i = 0, iMax = newEventsFromSplit.length; i < iMax; i++) {
+                  newEvents.push(newEventsFromSplit[i]);
+                }
+              }
+            }
+          }
+          let nextMySplitter = null;
+          if (nextSeg) {
+            const nextInter = nextSeg.getIntersection(segment);
+            if (nextInter !== null) {
+              if (!segment.isAnEndpoint(nextInter)) nextMySplitter = nextInter;
+              if (!nextSeg.isAnEndpoint(nextInter)) {
+                const newEventsFromSplit = this._splitSafely(nextSeg, nextInter);
+                for (let i = 0, iMax = newEventsFromSplit.length; i < iMax; i++) {
+                  newEvents.push(newEventsFromSplit[i]);
+                }
+              }
+            }
+          }
+          if (prevMySplitter !== null || nextMySplitter !== null) {
+            let mySplitter = null;
+            if (prevMySplitter === null) mySplitter = nextMySplitter;
+            else if (nextMySplitter === null) mySplitter = prevMySplitter;
+            else {
+              const cmpSplitters = SweepEvent.comparePoints(prevMySplitter, nextMySplitter);
+              mySplitter = cmpSplitters <= 0 ? prevMySplitter : nextMySplitter;
+            }
+            this.queue.remove(segment.rightSE);
+            newEvents.push(segment.rightSE);
+            const newEventsFromSplit = segment.split(mySplitter);
+            for (let i = 0, iMax = newEventsFromSplit.length; i < iMax; i++) {
+              newEvents.push(newEventsFromSplit[i]);
+            }
+          }
+          if (newEvents.length > 0) {
+            this.tree.remove(segment);
+            newEvents.push(event);
+          } else {
+            this.segments.push(segment);
+            segment.prev = prevSeg;
+          }
+        } else {
+          if (prevSeg && nextSeg) {
+            const inter = prevSeg.getIntersection(nextSeg);
+            if (inter !== null) {
+              if (!prevSeg.isAnEndpoint(inter)) {
+                const newEventsFromSplit = this._splitSafely(prevSeg, inter);
+                for (let i = 0, iMax = newEventsFromSplit.length; i < iMax; i++) {
+                  newEvents.push(newEventsFromSplit[i]);
+                }
+              }
+              if (!nextSeg.isAnEndpoint(inter)) {
+                const newEventsFromSplit = this._splitSafely(nextSeg, inter);
+                for (let i = 0, iMax = newEventsFromSplit.length; i < iMax; i++) {
+                  newEvents.push(newEventsFromSplit[i]);
+                }
+              }
+            }
+          }
+          this.tree.remove(segment);
+        }
+        return newEvents;
+      }
+      /* Safely split a segment that is currently in the datastructures
+       * IE - a segment other than the one that is currently being processed. */
+      _splitSafely(seg, pt) {
+        this.tree.remove(seg);
+        const rightSE = seg.rightSE;
+        this.queue.remove(rightSE);
+        const newEvents = seg.split(pt);
+        newEvents.push(rightSE);
+        if (seg.consumedBy === void 0) this.tree.add(seg);
+        return newEvents;
+      }
+    };
+    var POLYGON_CLIPPING_MAX_QUEUE_SIZE = typeof process !== "undefined" && process.env.POLYGON_CLIPPING_MAX_QUEUE_SIZE || 1e6;
+    var POLYGON_CLIPPING_MAX_SWEEPLINE_SEGMENTS = typeof process !== "undefined" && process.env.POLYGON_CLIPPING_MAX_SWEEPLINE_SEGMENTS || 1e6;
+    var Operation = class {
+      run(type, geom, moreGeoms) {
+        operation.type = type;
+        rounder.reset();
+        const multipolys = [new MultiPolyIn(geom, true)];
+        for (let i = 0, iMax = moreGeoms.length; i < iMax; i++) {
+          multipolys.push(new MultiPolyIn(moreGeoms[i], false));
+        }
+        operation.numMultiPolys = multipolys.length;
+        if (operation.type === "difference") {
+          const subject = multipolys[0];
+          let i = 1;
+          while (i < multipolys.length) {
+            if (getBboxOverlap(multipolys[i].bbox, subject.bbox) !== null) i++;
+            else multipolys.splice(i, 1);
+          }
+        }
+        if (operation.type === "intersection") {
+          for (let i = 0, iMax = multipolys.length; i < iMax; i++) {
+            const mpA = multipolys[i];
+            for (let j2 = i + 1, jMax = multipolys.length; j2 < jMax; j2++) {
+              if (getBboxOverlap(mpA.bbox, multipolys[j2].bbox) === null) return [];
+            }
+          }
+        }
+        const queue = new SplayTree__default["default"](SweepEvent.compare);
+        for (let i = 0, iMax = multipolys.length; i < iMax; i++) {
+          const sweepEvents = multipolys[i].getSweepEvents();
+          for (let j2 = 0, jMax = sweepEvents.length; j2 < jMax; j2++) {
+            queue.insert(sweepEvents[j2]);
+            if (queue.size > POLYGON_CLIPPING_MAX_QUEUE_SIZE) {
+              throw new Error("Infinite loop when putting segment endpoints in a priority queue (queue size too big).");
+            }
+          }
+        }
+        const sweepLine = new SweepLine(queue);
+        let prevQueueSize = queue.size;
+        let node = queue.pop();
+        while (node) {
+          const evt = node.key;
+          if (queue.size === prevQueueSize) {
+            const seg = evt.segment;
+            throw new Error(`Unable to pop() ${evt.isLeft ? "left" : "right"} SweepEvent [${evt.point.x}, ${evt.point.y}] from segment #${seg.id} [${seg.leftSE.point.x}, ${seg.leftSE.point.y}] -> [${seg.rightSE.point.x}, ${seg.rightSE.point.y}] from queue.`);
+          }
+          if (queue.size > POLYGON_CLIPPING_MAX_QUEUE_SIZE) {
+            throw new Error("Infinite loop when passing sweep line over endpoints (queue size too big).");
+          }
+          if (sweepLine.segments.length > POLYGON_CLIPPING_MAX_SWEEPLINE_SEGMENTS) {
+            throw new Error("Infinite loop when passing sweep line over endpoints (too many sweep line segments).");
+          }
+          const newEvents = sweepLine.process(evt);
+          for (let i = 0, iMax = newEvents.length; i < iMax; i++) {
+            const evt2 = newEvents[i];
+            if (evt2.consumedBy === void 0) queue.insert(evt2);
+          }
+          prevQueueSize = queue.size;
+          node = queue.pop();
+        }
+        rounder.reset();
+        const ringsOut = RingOut.factory(sweepLine.segments);
+        const result = new MultiPolyOut(ringsOut);
+        return result.getGeom();
+      }
+    };
+    var operation = new Operation();
+    var union2 = function(geom) {
+      for (var _len = arguments.length, moreGeoms = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        moreGeoms[_key - 1] = arguments[_key];
+      }
+      return operation.run("union", geom, moreGeoms);
+    };
+    var intersection = function(geom) {
+      for (var _len2 = arguments.length, moreGeoms = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        moreGeoms[_key2 - 1] = arguments[_key2];
+      }
+      return operation.run("intersection", geom, moreGeoms);
+    };
+    var xor = function(geom) {
+      for (var _len3 = arguments.length, moreGeoms = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+        moreGeoms[_key3 - 1] = arguments[_key3];
+      }
+      return operation.run("xor", geom, moreGeoms);
+    };
+    var difference = function(subjectGeom) {
+      for (var _len4 = arguments.length, clippingGeoms = new Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
+        clippingGeoms[_key4 - 1] = arguments[_key4];
+      }
+      return operation.run("difference", subjectGeom, clippingGeoms);
+    };
+    var index = {
+      union: union2,
+      intersection,
+      xor,
+      difference
+    };
+    module2.exports = index;
+  }
+});
+
 // node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/escape.js
 var require_escape = __commonJS({
   "node_modules/.pnpm/ltx@3.1.2/node_modules/ltx/lib/escape.js"(exports2) {
@@ -12947,7 +20748,7 @@ var require_createElement = __commonJS({
       }
       el.cnode(child);
     }
-    function createElement2(name, attrs, ...children) {
+    function createElement2(name, attrs, ...children2) {
       if (typeof attrs === "object" && attrs !== null) {
         delete attrs.__source;
         delete attrs.__self;
@@ -12957,7 +20758,7 @@ var require_createElement = __commonJS({
         }
       }
       const el = new Element3(name, attrs);
-      for (const child of children) {
+      for (const child of children2) {
         append(el, child);
       }
       return el;
@@ -14798,6 +22599,7 @@ var ENUM_LEGACY_AWIPS = {
 var GetAwipsType = ({ Attributes }) => {
   if (!Attributes.awipsid) {
     return {
+      Raw: Attributes.awipsid,
       Name: null,
       ID: null,
       Discovered: false
@@ -14805,10 +22607,10 @@ var GetAwipsType = ({ Attributes }) => {
   }
   for (const [cPrefix, cName] of Object.entries(ENUM_LEGACY_AWIPS)) {
     if (Attributes.awipsid.startsWith(cPrefix)) {
-      return { Name: cName, ID: cPrefix, Discovered: true };
+      return { Raw: Attributes.awipsid, Name: cName, ID: cPrefix, Discovered: true };
     }
   }
-  return { Name: Attributes.awipsid, ID: Attributes.awipsid, Discovered: false };
+  return { Raw: Attributes.awipsid, Name: Attributes.awipsid, ID: Attributes.awipsid, Discovered: false };
 };
 
 // src/components/stanza/ValidateStanza.ts
@@ -14841,17 +22643,1227 @@ var ValidateStanza = ({ Stanza }) => {
   };
 };
 
+// src/components/utilities/ConstructClassTimer.ts
+function ConstructClassTimer(Target, Context2) {
+  if (Context2) {
+    return function(...args) {
+      const cStart = performance.now();
+      try {
+        return Target.apply(this, args);
+      } finally {
+        const cTickC = performance.now() - cStart;
+        SetLog({ Type: `DEBUG`, Message: `[${(Math.round(cTickC * 100) / 100).toFixed(1)}ms] ${String(Context2.name)}` });
+      }
+    };
+  }
+  return (Callback) => (...args) => {
+    const cStart = performance.now();
+    try {
+      return Callback(...args);
+    } finally {
+      const cTickC = performance.now() - cStart;
+      SetLog({ Type: `DEBUG`, Message: `[${(Math.round(cTickC * 100) / 100).toFixed(1)}ms] ${String(Target)}` });
+    }
+  };
+}
+
+// src/components/events/parsing/classes/CommonAlertingProtocolParsing.ts
+var import_xml2js = __toESM(require_xml2js());
+var _GetPropertyValues_dec, _GetFilteredMessage_dec, _GetJSON_dec, _init;
+_GetJSON_dec = [ConstructClassTimer], _GetFilteredMessage_dec = [ConstructClassTimer], _GetPropertyValues_dec = [ConstructClassTimer];
+var CommonAlertingProtocolParsing = class {
+  constructor({ Message }) {
+    __runInitializers(_init, 5, this);
+    this.pMessage = void 0;
+    this.ENUM_KEYS = [
+      { Keys: ["identifier"], Value: "temp.id" },
+      { Keys: ["VTEC"], Value: "temp.vtec" },
+      { Keys: ["UGC"], Value: "properties.geography.zones", Array: true },
+      { Keys: ["wmoidentifier"], Value: "properties.geography.wmo" },
+      { Keys: ["areadesc"], Value: "temp.locations" },
+      { Keys: ["expires"], Value: "properties.expires" },
+      { Keys: ["sent"], Value: "properties.issued" },
+      { Keys: ["msgtype"], Value: "properties.status" },
+      { Keys: ["description", "instruction"], Value: "properties.description" },
+      { Keys: ["event"], Value: "properties.event" },
+      { Keys: ["sendername"], Value: "properties.geography.office.name" },
+      { Keys: ["polygon"], Value: "temp.polygon" },
+      { Keys: ["tornadodetection", "waterspoutdetection"], Value: "properties.parameters.tornado_indicator" },
+      { Keys: ["maxhailsize"], Value: "properties.parameters.hail_size" },
+      { Keys: ["maxwindgust"], Value: "properties.parameters.wind_gusts" },
+      { Keys: ["windthreat"], Value: "properties.parameters.wind_indicator" },
+      { Keys: ["hailthreat"], Value: "properties.parameters.hail_indicator" },
+      { Keys: ["thunderstormdamagethreat", "tornadodamagethreat"], Value: "properties.parameters.damage_indicator" },
+      { Keys: ["snowsqualldetection"], Value: "properties.parameters.snow_squall_indicator" },
+      { Keys: ["snowsquallimpact"], Value: "properties.parameters.damage_indicator" },
+      { Keys: ["flashflooddetection"], Value: "properties.parameters.flood_indicator" },
+      { Keys: ["flooddetection"], Value: "properties.parameters.flood_indicator" }
+    ];
+    this.pMessage = Message;
+    return this;
+  }
+  async GetJSON({ Message = this.pMessage }) {
+    const cParser = new import_xml2js.Parser({ explicitArray: false, mergeAttrs: false, trim: true });
+    const cPromise = await cParser.parseStringPromise(Message);
+    return cPromise;
+  }
+  GetFilteredMessage({ Message = this.pMessage }) {
+    const cXMLIndex = Message.indexOf(`<?xml version="1.0"`);
+    const cXMLLastIndex = Message.lastIndexOf(`>`);
+    const cFilter = Message.substring(cXMLIndex, cXMLLastIndex + 1);
+    return cFilter;
+  }
+  GetPropertyValues({ JSON: JSON2 }) {
+    const cExtracted = {};
+    const callFindValue = (lObject, lKey) => {
+      if (!lObject || typeof lObject !== "object") return [];
+      const cLowerKey = lKey.toLowerCase();
+      const cCurrent = Object.entries(lObject).flatMap(([k2, v2]) => k2.toLowerCase() === cLowerKey ? [v2] : v2 && v2.valueName?.toLowerCase() === cLowerKey && v2.value !== void 0 ? [v2.value] : []);
+      const cChildren = Object.values(lObject).flatMap((v2) => callFindValue(v2, lKey));
+      return [...cCurrent, ...cChildren];
+    };
+    const cMappings = Array.isArray(this.ENUM_KEYS) ? this.ENUM_KEYS : Object.entries(this.ENUM_KEYS).map(([k2, v2]) => ({ Keys: [k2], Value: v2, Array: Array.isArray(v2) }));
+    for (const { Keys, Value, Array: isArr } of cMappings) {
+      if (typeof Value !== "string" || !Value) continue;
+      const cUnique = [...new Set(Keys.flatMap((k2) => callFindValue(JSON2, k2)))];
+      if (!cUnique.length) continue;
+      const cValue = isArr ? cUnique : cUnique.length === 1 ? cUnique[0] : cUnique;
+      const cParts = Value.split(".").filter(Boolean);
+      let lCurrent = cExtracted;
+      cParts.slice(0, -1).forEach((p2) => lCurrent = lCurrent[p2] && typeof lCurrent[p2] === "object" && !Array.isArray(lCurrent[p2]) ? lCurrent[p2] : lCurrent[p2] = {});
+      const last = cParts[cParts.length - 1];
+      if (last) {
+        lCurrent[last] = lCurrent[last] !== void 0 ? [...Array.isArray(lCurrent[last]) ? lCurrent[last] : [lCurrent[last]], ...Array.isArray(cValue) ? cValue : [cValue]] : cValue;
+      }
+    }
+    return cExtracted;
+  }
+};
+_init = __decoratorStart(null);
+__decorateElement(_init, 1, "GetJSON", _GetJSON_dec, CommonAlertingProtocolParsing);
+__decorateElement(_init, 1, "GetFilteredMessage", _GetFilteredMessage_dec, CommonAlertingProtocolParsing);
+__decorateElement(_init, 1, "GetPropertyValues", _GetPropertyValues_dec, CommonAlertingProtocolParsing);
+__decoratorMetadata(_init, CommonAlertingProtocolParsing);
+
+// src/components/events/parsing/CommonAlertingProtocolProducts.ts
+var IngestProduct = async (Stanza) => {
+  const { Message } = Stanza;
+  const cMessages = Message?.split(/(?=\$\$)/g)?.map((lMsg) => lMsg.trim())?.filter((lMsg) => lMsg && lMsg !== "$$")?.filter((lMsg) => lMsg.length > 25);
+  if (!cMessages?.length || cMessages?.length == 0) return;
+  for (const cMessage of cMessages) {
+    const cParsing = new CommonAlertingProtocolParsing({ Message: cMessage });
+    const cFilter = cParsing.GetFilteredMessage({});
+    const cJSON = await cParsing.GetJSON({ Message: cFilter });
+    const cProperties = cParsing.GetPropertyValues({ JSON: cJSON });
+  }
+};
+
+// src/components/events/parsing/GeoJSONProduct.ts
+var IngestProduct2 = async (Stanza) => {
+};
+
+// src/components/geometry/GetUnionedPolygon.ts
+var import_polygon_clipping = __toESM(require_polygon_clipping_cjs());
+var GetUnionedPolygon = ({ Polygons }) => {
+  const dbgTickA = performance.now();
+  if (!Polygons || Polygons.length == 0) return null;
+  const cUnionFN = import_polygon_clipping.union;
+  const cUnioned = cUnionFN(...Polygons);
+  SetLog({ Type: `DEBUG`, Message: `[${(Math.round((performance.now() - dbgTickA) * 100) / 100).toFixed(1)}ms] GetUnionedPolygon` });
+  return {
+    type: `MultiPolygon`,
+    coordinates: cUnioned
+  };
+};
+
+// src/components/events/parsing/classes/GeographicalCodeParsing.ts
+var import_node_crypto = require("node:crypto");
+var _GetLocationMetadata_dec, _GetPolygon_dec, _GetCachedZone_dec, _SetCachedZone_dec, _GetExpiry_dec, _GetHeader_dec, _GetZones_dec, _GetZoneLocations_dec, _GetReferences_dec, _init2;
+_GetReferences_dec = [ConstructClassTimer], _GetZoneLocations_dec = [ConstructClassTimer], _GetZones_dec = [ConstructClassTimer], _GetHeader_dec = [ConstructClassTimer], _GetExpiry_dec = [ConstructClassTimer], _SetCachedZone_dec = [ConstructClassTimer], _GetCachedZone_dec = [ConstructClassTimer], _GetPolygon_dec = [ConstructClassTimer], _GetLocationMetadata_dec = [ConstructClassTimer];
+var GeographicalCodeParsing = class {
+  constructor({ Message }) {
+    __runInitializers(_init2, 5, this);
+    this.pMessage = void 0;
+    this.pDiscoveredZones = [];
+    this.pMissingZones = [];
+    this.pZones = [];
+    this.pMessage = Message;
+    return this;
+  }
+  GetReferences() {
+    if (!this.pMessage) return null;
+    const cExpires = this.GetExpiry({ Message: this.pMessage });
+    const cHeader = this.GetHeader({ Message: this.pMessage });
+    const cZones = this.GetZones({ Header: cHeader ?? `` });
+    const cLocations = this.GetZoneLocations({ Zones: cZones ?? [] });
+    if (!cHeader || cZones?.length == 0) return null;
+    return {
+      Zones: cZones,
+      Locations: cLocations,
+      Expires: cExpires
+    };
+  }
+  GetZoneLocations({ Zones }) {
+    const cUnique = Array.from(new Set(Zones));
+    for (const cZone of cUnique) {
+      const cCached = this.GetCachedZone({ Zone: cZone, Location: [] });
+      if (cCached) {
+        cCached.forEach((lLocation) => this.pDiscoveredZones.push(lLocation));
+      }
+      if (!cCached) {
+        this.pMissingZones.push(cZone);
+      }
+    }
+    if (this.pMissingZones.length > 0) {
+      const cRows = CreateQuery({
+        Query: ENUM_STRINGS.DB_STRINGS.QUERIES.LOCATION_LOOKUP.replace(/%s/, this.pMissingZones.map(() => `?`).join(`,`)),
+        Parameters: this.pMissingZones
+      });
+      cRows.forEach((cRow) => {
+        this.pDiscoveredZones.push(cRow.Location);
+        this.SetCachedZone({ Zone: cRow.ID, Location: [cRow.Location] });
+      });
+    }
+    return Array.from(new Set(this.pDiscoveredZones));
+  }
+  GetZones({ Header }) {
+    const [cFirstPart, ...cParts] = Header.split("-");
+    let lState = cFirstPart.substring(0, 2);
+    let lFormat = cFirstPart.substring(2, 3);
+    const cFirstZone = cFirstPart.substring(3);
+    const cAddZones = (cStart, cEnd) => {
+      const cStartNumber = Number(cStart);
+      const cEndNumber = Number(cEnd ?? cStart);
+      if (!Number.isInteger(cStartNumber) || !Number.isInteger(cEndNumber)) return;
+      for (let i = cStartNumber; i <= cEndNumber; i++) {
+        this.pZones.push(`${lState}${lFormat}${String(i).padStart(3, "0")}`);
+      }
+    };
+    const [cFirstStart, cFirstEnd] = cFirstZone.split(">");
+    if (cFirstStart) cAddZones(cFirstStart, cFirstEnd);
+    for (const cPart of cParts) {
+      const cHasState = /^[A-Z]{2}[A-Z]/.test(cPart);
+      const cCleanPart = cHasState ? (lState = cPart.substring(0, 2), lFormat = cPart.substring(2, 3), cPart.substring(3)) : cPart;
+      if (cCleanPart.includes(">")) {
+        const [cStart, cEnd] = cCleanPart.split(">").map(Number);
+        cAddZones(String(cStart), String(cEnd));
+      } else {
+        const cDigits = cCleanPart.replace(/^\D+/, "");
+        this.pZones.push(cDigits === cCleanPart ? `${lState}${lFormat}${cCleanPart.padStart(3, "0")}` : cPart);
+      }
+    }
+    return Array.from(new Set(this.pZones));
+  }
+  GetHeader({ Message }) {
+    const cStart = Message.search(ENUM_REGULAR_EXPRESSIONS.UGC_PT1);
+    const cSub = Message.substring(cStart);
+    const cEnd = cSub.search(ENUM_REGULAR_EXPRESSIONS.UGC_PT2);
+    const cFinal = cSub.substring(0, cEnd).replace(/\s+/g, "").slice(0, -1);
+    return cFinal ?? null;
+  }
+  GetExpiry({ Message }) {
+    const cRegex = Message.match(ENUM_REGULAR_EXPRESSIONS.UGC_PT3);
+    if (!cRegex) return null;
+    const [, cExpiry] = cRegex;
+    const cTimestamp = /* @__PURE__ */ new Date();
+    const cDay = Number(cExpiry.slice(0, 2));
+    const dHour = Number(cExpiry.slice(2, 4));
+    const cMinute = Number(cExpiry.slice(4, 6));
+    const cExpires = new Date(Date.UTC(cTimestamp.getUTCFullYear(), cTimestamp.getUTCMonth(), cDay, dHour, cMinute));
+    return cExpires;
+  }
+  SetCachedZone({ Zone, Location }) {
+    const { Zones } = Bootstrap.CacheControl.Manager;
+    if (Zones.size >= 5e3) {
+      const cFirstKey = Zones.keys().next().value;
+      Bootstrap.CacheControl.Manager.Zones.delete(cFirstKey);
+    }
+    Bootstrap.CacheControl.Manager.Zones.set(Zone, Location);
+  }
+  GetCachedZone({ Zone }) {
+    const { Zones } = Bootstrap.CacheControl.Manager;
+    return Zones.get(Zone);
+  }
+  GetPolygon({ Zones, Union }) {
+    const cPolygons = [];
+    const cGeometryHashes = /* @__PURE__ */ new Set();
+    const cUnique = [...new Set(Zones.map((z) => z.trim()))].filter((z) => z === "XX000" ? false : true);
+    const cPlaceholders = cUnique.map(() => `?`).join(`,`);
+    const cRows = CreateQuery({
+      Query: ENUM_STRINGS.DB_STRINGS.QUERIES.ZONE_LOOKUP.replace(/%s/, cPlaceholders),
+      Parameters: cUnique
+    });
+    for (const cRow of cRows) {
+      const { Geometry } = cRow;
+      if (!Geometry) continue;
+      const cHash = (0, import_node_crypto.createHash)(`Sha256`).update(Geometry).digest(`hex`);
+      if (cGeometryHashes.has(cHash)) continue;
+      cGeometryHashes.add(cHash);
+      const cGetometry = JSON.parse(Geometry);
+      const { type, coordinates } = cGetometry;
+      if (type == `Polygon`) {
+        cPolygons.push(coordinates);
+      }
+      if (type == `MultiPolygon`) {
+        for (const cPolygon of coordinates) {
+          cPolygons.push(cPolygon);
+        }
+      }
+    }
+    if (cPolygons.length == 0) return null;
+    if (Union) {
+      return GetUnionedPolygon({ Polygons: cPolygons });
+    } else {
+      const cMultiPolygon = [];
+      for (const cPoly of cPolygons) {
+        if (Array.isArray(cPoly) && Array.isArray(cPoly[0])) {
+          cMultiPolygon.push(cPoly);
+        }
+      }
+      if (cMultiPolygon.length == 0) return null;
+      return { type: `MultiPolygon`, coordinates: cMultiPolygon };
+    }
+  }
+  GetLocationMetadata({ Zones, UGC }) {
+    const locations = UGC ? UGC?.Locations : this.GetZoneLocations({ Zones });
+    return {
+      locations,
+      states: [...new Set(
+        Zones?.map((lLocation) => lLocation.match(/^([A-Z]{2})[CZ](\d{3})$/)?.[1])?.filter(Boolean) ?? []
+      )]
+    };
+  }
+};
+_init2 = __decoratorStart(null);
+__decorateElement(_init2, 1, "GetReferences", _GetReferences_dec, GeographicalCodeParsing);
+__decorateElement(_init2, 1, "GetZoneLocations", _GetZoneLocations_dec, GeographicalCodeParsing);
+__decorateElement(_init2, 1, "GetZones", _GetZones_dec, GeographicalCodeParsing);
+__decorateElement(_init2, 1, "GetHeader", _GetHeader_dec, GeographicalCodeParsing);
+__decorateElement(_init2, 1, "GetExpiry", _GetExpiry_dec, GeographicalCodeParsing);
+__decorateElement(_init2, 1, "SetCachedZone", _SetCachedZone_dec, GeographicalCodeParsing);
+__decorateElement(_init2, 1, "GetCachedZone", _GetCachedZone_dec, GeographicalCodeParsing);
+__decorateElement(_init2, 1, "GetPolygon", _GetPolygon_dec, GeographicalCodeParsing);
+__decorateElement(_init2, 1, "GetLocationMetadata", _GetLocationMetadata_dec, GeographicalCodeParsing);
+__decoratorMetadata(_init2, GeographicalCodeParsing);
+
+// src/enums/events/RegexEvents.ts
+var ENUM_REGEX_EVENTS = {
+  SPS: [
+    { Match: /STRONG\s+THUNDERSTORM/i, Label: "Convective Special Weather Statement", Statement: false },
+    { Match: /SPECIAL\s+WEATHER\s+STATEMENT/i, Label: "Special Weather Statement", Statement: false }
+  ],
+  TSU: [
+    { Match: /TSUNAMI\s+WARNING/i, Label: "Tsunami Warning", Statement: false },
+    { Match: /TSUNAMI\s+WATCH/i, Label: "Tsunami Watch", Statement: false },
+    { Match: /TSUNAMI\s+ADVISORY/i, Label: "Tsunami Advisory", Statement: false },
+    { Match: /TSUNAMI\s+INFORMATION\s+STATEMENT/i, Label: "Tsunami Information Statement", Statement: false },
+    { Match: /TSUNAMI\s+WARNING\s+CANCELLATION/i, Label: "Tsunami Cancellation", Statement: false }
+  ],
+  TCP: [
+    { Match: /A\s+HURRICANE\s+WARNING\s+IS\s+IN\s+EFFECT/i, Label: "Hurricane Warning", Statement: false },
+    { Match: /A\s+HURRICANE\s+WATCH\s+IS\s+IN\s+EFFECT/i, Label: "Hurricane Watch", Statement: false },
+    { Match: /A\s+TROPICAL\s+STORM\s+WARNING\s+IS\s+IN\s+EFFECT/i, Label: "Tropical Storm Warning", Statement: false },
+    { Match: /A\s+TROPICAL\s+STORM\s+WATCH\s+IS\s+IN\s+EFFECT/i, Label: "Tropical Storm Watch", Statement: false },
+    { Match: /A\s+STORM\s+SURGE\s+WARNING\s+IS\s+IN\s+EFFECT/i, Label: "Storm Surge Warning", Statement: false },
+    { Match: /A\s+STORM\s+SURGE\s+WATCH\s+IS\s+IN\s+EFFECT/i, Label: "Storm Surge Watch", Statement: false }
+  ],
+  MWW: [
+    { Match: /\.\.\.HURRICANE\s+FORCE\s+WIND\s+WARNING/i, Label: "Hurricane Force Wind Warning", Statement: false },
+    { Match: /\.\.\.HURRICANE\s+WARNING/i, Label: "Hurricane Warning", Statement: false },
+    { Match: /\.\.\.STORM\s+WARNING/i, Label: "Storm Warning", Statement: false },
+    { Match: /\.\.\.GALE\s+WARNING/i, Label: "Gale Warning", Statement: false },
+    { Match: /\.\.\.SMALL\s+CRAFT\s+ADVISORY/i, Label: "Small Craft Advisory", Statement: false },
+    { Match: /\.\.\.HAZARDOUS\s+SEAS\s+WARNING/i, Label: "Hazardous Seas Warning", Statement: false },
+    { Match: /\.\.\.DENSE\s+FOG\s+ADVISORY/i, Label: "Dense Fog Advisory", Statement: false },
+    { Match: /THUNDERSTORMS/i, Label: "Convective Marine Weather Statement", Statement: false },
+    { Match: /MARINE\s+WEATHER\s+STATEMENT/i, Label: "Marine Weather Statement", Statement: false }
+  ],
+  PNS: [
+    { Match: /NOAA\s+WEATHER\s+WIRE\s+SERVICE/i, Label: "NOAA Weather Wire Service Report", Statement: true },
+    { Match: /Public\s+Information\s+Statement/i, Label: "Public Information Statement", Statement: true }
+  ],
+  OFF: [
+    { Match: /\.\.\.HURRICANE\s+FORCE\s+WIND\s+WARNING/i, Label: "Hurricane Force Wind Warning", Statement: false },
+    { Match: /\.\.\.HURRICANE\s+WARNING/i, Label: "Hurricane Warning", Statement: false },
+    { Match: /\.\.\.STORM\s+WARNING/i, Label: "Storm Warning", Statement: false },
+    { Match: /\.\.\.GALE\s+WARNING/i, Label: "Gale Warning", Statement: false }
+  ]
+};
+
+// src/components/events/parsing/classes/TextProductParsing.ts
+var _GetTextProductEvent_dec, _GetExpiry_dec2, _GetDescription_dec, _GetPolygon_dec2, _GetTextReference_dec, _init3;
+_GetTextReference_dec = [ConstructClassTimer], _GetPolygon_dec2 = [ConstructClassTimer], _GetDescription_dec = [ConstructClassTimer], _GetExpiry_dec2 = [ConstructClassTimer], _GetTextProductEvent_dec = [ConstructClassTimer];
+var TextProductParsing = class {
+  constructor({ Message }) {
+    __runInitializers(_init3, 5, this);
+    this.pMessage = void 0;
+    this.ENUM_END_MARKERS = ["&&", "LAT..."];
+    this.pMessage = Message;
+    return this;
+  }
+  GetTextReference({ Message = this.pMessage, Grep, Append, Exclude }) {
+    const cSplitter = Message.split(`
+`);
+    for (const cLine of cSplitter) {
+      const cFind = Grep.find((s2) => cLine.includes(s2));
+      if (cFind) {
+        let lResult = cLine.slice(cLine.indexOf(cFind) + cFind.length).trim();
+        if (Exclude) {
+          for (const cString of Exclude) {
+            lResult = lResult.toLowerCase().split(cString.toLowerCase()).join("");
+          }
+          lResult = lResult.replace(cFind, "").replace("<", "").trim();
+        }
+        return lResult.toUpperCase() + (Append ? ` ${Append}` : ``);
+      }
+    }
+  }
+  GetPolygon({ Message = this.pMessage }) {
+    const cCoordinates = [];
+    const cPoints = [];
+    const cMatch = Message.match(ENUM_REGULAR_EXPRESSIONS.POLYGON_INDEX);
+    const cRegion = cMatch?.[1]?.split(/\r?\n/).map((l) => l.trim())?.filter((l) => l && !/[A-Za-z]/.test(l))?.join(" ").trim();
+    const cValues = cRegion?.match(ENUM_REGULAR_EXPRESSIONS.POLYGON_COORDINATES);
+    if (!cRegion || !cValues || cValues.length === 0) return cCoordinates;
+    if (cValues.every((v2) => v2.length === 8)) {
+      for (const value of cValues) {
+        let lLatitude = Number(value.slice(0, 4)) / 100;
+        let lLongitude = Number(value.slice(4, 8)) / 100;
+        if (lLongitude < 20) lLongitude += 100;
+        cPoints.push({ lat: lLatitude, lon: lLongitude });
+      }
+    } else if (cValues.every((v2) => v2.length === 4)) {
+      for (let i = 0; i + 1 < cValues.length; i += 2) {
+        let lLatitude = Number(cValues[i]) / 100;
+        let lLongitude = Number(cValues[i + 1]) / 100;
+        cPoints.push({ lat: lLatitude, lon: lLongitude });
+      }
+    } else {
+      for (let i = 0; i + 1 < cValues.length; i += 2) {
+        const cLatitude = String(cValues[i]);
+        const cLongitude = String(cValues[i + 1]);
+        let lLatitude = Number(cLatitude) / 100;
+        let lLongitude = Number(cLongitude) / 100;
+        if (cLatitude.length !== 4) continue;
+        if (cLongitude.length < 4 || cLongitude.length > 5) continue;
+        cPoints.push({ lat: lLatitude, lon: lLongitude });
+      }
+    }
+    if (cPoints.length === 0) return cCoordinates;
+    for (const p2 of cPoints) {
+      const lon = cPoints.some((p3) => p3.lon > 130 && p3.lon < 180) ? p2.lon : -p2.lon;
+      if (Number.isFinite(p2.lat) && Number.isFinite(lon) && p2.lat >= -90 && p2.lat <= 90 && lon >= -180 && lon <= 180) {
+        cCoordinates.push([lon, p2.lat]);
+      }
+    }
+    if (cCoordinates.length > 2 && (cCoordinates[0][0] !== cCoordinates[cCoordinates.length - 1][0] || cCoordinates[0][1] !== cCoordinates[cCoordinates.length - 1][1])) {
+      cCoordinates.push([...cCoordinates[0]]);
+    }
+    return cCoordinates;
+  }
+  GetDescription({ Message = this.pMessage, Handle }) {
+    const cMessage = Message;
+    if (cMessage == "" || cMessage == null) return `This product did not contain a valid description. Please check the product for more information`;
+    const cDates = Array.from(Message.matchAll(ENUM_REGULAR_EXPRESSIONS.DATE));
+    const callFallback = (Message2, Index) => {
+      const cHeadline = Message2.search(ENUM_REGULAR_EXPRESSIONS.HEADLINE_INDEX);
+      const cUGCIndex = Message2.search(ENUM_REGULAR_EXPRESSIONS.UGC_INDEX);
+      const cFallbackIndex = cUGCIndex >= 0 && cUGCIndex < Index ? cUGCIndex : Index;
+      return Message2.substring(cHeadline >= 0 ? cHeadline : 0, cFallbackIndex).trim();
+    };
+    const callIndexEnd = (Message2, Index = 0) => {
+      const cEndMarkers = this.ENUM_END_MARKERS.map((marker) => Message2.indexOf(marker, Index)).filter((idx) => idx !== -1);
+      return cEndMarkers.length ? Math.min(...cEndMarkers) : -1;
+    };
+    if (cDates.length) {
+      const cLastMatch = cDates[cDates.length - 1][0];
+      const cIndex = Message.lastIndexOf(cLastMatch);
+      if (cIndex !== -1) {
+        const cEndIndex = callIndexEnd(Message, cIndex);
+        Message = Message.substring(cIndex + cLastMatch.length, cEndIndex !== -1 ? cEndIndex : void 0).trimStart();
+        if (Message.startsWith("/")) Message = Message.slice(1).trimStart();
+        if (Handle && Message.includes(Handle)) {
+          const cHandle = Message.indexOf(Handle);
+          Message = Message.substring(cHandle + Handle.length).trimStart();
+          if (Message.startsWith("/")) Message = Message.slice(1).trimStart();
+        }
+      }
+    } else if (Handle) {
+      const cHandle = Message.indexOf(Handle);
+      if (cHandle !== -1) {
+        let afterHandle = Message.substring(cHandle + Handle.length).trimStart();
+        if (afterHandle.startsWith("/")) afterHandle = afterHandle.slice(1).trimStart();
+        const cEndIndex = callIndexEnd(afterHandle);
+        Message = cEndIndex !== -1 ? afterHandle.substring(0, cEndIndex).trim() : afterHandle.trim();
+      }
+    }
+    if (Message == "" || Message == null) {
+      const cHandle = Handle ? cMessage.indexOf(Handle) : -1;
+      if (cHandle !== -1) {
+        Message = callFallback(cMessage, cHandle);
+        if (Message == "$$") {
+          Message = `This product did not contain a valid description. Please check the product for more information`;
+        }
+      }
+    }
+    return Message.trim();
+  }
+  GetExpiry({ Message = this.pMessage }) {
+    const cMatch = Message.match(ENUM_REGULAR_EXPRESSIONS.TEXT_EXPIRY);
+    if (!cMatch) return null;
+    const [, cExpiry] = cMatch;
+    const cTimestamp = /* @__PURE__ */ new Date();
+    const cDay = Number(cExpiry.slice(0, 2));
+    const dHour = Number(cExpiry.slice(2, 4));
+    const cMinute = Number(cExpiry.slice(4, 6));
+    const cExpires = new Date(Date.UTC(cTimestamp.getUTCFullYear(), cTimestamp.getUTCMonth(), cDay, dHour, cMinute));
+    return cExpires;
+  }
+  GetTextProductEvent({ Message = this.pMessage, Stanza, Issuance, Expiration }) {
+    const { Product } = Stanza;
+    const { ID, Name, Discovered } = Product;
+    const { Label, Statement } = ENUM_REGEX_EVENTS[ID]?.find((A2) => A2.Match.test(Message)) ?? { Label: `${Discovered ? Name : `${ID} (Unknown)`}`, Statement: true };
+    const cGetExpiry = this.GetExpiry({ Message });
+    const cIssuanceValid = !isNaN(Issuance.getTime()) ? Issuance.toISOString() : (/* @__PURE__ */ new Date()).toISOString();
+    const cExpirationValid = cGetExpiry && !isNaN(cGetExpiry.getTime()) ? cGetExpiry.toISOString() : Expiration.toISOString();
+    return {
+      Label,
+      Status: !Statement ? `Issued` : `Statement`,
+      Issuance: new Date(cIssuanceValid),
+      Expiry: Statement ? new Date(Issuance.getTime() + 120 * 1e3) : new Date(cExpirationValid)
+    };
+  }
+};
+_init3 = __decoratorStart(null);
+__decorateElement(_init3, 1, "GetTextReference", _GetTextReference_dec, TextProductParsing);
+__decorateElement(_init3, 1, "GetPolygon", _GetPolygon_dec2, TextProductParsing);
+__decorateElement(_init3, 1, "GetDescription", _GetDescription_dec, TextProductParsing);
+__decorateElement(_init3, 1, "GetExpiry", _GetExpiry_dec2, TextProductParsing);
+__decorateElement(_init3, 1, "GetTextProductEvent", _GetTextProductEvent_dec, TextProductParsing);
+__decoratorMetadata(_init3, TextProductParsing);
+
+// src/enums/properties/Offices.ts
+var ENUM_FORECAST_OFFICES = {
+  "KCYS": "Cheyenne, WY",
+  "KJKL": "Jackson, KY",
+  "KWNS": "Storm Prediction Center",
+  "KNHC": "National Hurricane Center",
+  "KPAH": "Paducah, KY",
+  "KEMX": "Tucson, AZ",
+  "KMHX": "Morehead City, NC",
+  "PAPD": "Fairbanks, AK",
+  "KDLH": "Duluth, MN",
+  "TADW": "Andrews Air Force Base, MD",
+  "KOKX": "Brookhaven, NY",
+  "KLZK": "Little Rock, AR",
+  "KHGX": "Houston, TX",
+  "TMSY": "New Orleans, LA",
+  "KDGX": "Jackson/Brandon, MS",
+  "KCTP": "Caribou, ME",
+  "KAMA": "Amarillo, TX",
+  "PGUA": "Andersen AFB, GU",
+  "KAPX": "Gaylord, MI",
+  "PAHG": "Kenai, AK",
+  "KLWX": "Sterling, VA",
+  "HWPA2": "Homer, AK",
+  "KGRK": "Fort Hood, TX",
+  "KAKQ": "Wakefield, VA",
+  "ROCO2": "Norman, OK",
+  "KCLX": "Charleston, SC",
+  "TPHX": "Phoenix, AZ",
+  "KNKX": "San Diego, CA",
+  "TDEN": "Denver, CO",
+  "TLAS": "Las Vegas, NV",
+  "KBUF": "Buffalo, NY",
+  "KTLX": "Norman, OK",
+  "KILX": "Lincoln, IL",
+  "KHDC": "Hammond, LA",
+  "KVWX": "Evansville, IN",
+  "TCLT": "Charlotte, NC",
+  "TEWR": "Newark, NJ",
+  "KFSD": "Sioux Falls, SD",
+  "KEAX": "Pleasant Hill, MO",
+  "KICX": "Cedar City, UT",
+  "KHTX": "Huntsville, AL",
+  "PACG": "Sitka, AK",
+  "KSOX": "Santa Ana Mountains, CA",
+  "TPBI": "West Palm Beach, FL",
+  "TSLC": "Salt Lake City, UT",
+  "KGLD": "Goodland, KS",
+  "TRDU": "Raleigh-Durham, NC",
+  "KATX": "Seattle, WA",
+  "TICH": "Wichita, KS",
+  "TSDF": "Louisville, KY",
+  "TBOS": "Boston, MA",
+  "TDCA": "Washington, DC",
+  "KUEX": "Grand Island, NE",
+  "TLKA2": "Talkeetna, AK",
+  "KBGM": "Binghamton, NY",
+  "TLVE": "Cleveland, OH",
+  "KCAE": "Columbia, SC",
+  "KDVN": "Quad Cities, IA",
+  "KABR": "Aberdeen, SD",
+  "KBYX": "Key West, FL",
+  "KMPX": "Minneapolis, MN",
+  "KCRP": "Corpus Christi, TX",
+  "KCBW": "Caribou, ME",
+  "KMRX": "Knoxville, TN",
+  "KSHV": "Shreveport, LA",
+  "KIWA": "Phoenix, AZ",
+  "KRGX": "Reno, NV",
+  "PHKM": "Kamuela, HI",
+  "KABX": "Albuquerque, NM",
+  "KBMX": "Birmingham, AL",
+  "TMDW": "Chicago Midway, IL",
+  "KVAX": "Moody AFB, GA",
+  "KHDX": "Holloman AFB, NM",
+  "KBRO": "Brownsville, TX",
+  "KTWX": "Topeka, KS",
+  "KRTX": "Portland, OR",
+  "KCXX": "Burlington, VT",
+  "KFCX": "Roanoke, VA",
+  "KFFC": "Atlanta, GA",
+  "KBOX": "Boston, MA",
+  "KTLH": "Tallahassee, FL",
+  "KPUX": "Pueblo, CO",
+  "KFDR": "Altus AFB, OK",
+  "KGJX": "Grand Junction, CO",
+  "KDTX": "Detroit, MI",
+  "PHWA": "Waimea, HI",
+  "KMQT": "Marquette, MI",
+  "KSJT": "San Angelo, TX",
+  "KUDX": "Rapid City, SD",
+  "TIAH": "Houston, TX",
+  "KSRX": "Fort Smith, AR",
+  "TJFK": "New York City, NY",
+  "KDDC": "Dodge City, KS",
+  "PAKC": "King Salmon, AK",
+  "PAIH": "Middleton Island, AK",
+  "RODN": "Kadena AB, JA",
+  "TBWI": "Baltimore/Washington, MD",
+  "KIWX": "Northern Indiana, IN",
+  "KFDX": "Cannon AFB, NM",
+  "TMIA": "Miami, FL",
+  "KICT": "Wichita, KS",
+  "TMKE": "Milwaukee, WI",
+  "TFLL": "Fort Lauderdale, FL",
+  "KARX": "La Crosse, WI",
+  "KLRX": "Elko, NV",
+  "KDAX": "Sacramento, CA",
+  "KGRB": "Green Bay, WI",
+  "KLGX": "Langley Hill, WA",
+  "KFTG": "Denver, CO",
+  "KMKX": "Milwaukee, WI",
+  "TTUL": "Tulsa, OK",
+  "TDFW": "Dallas/Fort Worth, TX",
+  "TTPA": "Tampa Bay, FL",
+  "TDAL": "Dallas Love Field, TX",
+  "KDFX": "Laughlin AFB, TX",
+  "KSFX": "Pocatello, ID",
+  "KMTX": "Salt Lake City, UT",
+  "PAEC": "Nome, AK",
+  "RKSG": "Camp Humphreys, KR",
+  "KOAX": "Omaha, NE",
+  "PHMO": "Molokai, HI",
+  "TDTW": "Detroit, MI",
+  "THOU": "Houston, TX",
+  "AWPA2": "Anchorage, AK",
+  "KTYX": "Fort Drum, NY",
+  "KCCX": "State College, PA",
+  "TMSP": "Minneapolis, MN",
+  "KMVX": "Grand Forks, ND",
+  "KBIS": "Bismarck, ND",
+  "KBBX": "Beale AFB, CA",
+  "KVBX": "Vandenberg AFB, CA",
+  "KPOE": "Fort Polk, LA",
+  "KMOB": "Mobile, AL",
+  "KJGX": "Robins AFB, GA",
+  "KMUX": "San Francisco, CA",
+  "TMCI": "Kansas City, MO",
+  "KLSX": "St. Louis, MO",
+  "KMAX": "Medford, OR",
+  "KRAX": "Raleigh/Durham, NC",
+  "KINX": "Tulsa, OK",
+  "RKJK": "Kunsan AB, KR",
+  "KSGF": "Springfield, MO",
+  "TDAY": "Dayton, OH",
+  "KDOX": "Dover AFB, DE",
+  "KGGW": "Glasgow, MT",
+  "KAMX": "Miami, FL",
+  "KENX": "Albany, NY",
+  "KTFX": "Great Falls, MT",
+  "KPBZ": "Pittsburgh, PA",
+  "KMAF": "Midland/Odessa, TX",
+  "KPDT": "Pendleton, OR",
+  "KLNX": "North Platte, NE",
+  "KEOX": "Fort Rucker, AL",
+  "KGSP": "Greer, SC",
+  "KHPX": "Fort Campbell, KY",
+  "KGRR": "Grand Rapids, MI",
+  "KLOT": "Chicago, IL",
+  "TPIT": "Pittsburgh, PA",
+  "KEYX": "Edwards AFB, CA",
+  "TIAD": "Dulles, VA",
+  "KFWS": "Dallas/Fort Worth, TX",
+  "KMLB": "Melbourne, FL",
+  "KMBX": "Minot AFB, ND",
+  "KDMX": "Des Moines, IA",
+  "KEVX": "Eglin AFB, FL",
+  "TBNA": "Nashville, TN",
+  "KDYX": "Dyess AFB, TX",
+  "TOKC": "Oklahoma City, OK",
+  "PHKI": "South Kauai, HI",
+  "TMCO": "Orlando, FL",
+  "KDIX": "Philadelphia, PA",
+  "TORD": "Chicago, IL",
+  "KYUX": "Yuma, AZ",
+  "KVNX": "Vance AFB, OK",
+  "TJUA": "San Juan, PR",
+  "TATL": "Atlanta, GA",
+  "KVTX": "Los Angeles, CA",
+  "KIND": "Indianapolis, IN",
+  "KCBX": "Boise, ID",
+  "KGYX": "Portland, ME",
+  "KMXX": "Maxwell AFB, AL",
+  "TSJU": "San Juan, PR",
+  "KHNX": "San Joaquin Valley, CA",
+  "KLVX": "Louisville, KY",
+  "KMSX": "Missoula, MT",
+  "KJAX": "Jacksonville, FL",
+  "KNQA": "Memphis, TN",
+  "KRIW": "Riverton/Lander, WY",
+  "TCVG": "Covington, KY",
+  "KBLX": "Billings, MT",
+  "TPHL": "Philadelphia, PA",
+  "KRLX": "Charleston, WV",
+  "TMEM": "Memphis, TN",
+  "KCLE": "Cleveland, OH",
+  "KBHX": "Eureka, CA",
+  "KLBB": "Lubbock, TX",
+  "KOTX": "Spokane, WA",
+  "KEWX": "Austin/San Antonio, TX",
+  "KGWX": "Columbus AFB, MS",
+  "KESX": "Las Vegas, NV",
+  "KTBW": "Tampa, FL",
+  "KOHX": "Nashville, TN",
+  "KLTX": "Wilmington, NC",
+  "KFSX": "Flagstaff, AZ",
+  "TIDS": "Indianapolis, IN",
+  "KILN": "Cincinnati, OH",
+  "PAFG": "Fairbanks, AK",
+  "KPQR": "Portland, OR",
+  "KILM": "Wilmington, NC",
+  "KEKA": "Eureka, CA",
+  "KCHS": "Charleston, SC",
+  "KPHI": "Philadelphia/Mt. Holly, NJ",
+  "KUNR": "Rapid City, SD",
+  "KMFL": "Miami, FL",
+  "TJSJ": "San Juan, PR",
+  "KFGF": "Grand Forks, ND",
+  "KSEW": "Seattle, WA",
+  "PAFC": "Anchorage, AK",
+  "KLMK": "Louisville, KY",
+  "PHFO": "Honolulu, HI",
+  "KLIX": "New Orleans/Baton Rouge, LA",
+  "KBOI": "Boise, ID",
+  "KPIH": "Pocatello, ID",
+  "KMTR": "San Francisco/Monterey, CA",
+  "KGJT": "Grand Junction, CO",
+  "PAAQ": "Anchorage, AK",
+  "KABQ": "Albuquerque, NM",
+  "KTAE": "Tallahassee, FL",
+  "KCAR": "Caribou, ME",
+  "KMFR": "Medford, OR",
+  "PGUM": "Guam, GU",
+  "PACR": "Cordova, AK",
+  "PAJK": "Juneau, AK"
+};
+
+// src/enums/properties/Tags.ts
+var ENUM_TAGS = {
+  SEVERE_WEATHER: [
+    { Match: /A Large And Extremely Dangerous Tornado/i, Label: "Large and Dangerous Tornado" },
+    { Match: /This Is A Particularly Dangerous Situation/i, Label: "Particularly Dangerous Situation" },
+    { Match: /Weather Spotters Confirmed Tornado/i, Label: "Weather Spotters Confirmed Tornado" },
+    { Match: /Law Enforcement Confirmed Tornado/i, Label: "Law Enforcement Confirmed Tornado" },
+    { Match: /Radar Confirmed/i, Label: "Radar Confirmed" },
+    { Match: /Radar Indicated Rotation/i, Label: "Radar Indicated Rotation" },
+    { Match: /Radar Indicated(?! Rotation)/i, Label: "Radar Indicated" },
+    { Match: /A Tornado Is On The Ground/i, Label: "Tornado On The Ground" },
+    { Match: /Tornado Was Reported Briefly On The Ground/i, Label: "Tornado Briefly On Ground" },
+    { Match: /Weather Spotters Reported Funnel Cloud/i, Label: "Confirmed Funnel Cloud" },
+    { Match: /Spotters Indicate That A Funnel Cloud Continues With This Storm/i, Label: "Funnel Cloud Continues" },
+    { Match: /A Severe Thunderstorm Capable Of Producing A Tornado/i, Label: "Tornado Possible" },
+    { Match: /A Tornado May Develop At Any Time/i, Label: "Tornado May Develop" },
+    { Match: /A Tornado Watch Remains In Effect/i, Label: "Active Tornado Watch" },
+    { Match: /Complete Destruction Is Possible/i, Label: "Extremely Damaging Tornado" },
+    { Match: /Potentially Deadly Tornado/i, Label: "Deadly Tornado" },
+    { Match: /Life-Threatening Situation/i, Label: "Life Threatening Situation" },
+    { Match: /Capable Of Producing A Landspout/i, Label: "Landspout Possible" },
+    { Match: /Public Confirmed Tornado/i, Label: "Public Confirmed Tornado" },
+    { Match: /Expect Wind Damage/i, Label: "Wind Damage" },
+    { Match: /Destructive Winds/i, Label: "Destructive Winds" },
+    { Match: /Wind Damage With This Storm Will Occur/i, Label: "Immediate Wind Damage Threat" },
+    { Match: /Widespread Wind Damage/i, Label: "Widespread Wind Damage" },
+    { Match: /Significant Wind Damage/i, Label: "Significant Wind Damage" },
+    { Match: /Tornado Like Wind Speeds/i, Label: "Tornado-Like Wind Speeds" },
+    { Match: /Winds Will Strengthen/i, Label: "Strengthening Winds" },
+    { Match: /Gusty Winds/i, Label: "Gusty Winds" },
+    { Match: /Could Knock Down Tree Limbs/i, Label: "Tree Damage Possible" },
+    { Match: /Blow Around Unsecured Objects/i, Label: "Loose Object Damage Possible" },
+    { Match: /Unsecured lightweight objects blown about/i, Label: "Loose Objects May Blow Around" },
+    { Match: /Many large tree limbs broken off/i, Label: "Tree Limb Damage Possible" },
+    { Match: /Some fences and roadway signs blown over/i, Label: "Fence and Sign Damage Possible" },
+    { Match: /Hazardous driving conditions on bridges/i, Label: "Hazardous Bridge Travel" },
+    { Match: /Scattered power and communications outages/i, Label: "Power Outages Possible" },
+    { Match: /Hail Damage To Vehicles Is Expected/i, Label: "Vehicle Damaging Hail" },
+    { Match: /Extremely Large Hail/i, Label: "Extremely Large Hail" },
+    { Match: /(?<!Extremely )Large Hail/i, Label: "Large Hail" },
+    { Match: /Tennis Ball Size Hail/i, Label: "Tennis Ball Size Hail" },
+    { Match: /Baseball Size Hail/i, Label: "Baseball Size Hail" },
+    { Match: /Golf Ball Size Hail/i, Label: "Golf Ball Size Hail" },
+    { Match: /Quarter Size Hail/i, Label: "Quarter Size Hail" },
+    { Match: /Ping Pong Ball Size Hail/i, Label: "Ping Pong Ball Size Hail" },
+    { Match: /Nickel Size Hail/i, Label: "Nickel Size Hail" },
+    { Match: /Hail Driven By Severe Winds/i, Label: "Wind Driven Hail" },
+    { Match: /Prepare Immediately For Large Hail/i, Label: "Large Hail" },
+    { Match: /Half Inch Hail/i, Label: "Half Inch Hail" },
+    { Match: /Frequent Lightning/i, Label: "Frequent Lightning" },
+    { Match: /Deadly Cloud To Ground Lightning/i, Label: "Deadly Cloud To Ground Lightning" },
+    { Match: /Continuous Cloud To Ground Lightning/i, Label: "Continuous Cloud To Ground Lightning" },
+    { Match: /Frequent Cloud To Ground Lightning/i, Label: "Frequent Cloud To Ground Lightning" },
+    { Match: /Lightning Can Strike \d+ Miles Away/i, Label: "Lightning Safety Threat" },
+    { Match: /Showers and thunderstorms with gusty winds may still occur/i, Label: "Gusty Thunderstorms Possible" }
+  ],
+  FLOOD: [
+    { Match: /Flash Flooding Caused By Thunderstorms/i, Label: "Thunderstorm Flash Flooding" },
+    { Match: /Flash Flooding Caused By Heavy Rain/i, Label: "Heavy Rain Flash Flooding" },
+    { Match: /Torrential Rainfall/i, Label: "Torrential Rainfall" },
+    { Match: /May Lead To Flash Flooding/i, Label: "Flash Flooding Possible" },
+    { Match: /Minor Flooding Is Occurring/i, Label: "Minor Flooding Occurring" },
+    { Match: /Localized Flooding/i, Label: "Localized Flooding Possible" },
+    { Match: /Do Not Drive Your Vehicle Through Flooded Roadways/i, Label: "Flooded Roadways" },
+    { Match: /No storm surge inundation forecast/i, Label: "No Storm Surge Inundation" },
+    { Match: /Localized storm surge possible/i, Label: "Localized Storm Surge Possible" },
+    { Match: /Peak Storm Surge Inundation/i, Label: "Storm Surge Inundation Risk" },
+    { Match: /Potential for storm surge flooding/i, Label: "Storm Surge Flooding Possible" },
+    { Match: /Small streams, creeks, and ditches may become swollen/i, Label: "Small Stream Flooding Risk" },
+    { Match: /Rivers and tributaries may quickly rise/i, Label: "Rapid River Rise Possible" },
+    { Match: /Flood waters can enter a few structures/i, Label: "Flood Damage Possible" },
+    { Match: /Rapid ponding of water occurs/i, Label: "Water Ponding Possible" },
+    { Match: /Brief road and bridge closures/i, Label: "Road Closures Possible" }
+  ],
+  WINTER_WEATHER: [
+    { Match: /Frostbite And Hypothermia Are Likely/i, Label: "Frostbite and Hypothermia Likely" },
+    { Match: /Very Cold Temperatures Can Lead To Hypothermia/i, Label: "Hypothermia Risk" },
+    { Match: /Hypothermia If Precautions Are Not Taken/i, Label: "Hypothermia Risk" },
+    { Match: /Frostbite And Hypothermia Will Occur If Unprotected Skin/i, Label: "Frostbite Risk" },
+    { Match: /Temperatures Could Cause Ruptured Water Pipes/i, Label: "Ruptured Water Pipes Possible" },
+    { Match: /Blowing Snow Which Could Reduce Visibility/i, Label: "Reduced Visibility From Blowing Snow" },
+    { Match: /Lake Effect Snow Expected/i, Label: "Lake Effect Snow" },
+    { Match: /Slick And Icy Spots On Roads/i, Label: "Icy Roads" },
+    { Match: /Hazardous Roadways And Black Ice/i, Label: "Black Ice" },
+    { Match: /Icy Patches May Be More Common On Bridges/i, Label: "Bridge Icing" }
+  ],
+  COASTAL_MARINE: [
+    { Match: /Rip Currents Can Sweep Even The Best Swimmer/i, Label: "Dangerous Rip Currents" },
+    { Match: /Small Craft Could Be Damaged/i, Label: "Small Craft Damage Possible" },
+    { Match: /No Tsunami Threat/i, Label: "No Tsunami Threat" },
+    { Match: /Tsunami Threat Exists/i, Label: "Tsunami Threat Exists" },
+    { Match: /TROPICAL STORM WARNING IN EFFECT/i, Label: "Tropical Storm Warning" },
+    { Match: /TROPICAL STORM WARNING REMAINS IN EFFECT/i, Label: "Tropical Storm Warning Continues" },
+    { Match: /Tropical storm[- ]force winds/i, Label: "Tropical Storm Force Winds" },
+    { Match: /hazardous wind/i, Label: "Hazardous Winds" },
+    { Match: /hazardous seas/i, Label: "Hazardous Seas" },
+    { Match: /could capsize or damage vessels/i, Label: "Vessel Damage Risk" },
+    { Match: /reduce visibility/i, Label: "Reduced Visibility" },
+    { Match: /Mariners should alter plans/i, Label: "Marine Travel Disruption" },
+    { Match: /Remain in port/i, Label: "Remain In Port" },
+    { Match: /seek safe harbor/i, Label: "Seek Safe Harbor" },
+    { Match: /secure the vessel for severe conditions/i, Label: "Secure Vessel" }
+  ],
+  SAFETY_INFO: [
+    { Match: /Seek Shelter Now/i, Label: "Seek Shelter Now" },
+    { Match: /Seek Shelter Immediately/i, Label: "Seek Shelter Immediately" },
+    { Match: /Move To An Interior Room/i, Label: "Move To Interior Room" },
+    { Match: /Move To Safe Shelter Now/i, Label: "Move To Safe Shelter" },
+    { Match: /Potentially Deadly Storm/i, Label: "Potentially Deadly Storm" },
+    { Match: /Serious Injury And Significant Property Damage/i, Label: "Serious Damage Possible" },
+    { Match: /People And Animals Outdoors Will Be Injured/i, Label: "Outdoor Injury Risk" },
+    { Match: /IMMINENT DANGEROUS WEATHER CONDITIONS/i, Label: "Imminent Dangerous Weather" },
+    { Match: /Follow the instructions of local officials/i, Label: "Follow Local Officials" },
+    { Match: /Monitor forecasts/i, Label: "Monitor Forecast Updates" },
+    { Match: /Complete preparations.*before conditions become unsafe/i, Label: "Complete Preparations Early" },
+    { Match: /Leave immediately if evacuation orders are given/i, Label: "Evacuate If Ordered" },
+    { Match: /Heed any flood watches and warnings/i, Label: "Monitor Flood Alerts" },
+    { Match: /Listen for changes in the forecast/i, Label: "Stay Weather Aware" },
+    { Match: /Travel Could Be Very Difficult/i, Label: "Difficult Travel Conditions" },
+    { Match: /Expect Disruptions/i, Label: "Travel Disruptions Expected" },
+    { Match: /Trained Weather Spotters/i, Label: "Confirmed By Storm Spotters" },
+    { Match: /Doppler Radar/i, Label: "Confirmed By Radar" },
+    { Match: /Source\.\.\.Storm Spotters/i, Label: "Confirmed By Storm Spotters" },
+    { Match: /Source\.\.\.Doppler Radar/i, Label: "Confirmed By Radar" },
+    { Match: /Source\.\.\.Automated Gauges/i, Label: "Confirmed By Automated Gauges" },
+    { Match: /Source\.\.\.Radar Confirmed/i, Label: "Confirmed By Radar" },
+    { Match: /Source\.\.\.Radar Indicated/i, Label: "Radar Indicated" },
+    { Match: /Source\.\.\.Public/i, Label: "Confirmed By Public" },
+    { Match: /Source\.\.\.Amateur Radio/i, Label: "Confirmed By Amateur Radio" },
+    { Match: /Source\.\.\.Emergency Management/i, Label: "Confirmed By Emergency Management" },
+    { Match: /Source\.\.\.Law Enforcement Reported/i, Label: "Confirmed By Law Enforcement" },
+    { Match: /Source\.\.\.Broadcast Media/i, Label: "Confirmed By Broadcast Media" },
+    { Match: /Source\.\.\.Media/i, Label: "Confirmed By Media" },
+    { Match: /Source\.\.\.Media Reported/i, Label: "Confirmed By Media" },
+    { Match: /Doppler Radar And Automated Gauges/i, Label: "Confirmed By Radar and Gauges" },
+    { Match: /Potential Impacts:\s*Limited/i, Label: "Limited Impacts Expected" },
+    { Match: /Potential Impacts:\s*Little to None/i, Label: "Minimal Impacts Expected" },
+    { Match: /Slow Down And Allow Extra Time/i, Label: "Allow Extra Travel Time" },
+    { Match: /Should Exercise Caution/i, Label: "Exercise Caution" },
+    { Match: /Heat Illnesses/i, Label: "Heat Illness Risk" },
+    { Match: /\bIntensifying\b/i, Label: "Intensifying Conditions" }
+  ]
+};
+
+// src/components/events/building/GetEventTags.ts
+var GetEventTags = ({ Message }) => {
+  return [...new Set(
+    Object.values(ENUM_TAGS).flat().filter(({ Match }) => Match.test(Message)).map(({ Label }) => Label)
+  )];
+};
+
+// src/components/events/building/GetStormMotion.ts
+var GetStormMotion = ({ Message }) => {
+  const cDirection = Message.replace(/\s+/g, " ").match(/moving\s+(north|south|east|west|northeast|northwest|southeast|southwest)\s+at\s+(\d+)\s+mph/i);
+  if (cDirection) {
+    return cDirection[1].charAt(0).toUpperCase() + cDirection[1].slice(1).toLowerCase() + ` @ ${cDirection[2]} MPH`;
+  }
+  return null;
+};
+
+// src/components/events/building/GetEventProperties.ts
+var GetEventProperties = ({ Message, Attributes, VTEC, HVTEC, UGC }) => {
+  const cTextProductParsing = new TextProductParsing({ Message });
+  const cGeoParser = new GeographicalCodeParsing({ Message });
+  const cPolygons = cTextProductParsing.GetPolygon({});
+  const { Severity, Cause, Record } = HVTEC ?? {};
+  const cOffice = VTEC?.Office ?? Attributes?.cccc ?? null;
+  const cProperties = {
+    ...cGeoParser.GetLocationMetadata({ Zones: UGC?.Zones, UGC }),
+    description: cTextProductParsing.GetDescription({}),
+    geography: {
+      office: {
+        abbreviation: cOffice,
+        name: ENUM_FORECAST_OFFICES[cOffice] ?? null
+      },
+      wmo: Message.match(ENUM_REGULAR_EXPRESSIONS.OFFICE)?.[0] ?? null,
+      zones: UGC?.Zones ?? [],
+      population: {},
+      polygon: cPolygons.length > 0 ? Buffer.from(JSON.stringify([cPolygons])).toString("base64") : null
+    },
+    parameters: {
+      tags: GetEventTags({ Message }),
+      instructions: cTextProductParsing.GetTextReference({ Grep: [`For your protection`, `do not`, `use extreme caution`], Append: `...`, Exclude: [`.`] }) ?? null,
+      source: cTextProductParsing.GetTextReference({ Grep: [`SOURCE...`], Exclude: [`.`] }) ?? null,
+      hazards: cTextProductParsing.GetTextReference({ Grep: [`HAZARD...`], Exclude: [`.`] }) ?? null,
+      impacts: cTextProductParsing.GetTextReference({ Grep: [`IMPACTS...`], Exclude: [`.`] }) ?? null,
+      hail_size: cTextProductParsing.GetTextReference({ Grep: [`MAX HAIL SIZE...`, `HAIL...`], Exclude: [`in`] }) ?? null,
+      wind_gusts: cTextProductParsing.GetTextReference({ Grep: [`MAX WIND GUST...`, `WIND...`], Exclude: [`mph`] }) ?? null,
+      damage_indicator: cTextProductParsing.GetTextReference({ Grep: [`DAMAGE THREAT...`, `SNOW SQUALL IMPACT...`], Exclude: [] }) ?? null,
+      snow_squall_indicator: cTextProductParsing.GetTextReference({ Grep: [`SNOW SQUALL...`], Exclude: [] }) ?? null,
+      tornado_indicator: cTextProductParsing.GetTextReference({ Grep: [`TORNADO...`, `WATERSPOUT...`], Exclude: [] }) ?? null,
+      flood_indicator: cTextProductParsing.GetTextReference({ Grep: [`FLASH FLOOD...`], Exclude: [] }) ?? null,
+      wind_indicator: cTextProductParsing.GetTextReference({ Grep: [`WIND THREAT...`], Exclude: [] }) ?? null,
+      hail_indicator: cTextProductParsing.GetTextReference({ Grep: [`HAIL THREAT...`], Exclude: [] }) ?? null,
+      storm_motion: GetStormMotion({ Message }) ?? null
+    },
+    flood_parameters: {
+      severity: Severity ?? null,
+      cause: Cause ?? null,
+      record: Record ?? null
+    },
+    discussion_parameters: {
+      number: cTextProductParsing.GetTextReference({ Grep: [`Mesoscale Discussion `], Exclude: [`Mesoscale Discussion`, `Number`, `...`] })?.toString()?.padStart(4, "0") ?? null,
+      issuance: cTextProductParsing.GetTextReference({ Grep: [`Probability of Watch Issuance...`], Exclude: [`percent`] }) ?? null,
+      concerning: cTextProductParsing.GetTextReference({ Grep: [`Concerning...`], Exclude: [] }) ?? null,
+      max_tornado: cTextProductParsing.GetTextReference({ Grep: [`MOST PROBABLE PEAK TORNADO INTENSITY...`], Exclude: [] }) ?? null,
+      max_hail: cTextProductParsing.GetTextReference({ Grep: [`MOST PROBABLE PEAK HAIL SIZE...`], Exclude: [] }) ?? null,
+      max_gust: cTextProductParsing.GetTextReference({ Grep: [`MOST PROBABLE PEAK WIND GUST...`], Exclude: [] }) ?? null
+    },
+    watch_parameters: {
+      number: VTEC?.Watch?.Status ? cTextProductParsing.GetTextReference({ Grep: [`ITIES FOR`, `UPDATE FOR`, `Watch Number `], Exclude: [`%`, `<`, `:`] })?.replace(/(WT|WS|)/g, "")?.trim()?.toString()?.padStart(4, "0") ?? VTEC?.Tracking?.slice(-4)?.toString()?.padStart(4, "0") ?? null : null,
+      type: Message.includes(`TORNADO WATCH`) ? `TORNADO` : Message.includes(`SEVERE THUNDERSTORM WATCH`) ? `SEVERE THUNDERSTORM` : null,
+      tornado_probability: cTextProductParsing.GetTextReference({ Grep: [`PROB OF 2 OR MORE TORNADOES`], Exclude: [`%`, `<`, `:`] }) ?? null,
+      strong_tornado_probability: cTextProductParsing.GetTextReference({ Grep: [`PROB OF 1 OR MORE STRONG /EF2-EF5/ TORNADOES`], Exclude: [`%`, `<`, `:`] }) ?? null,
+      severe_wind_probability: cTextProductParsing.GetTextReference({ Grep: [`PROB OF 10 OR MORE SEVERE WIND EVENTS`], Exclude: [`%`, `<`, `:`] }) ?? null,
+      severe_hail_probability: cTextProductParsing.GetTextReference({ Grep: [`PROB OF 10 OR MORE SEVERE HAIL EVENTS`], Exclude: [`%`, `<`, `:`] }) ?? null,
+      hail_2in_probability: cTextProductParsing.GetTextReference({ Grep: [`PROB OF 1 OR MORE HAIL EVENTS >= 2 INCHES`], Exclude: [`%`, `<`, `:`] }) ?? null,
+      combined_hail_wind_probability: cTextProductParsing.GetTextReference({ Grep: [`PROB OF 6 OR MORE COMBINED SEVERE HAIL/WIND EVENTS`], Exclude: [`%`, `<`, `:`] }) ?? null,
+      max_hail_inches: cTextProductParsing.GetTextReference({ Grep: [`MAX HAIL /INCHES/`], Exclude: [`%`, `<`, `:`] }) ?? null,
+      max_wind_surface: cTextProductParsing.GetTextReference({ Grep: [`MAX WIND GUSTS SURFACE /KNOTS/`], Exclude: [`%`, `<`, `:`] }) ?? null,
+      max_tops_x100feet: cTextProductParsing.GetTextReference({ Grep: [`MAX TOPS /X 100 FEET/`], Exclude: [`%`, `<`, `:`] }) ?? null,
+      pds: cTextProductParsing.GetTextReference({ Grep: [`PARTICULARLY DANGEROUS SITUATION`], Exclude: [`%`, `<`, `:`] }) === `YES` ? true : null
+    }
+  };
+  if (isNaN(Number(cProperties.watch_parameters?.number))) {
+    cProperties.watch_parameters.number = null;
+  }
+  return cProperties;
+};
+
+// src/components/events/building/GetEventHeader.ts
+var GetEventHeader = ({ Tracking }) => {
+  return `ZCZC-ATMSX-${Tracking}-ATMSX-${(/* @__PURE__ */ new Date()).toISOString().replace(/[-:]/g, "").slice(0, 15)}-ATMSX`.toUpperCase();
+};
+
+// src/components/events/building/GetEventTracking.ts
+var import_node_crypto2 = require("node:crypto");
+var GetEventTracking = ({ Type, Stanza, Properties, Office, VTEC, ID }) => {
+  if (Type === `CAP`) {
+    if (VTEC) {
+      const cArray = Array.isArray(VTEC) ? VTEC[0]?.Raw : VTEC;
+      const cSplit = cArray.split(`.`);
+      return `${cSplit[2]}.${cSplit[3]}.${cSplit[4]}.${cSplit[5]}`;
+    }
+    const cOffice = Office?.match(/([A-Z]{4}\d{2})\s+([A-Z]{4})/);
+    const cAbbreviation = cOffice?.[2] ?? `---`;
+    const cHash = (0, import_node_crypto2.createHash)(`sha1`).update(JSON.stringify(Stanza ?? Properties ?? {})).digest(`hex`);
+    return `${cAbbreviation}.CAPv1.2.${ID?.match(/([a-f0-9]{40})/)?.[1] ?? cHash}`;
+  }
+  if (Type == `TEXT`) {
+    const { number } = Properties?.watch_parameters ?? {};
+    const { abbreviation } = Properties?.geography?.office ?? {};
+    const { ttaaii, id: id2 } = Stanza?.Attributes ?? {};
+    const { ID: ID2 } = Stanza?.Product ?? {};
+    if (number) {
+      return `${abbreviation}.${ID2}.A.${number}`;
+    }
+    return `${abbreviation}.${ttaaii}.${id2.slice(-4).replace(`.`, ``) ?? "0"}`;
+  }
+  if (Type == `VTEC`) {
+    return VTEC.Tracking;
+  }
+};
+
+// src/components/events/building/GetCleanGeoJSON.ts
+var GetCleanGeoJSON = (GeoJSON) => {
+  for (const cKey of Object.keys(GeoJSON)) {
+    const cValue = GeoJSON[cKey];
+    if (cValue === null || cValue === void 0) {
+      delete GeoJSON[cKey];
+    } else if (typeof cValue === "object" && cValue !== null && !Array.isArray(cValue)) {
+      GeoJSON[cKey] = GetCleanGeoJSON(cValue);
+    }
+  }
+  return GeoJSON;
+};
+
+// src/components/events/parsing/TextProduct.ts
+var IngestProduct3 = async (Stanza) => {
+  const { Message, Attributes, Product } = Stanza ?? {};
+  const { ID } = Product ?? {};
+  const cMessages = Message?.split(/(?=\$\$)/g)?.map((lMsg) => lMsg.trim())?.filter((lMsg) => lMsg && lMsg !== "$$")?.filter((lMsg) => lMsg.length > 25);
+  if (!cMessages?.length || cMessages?.length == 0) return;
+  for (const cMessage of cMessages) {
+    const cTextParser = new TextProductParsing({ Message: cMessage });
+    const cUGC = new GeographicalCodeParsing({ Message: cMessage }).GetReferences();
+    const cIssuance = new Date(Attributes.issue);
+    const cExpiration = cUGC?.Expires ?? new Date(Date.now() + 12 * 60 * 60 * 1e3);
+    const { Label, Status, Issuance, Expiry } = cTextParser.GetTextProductEvent({ Stanza, Issuance: cIssuance, Expiration: cExpiration });
+    const cProperties = GetCleanGeoJSON(GetEventProperties({ Message: cMessage, Attributes, UGC: cUGC }));
+    const cTracking = GetEventTracking({ Type: `TEXT`, Stanza, Properties: cProperties, ID });
+    const cHeader = GetEventHeader({ Tracking: cTracking });
+    console.log(cProperties);
+  }
+};
+
+// src/enums/products/VTECProducts.ts
+var ENUM_VTEC_PRODUCTS = {
+  "AF": "Ashfall",
+  "AS": "Air Stagnation",
+  "BH": "Beach Hazard",
+  "BW": "Brisk Wind",
+  "BZ": "Blizzard",
+  "CF": "Coastal Flood",
+  "DF": "Debris Flow",
+  "DS": "Dust Storm",
+  "EC": "Extreme Cold",
+  "EH": "Excessive Heat",
+  "XH": "Extreme Heat",
+  "EW": "Extreme Wind",
+  "FA": "Areal Flood",
+  "FF": "Flash Flood",
+  "FG": "Dense Fog",
+  "FL": "Flood",
+  "FR": "Frost",
+  "FW": "Fire Weather",
+  "FZ": "Freeze",
+  "GL": "Gale",
+  "HF": "Hurricane Force Wind",
+  "HT": "Heat",
+  "HU": "Hurricane",
+  "HW": "High Wind",
+  "HY": "Hydrologic",
+  "HZ": "Hard Freeze",
+  "IS": "Ice Storm",
+  "LE": "Lake Effect Snow",
+  "LO": "Low Water",
+  "LS": "Lakeshore Flood",
+  "LW": "Lake Wind",
+  "MA": "Special Marine",
+  "EQ": "Earthquake",
+  "MF": "Dense Fog",
+  "MH": "Ashfall",
+  "MS": "Dense Smoke",
+  "RB": "Small Craft for Rough Bar",
+  "RP": "Rip Current Risk",
+  "SC": "Small Craft",
+  "SE": "Hazardous Seas",
+  "SI": "Small Craft for Winds",
+  "SM": "Dense Smoke",
+  "SQ": "Snow Squall",
+  "SR": "Storm",
+  "SS": "Storm Surge",
+  "SU": "High Surf",
+  "SV": "Severe Thunderstorm",
+  "SW": "Small Craft for Hazardous Seas",
+  "TO": "Tornado",
+  "TR": "Tropical Storm",
+  "TS": "Tsunami",
+  "TY": "Typhoon",
+  "SP": "Special Weather",
+  "UP": "Heavy Freezing Spray",
+  "WC": "Wind Chill",
+  "WI": "Wind",
+  "WS": "Winter Storm",
+  "WW": "Winter Weather",
+  "ZF": "Freezing Fog",
+  "ZR": "Freezing Rain",
+  "ZY": "Freezing Spray"
+};
+
+// src/enums/products/VTECStatus.ts
+var ENUM_VTEC_STATUS = {
+  "NEW": "Issued",
+  "CON": "Updated",
+  "EXT": "Extended",
+  "EXA": "Extended",
+  "EXB": "Extended",
+  "UPG": "Upgraded",
+  "COR": "Correction",
+  "ROU": "Routine",
+  "CAN": "Cancelled",
+  "EXP": "Expired"
+};
+
+// src/enums/products/VTECActions.ts
+var ENUM_VTEC_ACTIONS = {
+  "W": "Warning",
+  "F": "Forecast",
+  "A": "Watch",
+  "O": "Outlook",
+  "Y": "Advisory",
+  "N": "Synopsis",
+  "S": "Statement"
+};
+
+// src/enums/products/VTECTypes.ts
+var ENUM_VTEC_TYPES = {
+  "O": "Operational Product",
+  "T": "Test Product",
+  "E": "Experimental Product",
+  "X": "Experimental Product (Non-Operational)"
+};
+
+// src/components/events/parsing/classes/ValidTimeCodeParsing.ts
+var _CreatePadding_dec, _GetExpiryDate_dec, _GetReferences_dec2, _init4;
+_GetReferences_dec2 = [ConstructClassTimer], _GetExpiryDate_dec = [ConstructClassTimer], _CreatePadding_dec = [ConstructClassTimer];
+var ValidTimeCodeParsing = class {
+  constructor({ Message }) {
+    __runInitializers(_init4, 5, this);
+    this.pMessage = void 0;
+    this.pCollection = [];
+    this.pMessage = Message;
+    return this;
+  }
+  GetReferences() {
+    if (!this.pMessage) return null;
+    const cRegex = this.pMessage.match(ENUM_REGULAR_EXPRESSIONS.VTEC) ?? [];
+    for (const cVTEC of cRegex) {
+      const cExpiryDate = this.GetExpiryDate({ VTEC: cVTEC });
+      const [cType, cStatus, cOffice, cProduct, cAction, cCode] = cVTEC.split(`.`);
+      this.pCollection.push({
+        Raw: cVTEC,
+        Product: ENUM_VTEC_TYPES[cType] ?? `Unknown Product Type`,
+        Name: `${ENUM_VTEC_PRODUCTS[cProduct]} ${ENUM_VTEC_ACTIONS[cAction]}`,
+        Status: ENUM_VTEC_STATUS[cStatus] ?? `Unknown Status Type`,
+        Office: cOffice,
+        Expires: new Date(cExpiryDate),
+        Watch: {
+          SPC: (cAction == `A` || cAction == `Y`) && (cProduct == `TO` || cProduct == `SV`),
+          NHC: (cAction == `A` || cAction == `Y`) && (cProduct == `HU` || cProduct == `TR`),
+          Status: [`KWNS`, `KNHC`].includes(cOffice)
+        },
+        Tracking: `${cOffice}.${cProduct}.${cAction}.${cCode}`
+      });
+    }
+    return this.pCollection;
+  }
+  GetExpiryDate({ VTEC }) {
+    const cSub = VTEC.split(`.`);
+    const cDates = cSub[6]?.split(`-`);
+    const isInvalid = cDates?.[1] == `000000T0000Z`;
+    if (isInvalid) return null;
+    const cGetYear = (/* @__PURE__ */ new Date()).getFullYear().toString().substring(0, 2);
+    const cGetDayMonth = `${cDates[1].substring(0, 2)}-${cDates[1].substring(2, 4)}-${cDates[1].substring(4, 6)}`;
+    const cGetTime = `${cDates[1].substring(7, 9)}:${cDates[1].substring(9, 11)}:00`;
+    const cGetDate = /* @__PURE__ */ new Date(`${cGetYear}${cGetDayMonth}T${cGetTime}`);
+    const cLocalTime = new Date(new Date(cGetDate).getTime() - 4 * 60 * 6e4);
+    return [
+      `${cLocalTime.getFullYear()}-`,
+      `${this.CreatePadding(cLocalTime.getMonth() + 1)}-`,
+      `${this.CreatePadding(cLocalTime.getDate())}T`,
+      `${this.CreatePadding(cLocalTime.getHours())}:`,
+      `${this.CreatePadding(cLocalTime.getMinutes())}:00.000-04:00`
+    ].join(``);
+  }
+  CreatePadding(cNumber) {
+    return cNumber.toString().padStart(2, `0`);
+  }
+};
+_init4 = __decoratorStart(null);
+__decorateElement(_init4, 1, "GetReferences", _GetReferences_dec2, ValidTimeCodeParsing);
+__decorateElement(_init4, 1, "GetExpiryDate", _GetExpiryDate_dec, ValidTimeCodeParsing);
+__decorateElement(_init4, 1, "CreatePadding", _CreatePadding_dec, ValidTimeCodeParsing);
+__decoratorMetadata(_init4, ValidTimeCodeParsing);
+
+// src/components/events/parsing/ValidTimeProducts.ts
+var IngestProduct4 = async (Stanza) => {
+  const { Message } = Stanza;
+  const cMessages = Message?.split(/(?=\$\$)/g)?.map((lMsg) => lMsg.trim())?.filter((lMsg) => lMsg && lMsg !== "$$")?.filter((lMsg) => lMsg.length > 25);
+  if (!cMessages?.length || cMessages?.length == 0) return;
+  for (const cMessage of cMessages) {
+    const cGeoParser = new GeographicalCodeParsing({ Message: cMessage }).GetReferences();
+    const cTimeParser = new ValidTimeCodeParsing({ Message: cMessage }).GetReferences();
+    if (cGeoParser != null && cTimeParser != null) {
+    }
+  }
+};
+
 // src/components/stanza/ProcessStanza.ts
 var ProcessStanza = async ({ Stanza }) => {
   const { VTEC, CAP, Wire } = Stanza.Metadata;
   switch (true) {
     case !Wire:
+      IngestProduct2(Stanza);
       break;
     case (Wire && CAP):
+      IngestProduct(Stanza);
       break;
     case (Wire && VTEC):
+      IngestProduct4(Stanza);
       break;
     case Wire:
+      IngestProduct3(Stanza);
+      break;
   }
 };
 
@@ -15026,7 +24038,7 @@ var XMLError = class extends Error {
 };
 
 // node_modules/.pnpm/@xmpp+xml@0.14.0/node_modules/@xmpp/xml/lib/Parser.js
-var Parser = class extends import_events.EventEmitter {
+var Parser2 = class extends import_events.EventEmitter {
   constructor() {
     super();
     const parser = new import_ltx.default();
@@ -15083,8 +24095,8 @@ var Parser = class extends import_events.EventEmitter {
     }
   }
 };
-Parser.XMLError = XMLError;
-var Parser_default = Parser;
+Parser2.XMLError = XMLError;
+var Parser_default = Parser2;
 
 // node_modules/.pnpm/@xmpp+xml@0.14.0/node_modules/@xmpp/xml/index.js
 function xml(...args) {
@@ -15335,12 +24347,12 @@ var Connection = class extends import_events.EventEmitter {
   isSecure() {
     return this.socket?.secure === true;
   }
-  async _streamError(condition, children) {
+  async _streamError(condition, children2) {
     try {
       await this.send(
         // prettier-ignore
         xml("stream:error", {}, [
-          xml(condition, { xmlns: NS_STREAM }, children)
+          xml(condition, { xmlns: NS_STREAM }, children2)
         ])
       );
     } catch {
@@ -16215,9 +25227,9 @@ function isQuery({ name, type }) {
   if (type === "error" || type === "result") return false;
   return true;
 }
-function isValidQuery({ type }, children, child) {
+function isValidQuery({ type }, children2, child) {
   if (type !== "get" && type !== "set") return false;
-  if (children.length !== 1) return false;
+  if (children2.length !== 1) return false;
   if (!child) return false;
   return true;
 }
@@ -16252,9 +25264,9 @@ function iqHandler(entity) {
   return async function iqHandler2(ctx, next) {
     if (!isQuery(ctx)) return next();
     const { stanza } = ctx;
-    const children = stanza.getChildElements();
-    const [child] = children;
-    if (!isValidQuery(ctx, children, child)) {
+    const children2 = stanza.getChildElements();
+    const [child] = children2;
+    if (!isValidQuery(ctx, children2, child)) {
       return buildReplyError(ctx, buildError("modify", "bad-request"), child);
     }
     ctx.element = child;
@@ -18288,8 +27300,11 @@ var DeployService = class {
 };
 
 // src/index.ts
+var _stop_dec, _start_dec, _init5;
+_start_dec = [ConstructClassTimer], _stop_dec = [ConstructClassTimer];
 var Manager = class {
   constructor(settings) {
+    __runInitializers(_init5, 5, this);
     CreateErrorHandler();
     SetSettings(settings);
   }
@@ -18332,8 +27347,17 @@ var Manager = class {
     return Bootstrap.Version;
   }
 };
+_init5 = __decoratorStart(null);
+__decorateElement(_init5, 1, "start", _start_dec, Manager);
+__decorateElement(_init5, 1, "stop", _stop_dec, Manager);
+__decoratorMetadata(_init5, Manager);
 var index_default = Manager;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   Manager
 });
+/*! Bundled license information:
+
+sax/lib/sax.js:
+  (*! http://mths.be/fromcodepoint v0.1.0 by @mathias *)
+*/

@@ -26,6 +26,7 @@ export type TYPE_STANZA_COMPILED = {
     }
     Ignored?: boolean
     Product?: {
+        Raw: string
         Name: string
         ID: string
         Discovered: boolean

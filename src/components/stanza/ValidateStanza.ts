@@ -31,7 +31,7 @@ export const ValidateStanza = ({ Stanza }: VALIDATE_OPTIONS): TYPE_STANZA_COMPIL
     const cCAP = cMessage.includes(`<?xml`) && cMessage.includes(`<areaDesc>`);
     const cVTEC = cMessage.match(ENUM_REGULAR_EXPRESSIONS.VTEC) != null;
     const cUGC = cMessage.match(ENUM_REGULAR_EXPRESSIONS.UGC_PT1) != null;
-    const { Name, ID, Discovered } = GetAwipsType({ Attributes: cAttributes });
+    const { Raw, Name, ID, Discovered } = GetAwipsType({ Attributes: cAttributes });
     if (Name == null) return null;
     return { 
         Message: cMessage,
@@ -44,6 +44,7 @@ export const ValidateStanza = ({ Stanza }: VALIDATE_OPTIONS): TYPE_STANZA_COMPIL
             Wire: true,
         },
         Product: {
+            Raw,
             Name,
             ID,
             Discovered: Discovered

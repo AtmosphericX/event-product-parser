@@ -14,6 +14,10 @@
 */
 
 import { TYPE_STANZA_COMPILED } from "Types.Stanza/StanzaValidated"
+import { IngestProduct as CAPProductIngestion } from "@Components.Events.Parsing/CommonAlertingProtocolProducts"
+import { IngestProduct as GeoJSONProductIngestion } from "@Components.Events.Parsing/GeoJSONProduct"
+import { IngestProduct as TextProductIngestion } from "@Components.Events.Parsing/TextProduct"
+import { IngestProduct as ValidTimeProductIngestion } from "@Components.Events.Parsing/ValidTimeProducts"
 
 interface PROCESS_STANZA_OPTIONS { 
     Stanza: TYPE_STANZA_COMPILED
@@ -24,13 +28,16 @@ export const ProcessStanza = async ({ Stanza }: PROCESS_STANZA_OPTIONS): Promise
 
     switch (true) { 
         case (!Wire):
+            GeoJSONProductIngestion(Stanza);
             break;
         case (Wire && CAP):
+            CAPProductIngestion(Stanza);
             break;
         case (Wire && VTEC):
-            //VTECProduct({ Stanza });
+            ValidTimeProductIngestion(Stanza);
             break;
         case (Wire):
-            //TextProduct({ Stanza });
+            TextProductIngestion(Stanza);
+            break;
     }
 }

@@ -33,6 +33,9 @@
 **Features**
 - feat(exports): Exported parsing classes for use in other projects.
 
+**Documentation**
+- feat(docs): Add `AGENTS.md` file to provide instructions to **NOT** use AI agents on this codebase. That includes scraping, indexing, and code generation. This is to protect the intellectual property of the project and to ensure that the codebase is not misused or misrepresented.
+
 **Todo**
 - chore(building): Complete all building export functions
 - chore(parsing): Complete all parsing classes

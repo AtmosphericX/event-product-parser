@@ -63,9 +63,6 @@ type TYPE_ROW = { ID: string, Location: string, Geometry: string }
 
 export class GeographicalCodeParsing { 
     private pMessage: string;
-    private pDiscoveredZones: string[] = [];
-    private pMissingZones: string[] = [];
-    private pZones: string[] = [];
 
     public constructor({ Message }: GET_OPTIONS) {
         this.pMessage = Message;
@@ -90,26 +87,29 @@ export class GeographicalCodeParsing {
     @ConstructClassTimer
     public GetZoneLocations({ Zones }: GET_ZONES_OPTIONS): string[] | null {
         const cUnique = Array.from(new Set(Zones));
+        const cDiscoveredZones: string[] = [];
+        const cMissingZones: string[] = [];
         for (const cZone of cUnique) {
             const cCached = this.GetCachedZone({ Zone: cZone, Location: [] })
-            if (cCached) { cCached.forEach((lLocation) => this.pDiscoveredZones.push(lLocation)) } 
-            if (!cCached) { this.pMissingZones.push(cZone); }
+            if (cCached) { cCached.forEach((lLocation) => cDiscoveredZones.push(lLocation)) } 
+            if (!cCached) { cMissingZones.push(cZone); }
         }
-        if (this.pMissingZones.length > 0) { 
+        if (cMissingZones.length > 0) { 
             const cRows = CreateQuery({
-                Query: ENUM_STRINGS.DB_STRINGS.QUERIES.LOCATION_LOOKUP.replace(/%s/, this.pMissingZones.map(() => `?`).join(`,`)),
-                Parameters: this.pMissingZones
+                Query: ENUM_STRINGS.DB_STRINGS.QUERIES.LOCATION_LOOKUP.replace(/%s/, cMissingZones.map(() => `?`).join(`,`)),
+                Parameters: cMissingZones
             }) as TYPE_ROW[];
             cRows.forEach((cRow) => {
-                this.pDiscoveredZones.push(cRow.Location); 
+                cDiscoveredZones.push(cRow.Location); 
                 this.SetCachedZone({ Zone: cRow.ID, Location: [cRow.Location] });
             });
         }
-        return Array.from(new Set(this.pDiscoveredZones));
+        return Array.from(new Set(cDiscoveredZones));
     }
 
     @ConstructClassTimer
     public GetZones({ Header }: GET_HEADER_OPTIONS): string[] | null {
+        const cZones: string[] = [];
         const [cFirstPart, ...cParts] = Header.split('-');
         let lState = cFirstPart.substring(0, 2);
         let lFormat = cFirstPart.substring(2, 3);
@@ -119,7 +119,7 @@ export class GeographicalCodeParsing {
             const cEndNumber = Number(cEnd ?? cStart);
             if (!Number.isInteger(cStartNumber) || !Number.isInteger(cEndNumber)) return;
             for (let i = cStartNumber; i <= cEndNumber; i++) {
-                this.pZones.push(`${lState}${lFormat}${String(i).padStart(3, '0')}`);
+                cZones.push(`${lState}${lFormat}${String(i).padStart(3, '0')}`);
             }
         };
         const [cFirstStart, cFirstEnd] = cFirstZone.split('>');
@@ -132,10 +132,10 @@ export class GeographicalCodeParsing {
                 cAddZones(String(cStart), String(cEnd));
             } else {
                 const cDigits = cCleanPart.replace(/^\D+/, '');
-                this.pZones.push(cDigits === cCleanPart ? `${lState}${lFormat}${cCleanPart.padStart(3, '0')}` : cPart);
+                cZones.push(cDigits === cCleanPart ? `${lState}${lFormat}${cCleanPart.padStart(3, '0')}` : cPart);
             }
         }
-        return Array.from(new Set(this.pZones));
+        return Array.from(new Set(cZones));
     }
 
     @ConstructClassTimer

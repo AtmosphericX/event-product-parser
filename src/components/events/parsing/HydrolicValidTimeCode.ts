@@ -26,8 +26,7 @@ interface GET_OPTIONS {
 
 export class HydrolicValidTimeCodeParsing { 
     private pMessage: string;
-    private pCollection: TYPE_HVTEC[] = [];
-
+    
     public constructor({ Message }: GET_OPTIONS) {
         this.pMessage = Message;
         return this;
@@ -36,16 +35,17 @@ export class HydrolicValidTimeCodeParsing {
     @ConstructClassTimer
     public GetReferences(): TYPE_HVTEC[] | null {
         if (!this.pMessage) return null;
+        const cCollection: TYPE_HVTEC[] = []
         const cRegex = this.pMessage.match(ENUM_REGULAR_EXPRESSIONS.HVTEC) ?? [];
         for (const cHVTEC of cRegex) { 
             const [_, cSeverity, cCause, __, ___, ____, cRecord] = cHVTEC.split(`.`); 
-            this.pCollection.push({
+            cCollection.push({
                 Raw: cHVTEC,
                 Severity: ENUM_FLOOD_SEVERITY[cSeverity] ?? `Unknown Severity`,
                 Cause: ENUM_FLOOD_CAUSES[cCause] ?? `Unknown Cause`,
                 Record: ENUM_FLOOD_RECORDS[cRecord] ?? `Unknown Record`
             });
         }
-        return this.pCollection;
+        return cCollection;
     }
 }

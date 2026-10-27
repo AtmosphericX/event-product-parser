@@ -14,8 +14,8 @@
 */
 
 import { TYPE_STANZA_COMPILED } from "Types.Stanza/StanzaValidated"
-import { TYPE_CAP_PRODUCT_PROPERTIES } from "Types.Components/CapProductProperties"
-import { CommonAlertingProtocolParsing } from "@Components.Events.Parsing.Classes/CommonAlertingProtocolParsing"
+import { GeographicalCodeParsing } from "@Components.Events.Parsing/GeographicalCode"
+import { ValidTimeEventCodeParsing } from "@Components.Events.Parsing/ValidTimeEventCode"
 
 export const IngestProduct = async (Stanza: TYPE_STANZA_COMPILED): Promise<void> => {
     const { Message } = Stanza;
@@ -24,11 +24,10 @@ export const IngestProduct = async (Stanza: TYPE_STANZA_COMPILED): Promise<void>
         ?.map(lMsg => lMsg.trim())
         ?.filter(lMsg => lMsg && lMsg !== "$$")
         ?.filter(lMsg => lMsg.length > 25)
-    if (!cMessages?.length || cMessages?.length == 0) return;
+    if (!cMessages?.length) return;
     for (const cMessage of cMessages) { 
-        const cParsing = new CommonAlertingProtocolParsing({ Message: cMessage });
-        const cFilter = cParsing.GetFilteredMessage({});
-        const cJSON = await cParsing.GetJSON({Message: cFilter});
-        const cProperties = cParsing.GetPropertyValues({ JSON: cJSON }) as TYPE_CAP_PRODUCT_PROPERTIES;
+        const cGeoParser = new GeographicalCodeParsing({ Message: cMessage }).GetReferences();
+        const cTimeParser = new ValidTimeEventCodeParsing({ Message: cMessage }).GetReferences();
+        if (cGeoParser != null && cTimeParser != null) { }
     }
 }

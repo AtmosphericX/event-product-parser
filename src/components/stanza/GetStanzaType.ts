@@ -16,18 +16,18 @@
 import { TYPE_ATTRIBUTES } from "Types.Stanza/StanzaAttributes"
 import { ENUM_LEGACY_AWIPS } from "@Enums.Products/LegacyAWIPS"
 
-interface GET_AWIPS_TYPE_OPTIONS { 
+interface GET_STANZA_TYPE_OPTIONS { 
     Attributes: TYPE_ATTRIBUTES
 }
 
-interface GET_AWIPS_TYPE_RESPONSE { 
+interface GET_STANZA_TYPE_RESPONSE { 
     Raw: string
     Name: string
     ID: string
     Discovered: boolean
 }
 
-export const GetAwipsType = ({ Attributes }: GET_AWIPS_TYPE_OPTIONS): GET_AWIPS_TYPE_RESPONSE => {
+export const GetStanzaType = ({ Attributes }: GET_STANZA_TYPE_OPTIONS): GET_STANZA_TYPE_RESPONSE => {
     if (!Attributes.awipsid) { 
         return { 
             Raw: Attributes.awipsid,

@@ -21377,7 +21377,11 @@ var require_main3 = __commonJS({
 // src/index.ts
 var index_exports = {};
 __export(index_exports, {
+  CommonAlertingProtocolParsing: () => CommonAlertingProtocolParsing,
+  GeographicalCodeParsing: () => GeographicalCodeParsing,
   Manager: () => Manager,
+  TextProductParsing: () => TextProductParsing,
+  ValidTimeEventCodeParsing: () => ValidTimeEventCodeParsing,
   default: () => index_default
 });
 module.exports = __toCommonJS(index_exports);
@@ -21435,7 +21439,7 @@ var ENUM_THEMES = [
 var import_node_events = require("node:events");
 var import_node_path = require("node:path");
 var Bootstrap = {
-  Version: `b3.1-04`,
+  Version: `b3.1-0402`,
   ServiceReady: false,
   Listener: new import_node_events.EventEmitter(),
   Scheduler: null,
@@ -22595,8 +22599,8 @@ var ENUM_LEGACY_AWIPS = {
   "3HRCON": `3-Hour Convective Outlook`
 };
 
-// src/components/stanza/GetAwipsType.ts
-var GetAwipsType = ({ Attributes }) => {
+// src/components/stanza/GetStanzaType.ts
+var GetStanzaType = ({ Attributes }) => {
   if (!Attributes.awipsid) {
     return {
       Raw: Attributes.awipsid,
@@ -22623,24 +22627,14 @@ var ValidateStanza = ({ Stanza }) => {
   const cCAP = cMessage.includes(`<?xml`) && cMessage.includes(`<areaDesc>`);
   const cVTEC = cMessage.match(ENUM_REGULAR_EXPRESSIONS.VTEC) != null;
   const cUGC = cMessage.match(ENUM_REGULAR_EXPRESSIONS.UGC_PT1) != null;
-  const { Raw, Name, ID, Discovered } = GetAwipsType({ Attributes: cAttributes });
+  const { Raw, Name, ID, Discovered } = GetStanzaType({ Attributes: cAttributes });
   if (Name == null) return null;
   return {
     Message: cMessage,
     Attributes: cAttributes,
     Ignored: false,
-    Metadata: {
-      CAP: cCAP,
-      VTEC: cVTEC,
-      UGC: cUGC,
-      Wire: true
-    },
-    Product: {
-      Raw,
-      Name,
-      ID,
-      Discovered
-    }
+    Metadata: { CAP: cCAP, VTEC: cVTEC, UGC: cUGC, Wire: true },
+    Product: { Raw, Name, ID, Discovered }
   };
 };
 
@@ -22668,7 +22662,7 @@ function ConstructClassTimer(Target, Context2) {
   };
 }
 
-// src/components/events/parsing/classes/CommonAlertingProtocolParsing.ts
+// src/components/events/parsing/CommonAlertingProtocol.ts
 var import_xml2js = __toESM(require_xml2js());
 var _GetPropertyValues_dec, _GetFilteredMessage_dec, _GetJSON_dec, _init;
 _GetJSON_dec = [ConstructClassTimer], _GetFilteredMessage_dec = [ConstructClassTimer], _GetPropertyValues_dec = [ConstructClassTimer];
@@ -22746,11 +22740,11 @@ __decorateElement(_init, 1, "GetFilteredMessage", _GetFilteredMessage_dec, Commo
 __decorateElement(_init, 1, "GetPropertyValues", _GetPropertyValues_dec, CommonAlertingProtocolParsing);
 __decoratorMetadata(_init, CommonAlertingProtocolParsing);
 
-// src/components/events/parsing/CommonAlertingProtocolProducts.ts
+// src/components/events/products/CommonAlertingProtocol.ts
 var IngestProduct = async (Stanza) => {
   const { Message } = Stanza;
   const cMessages = Message?.split(/(?=\$\$)/g)?.map((lMsg) => lMsg.trim())?.filter((lMsg) => lMsg && lMsg !== "$$")?.filter((lMsg) => lMsg.length > 25);
-  if (!cMessages?.length || cMessages?.length == 0) return;
+  if (!cMessages?.length) return;
   for (const cMessage of cMessages) {
     const cParsing = new CommonAlertingProtocolParsing({ Message: cMessage });
     const cFilter = cParsing.GetFilteredMessage({});
@@ -22759,7 +22753,7 @@ var IngestProduct = async (Stanza) => {
   }
 };
 
-// src/components/events/parsing/GeoJSONProduct.ts
+// src/components/events/products/GeoJSON.ts
 var IngestProduct2 = async (Stanza) => {
 };
 
@@ -22777,7 +22771,7 @@ var GetUnionedPolygon = ({ Polygons }) => {
   };
 };
 
-// src/components/events/parsing/classes/GeographicalCodeParsing.ts
+// src/components/events/parsing/GeographicalCode.ts
 var import_node_crypto = require("node:crypto");
 var _GetLocationMetadata_dec, _GetPolygon_dec, _GetCachedZone_dec, _SetCachedZone_dec, _GetExpiry_dec, _GetHeader_dec, _GetZones_dec, _GetZoneLocations_dec, _GetReferences_dec, _init2;
 _GetReferences_dec = [ConstructClassTimer], _GetZoneLocations_dec = [ConstructClassTimer], _GetZones_dec = [ConstructClassTimer], _GetHeader_dec = [ConstructClassTimer], _GetExpiry_dec = [ConstructClassTimer], _SetCachedZone_dec = [ConstructClassTimer], _GetCachedZone_dec = [ConstructClassTimer], _GetPolygon_dec = [ConstructClassTimer], _GetLocationMetadata_dec = [ConstructClassTimer];
@@ -22785,9 +22779,6 @@ var GeographicalCodeParsing = class {
   constructor({ Message }) {
     __runInitializers(_init2, 5, this);
     this.pMessage = void 0;
-    this.pDiscoveredZones = [];
-    this.pMissingZones = [];
-    this.pZones = [];
     this.pMessage = Message;
     return this;
   }
@@ -22806,28 +22797,31 @@ var GeographicalCodeParsing = class {
   }
   GetZoneLocations({ Zones }) {
     const cUnique = Array.from(new Set(Zones));
+    const cDiscoveredZones = [];
+    const cMissingZones = [];
     for (const cZone of cUnique) {
       const cCached = this.GetCachedZone({ Zone: cZone, Location: [] });
       if (cCached) {
-        cCached.forEach((lLocation) => this.pDiscoveredZones.push(lLocation));
+        cCached.forEach((lLocation) => cDiscoveredZones.push(lLocation));
       }
       if (!cCached) {
-        this.pMissingZones.push(cZone);
+        cMissingZones.push(cZone);
       }
     }
-    if (this.pMissingZones.length > 0) {
+    if (cMissingZones.length > 0) {
       const cRows = CreateQuery({
-        Query: ENUM_STRINGS.DB_STRINGS.QUERIES.LOCATION_LOOKUP.replace(/%s/, this.pMissingZones.map(() => `?`).join(`,`)),
-        Parameters: this.pMissingZones
+        Query: ENUM_STRINGS.DB_STRINGS.QUERIES.LOCATION_LOOKUP.replace(/%s/, cMissingZones.map(() => `?`).join(`,`)),
+        Parameters: cMissingZones
       });
       cRows.forEach((cRow) => {
-        this.pDiscoveredZones.push(cRow.Location);
+        cDiscoveredZones.push(cRow.Location);
         this.SetCachedZone({ Zone: cRow.ID, Location: [cRow.Location] });
       });
     }
-    return Array.from(new Set(this.pDiscoveredZones));
+    return Array.from(new Set(cDiscoveredZones));
   }
   GetZones({ Header }) {
+    const cZones = [];
     const [cFirstPart, ...cParts] = Header.split("-");
     let lState = cFirstPart.substring(0, 2);
     let lFormat = cFirstPart.substring(2, 3);
@@ -22837,7 +22831,7 @@ var GeographicalCodeParsing = class {
       const cEndNumber = Number(cEnd ?? cStart);
       if (!Number.isInteger(cStartNumber) || !Number.isInteger(cEndNumber)) return;
       for (let i = cStartNumber; i <= cEndNumber; i++) {
-        this.pZones.push(`${lState}${lFormat}${String(i).padStart(3, "0")}`);
+        cZones.push(`${lState}${lFormat}${String(i).padStart(3, "0")}`);
       }
     };
     const [cFirstStart, cFirstEnd] = cFirstZone.split(">");
@@ -22850,10 +22844,10 @@ var GeographicalCodeParsing = class {
         cAddZones(String(cStart), String(cEnd));
       } else {
         const cDigits = cCleanPart.replace(/^\D+/, "");
-        this.pZones.push(cDigits === cCleanPart ? `${lState}${lFormat}${cCleanPart.padStart(3, "0")}` : cPart);
+        cZones.push(cDigits === cCleanPart ? `${lState}${lFormat}${cCleanPart.padStart(3, "0")}` : cPart);
       }
     }
-    return Array.from(new Set(this.pZones));
+    return Array.from(new Set(cZones));
   }
   GetHeader({ Message }) {
     const cStart = Message.search(ENUM_REGULAR_EXPRESSIONS.UGC_PT1);
@@ -22991,7 +22985,7 @@ var ENUM_REGEX_EVENTS = {
   ]
 };
 
-// src/components/events/parsing/classes/TextProductParsing.ts
+// src/components/events/parsing/TextProduct.ts
 var _GetTextProductEvent_dec, _GetExpiry_dec2, _GetDescription_dec, _GetPolygon_dec2, _GetTextReference_dec, _init3;
 _GetTextReference_dec = [ConstructClassTimer], _GetPolygon_dec2 = [ConstructClassTimer], _GetDescription_dec = [ConstructClassTimer], _GetExpiry_dec2 = [ConstructClassTimer], _GetTextProductEvent_dec = [ConstructClassTimer];
 var TextProductParsing = class {
@@ -23657,12 +23651,12 @@ var GetCleanGeoJSON = (GeoJSON) => {
   return GeoJSON;
 };
 
-// src/components/events/parsing/TextProduct.ts
+// src/components/events/products/Text.ts
 var IngestProduct3 = async (Stanza) => {
   const { Message, Attributes, Product } = Stanza ?? {};
   const { ID } = Product ?? {};
   const cMessages = Message?.split(/(?=\$\$)/g)?.map((lMsg) => lMsg.trim())?.filter((lMsg) => lMsg && lMsg !== "$$")?.filter((lMsg) => lMsg.length > 25);
-  if (!cMessages?.length || cMessages?.length == 0) return;
+  if (!cMessages?.length) return;
   for (const cMessage of cMessages) {
     const cTextParser = new TextProductParsing({ Message: cMessage });
     const cUGC = new GeographicalCodeParsing({ Message: cMessage }).GetReferences();
@@ -23773,24 +23767,24 @@ var ENUM_VTEC_TYPES = {
   "X": "Experimental Product (Non-Operational)"
 };
 
-// src/components/events/parsing/classes/ValidTimeCodeParsing.ts
+// src/components/events/parsing/ValidTimeEventCode.ts
 var _CreatePadding_dec, _GetExpiryDate_dec, _GetReferences_dec2, _init4;
 _GetReferences_dec2 = [ConstructClassTimer], _GetExpiryDate_dec = [ConstructClassTimer], _CreatePadding_dec = [ConstructClassTimer];
-var ValidTimeCodeParsing = class {
+var ValidTimeEventCodeParsing = class {
   constructor({ Message }) {
     __runInitializers(_init4, 5, this);
     this.pMessage = void 0;
-    this.pCollection = [];
     this.pMessage = Message;
     return this;
   }
   GetReferences() {
     if (!this.pMessage) return null;
+    const cCollection = [];
     const cRegex = this.pMessage.match(ENUM_REGULAR_EXPRESSIONS.VTEC) ?? [];
     for (const cVTEC of cRegex) {
       const cExpiryDate = this.GetExpiryDate({ VTEC: cVTEC });
       const [cType, cStatus, cOffice, cProduct, cAction, cCode] = cVTEC.split(`.`);
-      this.pCollection.push({
+      cCollection.push({
         Raw: cVTEC,
         Product: ENUM_VTEC_TYPES[cType] ?? `Unknown Product Type`,
         Name: `${ENUM_VTEC_PRODUCTS[cProduct]} ${ENUM_VTEC_ACTIONS[cAction]}`,
@@ -23805,7 +23799,7 @@ var ValidTimeCodeParsing = class {
         Tracking: `${cOffice}.${cProduct}.${cAction}.${cCode}`
       });
     }
-    return this.pCollection;
+    return cCollection;
   }
   GetExpiryDate({ VTEC }) {
     const cSub = VTEC.split(`.`);
@@ -23830,27 +23824,29 @@ var ValidTimeCodeParsing = class {
   }
 };
 _init4 = __decoratorStart(null);
-__decorateElement(_init4, 1, "GetReferences", _GetReferences_dec2, ValidTimeCodeParsing);
-__decorateElement(_init4, 1, "GetExpiryDate", _GetExpiryDate_dec, ValidTimeCodeParsing);
-__decorateElement(_init4, 1, "CreatePadding", _CreatePadding_dec, ValidTimeCodeParsing);
-__decoratorMetadata(_init4, ValidTimeCodeParsing);
+__decorateElement(_init4, 1, "GetReferences", _GetReferences_dec2, ValidTimeEventCodeParsing);
+__decorateElement(_init4, 1, "GetExpiryDate", _GetExpiryDate_dec, ValidTimeEventCodeParsing);
+__decorateElement(_init4, 1, "CreatePadding", _CreatePadding_dec, ValidTimeEventCodeParsing);
+__decoratorMetadata(_init4, ValidTimeEventCodeParsing);
 
-// src/components/events/parsing/ValidTimeProducts.ts
+// src/components/events/products/ValidTimeCode.ts
 var IngestProduct4 = async (Stanza) => {
   const { Message } = Stanza;
   const cMessages = Message?.split(/(?=\$\$)/g)?.map((lMsg) => lMsg.trim())?.filter((lMsg) => lMsg && lMsg !== "$$")?.filter((lMsg) => lMsg.length > 25);
-  if (!cMessages?.length || cMessages?.length == 0) return;
+  if (!cMessages?.length) return;
   for (const cMessage of cMessages) {
     const cGeoParser = new GeographicalCodeParsing({ Message: cMessage }).GetReferences();
-    const cTimeParser = new ValidTimeCodeParsing({ Message: cMessage }).GetReferences();
+    const cTimeParser = new ValidTimeEventCodeParsing({ Message: cMessage }).GetReferences();
     if (cGeoParser != null && cTimeParser != null) {
     }
   }
 };
 
-// src/components/stanza/ProcessStanza.ts
-var ProcessStanza = async ({ Stanza }) => {
+// src/components/events/managers/IngestStanza.ts
+var IngestStanza = async ({ Stanza }) => {
   const { VTEC, CAP, Wire } = Stanza.Metadata;
+  const cType = VTEC ? `ValidTimeEventCode` : CAP ? `CAP v1.2` : Wire ? `Text` : `GeoJSON`;
+  SetLog({ Type: `DEBUG`, Message: `[Ingestion] ${cType} Product: ${Stanza.Product.Name} (${Stanza.Product.ID})` });
   switch (true) {
     case !Wire:
       IngestProduct2(Stanza);
@@ -27288,7 +27284,7 @@ var DeployService = class {
         return;
       }
       await CreateStanza({ Stanza: JSON.parse(JSON.stringify(cValidate)) });
-      await ProcessStanza({ Stanza: JSON.parse(JSON.stringify(cValidate)) });
+      await IngestStanza({ Stanza: JSON.parse(JSON.stringify(cValidate)) });
       SetLog({
         Hidden: true,
         Message: Stanza,
@@ -27354,7 +27350,11 @@ __decoratorMetadata(_init5, Manager);
 var index_default = Manager;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  Manager
+  CommonAlertingProtocolParsing,
+  GeographicalCodeParsing,
+  Manager,
+  TextProductParsing,
+  ValidTimeEventCodeParsing
 });
 /*! Bundled license information:
 

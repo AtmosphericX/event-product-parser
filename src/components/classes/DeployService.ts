@@ -19,7 +19,7 @@ import { Bootstrap } from "@Bootstrap"
 import { SetLog } from "@Components.Utilities/SetLog"
 import { SetSleep } from "@Components.Utilities/SetSleep"
 import { ValidateStanza } from "@Components.Stanza/ValidateStanza"
-import { ProcessStanza } from "@Components.Stanza/ProcessStanza"
+import { IngestStanza } from "@Components.Events.Managers/IngestStanza"
 import { CreateStanza } from "@Components.Database.Queries/CreateStanza"
 import { client, xml } from "@xmpp/client"
 import { Cron } from "croner"
@@ -159,7 +159,7 @@ export class DeployService {
             const cSkippable = !cValidate || cValidate.Ignored
             if (cSkippable) { return; }
             await CreateStanza({ Stanza: JSON.parse(JSON.stringify(cValidate)) });
-            await ProcessStanza({ Stanza: JSON.parse(JSON.stringify(cValidate)) });
+            await IngestStanza({ Stanza: JSON.parse(JSON.stringify(cValidate)) });
             SetLog({
                 Hidden: true,
                 Message: Stanza,

@@ -16,7 +16,7 @@
 import { TYPE_STANZA } from "Types.Stanza/Stanza"
 import { TYPE_STANZA_COMPILED } from "Types.Stanza/StanzaValidated"
 import { ENUM_REGULAR_EXPRESSIONS } from "@Enums/RegularExpressions"
-import { GetAwipsType } from "@Components.Stanza/GetAwipsType"
+import { GetStanzaType } from "@Components.Stanza/GetStanzaType"
 
 interface VALIDATE_OPTIONS { 
     Stanza: TYPE_STANZA
@@ -31,23 +31,13 @@ export const ValidateStanza = ({ Stanza }: VALIDATE_OPTIONS): TYPE_STANZA_COMPIL
     const cCAP = cMessage.includes(`<?xml`) && cMessage.includes(`<areaDesc>`);
     const cVTEC = cMessage.match(ENUM_REGULAR_EXPRESSIONS.VTEC) != null;
     const cUGC = cMessage.match(ENUM_REGULAR_EXPRESSIONS.UGC_PT1) != null;
-    const { Raw, Name, ID, Discovered } = GetAwipsType({ Attributes: cAttributes });
+    const { Raw, Name, ID, Discovered } = GetStanzaType({ Attributes: cAttributes });
     if (Name == null) return null;
     return { 
         Message: cMessage,
         Attributes: cAttributes,
         Ignored: false,
-        Metadata: {
-            CAP: cCAP,
-            VTEC: cVTEC,
-            UGC: cUGC,
-            Wire: true,
-        },
-        Product: {
-            Raw,
-            Name,
-            ID,
-            Discovered: Discovered
-        }
+        Metadata: { CAP: cCAP, VTEC: cVTEC, UGC: cUGC, Wire: true },
+        Product: { Raw, Name, ID, Discovered: Discovered }
     }
 }

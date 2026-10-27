@@ -29,9 +29,8 @@ interface GET_EXPIRY_DATE_OPTIONS {
     VTEC: string 
 }
 
-export class ValidTimeCodeParsing { 
+export class ValidTimeEventCodeParsing { 
     private pMessage: string;
-    private pCollection: TYPE_VTEC[] = [];
 
     public constructor({ Message }: GET_OPTIONS) {
         this.pMessage = Message;
@@ -41,11 +40,12 @@ export class ValidTimeCodeParsing {
     @ConstructClassTimer
     public GetReferences(): TYPE_VTEC[] | null {
         if (!this.pMessage) return null;
+        const cCollection: TYPE_VTEC[] = []
         const cRegex = this.pMessage.match(ENUM_REGULAR_EXPRESSIONS.VTEC) ?? [];
         for (const cVTEC of cRegex) { 
             const cExpiryDate = this.GetExpiryDate({ VTEC: cVTEC });
             const [cType, cStatus, cOffice, cProduct, cAction, cCode] = cVTEC.split(`.`);
-            this.pCollection.push({
+            cCollection.push({
                 Raw: cVTEC,
                 Product: ENUM_VTEC_TYPES[cType] ?? `Unknown Product Type`,
                 Name: `${ENUM_VTEC_PRODUCTS[cProduct]} ${ENUM_VTEC_ACTIONS[cAction]}`,
@@ -60,7 +60,7 @@ export class ValidTimeCodeParsing {
                 Tracking: `${cOffice}.${cProduct}.${cAction}.${cCode}`,
             });
         }
-        return this.pCollection;
+        return cCollection;
     }
 
     @ConstructClassTimer

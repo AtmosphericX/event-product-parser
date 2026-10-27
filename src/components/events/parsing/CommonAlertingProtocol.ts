@@ -16,7 +16,7 @@
 import { TYPE_CAP_PRODUCT_PROPERTIES } from "Types.Components/CapProductProperties"
 import { TYPE_STANZA_COMPILED } from "Types.Stanza/StanzaValidated";
 import { ConstructClassTimer } from "@Components.Utilities/ConstructClassTimer";
-import { GeographicalCodeParsing } from "@Components.Events.Parsing.Classes/GeographicalCodeParsing"
+import { GeographicalCodeParsing } from "@Components.Events.Parsing/GeographicalCode"
 import { Parser } from "xml2js"
 
 

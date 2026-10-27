@@ -23,6 +23,25 @@
 
 ## Changelogs [NOT FOR PRODUCTION USE]
 
+### October 27th, 2026 - b3.1-0402
+
+**Refactoring**
+- ref(parser): Seperated ingestion and parsing into two seperate directories. (`Products` & `Parsing`).
+- ref(stanza): Renamed `ProcessStanza.ts` -> `IngestStanza.ts` and moved to `Manager` directory.
+- ref(awips): Renamed `GetAwipsType` -> `GetStanzaType`
+
+**Features**
+- feat(exports): Exported parsing classes for use in other projects.
+
+**Todo**
+- chore(building): Complete all building export functions
+- chore(parsing): Complete all parsing classes
+- chore(products): Complete all product ingestions (Cap 1.2, VTEC, GeoJSON, Text)
+- chore(api): Integrate National Weather Service API for product retrieval and ingestion.
+- chore(host): Integrate shared ingestion hosting while using NWWS-OI.
+
+------------------------------------------------------------------------------------------------------------------------
+
 ### October 26th, 2026 - b3.1-0401
 
 **Refactoring**

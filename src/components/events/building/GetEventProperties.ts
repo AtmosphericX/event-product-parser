@@ -22,8 +22,8 @@ import { ENUM_FORECAST_OFFICES } from "@Enums.Properties/Offices"
 import { ENUM_REGULAR_EXPRESSIONS } from "@Enums/RegularExpressions"
 import { GetEventTags } from "@Components.Events.Building/GetEventTags"
 import { GetStormMotion } from "@Components.Events.Building/GetStormMotion"
-import { TextProductParsing } from "@Components.Events.Parsing.Classes/TextProductParsing"
-import { GeographicalCodeParsing } from "@Components.Events.Parsing.Classes/GeographicalCodeParsing"
+import { TextProductParsing } from "@Components.Events.Parsing/TextProduct"
+import { GeographicalCodeParsing } from "@Components.Events.Parsing/GeographicalCode"
 
 interface GET_EVENT_PROPERTIES_OPTIONS {
     Message: string

@@ -14,18 +14,20 @@
 */
 
 import { TYPE_STANZA_COMPILED } from "Types.Stanza/StanzaValidated"
-import { IngestProduct as CAPProductIngestion } from "@Components.Events.Parsing/CommonAlertingProtocolProducts"
-import { IngestProduct as GeoJSONProductIngestion } from "@Components.Events.Parsing/GeoJSONProduct"
-import { IngestProduct as TextProductIngestion } from "@Components.Events.Parsing/TextProduct"
-import { IngestProduct as ValidTimeProductIngestion } from "@Components.Events.Parsing/ValidTimeProducts"
+import { IngestProduct as CAPProductIngestion } from "@Components.Events.Products/CommonAlertingProtocol"
+import { IngestProduct as GeoJSONProductIngestion } from "@Components.Events.Products/GeoJSON"
+import { IngestProduct as TextProductIngestion } from "@Components.Events.Products/Text"
+import { IngestProduct as ValidTimeProductIngestion } from "@Components.Events.Products/ValidTimeCode"
+import { SetLog } from "@Components.Utilities/SetLog"
 
 interface PROCESS_STANZA_OPTIONS { 
     Stanza: TYPE_STANZA_COMPILED
 }
 
-export const ProcessStanza = async ({ Stanza }: PROCESS_STANZA_OPTIONS): Promise<void> => {
+export const IngestStanza = async ({ Stanza }: PROCESS_STANZA_OPTIONS): Promise<void> => {
     const { VTEC, CAP, Wire } = Stanza.Metadata;
-
+    const cType = VTEC ? `ValidTimeEventCode` : CAP ? `CAP v1.2` : Wire ? `Text` : `GeoJSON`;
+    SetLog({ Type: `DEBUG`, Message: `[Ingestion] ${cType} Product: ${Stanza.Product.Name} (${Stanza.Product.ID})` });
     switch (true) { 
         case (!Wire):
             GeoJSONProductIngestion(Stanza);
@@ -40,4 +42,5 @@ export const ProcessStanza = async ({ Stanza }: PROCESS_STANZA_OPTIONS): Promise
             TextProductIngestion(Stanza);
             break;
     }
+    // TODO: FilterEventCaller
 }

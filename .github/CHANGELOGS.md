@@ -31,6 +31,9 @@
 - ref(products): Changed file name `CAPProduct` -> `CommonAlertingProtocolProduct`.
 - ref(products): Changed file name `VTECProduct` -> `ValidTimeProduct`.
 
+**Features**
+- feat(ConstructClassTimer): Added a `ConstructClassTimer` utility to allow for monitoring of class construction times for performance testing, optimization, and debugging.
+
 **Packages**
 - chore(xml2js): Enforce `0.6.2` version of `xml2js` to avoid breaking changes in future versions.
 

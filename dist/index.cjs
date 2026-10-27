@@ -22623,7 +22623,7 @@ var ValidateStanza = ({ Stanza }) => {
   const cCAP = cMessage.includes(`<?xml`) && cMessage.includes(`<areaDesc>`);
   const cVTEC = cMessage.match(ENUM_REGULAR_EXPRESSIONS.VTEC) != null;
   const cUGC = cMessage.match(ENUM_REGULAR_EXPRESSIONS.UGC_PT1) != null;
-  const { Name, ID, Discovered } = GetAwipsType({ Attributes: cAttributes });
+  const { Raw, Name, ID, Discovered } = GetAwipsType({ Attributes: cAttributes });
   if (Name == null) return null;
   return {
     Message: cMessage,
@@ -22636,6 +22636,7 @@ var ValidateStanza = ({ Stanza }) => {
       Wire: true
     },
     Product: {
+      Raw,
       Name,
       ID,
       Discovered
@@ -23667,11 +23668,10 @@ var IngestProduct3 = async (Stanza) => {
     const cUGC = new GeographicalCodeParsing({ Message: cMessage }).GetReferences();
     const cIssuance = new Date(Attributes.issue);
     const cExpiration = cUGC?.Expires ?? new Date(Date.now() + 12 * 60 * 60 * 1e3);
-    const { Label, Status, Issuance, Expiry } = cTextParser.GetTextProductEvent({ Stanza, Issuance: cIssuance, Expiration: cExpiration });
     const cProperties = GetCleanGeoJSON(GetEventProperties({ Message: cMessage, Attributes, UGC: cUGC }));
     const cTracking = GetEventTracking({ Type: `TEXT`, Stanza, Properties: cProperties, ID });
     const cHeader = GetEventHeader({ Tracking: cTracking });
-    console.log(cProperties);
+    const { Label, Status, Issuance, Expiry } = cTextParser.GetTextProductEvent({ Stanza, Issuance: cIssuance, Expiration: cExpiration });
   }
 };
 

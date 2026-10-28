@@ -136,6 +136,15 @@ export const definitions = {
         {"Special Marine Warning": {
             "Tornadic Special Marine Warning": {condition: (tornadoThreatTag: string) => tornadoThreatTag === 'POSSIBLE'},
         }},
+        {"Snow Squall Warning": {
+            "Significant Snow Squall Warning": { condition: (damageThreatTag: string) => damageThreatTag === 'SIGNIFICANT'},
+        }},
+        {"Blizzard Warning": {
+            "PDS Blizzard Warning": { description: "particularly dangerous situation" },
+        }},
+        {"Ice Storm Warning": {
+            "PDS Ice Storm Warning": { description: "particularly dangerous situation" },
+        }},
         {"Tornado Watch": {
             "PDS Tornado Watch": { description: "particularly dangerous situation"}
         }},

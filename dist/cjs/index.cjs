@@ -3962,11 +3962,6 @@ var events = {
 };
 var offshore = {
   "Special Weather Statement": "Special Weather Statement",
-  "Hurricane Warning": "Hurricane Warning",
-  "Hurricane Force Wind Warning": "Hurricane Force Wind Warning",
-  "Hurricane Watch": "Hurricane Watch",
-  "Tropical Storm Warning": "Tropical Storm Warning",
-  "Tropical Storm Watch": "Tropical Storm Watch",
   "High Wind Warning": "High Wind Warning",
   "Gale Warning": "Gale Warning",
   "Small Craft Advisory": "Small Craft Advisory",
@@ -4864,6 +4859,15 @@ var definitions = {
     } },
     { "Special Marine Warning": {
       "Tornadic Special Marine Warning": { condition: (tornadoThreatTag) => tornadoThreatTag === "POSSIBLE" }
+    } },
+    { "Snow Squall Warning": {
+      "Significant Snow Squall Warning": { condition: (damageThreatTag) => damageThreatTag === "SIGNIFICANT" }
+    } },
+    { "Blizzard Warning": {
+      "PDS Blizzard Warning": { description: "particularly dangerous situation" }
+    } },
+    { "Ice Storm Warning": {
+      "PDS Ice Storm Warning": { description: "particularly dangerous situation" }
     } },
     { "Tornado Watch": {
       "PDS Tornado Watch": { description: "particularly dangerous situation" }

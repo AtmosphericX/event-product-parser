@@ -66,10 +66,10 @@ const manager = new Manager({...settings});
 - [topojson-client](https://www.npmjs.com/package/topojson-client) (v3.1.0)
 - [typescript](https://www.npmjs.com/package/typescript) (v5.9.3)
 
-### Diclaimer
+### Disclaimer
 
 > [!WARNING]
-> This project is currently in **active development** and is not yet ready for production use. The library is undergoing a major rewrite to support the retirement of AWIPS and the transition to a fully cloud-based infrastructure. CIRRUS will become the new standard for ingesting and parsing NOAA and NWS products, and this project is evolving to support that transition. Specifically with CAP v1.2 ingestion.
+> This project is currently in **active development** and is not yet ready for production use. The library is undergoing a major rewrite to support the retirement of AWIPS and the transition to a fully cloud-based infrastructure. CIRRUS will become the new standard for ingesting and parsing NOAA and NWS products, and this project is evolving to support that transition. Specifically, this applies to CAP v1.2 ingestion.
 
 
 ![alt text](.github/assets/migration.png)

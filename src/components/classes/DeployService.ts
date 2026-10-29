@@ -156,10 +156,9 @@ export class DeployService {
 
         if (Stanza.is(`message`)) {
             const cValidate = ValidateStanza({ Stanza });
-            const cSkippable = !cValidate || cValidate.Ignored
-            if (cSkippable) { return; }
-            await CreateStanza({ Stanza: JSON.parse(JSON.stringify(cValidate)) });
-            await IngestStanza({ Stanza: JSON.parse(JSON.stringify(cValidate)) });
+            if (!cValidate) { return; }
+            CreateStanza({ Stanza: JSON.parse(JSON.stringify(cValidate)) });
+            IngestStanza({ Stanza: JSON.parse(JSON.stringify(cValidate)) });
             SetLog({
                 Hidden: true,
                 Message: Stanza,

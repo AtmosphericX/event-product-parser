@@ -36,7 +36,6 @@ export const ValidateStanza = ({ Stanza }: VALIDATE_OPTIONS): TYPE_STANZA_COMPIL
     return { 
         Message: cMessage,
         Attributes: cAttributes,
-        Ignored: false,
         Metadata: { CAP: cCAP, VTEC: cVTEC, UGC: cUGC, Wire: true },
         Product: { Raw, Name, ID, Discovered: Discovered }
     }

@@ -21378,7 +21378,9 @@ var require_main3 = __commonJS({
 var index_exports = {};
 __export(index_exports, {
   CommonAlertingProtocolParsing: () => CommonAlertingProtocolParsing,
+  ConstructProduct: () => ConstructProduct,
   GeographicalCodeParsing: () => GeographicalCodeParsing,
+  GetArchivedProducts: () => GetArchivedProducts,
   Manager: () => Manager,
   TextProductParsing: () => TextProductParsing,
   ValidTimeEventCodeParsing: () => ValidTimeEventCodeParsing,
@@ -21562,6 +21564,10 @@ var ENUM_STRINGS = {
   DEFAULT_PREFIX: `${Bootstrap.Colors.Yellow}@atmosx/event-product-parser-${Bootstrap.Version}${Bootstrap.Colors.Reset}`,
   DEBUG_PREFIX: `${Bootstrap.Colors.Cyan}Debug${Bootstrap.Colors.Reset}`,
   ERROR_PREFIX: `${Bootstrap.Colors.Red}Error${Bootstrap.Colors.Reset}`,
+  API: {
+    NWS_EVENTS: ``,
+    ARCHIVED_PRODUCTS: `https://mesonet.agron.iastate.edu/cgi-bin/afos/retrieve.py?fmt=text&pil=%s&limit=%d`
+  },
   CALLBACKS: {
     SETTINGS_INVALID_KEY: `This configuration '%s' ${Bootstrap.Colors.Red}DOES NOT${Bootstrap.Colors.Reset} exist. Please check the documentation for valid configuration options.`,
     HTTP_REQUEST_FAILED: `HTTP Request Failed`
@@ -22632,7 +22638,6 @@ var ValidateStanza = ({ Stanza }) => {
   return {
     Message: cMessage,
     Attributes: cAttributes,
-    Ignored: false,
     Metadata: { CAP: cCAP, VTEC: cVTEC, UGC: cUGC, Wire: true },
     Product: { Raw, Name, ID, Discovered }
   };
@@ -23666,6 +23671,7 @@ var IngestProduct3 = async (Stanza) => {
     const cTracking = GetEventTracking({ Type: `TEXT`, Stanza, Properties: cProperties, ID });
     const cHeader = GetEventHeader({ Tracking: cTracking });
     const { Label, Status, Issuance, Expiry } = cTextParser.GetTextProductEvent({ Stanza, Issuance: cIssuance, Expiration: cExpiration });
+    console.log(Label, Status, Issuance, Expiry, cUGC);
   }
 };
 
@@ -23838,6 +23844,8 @@ var IngestProduct4 = async (Stanza) => {
     const cGeoParser = new GeographicalCodeParsing({ Message: cMessage }).GetReferences();
     const cTimeParser = new ValidTimeEventCodeParsing({ Message: cMessage }).GetReferences();
     if (cGeoParser != null && cTimeParser != null) {
+      console.log(cGeoParser);
+      console.log(cTimeParser);
     }
   }
 };
@@ -27279,12 +27287,11 @@ var DeployService = class {
     }
     if (Stanza.is(`message`)) {
       const cValidate = ValidateStanza({ Stanza });
-      const cSkippable = !cValidate || cValidate.Ignored;
-      if (cSkippable) {
+      if (!cValidate) {
         return;
       }
-      await CreateStanza({ Stanza: JSON.parse(JSON.stringify(cValidate)) });
-      await IngestStanza({ Stanza: JSON.parse(JSON.stringify(cValidate)) });
+      CreateStanza({ Stanza: JSON.parse(JSON.stringify(cValidate)) });
+      IngestStanza({ Stanza: JSON.parse(JSON.stringify(cValidate)) });
       SetLog({
         Hidden: true,
         Message: Stanza,
@@ -27295,14 +27302,54 @@ var DeployService = class {
   }
 };
 
+// src/components/exports/GetArchivedProducts.ts
+var GetArchivedProducts = async ({ PIL, Limit = 1 }) => {
+  const { ARCHIVED_PRODUCTS } = ENUM_STRINGS.API;
+  const cStorage = [];
+  for (const cPil of PIL) {
+    const { Error: Error2, Body } = await CreateFetchRequest({ Destination: ARCHIVED_PRODUCTS.replace(/%s/, cPil).replace(/%d/, String(Limit)) });
+    if (!Error2) {
+      const cProducts = Body?.split(/(?=\$\$)/g)?.map((lMsg) => lMsg.trim())?.filter((lMsg) => lMsg && lMsg !== "$$")?.filter((lMsg) => lMsg.length > 25);
+      cStorage.push({ TTAAII: cPil, Products: cProducts });
+    }
+  }
+  return cStorage;
+};
+
+// src/components/exports/ConstructProduct.ts
+var ConstructProduct = ({ Message, Tracking = `ATMSX.XX.XX.XXXX`, PIL = `XX` }) => {
+  const cCAP = Message.includes(`<?xml`) && Message.includes(`<areaDesc>`);
+  const cVTEC = Message.match(ENUM_REGULAR_EXPRESSIONS.VTEC) != null;
+  const cUGC = Message.match(ENUM_REGULAR_EXPRESSIONS.UGC_PT1) != null;
+  const [cOffice, cProduct, __, cID] = Tracking.split(`.`);
+  const cAttributes = {
+    xmlns: `manual_product.${cID ?? Math.random().toString(36).substring(2, 10)}`,
+    id: cID ?? Math.random().toString(36).substring(2, 10),
+    issue: (/* @__PURE__ */ new Date()).toISOString(),
+    ttaaii: cOffice ?? `XXXX`,
+    cccc: cProduct ?? `XXXX`,
+    awipsid: PIL
+  };
+  const { Raw, Name, ID, Discovered } = GetStanzaType({ Attributes: cAttributes });
+  if (Name == null) return null;
+  const cValidated = {
+    Message,
+    Attributes: cAttributes,
+    Metadata: { CAP: cCAP, VTEC: cVTEC, UGC: cUGC, Wire: true },
+    Product: { Raw, Name, ID, Discovered }
+  };
+  IngestStanza({ Stanza: cValidated });
+};
+
 // src/index.ts
-var _stop_dec, _start_dec, _init5;
-_start_dec = [ConstructClassTimer], _stop_dec = [ConstructClassTimer];
+var _initialize_dec, _stop_dec, _start_dec, _init5;
+_start_dec = [ConstructClassTimer], _stop_dec = [ConstructClassTimer], _initialize_dec = [ConstructClassTimer];
 var Manager = class {
   constructor(settings) {
     __runInitializers(_init5, 5, this);
     CreateErrorHandler();
     SetSettings(settings);
+    this.initialize();
   }
   async start() {
     const { WeatherWireService, WeatherWireServiceSettings, DeveloperSettings } = Bootstrap.Settings;
@@ -27310,18 +27357,12 @@ var Manager = class {
     if (Bootstrap.ServiceReady) {
       return SetLog({ Message: ENUM_STRINGS.SERVICE.ALREADY_STARTED });
     }
-    SetLog({ Type: `DEBUG`, Message: `@atmosx/event-product-parser: ${this.version()}` });
     Bootstrap.ServiceReady = true;
     await Promise.all([
-      await InitializeDatabase(),
-      await CreatePopulatedDatabase(),
       WeatherWireService && !DisableEvents ? new DeployService() : null,
       Bootstrap.Scheduler = new E(`*/15 * * * * *`, async () => {
-      }),
-      // Thread Caller
-      Bootstrap.Scheduler = new E(`* * * * * *`, async () => {
       })
-      // Event Polygon / Node Updater
+      // Thread Caller
     ]);
   }
   async stop() {
@@ -27332,6 +27373,16 @@ var Manager = class {
     if (Bootstrap.Scheduler) {
       Bootstrap.Scheduler = null;
     }
+  }
+  async initialize() {
+    SetLog({ Type: `DEBUG`, Message: `@atmosx/event-product-parser: ${this.version()}` });
+    await Promise.all([
+      await InitializeDatabase(),
+      await CreatePopulatedDatabase(),
+      Bootstrap.Scheduler = new E(`* * * * * *`, async () => {
+      })
+      // Event Polygon / Node Updater
+    ]);
   }
   on(Event, Callback) {
     Bootstrap.Listener.on(Event, Callback);
@@ -27346,12 +27397,15 @@ var Manager = class {
 _init5 = __decoratorStart(null);
 __decorateElement(_init5, 1, "start", _start_dec, Manager);
 __decorateElement(_init5, 1, "stop", _stop_dec, Manager);
+__decorateElement(_init5, 1, "initialize", _initialize_dec, Manager);
 __decoratorMetadata(_init5, Manager);
 var index_default = Manager;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   CommonAlertingProtocolParsing,
+  ConstructProduct,
   GeographicalCodeParsing,
+  GetArchivedProducts,
   Manager,
   TextProductParsing,
   ValidTimeEventCodeParsing

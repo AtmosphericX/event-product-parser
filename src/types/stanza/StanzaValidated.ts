@@ -24,7 +24,6 @@ export type TYPE_STANZA_COMPILED = {
         UGC: boolean
         Wire: boolean
     }
-    Ignored?: boolean
     Product?: {
         Raw: string
         Name: string

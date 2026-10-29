@@ -39,5 +39,6 @@ export const IngestProduct = async (Stanza: TYPE_STANZA_COMPILED): Promise<void>
         const cTracking = GetEventTracking({ Type: `TEXT`, Stanza, Properties: cProperties, ID });
         const cHeader = GetEventHeader({ Tracking: cTracking });
         const { Label, Status, Issuance, Expiry } = cTextParser.GetTextProductEvent({ Stanza: Stanza, Issuance: cIssuance, Expiration: cExpiration });
+        console.log(Label, Status, Issuance, Expiry, cUGC)
     }
 }

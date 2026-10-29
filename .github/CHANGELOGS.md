@@ -23,15 +23,24 @@
 
 ## Changelogs [NOT FOR PRODUCTION USE]
 
-### October 27th, 2026 - b3.1-0402
+### October 29th, 2026 - b3.1-0402
 
 **Refactoring**
 - ref(parser): Seperated ingestion and parsing into two seperate directories. (`Products` & `Parsing`).
 - ref(stanza): Renamed `ProcessStanza.ts` -> `IngestStanza.ts` and moved to `Manager` directory.
 - ref(awips): Renamed `GetAwipsType` -> `GetStanzaType`
+- ref(exports): Updated exports to have a dedicate `exports.ts` file which is imported within the main entry point of the project.
+- ref(exports): Created a directory for all export related functions `@Components.Exports` -> `src/components/exports`.
+- ref(deploy): Updated XMPP Deployment `onStanza` to no longer handle `Ignored` stanzas.
+- ref(deploy): Removed await for `CreateStanza` and `IngestStanza` in `onStanza`
 
 **Features**
 - feat(exports): Exported parsing classes for use in other projects.
+- feat(exports): Added `GetArchivedProducts` which retrieves archives from `iastate.edu` using PIL and a specified limit.
+- feat(exports): Added `ConstructProduct` which allows for manual event creation of products. (Supports CAP v1.2 and Text Products)
+- feat(exports): Added parsing classes to the exports for use in other projects. (ValidTimeEventCodeParsing, TextProductParsing, GeographicalCodeParsing, CommonAlertingProtocolParsing)
+- feat(strings): Added API strings such as `NWS_EVENTS` and `ARCHIVED_PRODUCTS`.
+- feat(types): `TYPE_STANZA_COMPILED` no longer contained `Ignored` bool for stanza processing.
 
 **Documentation**
 - feat(docs): Add `AGENTS.md` file to provide instructions to **NOT** use AI agents on this codebase. That includes scraping, indexing, and code generation. This is to protect the intellectual property of the project and to ensure that the codebase is not misused or misrepresented.
@@ -42,6 +51,9 @@
 - chore(products): Complete all product ingestions (Cap 1.2, VTEC, GeoJSON, Text)
 - chore(api): Integrate National Weather Service API for product retrieval and ingestion.
 - chore(host): Integrate shared ingestion hosting while using NWWS-OI.
+- chore(tasks): NTFY integration.
+- chore(tasks): Webhook integration.
+- chore(tasks): File generation.
 
 ------------------------------------------------------------------------------------------------------------------------
 

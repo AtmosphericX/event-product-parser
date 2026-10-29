@@ -19,6 +19,10 @@ type TYPE_STRINGS = {
     DEFAULT_PREFIX: string
     DEBUG_PREFIX: string
     ERROR_PREFIX: string
+    API: {
+        NWS_EVENTS: string
+        ARCHIVED_PRODUCTS: string
+    }
     CALLBACKS: {
         SETTINGS_INVALID_KEY: string
         HTTP_REQUEST_FAILED: string
@@ -94,6 +98,10 @@ export const ENUM_STRINGS: TYPE_STRINGS = {
     DEFAULT_PREFIX: `${Bootstrap.Colors.Yellow}@atmosx/event-product-parser-${Bootstrap.Version}${Bootstrap.Colors.Reset}`,
     DEBUG_PREFIX: `${Bootstrap.Colors.Cyan}Debug${Bootstrap.Colors.Reset}`,
     ERROR_PREFIX: `${Bootstrap.Colors.Red}Error${Bootstrap.Colors.Reset}`,
+    API: {
+        NWS_EVENTS: ``,
+        ARCHIVED_PRODUCTS: `https://mesonet.agron.iastate.edu/cgi-bin/afos/retrieve.py?fmt=text&pil=%s&limit=%d` 
+    },
     CALLBACKS: {
         SETTINGS_INVALID_KEY: `This configuration '%s' ${Bootstrap.Colors.Red}DOES NOT${Bootstrap.Colors.Reset} exist. Please check the documentation for valid configuration options.`,
         HTTP_REQUEST_FAILED: `HTTP Request Failed`,

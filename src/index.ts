@@ -25,36 +25,24 @@ import { DeployService } from "@Components.Classes/DeployService"
 import { ConstructClassTimer } from "@Components.Utilities/ConstructClassTimer";
 import { Cron } from "croner"
 
-
-import { CommonAlertingProtocolParsing } from "@Components.Events.Parsing/CommonAlertingProtocol"
-import { GeographicalCodeParsing } from "@Components.Events.Parsing/GeographicalCode"
-import { ValidTimeEventCodeParsing } from "@Components.Events.Parsing/ValidTimeEventCode"
-import { TextProductParsing } from "@Components.Events.Parsing/TextProduct"
-
-
 export class Manager { 
     public constructor(settings: TYPE_SETTINGS) { 
         CreateErrorHandler();
         SetSettings(settings);
+        this.initialize();
     }
 
     @ConstructClassTimer
     public async start(): Promise<void> { 
         const { WeatherWireService, WeatherWireServiceSettings, DeveloperSettings} = Bootstrap.Settings;
         const { DisableEvents } = DeveloperSettings;
-
         if (Bootstrap.ServiceReady) { 
             return SetLog({ Message: ENUM_STRINGS.SERVICE.ALREADY_STARTED });
         }
-   
-        SetLog({ Type: `DEBUG`, Message: `@atmosx/event-product-parser: ${this.version()}` });
         Bootstrap.ServiceReady = true;
         await Promise.all([
-            await InitializeDatabase(),
-            await CreatePopulatedDatabase(),
             WeatherWireService && !DisableEvents ? new DeployService() : null,
             Bootstrap.Scheduler = new Cron(`*/15 * * * * *`, async () => {}), // Thread Caller
-            Bootstrap.Scheduler = new Cron(`* * * * * *`, async () => {}) // Event Polygon / Node Updater
         ])
     }
 
@@ -69,6 +57,16 @@ export class Manager {
         }
     }
 
+    @ConstructClassTimer
+    public async initialize(): Promise<void> {
+        SetLog({ Type: `DEBUG`, Message: `@atmosx/event-product-parser: ${this.version()}` });
+        await Promise.all([
+            await InitializeDatabase(),
+            await CreatePopulatedDatabase(),
+            Bootstrap.Scheduler = new Cron(`* * * * * *`, async () => {}) // Event Polygon / Node Updater
+        ])
+    }
+
     public on(Event: string, Callback: () => void) {
         Bootstrap.Listener.on(Event, Callback)
         return () => { void Bootstrap.Listener.off(Event, Callback) };
@@ -80,11 +78,6 @@ export class Manager {
 }
 
 export default Manager;
-export { 
-    CommonAlertingProtocolParsing,
-    GeographicalCodeParsing,
-    ValidTimeEventCodeParsing,
-    TextProductParsing
-}
+export * from "@Exports"
 
 

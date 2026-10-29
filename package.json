@@ -13,7 +13,9 @@
 		"build": "node ./tools/build.js && cd ./test && node index.js",
 		"watch": "node ./tools/build.js --watch",
 		"publish": "node ./tools/build.js && npm publish --access public",
-		"publish-b3.1": "node ./tools/build.js && npm publish --tag b3.1 --access public"
+		"publish-b3.1": "node ./tools/build.js && npm publish --tag b3.1 --access public",
+		"testing:archives": "cd ./testing && node test.exports.archived.js",
+		"testing:create": "cd ./testing && node test.exports.create.js"
 	},
 	"keywords": [
 		"NWWS",

@@ -21575,6 +21575,7 @@ var ENUM_STRINGS = {
   DATABASE: {
     CREATED: `No database found, creating a new database at the specified path.`,
     CONNECTED: `Successfully connected to local database (SQlite3)`,
+    NOT_INITIALIZED: `Database not initialized, therefore query cannot be executed. Please initialize \`Manager\` first.`,
     QUERY_FAILED: `Database query failed, please check the database schema and ensure that the query is valid.`,
     BUILDING: `The required database tables are missing, the parsing is currently rebuilding them and this may take a few seconds. Please ${Bootstrap.Colors.Red}DO NOT${Bootstrap.Colors.Reset} exit the parser while this is happening.`,
     BUILD_COMPLETE: `Database building complete. The required tables have been successfully created and populated. You can now continue using the parser.`,
@@ -21780,6 +21781,10 @@ var InitializeDatabase = async () => {
 // src/components/database/CreateQuery.ts
 var CreateQuery = ({ Query, Parameters }) => {
   try {
+    if (!Bootstrap?.Database) {
+      SetLog({ Type: `ERROR`, Message: ENUM_STRINGS.DATABASE.NOT_INITIALIZED });
+      return [];
+    }
     const cParameters = Array.isArray(Parameters) ? Parameters : [];
     const cStatement = Bootstrap?.Database?.prepare(Query);
     return /^\s*select/i.test(Query) ? cStatement?.all(...cParameters) : cStatement?.run(...cParameters);

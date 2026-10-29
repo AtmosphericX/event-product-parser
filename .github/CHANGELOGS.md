@@ -40,6 +40,7 @@
 - feat(exports): Added `ConstructProduct` which allows for manual event creation of products. (Supports CAP v1.2 and Text Products)
 - feat(exports): Added parsing classes to the exports for use in other projects. (ValidTimeEventCodeParsing, TextProductParsing, GeographicalCodeParsing, CommonAlertingProtocolParsing)
 - feat(strings): Added API strings such as `NWS_EVENTS` and `ARCHIVED_PRODUCTS`.
+- feat(strings): Added `NOT_INITIALIZED` string for database not initialized error message.
 - feat(types): `TYPE_STANZA_COMPILED` no longer contained `Ignored` bool for stanza processing.
 
 **Documentation**

@@ -15,6 +15,7 @@
 
 import { ENUM_STRINGS } from "@Enums/Strings"
 import { Bootstrap } from "@Bootstrap"
+import { SetLog } from "@Components.Utilities/SetLog"
 
 interface CREATE_QUERY_OPTIONS { 
     Query: string
@@ -23,6 +24,10 @@ interface CREATE_QUERY_OPTIONS {
 
 export const CreateQuery = ({ Query, Parameters }: CREATE_QUERY_OPTIONS): any => {
     try { 
+        if (!Bootstrap?.Database) {
+            SetLog({ Type: `ERROR`, Message: ENUM_STRINGS.DATABASE.NOT_INITIALIZED });
+            return [];
+        }
         const cParameters = Array.isArray(Parameters) ? Parameters : [];
         const cStatement = Bootstrap?.Database?.prepare(Query);
         return /^\s*select/i.test(Query)

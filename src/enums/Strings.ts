@@ -30,6 +30,7 @@ type TYPE_STRINGS = {
     DATABASE: {
         CREATED: string
         CONNECTED: string
+        NOT_INITIALIZED: string
         QUERY_FAILED: string
         BUILDING: string
         BUILD_COMPLETE: string
@@ -109,6 +110,7 @@ export const ENUM_STRINGS: TYPE_STRINGS = {
     DATABASE: {
         CREATED: `No database found, creating a new database at the specified path.`,
         CONNECTED: `Successfully connected to local database (SQlite3)`,
+        NOT_INITIALIZED: `Database not initialized, therefore query cannot be executed. Please initialize \`Manager\` first.`,
         QUERY_FAILED: `Database query failed, please check the database schema and ensure that the query is valid.`,
         BUILDING: `The required database tables are missing, the parsing is currently rebuilding them and this may take a few seconds. Please ${Bootstrap.Colors.Red}DO NOT${Bootstrap.Colors.Reset} exit the parser while this is happening.`,
         BUILD_COMPLETE: `Database building complete. The required tables have been successfully created and populated. You can now continue using the parser.`,

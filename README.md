@@ -52,6 +52,20 @@ const { Manager } = require("@atmosx/event-product-parser");
 const manager = new Manager({...settings});
 ```
 
+### Dependencies
+- [xml2js](https://www.npmjs.com/package/xml2js) (v0.4.14)
+- [@xmpp/client](https://www.npmjs.com/package/@xmpp/client) (v0.14.0)
+- [better-sqlite3](https://www.npmjs.com/package/better-sqlite3) (v12.9.0)
+- [croner](https://www.npmjs.com/package/croner) (v10.0.1)
+- [d3-geo](https://www.npmjs.com/package/d3-geo) (v3.1.1)
+- [esbuild](https://www.npmjs.com/package/esbuild) (v0.28.1)
+- [jszip](https://www.npmjs.com/package/jszip) (v3.10.1)
+- [polygon-clipping](https://www.npmjs.com/package/polygon-clipping) (v0.15.7)
+- [shapefile](https://www.npmjs.com/package/shapefile) (v0.6.6)
+- [sharp](https://www.npmjs.com/package/sharp) (v0.35.3)
+- [topojson-client](https://www.npmjs.com/package/topojson-client) (v3.1.0)
+- [typescript](https://www.npmjs.com/package/typescript) (v5.9.3)
+
 ### Diclaimer
 
 > [!WARNING]

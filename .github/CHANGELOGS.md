@@ -26,7 +26,7 @@
 ### October 29th, 2026 - b3.1-0402
 
 **Refactoring**
-- ref(parser): Seperated ingestion and parsing into two seperate directories. (`Products` & `Parsing`).
+- ref(parser): Separated ingestion and parsing into two separate directories. (`Products` & `Parsing`).
 - ref(stanza): Renamed `ProcessStanza.ts` -> `IngestStanza.ts` and moved to `Manager` directory.
 - ref(awips): Renamed `GetAwipsType` -> `GetStanzaType`
 - ref(exports): Updated exports to have a dedicate `exports.ts` file which is imported within the main entry point of the project.

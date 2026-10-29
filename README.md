@@ -53,7 +53,7 @@ const manager = new Manager({...settings});
 ```
 
 ### Dependencies
-- [xml2js](https://www.npmjs.com/package/xml2js) (v0.4.14)
+- [xml2js](https://www.npmjs.com/package/xml2js) (v0.6.2)
 - [@xmpp/client](https://www.npmjs.com/package/@xmpp/client) (v0.14.0)
 - [better-sqlite3](https://www.npmjs.com/package/better-sqlite3) (v12.9.0)
 - [croner](https://www.npmjs.com/package/croner) (v10.0.1)

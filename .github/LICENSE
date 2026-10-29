@@ -1,5 +1,3 @@
-## Copyright (c) 2027 AtmosphericX (k3yomi)
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to use,
 copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
@@ -8,12 +6,6 @@ and to permit persons to whom the Software is furnished to do so, subject to the
 1. The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 2. The author of the software must be credited in all copies or substantial portions of the Software, including but not limited to documentation, README files, and source code comments.
 
-Additional Restriction on AI Use
-
-Without separate written permission from the applicable copyright holder, you may not use this repository or its contents as a dataset for training, fine-tuning, or evaluating large language models or other generative AI models. You may not use automated AI systems to systematically scrape or index the repository for model development or to generate code derived from its contents.
-
-This restriction does not, by itself, prohibit ordinary human use, modification, compilation, execution, or security analysis of the software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,6 +13,10 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+ADDITIONAL RESTRICTION ON AI USE:
+WITHOUT SEPARATE WRITTEN PERMISSION FROM THE APPLICABLE COPYRIGHT HOLDER, YOU MAY NOT USE THIS REPOSITORY OR ITS CONTENTS AS A DATASET FOR TRAINING, FINE-TUNING, OR EVALUATING LARGE LANGUAGE MODELS OR OTHER GENERATIVE AI MODELS. YOU MAY NOT USE AUTOMATED AI SYSTEMS TO SYSTEMATICALLY SCRAPE OR INDEX THE REPOSITORY FOR MODEL DEVELOPMENT OR TO GENERATE CODE DERIVED FROM ITS CONTENTS. THIS RESTRICTION DOES NOT, BY ITSELF, PROHIBIT ORDINARY HUMAN USE, MODIFICATION, COMPILATION, EXECUTION, OR SECURITY ANALYSIS OF THE SOFTWARE.
+
 
 ALL RIGHTS RESERVED TO:
 - k3yomi (Kiyo Flores)

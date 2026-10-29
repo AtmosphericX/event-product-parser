@@ -47,6 +47,8 @@
 - feat(docs): Add `AGENTS.md` file to provide instructions to **NOT** use AI agents on this codebase. That includes scraping, indexing, and code generation. This is to protect the intellectual property of the project and to ensure that the codebase is not misused or misrepresented.
 - feat(docs): Include `testing` directory and `npm` scripts for running tests with the exports.
 - feat(docs): Added dependencies section to the documentation. (README.md)
+- chore(LICENSE): Fixed LICENSE section in the documentation.
+- chore(LICENSE): Enforce license restrictions on AI use.
 
 **Packages**
 - chore(xml2js): Enforce `0.6.2` version of `xml2js` to avoid breaking changes in future versions.

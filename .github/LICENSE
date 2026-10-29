@@ -1,27 +1,4 @@
-<div align="center" style="margin-top: 20px;">
-    <a href="https://atmosphericx.scriptkitty.cafe">
-        <img src="https://scriptkitty.cafe/ftp/@atmosphericx/assets/logo-event-product-parser.png"
-             alt="@atmosx/event-product-parser"
-             width="800"/>
-    </a>
-    <p style="font-size: 1.1em; max-width: 700px;">
-        A robust TypeScript/JavaScript library for parsing and ingesting NOAA and NWS Weather Text Products, featuring an expanded suite of quality‑of‑life tools for faster, cleaner, and more reliable development.
-    </p>
-    <small style="display: block; margin-top: 10px;">
-        Built and maintained with ❤️ by the AtmosphericX team<br>
-        <i>Not affiliated with NOAA or NWS</i>
-    </small>
-    <hr style="width: 60%; margin: 25px auto; opacity: 0.3;">
-    <p style="text-align: center; font-size: 1.05em;">
-        <a href="https://atmosphericx.scriptkitty.cafe"><b>Official Documentation</b></a> &nbsp;•&nbsp;
-        <a href="https://github.com/AtmosphericX"><b>Github Organization</b></a> &nbsp;•&nbsp;
-        <a href="https://www.npmjs.com/search?q=%40atmosx"><b>Packages</b></a> &nbsp;•&nbsp;
-        <a href="/.github/CHANGELOGS.md"><b>Changelogs</b></a> &nbsp;•&nbsp;
-        <a href="https://atmosphericx-discord.scriptkitty.cafe"><b>Community Discord</b></a>
-    </p>
-</div>
-
-## Copyright (c) 2026 AtmosphericX
+## Copyright (c) 2027 AtmosphericX (k3yomi)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to use,
@@ -31,6 +8,12 @@ and to permit persons to whom the Software is furnished to do so, subject to the
 1. The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 2. The author of the software must be credited in all copies or substantial portions of the Software, including but not limited to documentation, README files, and source code comments.
 
+Additional Restriction on AI Use
+
+Without separate written permission from the applicable copyright holder, you may not use this repository or its contents as a dataset for training, fine-tuning, or evaluating large language models or other generative AI models. You may not use automated AI systems to systematically scrape or index the repository for model development or to generate code derived from its contents.
+
+This restriction does not, by itself, prohibit ordinary human use, modification, compilation, execution, or security analysis of the software.
+
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -38,3 +21,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+ALL RIGHTS RESERVED TO:
+- k3yomi (Kiyo Flores)
+- Project AtmosphericX
+- National Weather Service (NWS)
+- National Oceanic and Atmospheric Administration (NOAA)
+
+

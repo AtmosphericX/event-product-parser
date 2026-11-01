@@ -45,7 +45,8 @@ export type TYPE_EVENT = {
             hvtec?: string
             tracking?: string
             header?: string
-            hash?: string
+            event_hash?: string
+            polygon_hash?: string
         }
         tracking?: {
             nodes?: {

@@ -21441,7 +21441,7 @@ var ENUM_THEMES = [
 var import_node_events = require("node:events");
 var import_node_path = require("node:path");
 var Bootstrap = {
-  Version: `b3.1-0402`,
+  Version: `b3.1-0403`,
   ServiceReady: false,
   Listener: new import_node_events.EventEmitter(),
   Scheduler: null,
@@ -22674,8 +22674,8 @@ function ConstructClassTimer(Target, Context2) {
 
 // src/components/events/parsing/CommonAlertingProtocol.ts
 var import_xml2js = __toESM(require_xml2js());
-var _GetPropertyValues_dec, _GetFilteredMessage_dec, _GetJSON_dec, _init;
-_GetJSON_dec = [ConstructClassTimer], _GetFilteredMessage_dec = [ConstructClassTimer], _GetPropertyValues_dec = [ConstructClassTimer];
+var _GetPolygonGeojson_dec, _GetPropertyValues_dec, _GetFilteredMessage_dec, _GetJSON_dec, _init;
+_GetJSON_dec = [ConstructClassTimer], _GetFilteredMessage_dec = [ConstructClassTimer], _GetPropertyValues_dec = [ConstructClassTimer], _GetPolygonGeojson_dec = [ConstructClassTimer];
 var CommonAlertingProtocolParsing = class {
   constructor({ Message }) {
     __runInitializers(_init, 5, this);
@@ -22743,12 +22743,28 @@ var CommonAlertingProtocolParsing = class {
     }
     return cExtracted;
   }
+  GetPolygonGeojson({ Polygon }) {
+    if (!Polygon) return null;
+    const cCoordinates = Polygon.split(" ").map((lCoordinates) => lCoordinates.split(",").map(Number).reverse()).filter((lCoordinates) => lCoordinates.length === 2 && !lCoordinates.some(isNaN));
+    if (cCoordinates.length < 3) return null;
+    return {
+      type: "Polygon",
+      coordinates: [cCoordinates]
+    };
+  }
 };
 _init = __decoratorStart(null);
 __decorateElement(_init, 1, "GetJSON", _GetJSON_dec, CommonAlertingProtocolParsing);
 __decorateElement(_init, 1, "GetFilteredMessage", _GetFilteredMessage_dec, CommonAlertingProtocolParsing);
 __decorateElement(_init, 1, "GetPropertyValues", _GetPropertyValues_dec, CommonAlertingProtocolParsing);
+__decorateElement(_init, 1, "GetPolygonGeojson", _GetPolygonGeojson_dec, CommonAlertingProtocolParsing);
 __decoratorMetadata(_init, CommonAlertingProtocolParsing);
+
+// src/components/utilities/GetHash.ts
+var import_node_crypto = require("node:crypto");
+var GetHash = ({ Input, Salt = "" }) => {
+  return (0, import_node_crypto.createHash)("sha256").update(Input + Salt).digest("hex");
+};
 
 // src/components/events/products/CommonAlertingProtocol.ts
 var IngestProduct = async (Stanza) => {
@@ -22760,6 +22776,8 @@ var IngestProduct = async (Stanza) => {
     const cFilter = cParsing.GetFilteredMessage({});
     const cJSON = await cParsing.GetJSON({ Message: cFilter });
     const cProperties = cParsing.GetPropertyValues({ JSON: cJSON });
+    const cPolygon = cParsing.GetPolygonGeojson({ Polygon: cProperties?.temp?.polygon });
+    const cPolygonHash = GetHash({ Input: JSON.stringify(cPolygon) });
   }
 };
 
@@ -22782,7 +22800,7 @@ var GetUnionedPolygon = ({ Polygons }) => {
 };
 
 // src/components/events/parsing/GeographicalCode.ts
-var import_node_crypto = require("node:crypto");
+var import_node_crypto2 = require("node:crypto");
 var _GetLocationMetadata_dec, _GetPolygon_dec, _GetCachedZone_dec, _SetCachedZone_dec, _GetExpiry_dec, _GetHeader_dec, _GetZones_dec, _GetZoneLocations_dec, _GetReferences_dec, _init2;
 _GetReferences_dec = [ConstructClassTimer], _GetZoneLocations_dec = [ConstructClassTimer], _GetZones_dec = [ConstructClassTimer], _GetHeader_dec = [ConstructClassTimer], _GetExpiry_dec = [ConstructClassTimer], _SetCachedZone_dec = [ConstructClassTimer], _GetCachedZone_dec = [ConstructClassTimer], _GetPolygon_dec = [ConstructClassTimer], _GetLocationMetadata_dec = [ConstructClassTimer];
 var GeographicalCodeParsing = class {
@@ -22901,7 +22919,7 @@ var GeographicalCodeParsing = class {
     for (const cRow of cRows) {
       const { Geometry } = cRow;
       if (!Geometry) continue;
-      const cHash = (0, import_node_crypto.createHash)(`Sha256`).update(Geometry).digest(`hex`);
+      const cHash = (0, import_node_crypto2.createHash)(`Sha256`).update(Geometry).digest(`hex`);
       if (cGeometryHashes.has(cHash)) continue;
       cGeometryHashes.add(cHash);
       const cGetometry = JSON.parse(Geometry);
@@ -23620,7 +23638,7 @@ var GetEventHeader = ({ Tracking }) => {
 };
 
 // src/components/events/building/GetEventTracking.ts
-var import_node_crypto2 = require("node:crypto");
+var import_node_crypto3 = require("node:crypto");
 var GetEventTracking = ({ Type, Stanza, Properties, Office, VTEC, ID }) => {
   if (Type === `CAP`) {
     if (VTEC) {
@@ -23630,7 +23648,7 @@ var GetEventTracking = ({ Type, Stanza, Properties, Office, VTEC, ID }) => {
     }
     const cOffice = Office?.match(/([A-Z]{4}\d{2})\s+([A-Z]{4})/);
     const cAbbreviation = cOffice?.[2] ?? `---`;
-    const cHash = (0, import_node_crypto2.createHash)(`sha1`).update(JSON.stringify(Stanza ?? Properties ?? {})).digest(`hex`);
+    const cHash = (0, import_node_crypto3.createHash)(`sha1`).update(JSON.stringify(Stanza ?? Properties ?? {})).digest(`hex`);
     return `${cAbbreviation}.CAPv1.2.${ID?.match(/([a-f0-9]{40})/)?.[1] ?? cHash}`;
   }
   if (Type == `TEXT`) {
@@ -23676,7 +23694,6 @@ var IngestProduct3 = async (Stanza) => {
     const cTracking = GetEventTracking({ Type: `TEXT`, Stanza, Properties: cProperties, ID });
     const cHeader = GetEventHeader({ Tracking: cTracking });
     const { Label, Status, Issuance, Expiry } = cTextParser.GetTextProductEvent({ Stanza, Issuance: cIssuance, Expiration: cExpiration });
-    console.log(Label, Status, Issuance, Expiry, cUGC);
   }
 };
 
@@ -23848,10 +23865,6 @@ var IngestProduct4 = async (Stanza) => {
   for (const cMessage of cMessages) {
     const cGeoParser = new GeographicalCodeParsing({ Message: cMessage }).GetReferences();
     const cTimeParser = new ValidTimeEventCodeParsing({ Message: cMessage }).GetReferences();
-    if (cGeoParser != null && cTimeParser != null) {
-      console.log(cGeoParser);
-      console.log(cTimeParser);
-    }
   }
 };
 

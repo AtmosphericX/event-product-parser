@@ -28,9 +28,5 @@ export const IngestProduct = async (Stanza: TYPE_STANZA_COMPILED): Promise<void>
     for (const cMessage of cMessages) { 
         const cGeoParser = new GeographicalCodeParsing({ Message: cMessage }).GetReferences();
         const cTimeParser = new ValidTimeEventCodeParsing({ Message: cMessage }).GetReferences();
-        if (cGeoParser != null && cTimeParser != null) { 
-            console.log(cGeoParser)
-            console.log(cTimeParser)
-        }
     }
 }

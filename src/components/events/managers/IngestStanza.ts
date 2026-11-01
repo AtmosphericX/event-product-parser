@@ -20,11 +20,11 @@ import { IngestProduct as TextProductIngestion } from "@Components.Events.Produc
 import { IngestProduct as ValidTimeProductIngestion } from "@Components.Events.Products/ValidTimeCode"
 import { SetLog } from "@Components.Utilities/SetLog"
 
-interface PROCESS_STANZA_OPTIONS { 
+interface INGEST_STANZA_OPTIONS { 
     Stanza: TYPE_STANZA_COMPILED
 }
 
-export const IngestStanza = async ({ Stanza }: PROCESS_STANZA_OPTIONS): Promise<void> => {
+export const IngestStanza = async ({ Stanza }: INGEST_STANZA_OPTIONS): Promise<void> => {
     const { VTEC, CAP, Wire } = Stanza.Metadata;
     const cType = VTEC ? `ValidTimeEventCode` : CAP ? `CAP v1.2` : Wire ? `Text` : `GeoJSON`;
     SetLog({ Type: `DEBUG`, Message: `[Ingestion] ${cType} Product: ${Stanza.Product.Name} (${Stanza.Product.ID})` });

@@ -101,5 +101,17 @@ export class CommonAlertingProtocolParsing {
         }
         return cExtracted;
     }
-    
+
+    @ConstructClassTimer
+    public GetPolygonGeojson({ Polygon }: { Polygon: string }): { type: string, coordinates: number[][][] } | null {
+        if (!Polygon) return null;
+        const cCoordinates = Polygon.split(' ')
+            .map(lCoordinates => lCoordinates.split(',').map(Number).reverse())
+            .filter(lCoordinates => lCoordinates.length === 2 && !lCoordinates.some(isNaN));
+        if (cCoordinates.length < 3) return null;
+        return {
+            type: "Polygon",
+            coordinates: [cCoordinates]
+        };
+    }
 }

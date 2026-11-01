@@ -23,6 +23,29 @@
 
 ## Changelogs [NOT FOR PRODUCTION USE]
 
+### 🎃 October 31st 🎃, 2026 - b3.1-0403
+
+**Refactoring**
+- ref(ingest): Updated type `PROCESS_STANZA` to `INGEST_STANZA` for better clarity and consistency with the ingestion process.
+
+**Features**
+- feat(cap): Added `GetPolygonGeojson` to the `CommonAlertingProtocolParsing` class to allow for the retrieval of polygon data in GeoJSON format.
+- feat(hash): Added `GetHash` (SHA-256) utility function to generate a hash from a given input string, with optional salt parameter.
+- feat(types): Updated TYPE_EVENT components to include `polygon_hash` and `event_hash` for better tracking and identification of events and their associated polygons.
+
+**Todo**
+- chore(building): Complete all building export functions
+- chore(parsing): Complete all parsing classes
+- chore(products): Complete all product ingestions (Cap 1.2, VTEC, GeoJSON, Text)
+- chore(api): Integrate National Weather Service API for product retrieval and ingestion.
+- chore(host): Integrate shared ingestion hosting while using NWWS-OI.
+- chore(tasks): NTFY integration.
+- chore(tasks): Webhook integration.
+- chore(tasks): File generation.
+- chore(polygon): Implement TIM (Threats in Motion)
+
+------------------------------------------------------------------------------------------------------------------------
+
 ### October 29th, 2026 - b3.1-0402
 
 **Refactoring**
@@ -52,16 +75,6 @@
 
 **Packages**
 - chore(xml2js): Enforce `0.6.2` version of `xml2js` to avoid breaking changes in future versions.
-
-**Todo**
-- chore(building): Complete all building export functions
-- chore(parsing): Complete all parsing classes
-- chore(products): Complete all product ingestions (Cap 1.2, VTEC, GeoJSON, Text)
-- chore(api): Integrate National Weather Service API for product retrieval and ingestion.
-- chore(host): Integrate shared ingestion hosting while using NWWS-OI.
-- chore(tasks): NTFY integration.
-- chore(tasks): Webhook integration.
-- chore(tasks): File generation.
 
 ------------------------------------------------------------------------------------------------------------------------
 

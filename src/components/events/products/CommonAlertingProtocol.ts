@@ -16,6 +16,7 @@
 import { TYPE_STANZA_COMPILED } from "Types.Stanza/StanzaValidated"
 import { TYPE_CAP_PRODUCT_PROPERTIES } from "Types.Components/CapProductProperties"
 import { CommonAlertingProtocolParsing } from "@Components.Events.Parsing/CommonAlertingProtocol"
+import { GetHash } from "@Components.Utilities/GetHash"
 
 export const IngestProduct = async (Stanza: TYPE_STANZA_COMPILED): Promise<void> => {
     const { Message } = Stanza;
@@ -30,5 +31,7 @@ export const IngestProduct = async (Stanza: TYPE_STANZA_COMPILED): Promise<void>
         const cFilter = cParsing.GetFilteredMessage({});
         const cJSON = await cParsing.GetJSON({Message: cFilter});
         const cProperties = cParsing.GetPropertyValues({ JSON: cJSON }) as TYPE_CAP_PRODUCT_PROPERTIES;
+        const cPolygon = cParsing.GetPolygonGeojson({ Polygon: cProperties?.temp?.polygon });
+        const cPolygonHash = GetHash({ Input: JSON.stringify(cPolygon) });
     }
 }

@@ -1,6 +1,6 @@
 <div align="center" style="margin-top: 20px;">
     <a href="https://atmosphericx.scriptkitty.cafe">
-        <img src="https://scriptkitty.cafe/ftp/@atmosphericx/assets/logo-event-product-parser.png"
+        <img src="https://scriptkitty.cafe/files/atmosphericx/assets/logo-event-product-parser.png"
              alt="@atmosx/event-product-parser"
              width="800"/>
     </a>
@@ -57,7 +57,7 @@ Broadcastify feeds can be attached to events based on their geographical locatio
 new Manager({
     BroadcastifySettings: {
         BroadcastifyAttachments: true, // Enable atatchment of Broadcastify feeds to events
-        BroadcastifyDatabase: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/broadcastify.json`,
+        BroadcastifyDatabase: `https://scriptkitty.cafe/files/atmosphericx/assets/broadcastify.json`,
         BroadcastifyTags: [`Ham`, `Air`, `Fire`, `Public Safety`, `Weather`, `EMS`, `Police`, `Rail`] // Filter by specific tags
     }
 })
@@ -72,8 +72,8 @@ Boundary and population data provide additional geographic context for events, s
 ```ts
 new Manager({
     BoundarySettings: {
-        BoundaryDatabase: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/counties-10m.json`,
-        CityDatabase: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/cities500.json`
+        BoundaryDatabase: `https://scriptkitty.cafe/files/atmosphericx/assets/counties-10m.json`,
+        CityDatabase: `https://scriptkitty.cafe/files/atmosphericx/assets/cities500.json`
     },
 })
 ```

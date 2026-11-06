@@ -15434,12 +15434,12 @@ var Bootstrap = {
     },
     BroadcastifySettings: {
       BroadcastifyAttachments: true,
-      BroadcastifyDatabase: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/broadcastify.json`,
+      BroadcastifyDatabase: `https://scriptkitty.cafe/files/atmosphericx/assets/broadcastify.json`,
       BroadcastifyTags: [`Ham`, `Air`, `Fire`, `Public Safety`, `Weather`, `EMS`, `Police`, `Rail`]
     },
     BoundarySettings: {
-      BoundaryDatabase: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/counties-10m.json`,
-      CityDatabase: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/cities500.json`
+      BoundaryDatabase: `https://scriptkitty.cafe/files/atmosphericx/assets/counties-10m.json`,
+      CityDatabase: `https://scriptkitty.cafe/files/atmosphericx/assets/cities500.json`
     },
     NotifyServer: {
       Enabled: false,

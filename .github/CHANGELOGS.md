@@ -1,6 +1,6 @@
 <div align="center" style="margin-top: 20px;">
     <a href="https://atmosphericx.scriptkitty.cafe">
-        <img src="https://scriptkitty.cafe/ftp/@atmosphericx/assets/logo-event-product-parser.png"
+        <img src="https://scriptkitty.cafe/files/atmosphericx/assets/logo-event-product-parser.png"
              alt="@atmosx/event-product-parser"
              width="800"/>
     </a>

@@ -21498,11 +21498,11 @@ var Bootstrap = {
       Broadcastify: {
         Attachments: true,
         FilteredTags: [`Ham`, `Air`, `Fire`, `Public Safety`, `Weather`, `EMS`, `Police`, `Rail`],
-        Download: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/broadcastify.json`
+        Download: `https://scriptkitty.cafe/files/atmosphericx/assets/broadcastify.json`
       },
       GIS: {
-        ConusDownload: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/counties-10m.json`,
-        PopulationDownload: `https://scriptkitty.cafe/ftp/@atmosphericx/assets/cities500.json`
+        ConusDownload: `https://scriptkitty.cafe/files/atmosphericx/assets/counties-10m.json`,
+        PopulationDownload: `https://scriptkitty.cafe/files/atmosphericx/assets/cities500.json`
       },
       NTFY: {
         Enabled: false,

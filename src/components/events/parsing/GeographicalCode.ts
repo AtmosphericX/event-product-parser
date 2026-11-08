@@ -18,7 +18,7 @@ import { ENUM_STRINGS } from "@Enums/Strings";
 import { ENUM_REGULAR_EXPRESSIONS } from "@Enums/RegularExpressions";
 import { Bootstrap } from "@Bootstrap";
 import { ConstructClassTimer } from "@Components.Utilities/ConstructClassTimer";
-import { CreateQuery } from "@Components.Database/CreateQuery";
+import { ExecuteQuery } from "@Components.Database/ExecuteQuery";
 import { GetUnionedPolygon } from "@Components.Geometry/GetUnionedPolygon";
 import { createHash } from "node:crypto";
 
@@ -95,7 +95,7 @@ export class GeographicalCodeParsing {
             if (!cCached) { cMissingZones.push(cZone); }
         }
         if (cMissingZones.length > 0) { 
-            const cRows = CreateQuery({
+            const cRows = ExecuteQuery({
                 Query: ENUM_STRINGS.DB_STRINGS.QUERIES.LOCATION_LOOKUP.replace(/%s/, cMissingZones.map(() => `?`).join(`,`)),
                 Parameters: cMissingZones
             }) as TYPE_ROW[];
@@ -185,7 +185,7 @@ export class GeographicalCodeParsing {
         const cUnique = [...new Set(Zones.map(z => z.trim()))]
             .filter(z => z === 'XX000' ? false : true);
         const cPlaceholders = cUnique.map(() => `?`).join(`,`);
-        const cRows = CreateQuery({
+        const cRows = ExecuteQuery({
             Query: ENUM_STRINGS.DB_STRINGS.QUERIES.ZONE_LOOKUP.replace(/%s/, cPlaceholders),
             Parameters: cUnique
         }) as TYPE_ROW[];

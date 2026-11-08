@@ -18,7 +18,7 @@ import { ENUM_STATES_FULL_NAMES } from "@Enums.Geographic/StateAbreviations"
 import { ENUM_STRINGS } from "@Enums/Strings"
 import { Bootstrap } from "@Bootstrap"
 import { GetLatestIssuance } from "@Components.Events.Building/GetLatestIssuance"
-import { CreateQuery } from "@Components.Database/CreateQuery"
+import { ExecuteQuery } from "@Components.Database/ExecuteQuery"
 
 interface GET_EVENT_ATTACHMENTS_OPTIONS {
     Event: string
@@ -73,7 +73,7 @@ export const GetEventAttachments = ({ Event, DiscussionNumber, WatchNumber, Loca
             if (ENUM_REGULAR_EXPRESSIONS.Location.test(cLocation)) {
                 const cCount = cLocation?.split(',')[0]?.trim().replace(new RegExp(`^(${ENUM_DIRECTIONS.join('|')}) `), '')
                 const cState = ENUM_STATES_FULL_NAMES[cLocation?.split(',')[1]?.trim()]
-                const cFeeds = CreateQuery({
+                const cFeeds = ExecuteQuery({
                     Query: ENUM_STRINGS.DB_STRINGS.QUERIES.BROADCASTIFY_LOOKUP,
                     Parameters: [cState, cCount]
                 });

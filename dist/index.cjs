@@ -21441,7 +21441,7 @@ var ENUM_THEMES = [
 var import_node_events = require("node:events");
 var import_node_path = require("node:path");
 var Bootstrap = {
-  Version: `b3.1-0403`,
+  Version: `b3.1-0404`,
   ServiceReady: false,
   Listener: new import_node_events.EventEmitter(),
   Scheduler: null,
@@ -21473,7 +21473,7 @@ var Bootstrap = {
   },
   Settings: {
     Timezone: `UTC`,
-    Database: (0, import_node_path.join)(process.cwd(), `event-product-parser.db`),
+    Database: (0, import_node_path.join)(process.cwd(), `database/event-product-parser.db`),
     DeveloperSettings: {
       ConsoleMessages: true,
       DebugMessages: false,
@@ -21498,11 +21498,11 @@ var Bootstrap = {
       Broadcastify: {
         Attachments: true,
         FilteredTags: [`Ham`, `Air`, `Fire`, `Public Safety`, `Weather`, `EMS`, `Police`, `Rail`],
-        Download: `https://scriptkitty.cafe/files/atmosphericx/assets/broadcastify.json`
+        Download: `https://scriptkitty.cafe/files/atmosx/dict/broadcastify.json`
       },
       GIS: {
-        ConusDownload: `https://scriptkitty.cafe/files/atmosphericx/assets/counties-10m.json`,
-        PopulationDownload: `https://scriptkitty.cafe/files/atmosphericx/assets/cities500.json`
+        ConusDownload: `https://scriptkitty.cafe/files/atmosx/dict/counties.json`,
+        PopulationDownload: `https://scriptkitty.cafe/files/atmosx/dict/cities.json`
       },
       NTFY: {
         Enabled: false,
@@ -21733,7 +21733,7 @@ var CreateErrorHandler = () => {
 
 Traces: ${cStackTraceLines.length > 0 ? cStackTraceLines.join(", ") : "No stack trace available"}
 
-Error: ${cMessage}`
+[${cErrorCode}]: ${cMessage}`
     });
   });
 };
@@ -21764,11 +21764,12 @@ var SetSettings = (settings) => {
 
 // src/components/database/InitializeDatabase.ts
 var import_node_fs = require("node:fs");
+var import_node_path2 = require("node:path");
 var import_better_sqlite3 = __toESM(require("better-sqlite3"));
 var InitializeDatabase = async () => {
   const { Database } = Bootstrap.Settings;
   if (!(0, import_node_fs.existsSync)(Database)) {
-    (0, import_node_fs.writeFileSync)(Database, ``);
+    (0, import_node_fs.mkdirSync)((0, import_node_path2.dirname)(Database), { recursive: true });
     SetLog({ Message: ENUM_STRINGS.DATABASE.CREATED + ` -> ${Database}` });
   }
   Bootstrap.Database = new import_better_sqlite3.default(Database);
@@ -21778,8 +21779,8 @@ var InitializeDatabase = async () => {
   SetLog({ Message: ENUM_STRINGS.DATABASE.CONNECTED + ` -> ${Database}` });
 };
 
-// src/components/database/CreateQuery.ts
-var CreateQuery = ({ Query, Parameters }) => {
+// src/components/database/ExecuteQuery.ts
+var ExecuteQuery = ({ Query, Parameters }) => {
   try {
     if (!Bootstrap?.Database) {
       SetLog({ Type: `ERROR`, Message: ENUM_STRINGS.DATABASE.NOT_INITIALIZED });
@@ -21810,13 +21811,13 @@ var ENUM_SHAPEFILES = [
 
 // src/components/database/building/BuildShapefiles.ts
 var import_node_fs2 = require("node:fs");
-var import_node_path2 = require("node:path");
+var import_node_path3 = require("node:path");
 var import_jszip = __toESM(require_lib3());
 var import_shapefile = __toESM(require_shapefile_node());
 var BuildShapefiles = async () => {
   const dbgTickA = performance.now();
   const { Database } = Bootstrap;
-  const { count } = CreateQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.SHAPEFILE })[0];
+  const { count } = ExecuteQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.SHAPEFILE })[0];
   if (count == 0) {
     const cDirectory = `tmp-${Math.random().toString(36).substring(2, 15)}`;
     for (const cShapefile of ENUM_SHAPEFILES) {
@@ -21831,11 +21832,11 @@ var BuildShapefiles = async () => {
       for (const file of Object.keys(cArchive.files)) {
         if (file.endsWith(".shp") || file.endsWith(".dbf")) {
           const data = await cArchive.files[file].async(`nodebuffer`);
-          const output = (0, import_node_path2.resolve)(cDirectory, `${cShapefile.Name ?? ``}_${cShapefile.Type ?? ``}${(0, import_node_path2.extname)(file)}`);
+          const output = (0, import_node_path3.resolve)(cDirectory, `${cShapefile.Name ?? ``}_${cShapefile.Type ?? ``}${(0, import_node_path3.extname)(file)}`);
           (0, import_node_fs2.writeFileSync)(output, data);
         }
       }
-      const cFilePath = (0, import_node_path2.resolve)(cDirectory, `${cShapefile.Name}_${cShapefile.Type}`);
+      const cFilePath = (0, import_node_path3.resolve)(cDirectory, `${cShapefile.Name}_${cShapefile.Type}`);
       const { features } = await (0, import_shapefile.read)(cFilePath, cFilePath);
       SetLog({
         Message: ENUM_STRINGS.DATABASE.SHAPEFILE_BUILD.replace(/%s/g, String(cShapefile.Name)).replace(/%d/g, String(features.length))
@@ -21873,7 +21874,7 @@ var BuildShapefiles = async () => {
             lFinal = ID ?? WFO;
             lLocation = NAME;
           }
-          CreateQuery({
+          ExecuteQuery({
             Query: ENUM_STRINGS.DB_STRINGS.IMPORTS.SHAPEFILE,
             Parameters: [lFinal, lLocation, `${cShapefile.Name}_${cShapefile.Type}`, JSON.stringify(geometry)]
           });
@@ -21990,7 +21991,7 @@ var BuildPopulation = async () => {
   const dbgTickA = performance.now();
   const { Database, Settings } = Bootstrap;
   const { GIS } = Settings.Integrations;
-  const { count } = CreateQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.POPULATION })[0];
+  const { count } = ExecuteQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.POPULATION })[0];
   if (count == 0) {
     const cResponse = await CreateFetchRequest({
       Destination: GIS.PopulationDownload,
@@ -22019,7 +22020,7 @@ var BuildPopulation = async () => {
     }
     const callTransaction = Database.transaction((cEntries) => {
       for (const cEntry of cEntries) {
-        CreateQuery({
+        ExecuteQuery({
           Query: ENUM_STRINGS.DB_STRINGS.IMPORTS.POPULATION,
           Parameters: [cEntry.id, cEntry.name, cEntry.state, cEntry.county, cEntry.population, cEntry.lat, cEntry.lon]
         });
@@ -22091,7 +22092,7 @@ var BuildConus = async () => {
   const dbgTickA = performance.now();
   const { Database, Settings } = Bootstrap;
   const { GIS } = Settings.Integrations;
-  const { count } = CreateQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.CONUS })[0];
+  const { count } = ExecuteQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.CONUS })[0];
   if (count == 0) {
     const cResponse = await CreateFetchRequest({
       Destination: GIS.ConusDownload,
@@ -22138,7 +22139,7 @@ var BuildConus = async () => {
     SetLog({ Message: ENUM_STRINGS.DATABASE.CONUS_BUILD.replace(/%s/g, String(cStateRows.length)).replace(/%d/g, String(cCountyRows.length)) });
     const callTransaction = Database.transaction((cEntries) => {
       for (const cEntry of cEntries) {
-        CreateQuery({
+        ExecuteQuery({
           Query: ENUM_STRINGS.DB_STRINGS.IMPORTS.CONUS,
           Parameters: [cEntry.id, cEntry.type, cEntry.state, cEntry.name, cEntry.geometry]
         });
@@ -22154,7 +22155,7 @@ var BuildBroadcastify = async () => {
   const dbgTickA = performance.now();
   const { Database, Settings } = Bootstrap;
   const { Broadcastify } = Settings.Integrations;
-  const { count } = CreateQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.BROADCASTIFY })[0];
+  const { count } = ExecuteQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.BROADCASTIFY })[0];
   if (count == 0) {
     const cResponse = await CreateFetchRequest({
       Destination: Broadcastify.Download,
@@ -22168,7 +22169,7 @@ var BuildBroadcastify = async () => {
     const callTransaction = Database.transaction((cEntries) => {
       for (const cEntry of cEntries) {
         const { State, County, Feed, Type, Link } = cEntry;
-        CreateQuery({
+        ExecuteQuery({
           Query: ENUM_STRINGS.DB_STRINGS.IMPORTS.BROADCASTIFY,
           Parameters: [State, County, Feed, Type, Link]
         });
@@ -22198,26 +22199,26 @@ var CreatePopulatedDatabase = async () => {
   const dbgTickA = performance.now();
   const { DB_STRINGS } = ENUM_STRINGS;
   const [stanzas, shapefiles, conus, population, active, feeds] = await Promise.all([
-    await CreateQuery({ Query: DB_STRINGS.EXISTS.STANZA }),
-    await CreateQuery({ Query: DB_STRINGS.EXISTS.SHAPEFILE }),
-    await CreateQuery({ Query: DB_STRINGS.EXISTS.CONUS }),
-    await CreateQuery({ Query: DB_STRINGS.EXISTS.POPULATION }),
-    await CreateQuery({ Query: DB_STRINGS.EXISTS.ACTIVE }),
-    await CreateQuery({ Query: DB_STRINGS.EXISTS.BROADCASTIFY })
+    await ExecuteQuery({ Query: DB_STRINGS.EXISTS.STANZA }),
+    await ExecuteQuery({ Query: DB_STRINGS.EXISTS.SHAPEFILE }),
+    await ExecuteQuery({ Query: DB_STRINGS.EXISTS.CONUS }),
+    await ExecuteQuery({ Query: DB_STRINGS.EXISTS.POPULATION }),
+    await ExecuteQuery({ Query: DB_STRINGS.EXISTS.ACTIVE }),
+    await ExecuteQuery({ Query: DB_STRINGS.EXISTS.BROADCASTIFY })
   ]);
   const cTables = [stanzas, shapefiles, conus, population, active, feeds];
   const cMissingTables = cTables.some((table) => table.length === 0);
   if (cMissingTables) {
     SetLog({ Message: ENUM_STRINGS.DATABASE.BUILDING });
     await Promise.all([
-      await CreateQuery({ Query: DB_STRINGS.CREATE.STANZA }),
-      await CreateQuery({ Query: DB_STRINGS.CREATE.SHAPEFILE }),
-      await CreateQuery({ Query: DB_STRINGS.CREATE.CONUS }),
-      await CreateQuery({ Query: DB_STRINGS.CREATE.POPULATION }),
-      await CreateQuery({ Query: DB_STRINGS.CREATE.ACTIVE }),
-      await CreateQuery({ Query: DB_STRINGS.CREATE.BROADCASTIFY }),
-      await CreateQuery({ Query: DB_STRINGS.CREATE.ACTIVE_INDEX }),
-      await CreateQuery({ Query: DB_STRINGS.CREATE.SHAPEFILE_INDEX })
+      await ExecuteQuery({ Query: DB_STRINGS.CREATE.STANZA }),
+      await ExecuteQuery({ Query: DB_STRINGS.CREATE.SHAPEFILE }),
+      await ExecuteQuery({ Query: DB_STRINGS.CREATE.CONUS }),
+      await ExecuteQuery({ Query: DB_STRINGS.CREATE.POPULATION }),
+      await ExecuteQuery({ Query: DB_STRINGS.CREATE.ACTIVE }),
+      await ExecuteQuery({ Query: DB_STRINGS.CREATE.BROADCASTIFY }),
+      await ExecuteQuery({ Query: DB_STRINGS.CREATE.ACTIVE_INDEX }),
+      await ExecuteQuery({ Query: DB_STRINGS.CREATE.SHAPEFILE_INDEX })
     ]);
   }
   await Promise.all([
@@ -22837,7 +22838,7 @@ var GeographicalCodeParsing = class {
       }
     }
     if (cMissingZones.length > 0) {
-      const cRows = CreateQuery({
+      const cRows = ExecuteQuery({
         Query: ENUM_STRINGS.DB_STRINGS.QUERIES.LOCATION_LOOKUP.replace(/%s/, cMissingZones.map(() => `?`).join(`,`)),
         Parameters: cMissingZones
       });
@@ -22912,7 +22913,7 @@ var GeographicalCodeParsing = class {
     const cGeometryHashes = /* @__PURE__ */ new Set();
     const cUnique = [...new Set(Zones.map((z) => z.trim()))].filter((z) => z === "XX000" ? false : true);
     const cPlaceholders = cUnique.map(() => `?`).join(`,`);
-    const cRows = CreateQuery({
+    const cRows = ExecuteQuery({
       Query: ENUM_STRINGS.DB_STRINGS.QUERIES.ZONE_LOOKUP.replace(/%s/, cPlaceholders),
       Parameters: cUnique
     });
@@ -23893,15 +23894,15 @@ var IngestStanza = async ({ Stanza }) => {
 var CreateStanza = ({ Stanza }) => {
   const dbgTickA = performance.now();
   const { MaxStanzas } = Bootstrap.Settings.WeatherWireServiceSettings.CacheControl;
-  const { count } = CreateQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.STANZA })[0];
+  const { count } = ExecuteQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.STANZA })[0];
   const { Name } = Stanza.Product;
   const { issue } = Stanza.Attributes;
-  CreateQuery({
+  ExecuteQuery({
     Query: ENUM_STRINGS.DB_STRINGS.IMPORTS.STANZA,
     Parameters: [Name, issue, JSON.stringify(Stanza)]
   });
   if (count >= MaxStanzas) {
-    CreateQuery({
+    ExecuteQuery({
       Query: ENUM_STRINGS.DB_STRINGS.DELETE.STANZA_OLD,
       Parameters: [count - MaxStanzas]
     });
@@ -27207,7 +27208,7 @@ var DeployService = class {
     }
   }
   async KillSession() {
-    if (this.pSession) {
+    if (Bootstrap.CacheControl.Session.Connected) {
       Bootstrap.CacheControl.Session.Reconnecting = true;
       Bootstrap.CacheControl.Session.Connected = false;
       Bootstrap.CacheControl.Session.ReconnectAttempts++;

@@ -16,13 +16,14 @@
 import { ENUM_STRINGS } from "@Enums/Strings"
 import { Bootstrap } from "@Bootstrap"
 import { SetLog } from "@Components.Utilities/SetLog"
-import { existsSync, writeFileSync } from "node:fs"
+import { existsSync, mkdirSync } from "node:fs"
+import { dirname } from "node:path"
 import sqlite3 from "better-sqlite3"
 
 export const InitializeDatabase = async (): Promise<void> => {
     const { Database } = Bootstrap.Settings;
     if (!existsSync(Database)) { 
-        writeFileSync(Database, ``);
+        mkdirSync(dirname(Database), { recursive: true });
         SetLog({ Message: ENUM_STRINGS.DATABASE.CREATED + ` -> ${Database}` });
     }
     Bootstrap.Database = new sqlite3(Database);

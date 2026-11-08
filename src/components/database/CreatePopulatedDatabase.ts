@@ -15,7 +15,7 @@
 
 import { ENUM_STRINGS } from "@Enums/Strings"
 import { SetLog } from "@Components.Utilities/SetLog"
-import { CreateQuery } from "@Components.Database/CreateQuery"
+import { ExecuteQuery } from "@Components.Database/ExecuteQuery"
 import { BuildShapefiles } from "@Components.Database.Building/BuildShapefiles"
 import { BuildPopulation } from "@Components.Database.Building/BuildPopulation"
 import { BuildConus } from "@Components.Database.Building/BuildConus"
@@ -28,12 +28,12 @@ export const CreatePopulatedDatabase = async (): Promise<void> => {
 
     const { DB_STRINGS } = ENUM_STRINGS;
     const [stanzas, shapefiles, conus, population, active, feeds] = await Promise.all([
-        await CreateQuery({ Query: DB_STRINGS.EXISTS.STANZA }) as TYPE_DATABASE_CREATE,
-        await CreateQuery({ Query: DB_STRINGS.EXISTS.SHAPEFILE }) as TYPE_DATABASE_CREATE,
-        await CreateQuery({ Query: DB_STRINGS.EXISTS.CONUS }) as TYPE_DATABASE_CREATE,
-        await CreateQuery({ Query: DB_STRINGS.EXISTS.POPULATION }) as TYPE_DATABASE_CREATE,
-        await CreateQuery({ Query: DB_STRINGS.EXISTS.ACTIVE }) as TYPE_DATABASE_CREATE,
-        await CreateQuery({ Query: DB_STRINGS.EXISTS.BROADCASTIFY }) as TYPE_DATABASE_CREATE,
+        await ExecuteQuery({ Query: DB_STRINGS.EXISTS.STANZA }) as TYPE_DATABASE_CREATE,
+        await ExecuteQuery({ Query: DB_STRINGS.EXISTS.SHAPEFILE }) as TYPE_DATABASE_CREATE,
+        await ExecuteQuery({ Query: DB_STRINGS.EXISTS.CONUS }) as TYPE_DATABASE_CREATE,
+        await ExecuteQuery({ Query: DB_STRINGS.EXISTS.POPULATION }) as TYPE_DATABASE_CREATE,
+        await ExecuteQuery({ Query: DB_STRINGS.EXISTS.ACTIVE }) as TYPE_DATABASE_CREATE,
+        await ExecuteQuery({ Query: DB_STRINGS.EXISTS.BROADCASTIFY }) as TYPE_DATABASE_CREATE,
     ])
 
     const cTables = [stanzas, shapefiles, conus, population, active, feeds];
@@ -42,14 +42,14 @@ export const CreatePopulatedDatabase = async (): Promise<void> => {
     if (cMissingTables) { 
         SetLog({ Message: ENUM_STRINGS.DATABASE.BUILDING });
         await Promise.all([
-            await CreateQuery({ Query: DB_STRINGS.CREATE.STANZA }),
-            await CreateQuery({ Query: DB_STRINGS.CREATE.SHAPEFILE }),
-            await CreateQuery({ Query: DB_STRINGS.CREATE.CONUS }),
-            await CreateQuery({ Query: DB_STRINGS.CREATE.POPULATION }),
-            await CreateQuery({ Query: DB_STRINGS.CREATE.ACTIVE }),
-            await CreateQuery({ Query: DB_STRINGS.CREATE.BROADCASTIFY }),
-            await CreateQuery({ Query: DB_STRINGS.CREATE.ACTIVE_INDEX }),
-            await CreateQuery({ Query: DB_STRINGS.CREATE.SHAPEFILE_INDEX }),
+            await ExecuteQuery({ Query: DB_STRINGS.CREATE.STANZA }),
+            await ExecuteQuery({ Query: DB_STRINGS.CREATE.SHAPEFILE }),
+            await ExecuteQuery({ Query: DB_STRINGS.CREATE.CONUS }),
+            await ExecuteQuery({ Query: DB_STRINGS.CREATE.POPULATION }),
+            await ExecuteQuery({ Query: DB_STRINGS.CREATE.ACTIVE }),
+            await ExecuteQuery({ Query: DB_STRINGS.CREATE.BROADCASTIFY }),
+            await ExecuteQuery({ Query: DB_STRINGS.CREATE.ACTIVE_INDEX }),
+            await ExecuteQuery({ Query: DB_STRINGS.CREATE.SHAPEFILE_INDEX }),
         ])
     }
     

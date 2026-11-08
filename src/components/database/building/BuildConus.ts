@@ -16,7 +16,7 @@
 import { ENUM_STRINGS } from "@Enums/Strings"
 import { ENUM_STATE_FIPS } from "@Enums.Geographic/FIPCodes"
 import { Bootstrap } from "@Bootstrap"
-import { CreateQuery } from "@Components.Database/CreateQuery"
+import { ExecuteQuery } from "@Components.Database/ExecuteQuery"
 import { SetLog } from "@Components.Utilities/SetLog"
 import { CreateFetchRequest } from "@Components.Utilities/CreateFetchRequest"
 import { feature } from "topojson-client"
@@ -35,7 +35,7 @@ export const BuildConus = async (): Promise<void> => {
 
     const { Database, Settings } = Bootstrap;
     const { GIS } = Settings.Integrations;
-    const { count } = CreateQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.CONUS })[0] as TYPE_COUNT_RESULT;
+    const { count } = ExecuteQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.CONUS })[0] as TYPE_COUNT_RESULT;
     
     if (count == 0) { 
         const cResponse = await CreateFetchRequest({
@@ -89,7 +89,7 @@ export const BuildConus = async (): Promise<void> => {
 
         const callTransaction = Database.transaction((cEntries: TYPE_CONUS_ROW[]) => {
             for (const cEntry of cEntries) { 
-                CreateQuery({
+                ExecuteQuery({
                     Query: ENUM_STRINGS.DB_STRINGS.IMPORTS.CONUS,
                     Parameters: [cEntry.id, cEntry.type, cEntry.state, cEntry.name, cEntry.geometry]
                 })

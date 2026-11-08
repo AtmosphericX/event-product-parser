@@ -22,7 +22,7 @@ import { EventEmitter } from "node:events"
 import { join } from "node:path"
 
 export const Bootstrap = {
-    Version: `b3.1-0403`,
+    Version: `b3.1-0404`,
     ServiceReady: false,
     Listener: new EventEmitter(),
     Scheduler: null as unknown,
@@ -49,7 +49,7 @@ export const Bootstrap = {
     },
     Settings: {
         Timezone: `UTC`,
-        Database: join(process.cwd(), `event-product-parser.db`),
+        Database: join(process.cwd(), `database/event-product-parser.db`),
         DeveloperSettings: {
             ConsoleMessages: true,
             DebugMessages: false,
@@ -74,11 +74,11 @@ export const Bootstrap = {
             Broadcastify: {
                 Attachments: true,
                 FilteredTags: [`Ham`, `Air`, `Fire`, `Public Safety`, `Weather`, `EMS`, `Police`, `Rail`],
-                Download: `https://scriptkitty.cafe/files/atmosphericx/assets/broadcastify.json`,
+                Download: `https://scriptkitty.cafe/files/atmosx/dict/broadcastify.json`,
             },
             GIS: {
-                ConusDownload: `https://scriptkitty.cafe/files/atmosphericx/assets/counties-10m.json`,
-                PopulationDownload: `https://scriptkitty.cafe/files/atmosphericx/assets/cities500.json`
+                ConusDownload: `https://scriptkitty.cafe/files/atmosx/dict/counties.json`,
+                PopulationDownload: `https://scriptkitty.cafe/files/atmosx/dict/cities.json`
             },
             NTFY: {
                 Enabled: false,

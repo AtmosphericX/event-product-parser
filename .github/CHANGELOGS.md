@@ -23,15 +23,18 @@
 
 ## Changelogs [NOT FOR PRODUCTION USE]
 
-### 🎃 October 31st 🎃, 2026 - b3.1-0403
+### November 8th, 2026 - b3.1-0404
 
 **Refactoring**
-- ref(ingest): Updated type `PROCESS_STANZA` to `INGEST_STANZA` for better clarity and consistency with the ingestion process.
+- ref(query): Updated `CreateQuery` to `ExecuteQuery` for better clarity and consistency with its functionality.
+- ref(bootstrap): Updated default `Database` configuration to use `/database/event-product-parser.db` for better organization and clarity.
+- ref(bootstrap): Update routes for external source downloads. (/files/atmosx/...)
 
-**Features**
-- feat(cap): Added `GetPolygonGeojson` to the `CommonAlertingProtocolParsing` class to allow for the retrieval of polygon data in GeoJSON format.
-- feat(hash): Added `GetHash` (SHA-256) utility function to generate a hash from a given input string, with optional salt parameter.
-- feat(types): Updated TYPE_EVENT components to include `polygon_hash` and `event_hash` for better tracking and identification of events and their associated polygons.
+**Fix**
+- fix(initialize-database): Fixed pathing checks and issues with database initialization to ensure proper setup and functionality.
+
+**Documentation**
+- docs(README): Add `Build from Source` and `Testing` sections to the README.md for better guidance on building and testing the project.
 
 **Todo**
 - chore(building): Complete all building export functions
@@ -43,6 +46,18 @@
 - chore(tasks): Webhook integration.
 - chore(tasks): File generation.
 - chore(polygon): Implement TIM (Threats in Motion)
+
+------------------------------------------------------------------------------------------------------------------------
+
+### 🎃 October 31st 🎃, 2026 - b3.1-0403
+
+**Refactoring**
+- ref(ingest): Updated type `PROCESS_STANZA` to `INGEST_STANZA` for better clarity and consistency with the ingestion process.
+
+**Features**
+- feat(cap): Added `GetPolygonGeojson` to the `CommonAlertingProtocolParsing` class to allow for the retrieval of polygon data in GeoJSON format.
+- feat(hash): Added `GetHash` (SHA-256) utility function to generate a hash from a given input string, with optional salt parameter.
+- feat(types): Updated TYPE_EVENT components to include `polygon_hash` and `event_hash` for better tracking and identification of events and their associated polygons.
 
 ------------------------------------------------------------------------------------------------------------------------
 

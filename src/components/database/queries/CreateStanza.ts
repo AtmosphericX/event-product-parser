@@ -17,7 +17,7 @@ import { TYPE_STANZA_COMPILED } from "Types.Stanza/StanzaValidated"
 import { ENUM_STRINGS } from "@Enums/Strings"
 import { Bootstrap } from "@Bootstrap"
 import { SetLog } from "@Components.Utilities/SetLog"
-import { CreateQuery } from "@Components.Database/CreateQuery"
+import { ExecuteQuery } from "@Components.Database/ExecuteQuery"
 
 type TYPE_COUNT_RESULT = { count: number };
 interface CREATE_STANZA_OPTIONS {
@@ -28,17 +28,17 @@ export const CreateStanza = ({ Stanza }: CREATE_STANZA_OPTIONS): void => {
     const dbgTickA = performance.now();
     
     const { MaxStanzas } = Bootstrap.Settings.WeatherWireServiceSettings.CacheControl
-    const { count } = CreateQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.STANZA })[0] as TYPE_COUNT_RESULT;
+    const { count } = ExecuteQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.STANZA })[0] as TYPE_COUNT_RESULT;
     const { Name } = Stanza.Product;
     const { issue } = Stanza.Attributes;
 
-    CreateQuery({ 
+    ExecuteQuery({ 
         Query: ENUM_STRINGS.DB_STRINGS.IMPORTS.STANZA,
         Parameters: [Name, issue, JSON.stringify(Stanza)],
     });
 
     if (count >= MaxStanzas) {
-        CreateQuery({
+        ExecuteQuery({
             Query: ENUM_STRINGS.DB_STRINGS.DELETE.STANZA_OLD,
             Parameters: [count - MaxStanzas]
         })

@@ -16,7 +16,7 @@
 import { ENUM_STRINGS } from "@Enums/Strings"
 import { ENUM_SHAPEFILES } from "@Enums/Shapefiles"
 import { Bootstrap } from "@Bootstrap"
-import { CreateQuery } from "@Components.Database/CreateQuery"
+import { ExecuteQuery } from "@Components.Database/ExecuteQuery"
 import { SetLog } from "@Components.Utilities/SetLog"
 import { existsSync, mkdirSync, writeFileSync, unlinkSync, rm } from "node:fs"
 import { resolve, extname} from "node:path"
@@ -47,7 +47,7 @@ export const BuildShapefiles = async (): Promise<void> => {
     const dbgTickA = performance.now();
 
     const { Database } = Bootstrap
-    const { count } = CreateQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.SHAPEFILE })[0] as TYPE_COUNT_RESULT;
+    const { count } = ExecuteQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.SHAPEFILE })[0] as TYPE_COUNT_RESULT;
 
     if (count == 0) { 
         const cDirectory = `tmp-${Math.random().toString(36).substring(2, 15)}`;
@@ -97,7 +97,7 @@ export const BuildShapefiles = async (): Promise<void> => {
                         lFinal = ID ?? WFO
                         lLocation = NAME
                     }
-                    CreateQuery({
+                    ExecuteQuery({
                         Query: ENUM_STRINGS.DB_STRINGS.IMPORTS.SHAPEFILE,
                         Parameters: [lFinal, lLocation, `${cShapefile.Name}_${cShapefile.Type}`, JSON.stringify(geometry)]
                     })

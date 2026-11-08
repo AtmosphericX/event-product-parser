@@ -17,12 +17,12 @@ import { ENUM_STRINGS } from "@Enums/Strings"
 import { Bootstrap } from "@Bootstrap"
 import { SetLog } from "@Components.Utilities/SetLog"
 
-interface CREATE_QUERY_OPTIONS { 
+interface EXECUTE_QUERY_OPTIONS { 
     Query: string
     Parameters?: unknown[]
 }
 
-export const CreateQuery = ({ Query, Parameters }: CREATE_QUERY_OPTIONS): any => {
+export const ExecuteQuery = ({ Query, Parameters }: EXECUTE_QUERY_OPTIONS): any => {
     try { 
         if (!Bootstrap?.Database) {
             SetLog({ Type: `ERROR`, Message: ENUM_STRINGS.DATABASE.NOT_INITIALIZED });

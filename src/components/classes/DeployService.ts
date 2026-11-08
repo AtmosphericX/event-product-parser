@@ -49,7 +49,7 @@ export class DeployService {
     }
     
     private async KillSession(): Promise<void> {
-        if (this.pSession) {
+        if (Bootstrap.CacheControl.Session.Connected) {
             Bootstrap.CacheControl.Session.Reconnecting = true;
             Bootstrap.CacheControl.Session.Connected = false;
             Bootstrap.CacheControl.Session.ReconnectAttempts++;

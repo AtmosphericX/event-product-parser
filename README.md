@@ -52,6 +52,21 @@ const { Manager } = require("@atmosx/event-product-parser");
 const manager = new Manager({...settings});
 ```
 
+### Building from Source
+
+```bash
+$ pnpm install # Installs all requires dependencies and devDependencies
+$ pnpm run build # Automatically builds the project and executes node ./test/index.js
+$ pnpm run watch # Watches for changes and automatically rebuilds the project
+```
+
+### Testing
+
+```bash
+$ pnpm run testing:archives
+$ pnpm run testing:create
+```
+
 ### Dependencies
 - [xml2js](https://www.npmjs.com/package/xml2js) (v0.6.2)
 - [@xmpp/client](https://www.npmjs.com/package/@xmpp/client) (v0.14.0)

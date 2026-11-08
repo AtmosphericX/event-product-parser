@@ -16,7 +16,7 @@
 import { ENUM_STRINGS } from "@Enums/Strings"
 import { ENUM_STATES_FULL_NAMES } from "@Enums.Geographic/StateAbreviations"
 import { Bootstrap } from "@Bootstrap"
-import { CreateQuery } from "@Components.Database/CreateQuery"
+import { ExecuteQuery } from "@Components.Database/ExecuteQuery"
 import { SetLog } from "@Components.Utilities/SetLog"
 import { CreateFetchRequest } from "@Components.Utilities/CreateFetchRequest"
 
@@ -36,7 +36,7 @@ export const BuildPopulation = async (): Promise<void> => {
 
     const { Database, Settings } = Bootstrap;
     const { GIS } = Settings.Integrations;
-    const { count } = CreateQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.POPULATION })[0] as TYPE_COUNT_RESULT;
+    const { count } = ExecuteQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.POPULATION })[0] as TYPE_COUNT_RESULT;
     
     if (count == 0) { 
         const cResponse = await CreateFetchRequest({
@@ -71,7 +71,7 @@ export const BuildPopulation = async (): Promise<void> => {
         }
         const callTransaction = Database.transaction((cEntries: TYPE_CITY_ROW[]) => {
             for (const cEntry of cEntries) {
-                CreateQuery({
+                ExecuteQuery({
                     Query: ENUM_STRINGS.DB_STRINGS.IMPORTS.POPULATION,
                     Parameters: [cEntry.id, cEntry.name, cEntry.state, cEntry.county, cEntry.population, cEntry.lat, cEntry.lon]
                 })

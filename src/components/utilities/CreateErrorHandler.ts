@@ -37,7 +37,7 @@ export const CreateErrorHandler = (): void => {
         }
         SetLog({
             Type: `ERROR`,
-            Message: `${ENUM_STRINGS.SERVICE.ERROR_OCCURED}\n\nTraces: ${cStackTraceLines.length > 0 ? cStackTraceLines.join(', ') : 'No stack trace available'}\n\nError: ${cMessage}`
+            Message: `${ENUM_STRINGS.SERVICE.ERROR_OCCURED}\n\nTraces: ${cStackTraceLines.length > 0 ? cStackTraceLines.join(', ') : 'No stack trace available'}\n\n[${cErrorCode}]: ${cMessage}`
         });
     });
 }

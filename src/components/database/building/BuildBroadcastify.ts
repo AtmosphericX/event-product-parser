@@ -15,7 +15,7 @@
 
 import { ENUM_STRINGS } from "@Enums/Strings"
 import { Bootstrap } from "@Bootstrap"
-import { CreateQuery } from "@Components.Database/CreateQuery"
+import { ExecuteQuery } from "@Components.Database/ExecuteQuery"
 import { SetLog } from "@Components.Utilities/SetLog"
 import { CreateFetchRequest } from "@Components.Utilities/CreateFetchRequest"
 
@@ -33,7 +33,7 @@ export const BuildBroadcastify = async (): Promise<void> => {
 
     const { Database, Settings } = Bootstrap;
     const { Broadcastify } = Settings.Integrations;
-    const { count } = CreateQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.BROADCASTIFY })[0] as TYPE_COUNT_RESULT;
+    const { count } = ExecuteQuery({ Query: ENUM_STRINGS.DB_STRINGS.COUNTS.BROADCASTIFY })[0] as TYPE_COUNT_RESULT;
     
     if (count == 0) { 
         const cResponse = await CreateFetchRequest({
@@ -50,7 +50,7 @@ export const BuildBroadcastify = async (): Promise<void> => {
         const callTransaction = Database.transaction((cEntries: TYPE_BROADCASTIFY_ROW[]) => {
             for (const cEntry of cEntries) {
                 const { State, County, Feed, Type, Link } = cEntry;
-                CreateQuery({
+                ExecuteQuery({
                     Query: ENUM_STRINGS.DB_STRINGS.IMPORTS.BROADCASTIFY,
                     Parameters: [State, County, Feed, Type, Link]
                 })

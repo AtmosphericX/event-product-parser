@@ -26,6 +26,9 @@ type TYPE_STRINGS = {
     CALLBACKS: {
         SETTINGS_INVALID_KEY: string
         HTTP_REQUEST_FAILED: string
+        TRACKING_NODE_DELETED: string
+        TRACKING_NODE_UPDATED: string
+        TRACKING_NODE_ADDED: string
     }
     DATABASE: {
         CREATED: string
@@ -88,6 +91,8 @@ type TYPE_STRINGS = {
             STANZA_OLD: string
         }
         QUERIES: {
+            NEAREST_CITY_LOOKUP: string
+            NEAREST_CITY_LOOKUP_2: string
             ZONE_LOOKUP: string
             LOCATION_LOOKUP: string
             BROADCASTIFY_LOOKUP: string
@@ -106,11 +111,14 @@ export const ENUM_STRINGS: TYPE_STRINGS = {
     CALLBACKS: {
         SETTINGS_INVALID_KEY: `This configuration '%s' ${Bootstrap.Colors.Red}DOES NOT${Bootstrap.Colors.Reset} exist. Please check the documentation for valid configuration options.`,
         HTTP_REQUEST_FAILED: `HTTP Request Failed`,
+        TRACKING_NODE_DELETED: `Tracking node with the identifier '%s' has been deleted.`,
+        TRACKING_NODE_UPDATED: `Tracking node with the identifier '%s' has been updated. (%d)`,
+        TRACKING_NODE_ADDED: `Tracking node with the identifier '%s' has been added. (%d)`
     },
     DATABASE: {
         CREATED: `No database found, creating a new database at the specified path.`,
         CONNECTED: `Successfully connected to local database (SQlite3)`,
-        NOT_INITIALIZED: `Database not initialized, therefore query cannot be executed. Please initialize \`Manager\` first.`,
+        NOT_INITIALIZED: `Database not initialized, therefore query cannot be executed. Please initialize \`Manager\` first with start()`,
         QUERY_FAILED: `Database query failed, please check the database schema and ensure that the query is valid.`,
         BUILDING: `The required database tables are missing, the parsing is currently rebuilding them and this may take a few seconds. Please ${Bootstrap.Colors.Red}DO NOT${Bootstrap.Colors.Reset} exit the parser while this is happening.`,
         BUILD_COMPLETE: `Database building complete. The required tables have been successfully created and populated. You can now continue using the parser.`,
@@ -168,6 +176,8 @@ export const ENUM_STRINGS: TYPE_STRINGS = {
             STANZA_OLD: `DELETE FROM stanzas WHERE id IN (SELECT id FROM stanzas ORDER BY Issuance ASC LIMIT ?)`
         },
         QUERIES: {
+            NEAREST_CITY_LOOKUP: `SELECT * FROM Population WHERE Latitude BETWEEN ? AND ? AND Longitude BETWEEN ? AND ? AND Population > 0 ORDER BY ((Latitude - ?) * (Latitude - ?) + (Longitude - ?) * (Longitude - ?)) ASC LIMIT 1`,
+            NEAREST_CITY_LOOKUP_2: `SELECT * FROM Population WHERE Latitude BETWEEN ? AND ? AND Longitude BETWEEN ? AND ?`,
             ZONE_LOOKUP: `SELECT Geometry FROM Shapefiles WHERE ID IN (%s)`,
             LOCATION_LOOKUP: `SELECT ID, Location FROM Shapefiles WHERE ID IN (%s)`,
             BROADCASTIFY_LOOKUP: `SELECT * FROM BroadcastifyFeeds WHERE State = ? AND County = ?`

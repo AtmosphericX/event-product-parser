@@ -33,7 +33,7 @@ export type TYPE_PROPERTIES = {
         zones?: string[]
         population?: {
             population?: number
-            cities?: TYPE_CITIES[]
+            towns?: TYPE_CITIES[]
         }
         polygon?: string | null
     }

@@ -14,6 +14,7 @@
 */
 
 import { TYPE_SETTINGS } from "Types.Components/Settings"
+import { TYPE_NODE } from "Types.Components/Node"
 import { TYPE_EVENT } from "Types.Event/Event"
 import { ENUM_THEMES } from "@Enums.Properties/Themes"
 import { client } from "@xmpp/client"
@@ -22,7 +23,7 @@ import { EventEmitter } from "node:events"
 import { join } from "node:path"
 
 export const Bootstrap = {
-    Version: `b3.1-0404`,
+    Version: `b3.1-0405`,
     ServiceReady: false,
     Listener: new EventEmitter(),
     Scheduler: null as unknown,
@@ -43,6 +44,7 @@ export const Bootstrap = {
             ReconnectAttempts: 0 as number,
         },
         Manager: {
+            Nodes: {type: `FeatureCollection`, features: [] as TYPE_NODE[]},
             Cache: [] as TYPE_EVENT[],
             Zones: new Map<string, string[]>()
         }

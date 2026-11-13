@@ -19,6 +19,8 @@ import { ValidTimeEventCodeParsing } from "@Components.Events.Parsing/ValidTimeE
 import { TextProductParsing } from "@Components.Events.Parsing/TextProduct"
 import { GetArchivedProducts } from "@Components.Exports/GetArchivedProducts"
 import { ConstructProduct } from "@Components.Exports/ConstructProduct"
+import { GetNearestCity } from "@Components.Exports/GetNearestCity"
+import { ManageTrackingNode } from "@Components.Exports/ManageTrackingNode"
 
 export { 
     CommonAlertingProtocolParsing,
@@ -26,5 +28,7 @@ export {
     ValidTimeEventCodeParsing,
     TextProductParsing,
     GetArchivedProducts,
-    ConstructProduct
+    ConstructProduct,
+    GetNearestCity,
+    ManageTrackingNode
 }

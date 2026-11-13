@@ -21381,6 +21381,8 @@ __export(index_exports, {
   ConstructProduct: () => ConstructProduct,
   GeographicalCodeParsing: () => GeographicalCodeParsing,
   GetArchivedProducts: () => GetArchivedProducts,
+  GetNearestCity: () => GetNearestCity,
+  ManageTrackingNode: () => ManageTrackingNode,
   Manager: () => Manager,
   TextProductParsing: () => TextProductParsing,
   ValidTimeEventCodeParsing: () => ValidTimeEventCodeParsing,
@@ -21441,7 +21443,7 @@ var ENUM_THEMES = [
 var import_node_events = require("node:events");
 var import_node_path = require("node:path");
 var Bootstrap = {
-  Version: `b3.1-0404`,
+  Version: `b3.1-0405`,
   ServiceReady: false,
   Listener: new import_node_events.EventEmitter(),
   Scheduler: null,
@@ -21467,6 +21469,7 @@ var Bootstrap = {
       ReconnectAttempts: 0
     },
     Manager: {
+      Nodes: { type: `FeatureCollection`, features: [] },
       Cache: [],
       Zones: /* @__PURE__ */ new Map()
     }
@@ -21570,12 +21573,15 @@ var ENUM_STRINGS = {
   },
   CALLBACKS: {
     SETTINGS_INVALID_KEY: `This configuration '%s' ${Bootstrap.Colors.Red}DOES NOT${Bootstrap.Colors.Reset} exist. Please check the documentation for valid configuration options.`,
-    HTTP_REQUEST_FAILED: `HTTP Request Failed`
+    HTTP_REQUEST_FAILED: `HTTP Request Failed`,
+    TRACKING_NODE_DELETED: `Tracking node with the identifier '%s' has been deleted.`,
+    TRACKING_NODE_UPDATED: `Tracking node with the identifier '%s' has been updated. (%d)`,
+    TRACKING_NODE_ADDED: `Tracking node with the identifier '%s' has been added. (%d)`
   },
   DATABASE: {
     CREATED: `No database found, creating a new database at the specified path.`,
     CONNECTED: `Successfully connected to local database (SQlite3)`,
-    NOT_INITIALIZED: `Database not initialized, therefore query cannot be executed. Please initialize \`Manager\` first.`,
+    NOT_INITIALIZED: `Database not initialized, therefore query cannot be executed. Please initialize \`Manager\` first with start()`,
     QUERY_FAILED: `Database query failed, please check the database schema and ensure that the query is valid.`,
     BUILDING: `The required database tables are missing, the parsing is currently rebuilding them and this may take a few seconds. Please ${Bootstrap.Colors.Red}DO NOT${Bootstrap.Colors.Reset} exit the parser while this is happening.`,
     BUILD_COMPLETE: `Database building complete. The required tables have been successfully created and populated. You can now continue using the parser.`,
@@ -21633,6 +21639,8 @@ var ENUM_STRINGS = {
       STANZA_OLD: `DELETE FROM stanzas WHERE id IN (SELECT id FROM stanzas ORDER BY Issuance ASC LIMIT ?)`
     },
     QUERIES: {
+      NEAREST_CITY_LOOKUP: `SELECT * FROM Population WHERE Latitude BETWEEN ? AND ? AND Longitude BETWEEN ? AND ? AND Population > 0 ORDER BY ((Latitude - ?) * (Latitude - ?) + (Longitude - ?) * (Longitude - ?)) ASC LIMIT 1`,
+      NEAREST_CITY_LOOKUP_2: `SELECT * FROM Population WHERE Latitude BETWEEN ? AND ? AND Longitude BETWEEN ? AND ?`,
       ZONE_LOOKUP: `SELECT Geometry FROM Shapefiles WHERE ID IN (%s)`,
       LOCATION_LOOKUP: `SELECT ID, Location FROM Shapefiles WHERE ID IN (%s)`,
       BROADCASTIFY_LOOKUP: `SELECT * FROM BroadcastifyFeeds WHERE State = ? AND County = ?`
@@ -27360,6 +27368,97 @@ var ConstructProduct = ({ Message, Tracking = `ATMSX.XX.XX.XXXX`, PIL = `XX` }) 
   IngestStanza({ Stanza: cValidated });
 };
 
+// src/components/exports/GetNearestCity.ts
+var GetNearestCity = ({ Coordinates, Radius }) => {
+  const { Latitude, Longitude } = Coordinates;
+  const cScaleLatMildes = Radius / 69;
+  const cScaleLonMoiles = Radius / (69 * Math.cos(Latitude * (Math.PI / 180)));
+  const cQuery = ExecuteQuery({
+    Query: ENUM_STRINGS.DB_STRINGS.QUERIES.NEAREST_CITY_LOOKUP,
+    Parameters: [
+      Latitude - cScaleLatMildes,
+      Latitude + cScaleLatMildes,
+      Longitude - cScaleLonMoiles,
+      Longitude + cScaleLonMoiles,
+      Latitude,
+      Latitude,
+      Longitude,
+      Longitude
+    ]
+  });
+  return cQuery?.[0] ?? null;
+};
+
+// src/components/exports/ManageTrackingNode.ts
+var ManageTrackingNode = ({ Identifier, Coordinates, Delete }) => {
+  const { Latitude, Longitude } = Coordinates;
+  const { Name, State, County, Population } = GetNearestCity({ Coordinates, Radius: 25 });
+  const cTrackingNodes = Bootstrap.CacheControl.Manager.Nodes;
+  const cNode = cTrackingNodes.features.find((lNode) => lNode.properties.identifier === Identifier);
+  const cIndex = cTrackingNodes.features.indexOf(cNode);
+  const cLoationString = `${Name ?? `---`}, ${County ?? `---`}, ${State ?? `---`}, ${Population ?? `---`}`;
+  if (Delete && cNode) {
+    cTrackingNodes.features.splice(cIndex, 1);
+    return SetLog({
+      Message: ENUM_STRINGS.CALLBACKS.TRACKING_NODE_DELETED.replace(/%s/g, Identifier),
+      Event: `onTrackingNodeDeleted`,
+      Metadata: {
+        Action: `Deleted`,
+        Identifier,
+        Node: cNode
+      }
+    });
+  }
+  if (cNode) {
+    cTrackingNodes.features[cIndex] = {
+      ...cNode,
+      geometry: {
+        type: `Point`,
+        coordinates: [Longitude, Latitude]
+      },
+      properties: {
+        ...cNode.properties,
+        city: Name ?? null,
+        state: State ?? null,
+        county: County ?? null,
+        population: Population ?? null
+      }
+    };
+    return SetLog({
+      Message: ENUM_STRINGS.CALLBACKS.TRACKING_NODE_UPDATED.replace(/%s/g, Identifier).replace(/%d/g, cLoationString),
+      Event: `onTrackingNodeUpdated`,
+      Metadata: {
+        Action: `Updated`,
+        Identifier,
+        Node: cTrackingNodes.features[cIndex]
+      }
+    });
+  }
+  cTrackingNodes.features.push({
+    type: `Feature`,
+    geometry: {
+      type: `Point`,
+      coordinates: [Longitude, Latitude]
+    },
+    properties: {
+      identifier: Identifier,
+      city: Name ?? null,
+      state: State ?? null,
+      county: County ?? null,
+      population: Population ?? null
+    }
+  });
+  return SetLog({
+    Message: ENUM_STRINGS.CALLBACKS.TRACKING_NODE_ADDED.replace(/%s/g, Identifier).replace(/%d/g, cLoationString),
+    Event: `onTrackingNodeAdded`,
+    Metadata: {
+      Action: `Added`,
+      Identifier,
+      Node: cTrackingNodes.features[cTrackingNodes.features.length - 1]
+    }
+  });
+};
+
 // src/index.ts
 var _initialize_dec, _stop_dec, _start_dec, _init5;
 _start_dec = [ConstructClassTimer], _stop_dec = [ConstructClassTimer], _initialize_dec = [ConstructClassTimer];
@@ -27425,6 +27524,8 @@ var index_default = Manager;
   ConstructProduct,
   GeographicalCodeParsing,
   GetArchivedProducts,
+  GetNearestCity,
+  ManageTrackingNode,
   Manager,
   TextProductParsing,
   ValidTimeEventCodeParsing

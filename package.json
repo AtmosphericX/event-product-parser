@@ -1,6 +1,6 @@
 {
 	"name": "@atmosx/event-product-parser",
-	"version": "3.1.0404",
+	"version": "3.1.0405",
 	"description": "NOAA Weather Wire & NWS API Parser - Built for standalone and Project AtmosphericX Integration.",
 	"main": "dist/index.cjs",
 	"repository": {
@@ -14,8 +14,10 @@
 		"watch": "node ./tools/build.js --watch",
 		"publish": "node ./tools/build.js && npm publish --access public",
 		"publish-b3.1": "node ./tools/build.js && npm publish --tag b3.1 --access public",
-		"testing:archives": "cd ./testing && node test.exports.archived.js",
-		"testing:create": "cd ./testing && node test.exports.create.js"
+		"testing:archives": "cd ./testing && node test.exports.get-archived-products.js",
+		"testing:create": "cd ./testing && node test.exports.construct-product-manual.js",
+		"testing:manage-tracking-nodes": "cd ./testing && node test.exports.manage-tracking-nodes.js",
+		"testing:get-nearest-city": "cd ./testing && node test.exports.get-nearest-city.js"
 	},
 	"keywords": [
 		"NWWS",

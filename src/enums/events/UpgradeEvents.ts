@@ -24,9 +24,9 @@ type TYPE_UPGRADED_EVENTS = {
 export const ENUM_UPGRADED_EVENTS: Record<string, TYPE_UPGRADED_EVENTS[]> = {
     ["Tornado Warning"]: [
         { Match: /TORNADO\s+EMERGENCY/i, Label: "Tornado Emergency", DamageMatch: `CATASTROPHIC`, TornadoMatch: `OBSERVED` },
-        { Match: /TORNADO\s+EMERGENCY/i, Label: "Radar Indicated Tornado Emergency", DamageMatch: `CATASTROPHIC`, TornadoMatch: `RADAR INDICATED` },
+        { Match: /TORNADO\s+EMERGENCY/i, Label: "Radar Confirmed Tornado Emergency", DamageMatch: `CATASTROPHIC`, TornadoMatch: `RADAR INDICATED` },
         { Match: /PARTICULARLY\s+DANGEROUS\s+SITUATION/i, Label: "PDS Tornado Warning", DamageMatch: `CONSIDERABLE`, TornadoMatch: `OBSERVED` },
-        { Match: /PARTICULARLY\s+DANGEROUS\s+SITUATION/i, Label: "PDS Radar Indicated Tornado Warning", DamageMatch: `CONSIDERABLE`, TornadoMatch: `RADAR INDICATED` },
+        { Match: /PARTICULARLY\s+DANGEROUS\s+SITUATION/i, Label: "Radar Confirmed PDS Tornado Warning", DamageMatch: `CONSIDERABLE`, TornadoMatch: `RADAR INDICATED` },
         { Match: /SOURCE\.\.\.RADAR\s+CONFIRMED\s+TORNADO\./i, Label: "Radar Confirmed Tornado Warning", TornadoMatch: `OBSERVED` },
         { Match: /TORNADO\s+WARNING/i, Label: "Confirmed Tornado Warning", TornadoMatch: `OBSERVED` },
         { Match: /TORNADO\s+WARNING/i, Label: "Radar Indicated Tornado Warning" }

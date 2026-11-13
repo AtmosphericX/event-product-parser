@@ -19,9 +19,39 @@
         <a href="/.github/CHANGELOGS.md"><b>Changelogs</b></a> &nbsp;•&nbsp;
         <a href="https://atmosphericx-discord.scriptkitty.cafe"><b>Community Discord</b></a>
     </p>
-</div>
+</div>`
 
 ## Changelogs [NOT FOR PRODUCTION USE]
+
+### November "Friday" 13th, 2026 - b3.1-0405
+
+**Refactoring**
+- ref(types): Updated `TYPE_CITIES` to include `towns` instead of `cities` for better clarity and consistency with the data structure.
+- ref(restrictions): `GetNearestCity` and `ManageTrackingNode` no longer requires the `Manager` class to be started with `start()`.
+- ref(upgraded): Changed `Radar Indicated` to `Radar Confirmed` for PDS/Emergency Tornado warnings if conditions are met.
+
+**Features**
+- feat(exports): Added `GetNearestCity` which retrieves the nearest city based on population and distance from a given latitude and longitude.
+- feat(exports): Added `ManageTrackingNode` which allows for the creation, updating, and deletion of tracking nodes within the CacheControl system.
+- feat(bootstrap): Added `Nodes` within CacheControl to allow for the storage of tracking nodes. (Defined as GeoJSON with TYPE_NODE)
+- feat(building): Added `GetEventGeometry` which retrieves the geometry of an event based on product properties. (Dynamically determines the best geometry to use based on available data)
+- feat(building): Added `GetEventPopulation` which retrieves the population data for the event based on polygon geometry.
+- feat(geometry): Added `GetNormalizedPolygon` and `GetNormalizedD3Polygon` which normalizes polygons to ensure proper orientation and structure for future processing and graphics.
+feat(signature): Added `GetEventSignature` which retrieves the correct status type, if it has expired, and general property improvements.
+
+**Todo**
+- ~~chore(building): Complete all building export functions~~
+- chore(node): Implement node tracking for products.
+- ~~chore(parsing): Complete all parsing classes~~
+- chore(products): Complete all product ingestions (Cap 1.2, VTEC, GeoJSON, Text)
+- chore(api): Integrate National Weather Service API for product retrieval and ingestion.
+- chore(host): Integrate shared ingestion hosting while using NWWS-OI.
+- chore(tasks): NTFY integration.
+- chore(tasks): Webhook integration.
+- chore(tasks): File generation.
+- chore(polygon): Implement TIM (Threats in Motion)
+
+------------------------------------------------------------------------------------------------------------------------
 
 ### November 8th, 2026 - b3.1-0404
 
@@ -35,17 +65,6 @@
 
 **Documentation**
 - docs(README): Add `Build from Source` and `Testing` sections to the README.md for better guidance on building and testing the project.
-
-**Todo**
-- chore(building): Complete all building export functions
-- chore(parsing): Complete all parsing classes
-- chore(products): Complete all product ingestions (Cap 1.2, VTEC, GeoJSON, Text)
-- chore(api): Integrate National Weather Service API for product retrieval and ingestion.
-- chore(host): Integrate shared ingestion hosting while using NWWS-OI.
-- chore(tasks): NTFY integration.
-- chore(tasks): Webhook integration.
-- chore(tasks): File generation.
-- chore(polygon): Implement TIM (Threats in Motion)
 
 ------------------------------------------------------------------------------------------------------------------------
 

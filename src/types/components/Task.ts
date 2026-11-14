@@ -24,7 +24,6 @@ export type TYPE_TASK = {
         },
         PostNotifications?: {
             Topic: string
-            Priority?: string | number
         },
         Generation?: {
             Product?: boolean

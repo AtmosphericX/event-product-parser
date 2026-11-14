@@ -30,6 +30,13 @@ type TYPE_STRINGS = {
         TRACKING_NODE_UPDATED: string
         TRACKING_NODE_ADDED: string
     }
+    TASKS: {
+        NFTY_NOT_ENABLED: string
+        NTFY_FAILED: string
+        WEBHOOK_FAILED: string
+        AUDIO_GENERATION_NOT_SUPPORTED: string
+        AUDIO_GENERATION_TONEOUT_NOT_SUPPORTED: string
+    }
     DATABASE: {
         CREATED: string
         CONNECTED: string
@@ -114,6 +121,13 @@ export const ENUM_STRINGS: TYPE_STRINGS = {
         TRACKING_NODE_DELETED: `Tracking node with the identifier '%s' has been deleted.`,
         TRACKING_NODE_UPDATED: `Tracking node with the identifier '%s' has been updated. (%d)`,
         TRACKING_NODE_ADDED: `Tracking node with the identifier '%s' has been added. (%d)`
+    },
+    TASKS: {
+        NFTY_NOT_ENABLED: `NTFY integration is not enabled, please enable it in the configuration file to use this feature.`,
+        NTFY_FAILED: `Failed to send notification to topic %s (%d)`,
+        WEBHOOK_FAILED: `Failed to send webhook to %s (%d)`,
+        AUDIO_GENERATION_TONEOUT_NOT_SUPPORTED: `Audio generation is not supported for the specified toneout file. Please use a supported file format! See documentation for more information.`,
+        AUDIO_GENERATION_NOT_SUPPORTED: `Audio generation is not supported on this platform (%s). Please use a supported platform! See documentation for more information.`
     },
     DATABASE: {
         CREATED: `No database found, creating a new database at the specified path.`,

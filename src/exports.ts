@@ -21,6 +21,7 @@ import { GetArchivedProducts } from "@Components.Exports/GetArchivedProducts"
 import { ConstructProduct } from "@Components.Exports/ConstructProduct"
 import { GetNearestCity } from "@Components.Exports/GetNearestCity"
 import { ManageTrackingNode } from "@Components.Exports/ManageTrackingNode"
+import { ConstructAudioMessage } from "@Components.Tasks.Deployments/ConstructAudioMessage"
 
 export { 
     CommonAlertingProtocolParsing,
@@ -30,5 +31,6 @@ export {
     GetArchivedProducts,
     ConstructProduct,
     GetNearestCity,
-    ManageTrackingNode
+    ManageTrackingNode,
+    ConstructAudioMessage
 }

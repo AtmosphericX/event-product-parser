@@ -130,6 +130,7 @@ export const Bootstrap = {
                     MaxHeight: 1080,
                 },
                 AudioGeneration: {
+                    SampleRate: 8000,
                     Toneout: null
                 }
             }

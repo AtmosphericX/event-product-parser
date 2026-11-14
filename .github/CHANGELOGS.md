@@ -23,6 +23,27 @@
 
 ## Changelogs [NOT FOR PRODUCTION USE]
 
+### November 14th, 2026 - b3.1-0405-a
+
+**Features**
+- feat(tsconfig): Implemented `@Components.Tasks` and `@Components.Tasks.Deployments` path in tsconfig.json.
+- feat(tasks): Implemented `ConstructFile` for file tasks.
+- feat(tasks): Implemented `ConstructNotification` for NTFY push notifications.
+- feat(tasks): Implemented `ConstructWebhook` for Discord webhook ingestions.
+- feat(config): Added `SampleRate` to the `AudioGeneration` configurations.
+
+**Todo**
+- chore(node): Implement node tracking for products.
+- chore(products): Complete all product ingestions (Cap 1.2, VTEC, GeoJSON, Text)
+- chore(api): Integrate National Weather Service API for product retrieval and ingestion.
+- chore(host): Integrate shared ingestion hosting while using NWWS-OI.
+- chore(tasks): NTFY integration.
+- chore(tasks): Webhook integration.
+- chore(tasks): File generation.
+- chore(polygon): Implement TIM (Threats in Motion)
+
+------------------------------------------------------------------------------------------------------------------------
+
 ### November "Friday" 13th, 2026 - b3.1-0405
 
 **Refactoring**
@@ -39,17 +60,9 @@
 - feat(geometry): Added `GetNormalizedPolygon` and `GetNormalizedD3Polygon` which normalizes polygons to ensure proper orientation and structure for future processing and graphics.
 feat(signature): Added `GetEventSignature` which retrieves the correct status type, if it has expired, and general property improvements.
 
-**Todo**
+**Todo (Completed)**
 - ~~chore(building): Complete all building export functions~~
-- chore(node): Implement node tracking for products.
 - ~~chore(parsing): Complete all parsing classes~~
-- chore(products): Complete all product ingestions (Cap 1.2, VTEC, GeoJSON, Text)
-- chore(api): Integrate National Weather Service API for product retrieval and ingestion.
-- chore(host): Integrate shared ingestion hosting while using NWWS-OI.
-- chore(tasks): NTFY integration.
-- chore(tasks): Webhook integration.
-- chore(tasks): File generation.
-- chore(polygon): Implement TIM (Threats in Motion)
 
 ------------------------------------------------------------------------------------------------------------------------
 

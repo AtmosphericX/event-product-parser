@@ -26,6 +26,8 @@
 			"@Components.Events.Managers/*": ["./src/components/events/managers/*"],
 			"@Components.Events.Products/*": ["./src/components/events/products/*"],
 			"@Components.Exports/*": ["./src/components/exports/*"],
+			"@Components.Tasks/*": ["./src/components/tasks/*"],
+			"@Components.Tasks.Deployments/*": ["./src/components/tasks/deployments/*"],
 			"@Enums/*": ["./src/enums/*"],
 			"@Enums.Properties/*": ["./src/enums/properties/*"],
 			"@Enums.Products/*": ["./src/enums/products/*"],

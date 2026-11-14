@@ -104,6 +104,7 @@ export type TYPE_SETTINGS = {
                 MaxHeight: number
             }
             AudioGeneration: {
+                SampleRate: number
                 Toneout: string | null
             }
         }

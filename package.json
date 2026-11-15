@@ -19,6 +19,10 @@
 		"testing:manage-tracking-nodes": "cd ./testing && node test.exports.manage-tracking-nodes.js",
 		"testing:get-nearest-city": "cd ./testing && node test.exports.get-nearest-city.js"
 	},
+	"files": [
+		"dist",
+		"tools"
+	],
 	"keywords": [
 		"NWWS",
 		"NOAA Weather Wire Service",

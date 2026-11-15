@@ -21444,7 +21444,7 @@ var ENUM_THEMES = [
 var import_node_events = require("node:events");
 var import_node_path = require("node:path");
 var Bootstrap = {
-  Version: `b3.1-0405`,
+  Version: `b3.1-0405-b`,
   ServiceReady: false,
   Listener: new import_node_events.EventEmitter(),
   Scheduler: null,
@@ -27468,85 +27468,78 @@ var ManageTrackingNode = ({ Identifier, Coordinates, Delete }) => {
   });
 };
 
+// src/enums/AudioGeneration.ts
+var ENUM_AUDIO_MESSAGES = [
+  { RegEx: /\.{3,}/g, Replace: ". " },
+  { RegEx: /\bUTC\b/g, Replace: "Coordinated Universal Time" },
+  { RegEx: /\bGMT\b/g, Replace: "Greenwich Mean Time" },
+  { RegEx: /\bEST\b(?!\w)/g, Replace: "Eastern Standard Time" },
+  { RegEx: /\bEDT\b(?!\w)/g, Replace: "Eastern Daylight Time" },
+  { RegEx: /\bCST\b(?!\w)/g, Replace: "Central Standard Time" },
+  { RegEx: /\bCDT\b(?!\w)/g, Replace: "Central Daylight Time" },
+  { RegEx: /\bMST\b(?!\w)/g, Replace: "Mountain Standard Time" },
+  { RegEx: /\bMDT\b(?!\w)/g, Replace: "Mountain Daylight Time" },
+  { RegEx: /\bPST\b(?!\w)/g, Replace: "Pacific Standard Time" },
+  { RegEx: /\bPDT\b(?!\w)/g, Replace: "Pacific Daylight Time" },
+  { RegEx: /\bAKST\b(?!\w)/g, Replace: "Alaska Standard Time" },
+  { RegEx: /\bAKDT\b(?!\w)/g, Replace: "Alaska Daylight Time" },
+  { RegEx: /\bHST\b(?!\w)/g, Replace: "Hawaii Standard Time" },
+  { RegEx: /\bHDT\b(?!\w)/g, Replace: "Hawaii Daylight Time" },
+  { RegEx: /\bmph\b(?!\w)/g, Replace: "miles per hour" },
+  { RegEx: /\bkm\/h\b(?!\w)/g, Replace: "kilometers per hour" },
+  { RegEx: /\bkmh\b(?!\w)/g, Replace: "kilometers per hour" },
+  { RegEx: /\bkt\b(?!\w)/g, Replace: "knots" },
+  { RegEx: /\bNE\b(?!\w)/g, Replace: "northeast" },
+  { RegEx: /\bNW\b(?!\w)/g, Replace: "northwest" },
+  { RegEx: /\bSE\b(?!\w)/g, Replace: "southeast" },
+  { RegEx: /\bSW\b(?!\w)/g, Replace: "southwest" },
+  { RegEx: /\bNM\b(?!\w)/g, Replace: "nautical miles" },
+  { RegEx: /\bdeg\b(?!\w)/g, Replace: "degrees" },
+  { RegEx: /\btstm\b(?!\w)/g, Replace: "thunderstorm" },
+  { RegEx: /\bmm\b(?!\w)/g, Replace: "millimeters" },
+  { RegEx: /\bcm\b(?!\w)/g, Replace: "centimeters" },
+  { RegEx: /\bin.\b(?!\w)/g, Replace: "inches" },
+  { RegEx: /\bft\b(?!\w)/g, Replace: "feet" },
+  { RegEx: /\bmi\b(?!\w)/g, Replace: "miles" },
+  { RegEx: /\bhr\b(?!\w)/g, Replace: "hour" },
+  { RegEx: /\bhourly\b(?!\w)/g, Replace: "per hour" },
+  { RegEx: /\bkg\b(?!\w)/g, Replace: "kilograms" },
+  { RegEx: /\bg\/kg\b(?!\w)/g, Replace: "grams per kilogram" },
+  { RegEx: /\bMB\b(?!\w)/g, Replace: "millibars" },
+  { RegEx: /\bhPa\b(?!\w)/g, Replace: "hectopascals" },
+  { RegEx: /\bPa\b(?!\w)/g, Replace: "pascals" },
+  { RegEx: /\bKPa\b(?!\w)/g, Replace: "kilopascals" },
+  { RegEx: /\bC\/hr\b(?!\w)/g, Replace: "degrees Celsius per hour" },
+  { RegEx: /\bF\/hr\b(?!\w)/g, Replace: "degrees Fahrenheit per hour" },
+  { RegEx: /\bC\/min\b(?!\w)/g, Replace: "degrees Celsius per minute" },
+  { RegEx: /\bF\/min\b(?!\w)/g, Replace: "degrees Fahrenheit per minute" },
+  { RegEx: /\bC\b(?!\w)/g, Replace: "degrees Celsius" },
+  { RegEx: /\bF\b(?!\w)/g, Replace: "degrees Fahrenheit" }
+];
+var ENUM_HOURS = {
+  0: "twelve",
+  1: "one",
+  2: "two",
+  3: "three",
+  4: "four",
+  5: "five",
+  6: "six",
+  7: "seven",
+  8: "eight",
+  9: "nine",
+  10: "ten",
+  11: "eleven",
+  12: "twelve"
+};
+
 // src/components/tasks/deployments/ConstructAudioMessage.ts
 var import_node_path4 = require("node:path");
-var import_node_fs3 = require("node:fs");
 var import_node_os = require("node:os");
 var import_node_child_process = require("node:child_process");
+var import_node_fs3 = require("node:fs");
 var ConstructAudioMessage = class {
   constructor() {
     this.pPlatform = (0, import_node_os.platform)();
-    this.pPowerShellCommandFix = `ffmpeg -y -i "%s" -ar 8000 -ac 1 -sample_fmt s16 "%d"`;
-    this.pPowerShellCommandTTS = [
-      `Add-Type -AssemblyName System.Speech;`,
-      `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`,
-      `$text = Get-Content -Raw -LiteralPath '%s';`,
-      `$speak.SetOutputToWaveFile('%d');`,
-      `$speak.Speak($text);`,
-      `$speak.Dispose();`
-    ];
-    this.ENUM_AUDIO_MESSAGES = [
-      { RegEx: /\.{3,}/g, Replace: ". " },
-      { RegEx: /\bUTC\b/g, Replace: "Coordinated Universal Time" },
-      { RegEx: /\bGMT\b/g, Replace: "Greenwich Mean Time" },
-      { RegEx: /\bEST\b(?!\w)/g, Replace: "Eastern Standard Time" },
-      { RegEx: /\bEDT\b(?!\w)/g, Replace: "Eastern Daylight Time" },
-      { RegEx: /\bCST\b(?!\w)/g, Replace: "Central Standard Time" },
-      { RegEx: /\bCDT\b(?!\w)/g, Replace: "Central Daylight Time" },
-      { RegEx: /\bMST\b(?!\w)/g, Replace: "Mountain Standard Time" },
-      { RegEx: /\bMDT\b(?!\w)/g, Replace: "Mountain Daylight Time" },
-      { RegEx: /\bPST\b(?!\w)/g, Replace: "Pacific Standard Time" },
-      { RegEx: /\bPDT\b(?!\w)/g, Replace: "Pacific Daylight Time" },
-      { RegEx: /\bAKST\b(?!\w)/g, Replace: "Alaska Standard Time" },
-      { RegEx: /\bAKDT\b(?!\w)/g, Replace: "Alaska Daylight Time" },
-      { RegEx: /\bHST\b(?!\w)/g, Replace: "Hawaii Standard Time" },
-      { RegEx: /\bHDT\b(?!\w)/g, Replace: "Hawaii Daylight Time" },
-      { RegEx: /\bmph\b(?!\w)/g, Replace: "miles per hour" },
-      { RegEx: /\bkm\/h\b(?!\w)/g, Replace: "kilometers per hour" },
-      { RegEx: /\bkmh\b(?!\w)/g, Replace: "kilometers per hour" },
-      { RegEx: /\bkt\b(?!\w)/g, Replace: "knots" },
-      { RegEx: /\bNE\b(?!\w)/g, Replace: "northeast" },
-      { RegEx: /\bNW\b(?!\w)/g, Replace: "northwest" },
-      { RegEx: /\bSE\b(?!\w)/g, Replace: "southeast" },
-      { RegEx: /\bSW\b(?!\w)/g, Replace: "southwest" },
-      { RegEx: /\bNM\b(?!\w)/g, Replace: "nautical miles" },
-      { RegEx: /\bdeg\b(?!\w)/g, Replace: "degrees" },
-      { RegEx: /\btstm\b(?!\w)/g, Replace: "thunderstorm" },
-      { RegEx: /\bmm\b(?!\w)/g, Replace: "millimeters" },
-      { RegEx: /\bcm\b(?!\w)/g, Replace: "centimeters" },
-      { RegEx: /\bin.\b(?!\w)/g, Replace: "inches" },
-      { RegEx: /\bft\b(?!\w)/g, Replace: "feet" },
-      { RegEx: /\bmi\b(?!\w)/g, Replace: "miles" },
-      { RegEx: /\bhr\b(?!\w)/g, Replace: "hour" },
-      { RegEx: /\bhourly\b(?!\w)/g, Replace: "per hour" },
-      { RegEx: /\bkg\b(?!\w)/g, Replace: "kilograms" },
-      { RegEx: /\bg\/kg\b(?!\w)/g, Replace: "grams per kilogram" },
-      { RegEx: /\bMB\b(?!\w)/g, Replace: "millibars" },
-      { RegEx: /\bhPa\b(?!\w)/g, Replace: "hectopascals" },
-      { RegEx: /\bPa\b(?!\w)/g, Replace: "pascals" },
-      { RegEx: /\bKPa\b(?!\w)/g, Replace: "kilopascals" },
-      { RegEx: /\bC\/hr\b(?!\w)/g, Replace: "degrees Celsius per hour" },
-      { RegEx: /\bF\/hr\b(?!\w)/g, Replace: "degrees Fahrenheit per hour" },
-      { RegEx: /\bC\/min\b(?!\w)/g, Replace: "degrees Celsius per minute" },
-      { RegEx: /\bF\/min\b(?!\w)/g, Replace: "degrees Fahrenheit per minute" },
-      { RegEx: /\bC\b(?!\w)/g, Replace: "degrees Celsius" },
-      { RegEx: /\bF\b(?!\w)/g, Replace: "degrees Fahrenheit" }
-    ];
-    this.ENUM_HOURS = {
-      0: "twelve",
-      1: "one",
-      2: "two",
-      3: "three",
-      4: "four",
-      5: "five",
-      6: "six",
-      7: "seven",
-      8: "eight",
-      9: "nine",
-      10: "ten",
-      11: "eleven",
-      12: "twelve"
-    };
   }
   async Construct({ Message, Header, File }) {
     const { Audio, AudioGeneration } = Bootstrap.Settings.GlobalSettings.Generation;
@@ -27558,18 +27551,17 @@ var ConstructAudioMessage = class {
     const cOutputAudio = (0, import_node_path4.join)(Audio, `${this.pSetFilename}.wav`);
     if (this.pPlatform === `darwin`) {
       SetLog({ Type: `ERROR`, Message: ENUM_STRINGS.TASKS.AUDIO_GENERATION_NOT_SUPPORTED.replace(/%s/g, this.pPlatform) });
-      return null;
+      return;
     }
     await this.GenerateTextToSpeech(this.GetCleanMessageOutput(Message), cTempTTS);
-    if (!(0, import_node_fs3.existsSync)(cTempTTS)) return null;
+    if (!(0, import_node_fs3.existsSync)(cTempTTS)) return;
     this.pBufferTTS = (0, import_node_fs3.readFileSync)(cTempTTS);
     this.pSampleRate = SampleRate;
     const cWavePCM16 = this.GetWavPCM16(this.pBufferTTS);
     const cSamples = this.GetSampledPCM16(cWavePCM16.Samples, cWavePCM16.SampleRate);
     const sRadioEffect = this.SetRadioEffect(cSamples);
     const sToneoutBuffer = Toneout ? this.SetToneoutBuffer(Toneout, Audio) : null;
-    this.pBufferComplete = this.pBufferComplete != null ? [sToneoutBuffer, new Int16Array(Math.floor(0.5 * 8e3))] : [];
-    this.pBufferComplete.push(
+    this.pBufferComplete = [
       Toneout ? sToneoutBuffer : null,
       this.SetHeader(this.pSetHeader, 3, 1.3, 0.5),
       new Int16Array(Math.floor(0.5 * 8e3)),
@@ -27579,7 +27571,7 @@ var ConstructAudioMessage = class {
       new Int16Array(Math.floor(0.5 * 8e3)),
       this.SetHeader(this.pSetHeader, 3, 0.8, 0.4),
       new Int16Array(Math.floor(0.5 * 8e3))
-    );
+    ];
     const cBuffers = this.pBufferComplete.filter((lValue) => lValue != null);
     const cSamplesMerged = new Int16Array(cBuffers.reduce((lTotal, lBuffer) => lTotal + lBuffer.length, 0));
     let lOffset = 0;
@@ -27593,26 +27585,16 @@ var ConstructAudioMessage = class {
     (0, import_node_fs3.unlinkSync)(cTempTTS);
   }
   SetToneoutBuffer(Toneout, Directory) {
-    if ((0, import_node_fs3.existsSync)(Toneout)) {
-      let lBuffer = (0, import_node_fs3.readFileSync)(Toneout);
-      let lWav = this.GetWavPCM16(lBuffer);
-      if (lWav == null) {
-        const cConcert = (0, import_node_path4.join)(Directory, `${this.pSetFilename}.fixed.wav`);
-        (0, import_node_child_process.execSync)(this.pPowerShellCommandFix.replace(/%s/g, Toneout).replace(/%d/g, cConcert));
-        if ((0, import_node_fs3.existsSync)(cConcert)) {
-          lBuffer = (0, import_node_fs3.readFileSync)(cConcert);
-          lWav = this.GetWavPCM16(lBuffer);
-          (0, import_node_fs3.unlinkSync)(cConcert);
-        }
-      }
-      if (lWav == null) {
-        SetLog({ Type: `ERROR`, Message: ENUM_STRINGS.TASKS.AUDIO_GENERATION_TONEOUT_NOT_SUPPORTED });
-        return null;
-      }
-      const cSamplesToneout = lWav.SampleRate != this.pSampleRate ? this.GetSampledPCM16(lWav.Samples, lWav.SampleRate) : lWav.Samples;
-      this.pBufferRadio = this.SetRadioEffect(cSamplesToneout);
-      return this.pBufferRadio;
+    if (!(0, import_node_fs3.existsSync)(Toneout)) return null;
+    let lBuffer = (0, import_node_fs3.readFileSync)(Toneout);
+    let lWav = this.GetWavPCM16(lBuffer);
+    if (lWav == null) {
+      SetLog({ Type: `ERROR`, Message: ENUM_STRINGS.TASKS.AUDIO_GENERATION_TONEOUT_NOT_SUPPORTED });
+      return null;
     }
+    const cSamplesToneout = lWav.SampleRate != this.pSampleRate ? this.GetSampledPCM16(lWav.Samples, lWav.SampleRate) : lWav.Samples;
+    this.pBufferRadio = this.SetRadioEffect(cSamplesToneout);
+    return this.pBufferRadio;
   }
   SetNoise(Int16, NoiseLevel) {
     const cFloat = this.GetPCMToFloat(Int16);
@@ -27705,9 +27687,9 @@ var ConstructAudioMessage = class {
     return cBits;
   }
   GetWavPCM16(Buffer2) {
-    if (Buffer2.toString("ascii", 0, 4) !== "RIFF" || Buffer2.toString("ascii", 8, 12) !== "WAVE") return null;
     let lFMT, lData = null;
     let lChannels = 12;
+    if (Buffer2.toString("ascii", 0, 4) !== "RIFF" || Buffer2.toString("ascii", 8, 12) !== "WAVE") return null;
     while (lChannels + 8 <= Buffer2.length) {
       const cID = Buffer2.toString("ascii", lChannels, lChannels + 4);
       const cSize = Buffer2.readUInt32LE(lChannels + 4);
@@ -27826,14 +27808,27 @@ var ConstructAudioMessage = class {
   async GenerateTextToSpeech(Message, OutputFile) {
     switch (this.pPlatform) {
       case `win32`:
-        const cTextPath = `${OutputFile}.txt`;
-        const cCommand = this.pPowerShellCommandTTS.map((lCommand) => lCommand.replace(/%s/g, cTextPath).replace(/%d/g, OutputFile)).join(` `);
-        (0, import_node_fs3.writeFileSync)(cTextPath, Message, { encoding: "utf-8" });
-        (0, import_node_child_process.execSync)(`powershell -Command "${cCommand}"`, { stdio: "inherit" });
-        (0, import_node_fs3.unlinkSync)(cTextPath);
+        (0, import_node_child_process.execFileSync)("powershell", [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          (0, import_node_path4.join)(__dirname, `scripts/TextToSpeech.ps1`),
+          "-Message",
+          Message,
+          "-OutputPath",
+          OutputFile
+        ], { stdio: "inherit" });
         break;
       case `linux`:
-        (0, import_node_child_process.execSync)(`espeak -w "${OutputFile}" "${Message.replace(/"/g, '\\"')}"`, { stdio: "inherit" });
+        (0, import_node_child_process.execFileSync)("bash", [
+          (0, import_node_path4.join)(__dirname, `scripts/TextToSpeech.sh`),
+          "-Message",
+          Message,
+          "-OutputPath",
+          OutputFile.replace(/\\/g, "/")
+        ], { stdio: "inherit" });
         break;
       default:
         SetLog({ Type: `ERROR`, Message: ENUM_STRINGS.TASKS.AUDIO_GENERATION_NOT_SUPPORTED.replace(/%s/g, this.pPlatform) });
@@ -27842,8 +27837,8 @@ var ConstructAudioMessage = class {
   }
   GetCleanMessageOutput(Message) {
     const cCallClockMessage = (lMinute) => lMinute === 0 ? "" : lMinute < 10 ? `oh ${lMinute}` : `${lMinute}`;
-    const cCallFMT = (lHour, lMinute, lAMPM) => `${this.ENUM_HOURS[lHour % 12]} ${cCallClockMessage(lMinute)} ${lAMPM}`;
-    for (const { RegEx, Replace } of this.ENUM_AUDIO_MESSAGES) {
+    const cCallFMT = (lHour, lMinute, lAMPM) => `${ENUM_HOURS[lHour % 12]} ${cCallClockMessage(lMinute)} ${lAMPM}`;
+    for (const { RegEx, Replace } of ENUM_AUDIO_MESSAGES) {
       Message = Message.replace(RegEx, Replace);
     }
     return Message.replace(/'/g, "''").replace(/\b(\d{1,2}):(\d{2})\s*(AM|PM)\b/gi, (_2, h, m2, ap) => cCallFMT(+h, +m2, ap.toUpperCase())).replace(/\b(\d{1,2})\s+(\d{2})\s+(AM|PM)\b/gi, (_2, h, m2, ap) => cCallFMT(+h, +m2, ap.toUpperCase())).replace(/\b(\d{2})(\d{2})\s+(AM|PM)\b/gi, (_2, hh, mm, ap) => cCallFMT(+hh, +mm, ap.toUpperCase())).replace(/\b(\d{1,2})\s+(AM|PM)\b/gi, (_2, h, ap) => cCallFMT(+h, 0, ap.toUpperCase())).replace(/\*+/g, " ").replace(/-/g, " ").replace(/\n/g, " ").trim();

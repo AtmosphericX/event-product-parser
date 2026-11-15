@@ -23,7 +23,7 @@ import { EventEmitter } from "node:events"
 import { join } from "node:path"
 
 export const Bootstrap = {
-    Version: `b3.1-0405`,
+    Version: `b3.1-0405-b`,
     ServiceReady: false,
     Listener: new EventEmitter(),
     Scheduler: null as unknown,

@@ -14,12 +14,13 @@
 */
 
 import { ENUM_STRINGS } from "@Enums/Strings"
+import { ENUM_AUDIO_MESSAGES, ENUM_HOURS } from "@Enums/AudioGeneration"
 import { Bootstrap } from "@Bootstrap"
 import { SetLog } from "@Components.Utilities/SetLog"
 import { join } from "node:path"
-import { existsSync, mkdirSync, readFileSync, writeFileSync, unlinkSync } from "node:fs"
 import { platform } from "node:os"
-import { execSync } from "node:child_process"
+import { execFileSync } from "node:child_process"
+import { existsSync, mkdirSync, readFileSync, writeFileSync, unlinkSync } from "node:fs"
 
 interface CONSTRUCT_AUDIO_MESSAGE_OPTIONS {
     Message: string
@@ -35,68 +36,6 @@ export class ConstructAudioMessage {
     private pBufferRadio: Int16Array;
     private pBufferComplete: (Int16Array | null)[];
     private pPlatform: string = platform();
-    private pPowerShellCommandFix: string = `ffmpeg -y -i "%s" -ar 8000 -ac 1 -sample_fmt s16 "%d"`
-    private pPowerShellCommandTTS: string[] = [
-        `Add-Type -AssemblyName System.Speech;`,
-        `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`,
-        `$text = Get-Content -Raw -LiteralPath '%s';`,
-        `$speak.SetOutputToWaveFile('%d');`,
-        `$speak.Speak($text);`,
-        `$speak.Dispose();`
-    ]
-
-    private ENUM_AUDIO_MESSAGES: { RegEx: RegExp; Replace: string }[] = [
-        { RegEx: /\.{3,}/g, Replace: ". " },
-        { RegEx: /\bUTC\b/g, Replace: 'Coordinated Universal Time' },
-        { RegEx: /\bGMT\b/g, Replace: 'Greenwich Mean Time' },
-        { RegEx: /\bEST\b(?!\w)/g, Replace: 'Eastern Standard Time' },
-        { RegEx: /\bEDT\b(?!\w)/g, Replace: 'Eastern Daylight Time' },
-        { RegEx: /\bCST\b(?!\w)/g, Replace: 'Central Standard Time' },
-        { RegEx: /\bCDT\b(?!\w)/g, Replace: 'Central Daylight Time' },
-        { RegEx: /\bMST\b(?!\w)/g, Replace: 'Mountain Standard Time' },
-        { RegEx: /\bMDT\b(?!\w)/g, Replace: 'Mountain Daylight Time' },
-        { RegEx: /\bPST\b(?!\w)/g, Replace: 'Pacific Standard Time' },
-        { RegEx: /\bPDT\b(?!\w)/g, Replace: 'Pacific Daylight Time' },
-        { RegEx: /\bAKST\b(?!\w)/g, Replace: 'Alaska Standard Time' },
-        { RegEx: /\bAKDT\b(?!\w)/g, Replace: 'Alaska Daylight Time' },
-        { RegEx: /\bHST\b(?!\w)/g, Replace: 'Hawaii Standard Time' },
-        { RegEx: /\bHDT\b(?!\w)/g, Replace: 'Hawaii Daylight Time' },
-        { RegEx: /\bmph\b(?!\w)/g, Replace: 'miles per hour' },
-        { RegEx: /\bkm\/h\b(?!\w)/g, Replace: 'kilometers per hour' },
-        { RegEx: /\bkmh\b(?!\w)/g, Replace: 'kilometers per hour' },
-        { RegEx: /\bkt\b(?!\w)/g, Replace: 'knots' },
-        { RegEx: /\bNE\b(?!\w)/g, Replace: 'northeast' },
-        { RegEx: /\bNW\b(?!\w)/g, Replace: 'northwest' },
-        { RegEx: /\bSE\b(?!\w)/g, Replace: 'southeast' },
-        { RegEx: /\bSW\b(?!\w)/g, Replace: 'southwest' },
-        { RegEx: /\bNM\b(?!\w)/g, Replace: 'nautical miles' },
-        { RegEx: /\bdeg\b(?!\w)/g, Replace: 'degrees' },
-        { RegEx: /\btstm\b(?!\w)/g, Replace: 'thunderstorm' },
-        { RegEx: /\bmm\b(?!\w)/g, Replace: 'millimeters' },
-        { RegEx: /\bcm\b(?!\w)/g, Replace: 'centimeters' },
-        { RegEx: /\bin.\b(?!\w)/g, Replace: 'inches' },
-        { RegEx: /\bft\b(?!\w)/g, Replace: 'feet' },
-        { RegEx: /\bmi\b(?!\w)/g, Replace: 'miles' },
-        { RegEx: /\bhr\b(?!\w)/g, Replace: 'hour' },
-        { RegEx: /\bhourly\b(?!\w)/g, Replace: 'per hour' },
-        { RegEx: /\bkg\b(?!\w)/g, Replace: 'kilograms' },
-        { RegEx: /\bg\/kg\b(?!\w)/g, Replace: 'grams per kilogram' },
-        { RegEx: /\bMB\b(?!\w)/g, Replace: 'millibars' },
-        { RegEx: /\bhPa\b(?!\w)/g, Replace: 'hectopascals' },
-        { RegEx: /\bPa\b(?!\w)/g, Replace: 'pascals' },
-        { RegEx: /\bKPa\b(?!\w)/g, Replace: 'kilopascals' },
-        { RegEx: /\bC\/hr\b(?!\w)/g, Replace: 'degrees Celsius per hour' },
-        { RegEx: /\bF\/hr\b(?!\w)/g, Replace: 'degrees Fahrenheit per hour' },
-        { RegEx: /\bC\/min\b(?!\w)/g, Replace: 'degrees Celsius per minute' },
-        { RegEx: /\bF\/min\b(?!\w)/g, Replace: 'degrees Fahrenheit per minute' },
-        { RegEx: /\bC\b(?!\w)/g, Replace: 'degrees Celsius' },
-        { RegEx: /\bF\b(?!\w)/g, Replace: 'degrees Fahrenheit' },
-    ]
-    private ENUM_HOURS: Record<number, string> = {
-        0: "twelve", 1: "one", 2: "two", 3: "three", 4: "four",
-        5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine",
-        10: "ten", 11: "eleven", 12: "twelve",
-    }
 
     public async Construct({ Message, Header, File }: CONSTRUCT_AUDIO_MESSAGE_OPTIONS): Promise<void> { 
         const { Audio, AudioGeneration } = Bootstrap.Settings.GlobalSettings.Generation;
@@ -118,11 +57,11 @@ export class ConstructAudioMessage {
 
         if (this.pPlatform === `darwin`) {
             SetLog({ Type: `ERROR`, Message: ENUM_STRINGS.TASKS.AUDIO_GENERATION_NOT_SUPPORTED.replace(/%s/g, this.pPlatform) })
-            return null;
+            return;
         }
 
         await this.GenerateTextToSpeech(this.GetCleanMessageOutput(Message), cTempTTS);
-        if (!existsSync(cTempTTS)) return null;
+        if (!existsSync(cTempTTS)) return;
 
         this.pBufferTTS = readFileSync(cTempTTS);
         this.pSampleRate = SampleRate;
@@ -132,8 +71,7 @@ export class ConstructAudioMessage {
         const sRadioEffect = this.SetRadioEffect(cSamples);
         const sToneoutBuffer = Toneout ? this.SetToneoutBuffer(Toneout, Audio) : null;
 
-        this.pBufferComplete = this.pBufferComplete != null ? [sToneoutBuffer, new Int16Array(Math.floor(0.5 * 8000))] : [];
-        this.pBufferComplete.push(
+        this.pBufferComplete = [
             Toneout ? sToneoutBuffer : null,
             this.SetHeader(this.pSetHeader, 3, 1.3, 0.5),
             new Int16Array(Math.floor(0.5 * 8000)),
@@ -143,8 +81,8 @@ export class ConstructAudioMessage {
             new Int16Array(Math.floor(0.5 * 8000)),
             this.SetHeader(this.pSetHeader, 3, 0.8, 0.4),
             new Int16Array(Math.floor(0.5 * 8000))
-        )
-        
+        ];
+
         const cBuffers = this.pBufferComplete.filter((lValue): lValue is Int16Array => lValue != null);
         const cSamplesMerged = new Int16Array(cBuffers.reduce((lTotal, lBuffer) => lTotal + lBuffer.length, 0));
         let lOffset = 0;
@@ -159,26 +97,16 @@ export class ConstructAudioMessage {
     }
 
     private SetToneoutBuffer(Toneout: string, Directory: string): Int16Array {
-        if (existsSync(Toneout)) { 
-            let lBuffer = readFileSync(Toneout);
-            let lWav = this.GetWavPCM16(lBuffer);
-            if (lWav == null) {
-                const cConcert = join(Directory, `${this.pSetFilename}.fixed.wav`);
-                execSync(this.pPowerShellCommandFix.replace(/%s/g, Toneout).replace(/%d/g, cConcert));
-                if (existsSync(cConcert)) {
-                    lBuffer = readFileSync(cConcert);
-                    lWav = this.GetWavPCM16(lBuffer);
-                    unlinkSync(cConcert);
-                }
-            }
-            if (lWav == null) { 
-                SetLog({ Type: `ERROR`, Message: ENUM_STRINGS.TASKS.AUDIO_GENERATION_TONEOUT_NOT_SUPPORTED }) 
-                return null;
-            }
-            const cSamplesToneout = (lWav.SampleRate != this.pSampleRate) ? this.GetSampledPCM16(lWav.Samples, lWav.SampleRate) : lWav.Samples;
-            this.pBufferRadio = this.SetRadioEffect(cSamplesToneout);
-            return this.pBufferRadio;
+        if (!existsSync(Toneout)) return null;
+        let lBuffer = readFileSync(Toneout);
+        let lWav = this.GetWavPCM16(lBuffer);
+        if (lWav == null) { 
+            SetLog({ Type: `ERROR`, Message: ENUM_STRINGS.TASKS.AUDIO_GENERATION_TONEOUT_NOT_SUPPORTED }) 
+            return null;
         }
+        const cSamplesToneout = (lWav.SampleRate != this.pSampleRate) ? this.GetSampledPCM16(lWav.Samples, lWav.SampleRate) : lWav.Samples;
+        this.pBufferRadio = this.SetRadioEffect(cSamplesToneout);
+        return this.pBufferRadio;
     }
 
     private SetNoise(Int16: Int16Array, NoiseLevel: number): Int16Array {
@@ -256,14 +184,12 @@ export class ConstructAudioMessage {
                 if (lPhase > cTwoPi) lPhase -= cTwoPi;
             }
         }
-
         const cFadeSamples = Math.floor(this.pSampleRate * 0.002);
         for (let i = 0; i < cFadeSamples; i++) {
             const gain = i / cFadeSamples;
             cResult[i] = Math.round(cResult[i] * gain);
             cResult[cResult.length - 1 - i] = Math.round(cResult[cResult.length - 1 - i] * gain);
         }
-
         return Int16Array.from(cResult);
     }
 
@@ -279,11 +205,9 @@ export class ConstructAudioMessage {
     }
 
     private GetWavPCM16(Buffer: Buffer): { Samples: Int16Array, NumChannels: number, BitsPerSample: number, SampleRate: number } | null {
-        if (Buffer.toString("ascii", 0, 4) !== "RIFF" || Buffer.toString("ascii", 8, 12) !== "WAVE") return null;
-
         let lFMT, lData = null;
         let lChannels = 12;
-
+        if (Buffer.toString("ascii", 0, 4) !== "RIFF" || Buffer.toString("ascii", 8, 12) !== "WAVE") return null;
         while (lChannels + 8 <= Buffer.length) {
             const cID = Buffer.toString("ascii", lChannels, lChannels + 4);
             const cSize = Buffer.readUInt32LE(lChannels + 4);
@@ -293,18 +217,13 @@ export class ConstructAudioMessage {
             if (cID === "data") lData = Buffer.slice(cStart, cEnd);
             lChannels = cEnd + (cSize % 2); 
         }
-
         if (!lFMT || !lData) return null;
-
         const cAudioFormat = lFMT.readUInt16LE(0);
         const cChannels = lFMT.readUInt16LE(2);
         const cSampleRate = lFMT.readUInt32LE(4);
         const cBitsSample = lFMT.readUInt16LE(14);
-
         if (cAudioFormat !== 1 || cBitsSample !== 16 || cChannels !== 1) return null;
-
         const cSamples = new Int16Array(lData.buffer, lData.byteOffset, lData.length / 2);
-
         return { 
             Samples: new Int16Array(cSamples), 
             SampleRate: cSampleRate, 
@@ -331,7 +250,6 @@ export class ConstructAudioMessage {
 
     private SetRadioEffect(Int16: Int16Array): Int16Array {
         let lHP = 0, lPrev = 0, lYLP = 0;
-        
         const cGain = 2.0;
         const cNormalize = Math.tanh(cGain);
         const cHPCut = 3555;
@@ -340,7 +258,6 @@ export class ConstructAudioMessage {
         const cDT = 1 / this.pSampleRate;
         const cRCHP = 1 / (2 * Math.PI * cHPCut);
         const cAHP = cRCHP / (cRCHP + cDT);
-        
         for (let i = 0; i < cFloat.length; i++) {
             const cXI = cFloat[i];
             lHP = cAHP * (lHP + cXI - lPrev);
@@ -349,12 +266,10 @@ export class ConstructAudioMessage {
         }
         const cRCLP = 1 / (2 * Math.PI * cLPCut);
         const cALP = cDT / (cRCLP + cDT);
-        
         for (let i = 0; i < cFloat.length; i++) {
             lYLP = lYLP + cALP * (cFloat[i] - lYLP);
             cFloat[i] = lYLP;
         }
-        
         for (let i = 0; i < cFloat.length; i++) cFloat[i] = Math.tanh(cFloat[i] * cGain) / cNormalize;
         return this.GetFloatPCM16(cFloat);
     }
@@ -367,11 +282,9 @@ export class ConstructAudioMessage {
         const cSubchunk2Size = Samples.length * cBytesPerSample;
         const cChunkSize = 36 + cSubchunk2Size;
         const cBuffer = Buffer.alloc(44 + cSubchunk2Size);
-    
         cBuffer.write("RIFF", lOutput); lOutput += 4;
         cBuffer.writeUInt32LE(cChunkSize, lOutput); lOutput += 4;
         cBuffer.write("WAVE", lOutput); lOutput += 4;
-
         cBuffer.write("fmt ", lOutput); lOutput += 4;
         cBuffer.writeUInt32LE(16, lOutput); lOutput += 4;                 
         cBuffer.writeUInt16LE(1, lOutput); lOutput += 2;                  
@@ -380,10 +293,8 @@ export class ConstructAudioMessage {
         cBuffer.writeUInt32LE(cByteRate, lOutput); lOutput += 4;
         cBuffer.writeUInt16LE(cBlockAlign, lOutput); lOutput += 2;
         cBuffer.writeUInt16LE(16, lOutput); lOutput += 2;
-
         cBuffer.write("data", lOutput); lOutput += 4;
         cBuffer.writeUInt32LE(cSubchunk2Size, lOutput); lOutput += 4;
-
         for (let i = 0; i < Samples.length; i++, lOutput += 2) {
             cBuffer.writeInt16LE(Samples[i].value, lOutput);
         }
@@ -407,17 +318,22 @@ export class ConstructAudioMessage {
 
     private async GenerateTextToSpeech(Message: string, OutputFile: string): Promise<void> {
         switch (this.pPlatform) {
-            case `win32`: 
-                const cTextPath = `${OutputFile}.txt`;
-                const cCommand = this.pPowerShellCommandTTS
-                    .map(lCommand => lCommand.replace(/%s/g, cTextPath).replace(/%d/g, OutputFile))
-                    .join(` `);
-                writeFileSync(cTextPath, Message, { encoding: "utf-8" });
-                execSync(`powershell -Command "${cCommand}"`, { stdio: "inherit" });
-                unlinkSync(cTextPath);
+            case `win32` : 
+                execFileSync("powershell", [
+                    "-NoProfile",
+                    "-NonInteractive",
+                    "-ExecutionPolicy", "Bypass",
+                    "-File", join(__dirname, `scripts/TextToSpeech.ps1`),
+                    "-Message", Message,
+                    "-OutputPath", OutputFile
+                ], { stdio: "inherit" });
                 break;
             case `linux`:
-                execSync(`espeak -w "${OutputFile}" "${Message.replace(/"/g, '\\"')}"`, { stdio: "inherit" });
+                execFileSync("bash", [
+                    join(__dirname, `scripts/TextToSpeech.sh`),
+                    "-Message", Message,
+                    "-OutputPath", OutputFile.replace(/\\/g, "/")
+                ], { stdio: "inherit" });
                 break;
             default: 
                 SetLog({ Type: `ERROR`, Message: ENUM_STRINGS.TASKS.AUDIO_GENERATION_NOT_SUPPORTED.replace(/%s/g, this.pPlatform) });
@@ -427,8 +343,8 @@ export class ConstructAudioMessage {
 
     private GetCleanMessageOutput(Message: string): string { 
         const cCallClockMessage = (lMinute: number) =>  lMinute === 0 ? "" : lMinute < 10 ? `oh ${lMinute}` : `${lMinute}`;
-        const cCallFMT = (lHour: number, lMinute: number, lAMPM: string) => `${this.ENUM_HOURS[lHour % 12]} ${cCallClockMessage(lMinute)} ${lAMPM}`;
-        for (const { RegEx, Replace } of this.ENUM_AUDIO_MESSAGES) {
+        const cCallFMT = (lHour: number, lMinute: number, lAMPM: string) => `${ENUM_HOURS[lHour % 12]} ${cCallClockMessage(lMinute)} ${lAMPM}`;
+        for (const { RegEx, Replace } of ENUM_AUDIO_MESSAGES) {
             Message = Message.replace(RegEx, Replace);
         }
         return Message

@@ -23,14 +23,16 @@
 
 ## Changelogs [NOT FOR PRODUCTION USE]
 
-### November 14th, 2026 - b3.1-0405-a
+### November 15th, 2026 - b3.1-0405-b
+
+**Refactoring**
+- ref(tasks): Refactored `ConstructAudioMessage` slightly to improve readability.
+- ref(tasks): Proper handling of `TTS` generation for cross platform support. (Windows, Linux)
+- ref(tasks): Removed `ffmpeg` dependency for WAV file fixes.
 
 **Features**
-- feat(tsconfig): Implemented `@Components.Tasks` and `@Components.Tasks.Deployments` path in tsconfig.json.
-- feat(tasks): Implemented `ConstructFile` for file tasks.
-- feat(tasks): Implemented `ConstructNotification` for NTFY push notifications.
-- feat(tasks): Implemented `ConstructWebhook` for Discord webhook ingestions.
-- feat(config): Added `SampleRate` to the `AudioGeneration` configurations.
+- feat(scripts): Include `TextToSpeech` scripts in both powershell and bash for cross platform audio generation. `dist/scripts/`
+- feat(enums): Added `ENUM_HOURS` and `ENUM_AUDIO_MESSAGES` for audio generation and TTS message formatting.
 
 **Todo**
 - chore(node): Implement node tracking for products.
@@ -41,6 +43,17 @@
 - chore(tasks): Webhook integration.
 - chore(tasks): File generation.
 - chore(polygon): Implement TIM (Threats in Motion)
+
+------------------------------------------------------------------------------------------------------------------------
+
+### November 14th, 2026 - b3.1-0405-a
+
+**Features**
+- feat(tsconfig): Implemented `@Components.Tasks` and `@Components.Tasks.Deployments` path in tsconfig.json.
+- feat(tasks): Implemented `ConstructFile` for file tasks.
+- feat(tasks): Implemented `ConstructNotification` for NTFY push notifications.
+- feat(tasks): Implemented `ConstructWebhook` for Discord webhook ingestions.
+- feat(config): Added `SampleRate` to the `AudioGeneration` configurations.
 
 ------------------------------------------------------------------------------------------------------------------------
 

@@ -56,7 +56,7 @@ export type TYPE_EVENT = {
                 miles?: number | null
                 kilometers?: number | null
                 proximity?: boolean
-            }
+            }[]
             filtered?: boolean
             updated?: number
         }

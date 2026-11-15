@@ -40,7 +40,8 @@ export const ConstructNotification = async ({ Product, Message, Topic}: CONSTRUC
     const cFileStructure = `${event}_${components?.tracking}`;
     const cGeneratedImages = MediaDirectories.Graphics ? { link: `${MediaDirectories.Graphics}/${cFileStructure}.png` } : undefined;
     const cSPCGraphics = attachments?.find(lAttachment => lAttachment.name.includes(`Image: `))
-    const cTopics = [`GLOBAL`, Topic, ...(tracking?.filtered ? [`${Topic}-LOCAL`] : [])];
+    const cNodeNames = tracking?.nodes?.map(lNode => lNode.proximity && lNode.id ? String(lNode.id) : null).filter(Boolean);
+    const cTopics = [`GLOBAL`, Topic, ...(tracking?.filtered ? [`${Topic}-LOCAL`, ...cNodeNames.map(lNodeName => `${Topic}-LOCAL-${lNodeName.toUpperCase()}`)] : [])];
     
     const cActions = [
         ...(MediaDirectories.Audio ? [{

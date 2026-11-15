@@ -33,6 +33,7 @@
 **Features**
 - feat(scripts): Include `TextToSpeech` scripts in both powershell and bash for cross platform audio generation. `dist/scripts/`
 - feat(enums): Added `ENUM_HOURS` and `ENUM_AUDIO_MESSAGES` for audio generation and TTS message formatting.
+- feat(ntfy): Add the ability to push TOPIC-LOCAL-{NODE_NAME} notifications to NTFY for filtered events with tracking nodes.
 
 **Documentation**
 - docs(README): Added warning about `powershell` and `bash` scripts for cross-platform audio generation.

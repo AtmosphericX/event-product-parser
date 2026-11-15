@@ -34,6 +34,10 @@
 - feat(scripts): Include `TextToSpeech` scripts in both powershell and bash for cross platform audio generation. `dist/scripts/`
 - feat(enums): Added `ENUM_HOURS` and `ENUM_AUDIO_MESSAGES` for audio generation and TTS message formatting.
 
+**Documentation**
+- docs(README): Added warning about `powershell` and `bash` scripts for cross-platform audio generation.
+- docs(README): Add additional testing scripts for `get-nearest-city` and `manage-tracking-nodes`.
+
 **Todo**
 - chore(node): Implement node tracking for products.
 - chore(products): Complete all product ingestions (Cap 1.2, VTEC, GeoJSON, Text)

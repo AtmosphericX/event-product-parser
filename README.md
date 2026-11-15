@@ -65,7 +65,15 @@ $ pnpm run watch # Watches for changes and automatically rebuilds the project
 ```bash
 $ pnpm run testing:archives
 $ pnpm run testing:create
+$ pnpm run testing:manage-tracking-nodes
+$ pnpm run testing:get-nearest-city
 ```
+
+### Warning
+This project uses `powershell` and `bash` scripts for cross-platform audio generation. These scripts are located under `dist/scripts/` and are **ONLY** used for generating audio files from text. The scripts are not intended for any other purpose and should not be modified or used in any other context. You can verify the integrity of the scripts by checking their SHA256 hashes below:
+
+- 5b0e607857fe0630dee3f9cd4dd107693972eb91f0eb381aeeb02228a6593a7e
+- 8343c67e52192cf407109cb3fb5e685c618cd8313a81d52d1e974356b5d7afe0
 
 ### Dependencies
 - [xml2js](https://www.npmjs.com/package/xml2js) (v0.6.2)

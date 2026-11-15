@@ -20788,13 +20788,14 @@ var TaskSendNTFY = async function({ Event, Priority, Body, Topic }) {
   const { properties, geometry } = Event;
   const { event, status, metadata, parameters } = properties;
   const { tags } = parameters;
-  const { tracking, filtered_proximity, attachments } = metadata;
+  const { tracking, nodes, filtered_proximity, attachments } = metadata;
   const { NotifyServer } = Bootstrap.Settings;
   const { MediaStorage } = NotifyServer ?? {};
   const { Username, Password } = NotifyServer?.Credentials ?? {};
   const image = MediaStorage?.IMAGE ? { link: `${MediaStorage.IMAGE}/${event}_${tracking}.png` } : void 0;
   const graphic = attachments?.find((a) => a.name === "Image: SPC Graphic");
-  const topics = [`GLOBAL`, Topic, ...filtered_proximity ? [`${Topic}-LOCAL`] : []];
+  const cNodeNames = nodes?.map((lNode) => lNode.proximity && lNode.id ? String(lNode.id) : null).filter(Boolean);
+  const topics = [`GLOBAL`, Topic, ...filtered_proximity ? [`${Topic}-LOCAL`, ...cNodeNames.map((n) => `${Topic}-LOCAL-${n.toUpperCase().replace(/\s+/g, "_")}`)] : []];
   const actions = [
     ...MediaStorage?.AUDIO ? [{ "action": "view", "label": "View Audio", "url": `${MediaStorage.AUDIO}/${event}_${tracking}.wav?unix=${(/* @__PURE__ */ new Date()).getTime()}` }] : [],
     ...MediaStorage?.TEXT ? [{ "action": "view", "label": "View Text", "url": `${MediaStorage.TEXT}/${event}_${tracking}.txt?unix=${(/* @__PURE__ */ new Date()).getTime()}` }] : [],

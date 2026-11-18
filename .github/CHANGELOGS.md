@@ -23,6 +23,13 @@
 
 ## Changelogs [NOT FOR PRODUCTION USE]
 
+### November 18th, 2026 - b3.1-0405-c
+
+**Documentation**
+- docs(README): Add additional testing scripts for `construct-audio-message`.
+
+------------------------------------------------------------------------------------------------------------------------
+
 ### November 15th, 2026 - b3.1-0405-b
 
 **Refactoring**

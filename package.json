@@ -17,7 +17,8 @@
 		"testing:archives": "cd ./testing && node test.exports.get-archived-products.js",
 		"testing:create": "cd ./testing && node test.exports.construct-product-manual.js",
 		"testing:manage-tracking-nodes": "cd ./testing && node test.exports.manage-tracking-nodes.js",
-		"testing:get-nearest-city": "cd ./testing && node test.exports.get-nearest-city.js"
+		"testing:get-nearest-city": "cd ./testing && node test.exports.get-nearest-city.js",
+		"testing:construct-audio-message": "cd ./testing && node test.exports.construct-audio-message.js"
 	},
 	"files": [
 		"dist",

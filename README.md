@@ -67,6 +67,7 @@ $ pnpm run testing:archives
 $ pnpm run testing:create
 $ pnpm run testing:manage-tracking-nodes
 $ pnpm run testing:get-nearest-city
+$ pnpm run testing:construct-audio-message
 ```
 
 ### Warning

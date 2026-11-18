@@ -21444,7 +21444,7 @@ var ENUM_THEMES = [
 var import_node_events = require("node:events");
 var import_node_path = require("node:path");
 var Bootstrap = {
-  Version: `b3.1-0405-b`,
+  Version: `b3.1-0405-c`,
   ServiceReady: false,
   Listener: new import_node_events.EventEmitter(),
   Scheduler: null,
@@ -21706,8 +21706,6 @@ var SetLog = ({ Type = "DEFAULT", Message, Event, Metadata, Limited, Hidden }) =
       return;
     }
   }
-  Bootstrap.Listener.emit(cEvent, { Message: cCleanMessage, Headers: Metadata ?? {} });
-  Bootstrap.Listener.emit(`*`, { Event: cEvent, Metadata: cCleanMessage, Headers: Metadata ?? {} });
   if (DebugMessages && cType.Debug) {
     const cDebugMatch = cCleanMessage.match(/^\[(\d+(?:\.\d+)?)ms\]/);
     if (cDebugMatch && parseFloat(cDebugMatch[1]) <= DebugMinimumTime) {
@@ -21716,6 +21714,8 @@ var SetLog = ({ Type = "DEFAULT", Message, Event, Metadata, Limited, Hidden }) =
     console.log(cFullMessage);
     return;
   }
+  Bootstrap.Listener.emit(cEvent, { Message: cCleanMessage, Headers: Metadata ?? {} });
+  Bootstrap.Listener.emit(`*`, { Event: cEvent, Metadata: cCleanMessage, Headers: Metadata ?? {} });
   if (!cType.Debug && ConsoleMessages && !Hidden) {
     console.log(cFullMessage);
   }

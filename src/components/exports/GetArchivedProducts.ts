@@ -30,7 +30,10 @@ export const GetArchivedProducts = async ({ PIL, Limit = 1 }: ARCHIVED_PRODUCTS)
     const { ARCHIVED_PRODUCTS } = ENUM_STRINGS.API
     const cStorage: ARCHIVED_PRODUCTS_RESPONSE[] = [];
     for (const cPil of PIL) {
-        const { Error, Body } = await CreateFetchRequest({ Destination: ARCHIVED_PRODUCTS.replace(/%s/, cPil).replace(/%d/, String(Limit)) })
+        const { Error, Body } = await CreateFetchRequest({ 
+            Destination: ARCHIVED_PRODUCTS.replace(/%s/, cPil).replace(/%d/, String(Limit)),
+            Timeout: 5e3
+        })
         if (!Error) {
             const cProducts = Body
                 ?.split(/(?=\$\$)/g)

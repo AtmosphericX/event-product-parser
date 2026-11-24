@@ -21444,7 +21444,7 @@ var ENUM_THEMES = [
 var import_node_events = require("node:events");
 var import_node_path = require("node:path");
 var Bootstrap = {
-  Version: `b3.1-0405-c`,
+  Version: `b3.1-0405-d`,
   ServiceReady: false,
   Listener: new import_node_events.EventEmitter(),
   Scheduler: null,
@@ -27343,7 +27343,10 @@ var GetArchivedProducts = async ({ PIL, Limit = 1 }) => {
   const { ARCHIVED_PRODUCTS } = ENUM_STRINGS.API;
   const cStorage = [];
   for (const cPil of PIL) {
-    const { Error: Error2, Body } = await CreateFetchRequest({ Destination: ARCHIVED_PRODUCTS.replace(/%s/, cPil).replace(/%d/, String(Limit)) });
+    const { Error: Error2, Body } = await CreateFetchRequest({
+      Destination: ARCHIVED_PRODUCTS.replace(/%s/, cPil).replace(/%d/, String(Limit)),
+      Timeout: 5e3
+    });
     if (!Error2) {
       const cProducts = Body?.split(/(?=\$\$)/g)?.map((lMsg) => lMsg.trim())?.filter((lMsg) => lMsg && lMsg !== "$$")?.filter((lMsg) => lMsg.length > 25);
       cStorage.push({ TTAAII: cPil, Products: cProducts });

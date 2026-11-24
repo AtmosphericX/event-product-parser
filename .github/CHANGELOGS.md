@@ -23,6 +23,19 @@
 
 ## Changelogs [NOT FOR PRODUCTION USE]
 
+### November 23rd, 2026 - b3.1-0405-d
+
+**Refactoring**
+- ref(tasks): `ConstructNotification` no longer includes `GLOBAL` if `Product` is not provided.
+- ref(tasks): `ConstructNotification` timeout has been set to 5000ms (5 Seconds).
+- ref(tasks): `ConstructWebhook` timeout has been set to 5000ms (5 Seconds).
+- ref(exports): `GetArchivedProducts` timeout has been set to 5000ms (5 Seconds).
+
+**Features**
+- feat(package): Added `compile` script to `package.json` for building the project without starting the test script.
+
+------------------------------------------------------------------------------------------------------------------------
+
 ### November 18th, 2026 - b3.1-0405-c
 
 **Documentation**

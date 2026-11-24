@@ -113,7 +113,7 @@ export const ConstructWebhook = async ({ Product, Webhook, Attachments }: CONSTR
 
     const { Error, StatusCode } = await CreateFetchRequest({
         Destination: Webhook.URL,
-        Timeout: 15e3,
+        Timeout: 5e3,
         Method: `POST`,
         Body: cCreateForm
     });

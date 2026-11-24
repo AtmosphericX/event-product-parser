@@ -10,6 +10,7 @@
 	},
 	"scripts": {
 		"start": "cd ./test && node ./index.js",
+		"compile": "node ./tools/build.js",
 		"build": "node ./tools/build.js && cd ./test && node index.js",
 		"watch": "node ./tools/build.js --watch",
 		"publish": "node ./tools/build.js && npm publish --access public",

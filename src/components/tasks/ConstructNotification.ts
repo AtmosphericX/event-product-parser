@@ -41,7 +41,7 @@ export const ConstructNotification = async ({ Product, Message, Topic}: CONSTRUC
     const cGeneratedImages = MediaDirectories.Graphics ? { link: `${MediaDirectories.Graphics}/${cFileStructure}.png` } : undefined;
     const cSPCGraphics = attachments?.find(lAttachment => lAttachment.name.includes(`Image: `))
     const cNodeNames = tracking?.nodes?.map(lNode => lNode.proximity && lNode.id ? String(lNode.id) : null).filter(Boolean);
-    const cTopics = [`GLOBAL`, Topic, ...(tracking?.filtered ? [`${Topic}-LOCAL`, ...cNodeNames.map(lNodeName => `${Topic}-LOCAL-${lNodeName.toUpperCase().replace(/\s+/g, "_")}`)] : [])];
+    const cTopics = [Product ? `GLOBAL` : null, Topic, ...(tracking?.filtered ? [`${Topic}-LOCAL`, ...cNodeNames.map(lNodeName => `${Topic}-LOCAL-${lNodeName.toUpperCase().replace(/\s+/g, "_")}`)] : [])].filter(Boolean);
     
     const cActions = [
         ...(MediaDirectories.Audio ? [{
@@ -79,7 +79,7 @@ export const ConstructNotification = async ({ Product, Message, Topic}: CONSTRUC
     const cCallPush = async (lTopic: string) => {
         const { Error, StatusCode } = await CreateFetchRequest({
             Destination: `${DefaultServer.replace(/\/$/, "")}/${lTopic}`,
-            Timeout: 15e3,
+            Timeout: 5e3,
             Method: `POST`,
             Headers: cHeaders,
             Body: Message,
